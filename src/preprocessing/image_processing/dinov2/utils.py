@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Union
 import numpy as np
 import torch
 import torch.nn.functional as F
-
+from tqdm import tqdm
 
 class CenterPadding(torch.nn.Module):
     def __init__(self, multiple):
@@ -60,11 +60,25 @@ class Backbone:
 
         self.model.to(device)
         x = x.to(device)
+        print('DEVICE',device)
 
         with torch.no_grad():
-            x = self.model(x[:10, :, :, :]) #TODO: batching.
+          embedding_size = self.model(x[0:1, :, :, :]).shape[1]  # Get embedding size from the model
+          num_embeddings = x.shape[0]  # Total number of items in x
 
-        return x
+          # Preallocate embeddings tensor
+          embeddings = torch.empty((num_embeddings, embedding_size), device=x.device)
+          print('Total number of Batches: ',num_embeddings//10)
+
+          # Process in batches
+          for i in tqdm(range(0, num_embeddings, 10), desc="Processing batches"):
+            # Define the end index for the current batch
+            end_idx = min(i + 10, num_embeddings)  # Handle the last batch if it's smaller than 10
+            # Get the current batch
+            embeddings_temp = self.model(x[i:end_idx, :, :, :])
+            # Store the results in the preallocated tensor
+            embeddings[i:end_idx] = embeddings_temp
+        return embeddings
 
     @staticmethod
     def save_embeddings(embeddings: torch.Tensor, key: Dict[str, Any]) -> str:

@@ -3,14 +3,8 @@ import cv2
 import torch
 from torchvision import transforms
 
-sys.path.append("/content/multi-modal-CEBRA/")
-import src.third_party.utils
-#from src.video_processing import schema
-from src.video_processing.dinov2.utils import Backbone
-#from src.video_processing.schema import Dinov2, ImageTable
 
-#from src.utils.login import connect_to_database
-#connect_to_database()
+from content.riccardo_workspace.src.preprocessing.image_processing.dinov2.utils import Backbone, save_features
 
 #NOTE(celia): to add the segmentation mask, see /src/video_processing/dinov2/segmentation.py.
 
@@ -59,7 +53,7 @@ if __name__ == "__main__":
         #image_paths = src.third_party.utils.extract_image_paths(stimulus)
         
         # Define the path to the folder that contains the images
-        image_folder = '/content/openscope_databook/Allen/snake'
+        image_folder = '/content/drive/MyDrive/CEBRA/Allen/snake'
 
         # Get all the image paths in the folder. Assuming images have a .jpg extension.
         # If your images have a different extension, adjust the pattern accordingly.
@@ -91,5 +85,5 @@ if __name__ == "__main__":
             image_features = model.extract_embeddings(images)
             #image_features = model.encode_image(images)
             print("extracted embeddings")
-        src.third_party.utils.save_features(image_features, stimulus, backbone_name, feature_name="Dinov2_embeddings")
+        save_features(image_features, stimulus, backbone_name, feature_name="Dinov2_embeddings")
         print("saved")
