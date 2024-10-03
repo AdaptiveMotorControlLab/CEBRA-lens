@@ -38,22 +38,25 @@ if __name__ == "__main__":
     #    stimuli = set(stimuli)
   
     stimuli = set(stimuli)
-
     if skip is None:
         skip = []
 
     skip = set(skip)
     stimuli = stimuli - skip
     image_paths = extract_stimuli_paths(stimuli)
+    print('stimuli: ', stimuli)
+    print('image paths: ', image_paths)
+
     model = Backbone(backbone_name)
     
-    for stimulus in stimuli:
+    for i,stimulus in enumerate(stimuli):
+        print(stimulus)
         trans = transforms.Compose([transforms.ToTensor()])
 
         
         # Define the path to the folder that contains the images
         #image_folder = '/content/drive/MyDrive/CEBRA/Allen/snake'
-        image_folder = image_paths[stimulus]
+        image_folder = image_paths[i]
 
         # Get all the image paths in the folder. Assuming images have a .jpg extension.
         # If your images have a different extension, adjust the pattern accordingly.
