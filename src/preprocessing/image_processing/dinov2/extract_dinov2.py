@@ -4,7 +4,7 @@ import torch
 from torchvision import transforms
 
 
-from content.riccardo_workspace.src.preprocessing.image_processing.dinov2.utils import Backbone, save_features
+from utils import Backbone, save_features,  extract_stimuli_paths
 
 #NOTE(celia): to add the segmentation mask, see /src/video_processing/dinov2/segmentation.py.
 
@@ -44,16 +44,16 @@ if __name__ == "__main__":
 
     skip = set(skip)
     stimuli = stimuli - skip
-    
+    image_paths = extract_stimuli_paths(stimuli)
     model = Backbone(backbone_name)
     
     for stimulus in stimuli:
         trans = transforms.Compose([transforms.ToTensor()])
 
-        #image_paths = src.third_party.utils.extract_image_paths(stimulus)
         
         # Define the path to the folder that contains the images
-        image_folder = '/content/drive/MyDrive/CEBRA/Allen/snake'
+        #image_folder = '/content/drive/MyDrive/CEBRA/Allen/snake'
+        image_folder = image_paths[stimulus]
 
         # Get all the image paths in the folder. Assuming images have a .jpg extension.
         # If your images have a different extension, adjust the pattern accordingly.

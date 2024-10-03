@@ -124,6 +124,31 @@ def extract_image_paths(stimulus: str) -> List[str]:
     return image_absolute_paths
 '''
 
+def extract_stimuli_paths(stimuli_names):
+    stimuli_paths = {}
+
+    try:
+        data_dir = os.environ["DATA_PATH"]
+    except KeyError:
+        raise ValueError("DATA_PATH environment variable is not set")
+
+    # Loop over each stimulus name to find its path
+    for stimulus in stimuli_names:
+        stimulus_path = os.path.join(data_dir, stimulus)
+        
+        # Check if the path exists and is a directory
+        if os.path.exists(stimulus_path) and os.path.isdir(stimulus_path):
+
+            stimuli_paths[stimulus] = stimulus_path
+
+        else:
+            print(f"Warning: Path for stimulus '{stimulus}' does not exist or is not a directory.")
+    
+    return stimuli_paths
+
+
+
+
 def save_features(image_features, stimulus, backbone_name, feature_name:str="features"):
     """Save the embeddings in `image_features` to the corresponding `stimulus`.
     
