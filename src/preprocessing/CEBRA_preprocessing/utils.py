@@ -4,16 +4,16 @@ import numpy as np
 import torch
 
 
-def multisession_preparation(stimuli: list):
+def multisession_preparation(stimuli: list, split: float):
     
     print(type(stimuli))
     
     # make sure it's in a list format
     if isinstance(stimuli,list):
-        stimuli = set(stimuli)
+        print('list of stimuli:', stimuli)
+        #stimuli = set(stimuli)
     elif isinstance(stimuli,str):
         stimuli = [stimuli]
-        print('jher', stimuli)
 
     try:
         data_dir = os.environ["DATA_PATH"]
@@ -59,17 +59,18 @@ def multisession_preparation(stimuli: list):
 
         dff_trace_stimulus_all_repetitions = dff_trace[single_stimulus_df['index'].values,:]    
 
-        segments = _get_training_repeat_indices(single_stimulus_df)
+        segments = _get_training_repeat_indices(single_stimulus_df) # list of tuples 
         
-        #training sets 9/10
-        train_dff = dff_trace_stimulus_all_repetitions[segments[0][0]:segments[8][1],:]
-        train_embeddings_stimulus = embeddingsExtended[segments[0][0]:segments[8][1],:]
-        train_labels = single_stimulus_df['frame'].values[segments[0][0]:segments[8][1]]
+        #training sets split*10
+        train_idx = int(split*len(segments))
+        print('TRAIN INDEX', train_idx)
+        train_dff = dff_trace_stimulus_all_repetitions[segments[0][0]:segments[train_idx][1],:]
+        train_embeddings_stimulus = embeddingsExtended[segments[0][0]:segments[train_idx][1],:]
+        train_labels = single_stimulus_df['frame'].values[segments[0][0]:segments[train_idx][1]]
 
-        #testing sets 1/10
-        test_dff = dff_trace_stimulus_all_repetitions[segments[9][0]:segments[9][1],:]
-        test_embeddings_stimulus = embeddingsExtended[segments[9][0]:segments[9][1],:]
-        test_labels = single_stimulus_df['frame'].values[segments[9][0]:segments[9][1]]
+        test_dff = dff_trace_stimulus_all_repetitions[segments[train_idx][0]:segments[-1][1],:]
+        test_embeddings_stimulus = embeddingsExtended[segments[train_idx][0]:segments[-1][1],:]
+        test_labels = single_stimulus_df['frame'].values[segments[train_idx][0]:segments[-1][1]]
 
         data_train.append(train_dff)
         data_test.append(test_dff)
