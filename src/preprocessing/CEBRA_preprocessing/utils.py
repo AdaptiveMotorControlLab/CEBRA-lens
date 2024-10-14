@@ -101,3 +101,22 @@ def _get_training_repeat_indices(df):
       segments.append((start_idx, len(df) - 1))
 
   return segments
+
+
+def add_function_at_line(file_path, new_function, line_number):
+  #line_number manually found by looking in the files.
+  
+  # Read the existing file content into a list of lines
+  with open(file_path, 'r') as file:
+      lines = file.readlines()
+
+  indent = 4 # manually found in the file
+
+  indented_function = '\n'.join([(' ' * indent) + line for line in new_function.strip().split('\n')])
+
+  # Insert the new function at the desired line number
+  lines.insert(line_number, indented_function + '\n')  # Add a newline at the end
+
+  # Write the modified content back to the file
+  with open(file_path, 'w') as file:
+      file.writelines(lines)
