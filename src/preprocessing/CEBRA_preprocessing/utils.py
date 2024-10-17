@@ -77,7 +77,23 @@ def multisession_preparation(stimuli: list, split: float):
         test_dff = dff_trace_stimulus_all_repetitions[segments[train_idx+1][0]:segments[-1][1],:]
         test_embeddings_stimulus = embeddingsExtended[segments[train_idx+1][0]:segments[-1][1],:]
         test_labels = single_stimulus_df['frame'].values[segments[train_idx+1][0]:segments[-1][1]]
+            
+        ##########################################
+        # Filter out the frame 899
 
+        idx_no_899_train = np.where(train_labels != 899)[0]
+        idx_no_899_test = np.where(test_labels != 899)[0]
+
+        train_labels = train_labels[idx_no_899_train]
+        test_labels = test_labels[idx_no_899_test]
+
+        train_dff = train_dff[idx_no_899_train,:]
+        test_dff = test_dff[idx_no_899_test,:]
+
+        train_embeddings_stimulus = train_embeddings_stimulus[idx_no_899_train,:]
+        test_embeddings_stimulus = test_embeddings_stimulus[idx_no_899_test,:]
+
+        ##########################################
         data_train.append(train_dff)
         data_test.append(test_dff)
 
