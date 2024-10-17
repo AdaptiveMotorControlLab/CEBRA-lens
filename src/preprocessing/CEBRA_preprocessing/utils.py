@@ -61,16 +61,22 @@ def multisession_preparation(stimuli: list, split: float):
 
         segments = _get_training_repeat_indices(single_stimulus_df) # list of tuples 
         
-        #training sets split*10
-        train_idx = int(split*len(segments))
+       #training sets split*10
+        train_idx = int(split*len(segments)) - 1
+        
         print('TRAIN INDEX', train_idx)
+        print('END TRAIN:' ,segments[train_idx][1])
+        print('BEGIN TEST:' ,segments[train_idx+1][0])
+        print('END TEST: ',segments[-1][1])
+        print('FULL SIZE: ', dff_trace_stimulus_all_repetitions.shape)
+
         train_dff = dff_trace_stimulus_all_repetitions[segments[0][0]:segments[train_idx][1],:]
         train_embeddings_stimulus = embeddingsExtended[segments[0][0]:segments[train_idx][1],:]
         train_labels = single_stimulus_df['frame'].values[segments[0][0]:segments[train_idx][1]]
 
-        test_dff = dff_trace_stimulus_all_repetitions[segments[train_idx][0]:segments[-1][1],:]
-        test_embeddings_stimulus = embeddingsExtended[segments[train_idx][0]:segments[-1][1],:]
-        test_labels = single_stimulus_df['frame'].values[segments[train_idx][0]:segments[-1][1]]
+        test_dff = dff_trace_stimulus_all_repetitions[segments[train_idx+1][0]:segments[-1][1],:]
+        test_embeddings_stimulus = embeddingsExtended[segments[train_idx+1][0]:segments[-1][1],:]
+        test_labels = single_stimulus_df['frame'].values[segments[train_idx+1][0]:segments[-1][1]]
 
         data_train.append(train_dff)
         data_test.append(test_dff)
