@@ -142,3 +142,40 @@ def add_function_at_line(file_path, new_function, line_number):
   # Write the modified content back to the file
   with open(file_path, 'w') as file:
       file.writelines(lines)
+
+def plot_hippocampus(ax, embedding, label, gray = False, idx_order = (0,1,2)):
+    r_ind = label[:,1] == 1
+    l_ind = label[:,2] == 1
+
+    if not gray:
+        r_cmap = 'cool'
+        l_cmap = 'magma'
+        r_c = label[r_ind, 0]
+        l_c = label[l_ind, 0]
+    else:
+        r_cmap = None
+        l_cmap = None
+        r_c = 'gray'
+        l_c = 'gray'
+
+    idx1, idx2, idx3 = idx_order
+    r=ax.scatter(embedding [r_ind,idx1],
+               embedding [r_ind,idx2],
+               embedding [r_ind,idx3],
+               c=r_c,
+               cmap=r_cmap, s=0.05, alpha=0.75)
+    l=ax.scatter(embedding [l_ind,idx1],
+               embedding [l_ind,idx2],
+               embedding [l_ind,idx3],
+               c=l_c,
+               cmap=l_cmap, s=0.05, alpha=0.75)
+
+    ax.grid(False)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    ax.xaxis.pane.set_edgecolor('w')
+    ax.yaxis.pane.set_edgecolor('w')
+    ax.zaxis.pane.set_edgecolor('w')
+
+    return ax
