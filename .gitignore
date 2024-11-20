@@ -161,3 +161,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 .DS_Store
+src/preprocessing/.DS_Store
+src/.DS_Store
+.DS_Store
+src/preprocessing/image_processing/.DS_Store

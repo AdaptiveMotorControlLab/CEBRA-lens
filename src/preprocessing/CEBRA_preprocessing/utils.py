@@ -179,3 +179,24 @@ def plot_hippocampus(ax, embedding, label, gray = False, idx_order = (0,1,2)):
     ax.zaxis.pane.set_edgecolor('w')
 
     return ax
+
+
+def plot_allen(ax, embedding, label, gray = False, idx_order = (0,1,2)):
+    c = label
+
+    idx1, idx2, idx3 = idx_order
+    ax.scatter(embedding [:,idx1],
+               embedding [:,idx2],
+               embedding [:,idx3],
+               c=c,
+               cmap='magma', s=0.05, alpha=0.75)
+
+    ax.grid(False)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    ax.xaxis.pane.set_edgecolor('w')
+    ax.yaxis.pane.set_edgecolor('w')
+    ax.zaxis.pane.set_edgecolor('w')
+
+    return ax
