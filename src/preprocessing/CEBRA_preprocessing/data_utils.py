@@ -239,16 +239,16 @@ def get_single_session_datasets(
                 )
             )
 
-    # Add noise to the first mouse only
+    # Add noise to the 4th mouse only
     if shot_noise is not None:
         # train_datas[0].neural = _add_shot_noise(train_datas[0].neural, scale_factor=shot_noise)
-        valid_datas[0].neural = _add_shot_noise(
-            valid_datas[0].neural, scale_factor=shot_noise
+        valid_datas[3].neural = _add_shot_noise(
+            valid_datas[3].neural, scale_factor=shot_noise
         )
     elif gaussian_noise is not None:
         # train_datas[0].neural = _add_gaussian_noise(train_datas[0].neural, sigma=gaussian_noise)
-        valid_datas[0].neural = _add_gaussian_noise(
-            valid_datas[0].neural, sigma=gaussian_noise
+        valid_datas[3].neural = _add_gaussian_noise(
+            valid_datas[3].neural, sigma=gaussian_noise
         )
 
     # discrete_labels = [np.tile(np.arange(900), 10) for i in range(len(mice))]
