@@ -7,9 +7,20 @@ import cebra.datasets
 import copy
 
 
+# NOT USED IN THE NOTEBOOKS (TO BE REMOVED)
 def multisession_preparation(stimuli: list, split: float):
-    
-    print(type(stimuli))
+    """
+    This function loads the Open scope data and formats it for multisession training.
+
+    Input:
+    - stimuli (list): list of stimuli to load.
+    - split (float): split value for train/test splitting.
+
+    Output:
+    - data_train, data_test: The Open scope neural data.
+    - labels_train,labels_test: The Openscope data labels.
+    - embeddings: corresponding DINOv2 embeddings
+    """
     
     # make sure it's in a list format
     if isinstance(stimuli,list):
@@ -66,12 +77,6 @@ def multisession_preparation(stimuli: list, split: float):
         
        #training sets split*10
         train_idx = int(split*len(segments)) - 1
-        
-        print('TRAIN INDEX', train_idx)
-        print('END TRAIN:' ,segments[train_idx][1])
-        print('BEGIN TEST:' ,segments[train_idx+1][0])
-        print('END TEST: ',segments[-1][1])
-        print('FULL SIZE: ', dff_trace_stimulus_all_repetitions.shape)
 
         train_dff = dff_trace_stimulus_all_repetitions[segments[0][0]:segments[train_idx][1],:]
         train_embeddings_stimulus = embeddingsExtended[segments[0][0]:segments[train_idx][1],:]
@@ -128,8 +133,16 @@ def _get_training_repeat_indices(df):
   return segments
 
 
+
 def add_function_at_line(file_path, new_function, line_number):
-  #line_number manually found by looking in the files.
+  """
+    This function adds a line to a file. Was meant to be used to add a line to the CEBRA package when loading on COLAB.
+
+    Input:
+    - file_path: where the file to modify is.
+    - new_function (string): the function text to insert.
+    - line_number: line where the insertion should be made. Manually found by looking in the files.
+  """
   
   # Read the existing file content into a list of lines
   with open(file_path, 'r') as file:
@@ -147,6 +160,17 @@ def add_function_at_line(file_path, new_function, line_number):
       file.writelines(lines)
 
 def split_data_HPC(data, test_ratio):
+    """
+    This function splits the hippocampus data into test and train.
+
+    Input:
+    - data: hippocampus data to split.
+    - test_ratio (float): split value for train/test splitting.
+
+    Output:
+    - neural_train, neural_test: neural data.
+    - labels_train,labels_test: data labels.
+    """
 
     split_idx = int(len(data)* (1-test_ratio))
     neural_train = data.neural[:split_idx]
@@ -157,6 +181,15 @@ def split_data_HPC(data, test_ratio):
     return neural_train.numpy(), neural_test.numpy(), label_train.numpy(), label_test.numpy()
 
 def separate_activations(activations):
+    """
+    This function separates the layer activations into trained and untrained.
+
+    Input:
+    - activations: dictionnary of activations. Each key has _UT if the activations come from untrained models
+
+    Output:
+    - embeddings_untrained,embeddings_trained: splitted activations.
+    """
     # put everything in a list
     embeddings_untrained = []
     embeddings_trained = []
