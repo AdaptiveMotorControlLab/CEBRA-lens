@@ -3,19 +3,8 @@
 
 import os
 import pickle
-import numpy as np
 import torch
 import torch.nn as nn
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-import statsmodels.api as sm
-from tqdm import tqdm
-from scipy.linalg import block_diag
-from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
-from random import sample
 
 from ..preprocessing.CEBRA_preprocessing.plotting_utils import *
 from ..preprocessing.CEBRA_preprocessing.data_utils import *
@@ -24,7 +13,7 @@ import argparse
 
 def main(model_name,layer_type, session_id,filename):
     
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('BEGINNING OF SCRIPT')
     print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
@@ -183,7 +172,7 @@ def main(model_name,layer_type, session_id,filename):
     print(activations_dict['act_single'])
     print(activations_dict['labels_single'])
     print(len(activations_dict['labels_single']))
-    
+
 
     # Save activations to a pickle file
     with open(os.path.join('data/activations', f'{filename}.pkl'), 'wb') as f:

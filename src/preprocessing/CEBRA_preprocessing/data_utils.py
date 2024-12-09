@@ -44,11 +44,11 @@ def process_activations(activations,output_embeddings):
             labels_multi.append(key)
 
     # add the output embeddings at the end
-    activations_UT.append(output_embeddings['UT'])
+    activations_UT += output_embeddings['UT']
     labels_UT += [f'output_embedding_UT{i}' for i in range (len(output_embeddings['UT']))]
-    activations_single.append(output_embeddings['single'])
+    activations_single += output_embeddings['single']
     labels_single += [f'output_embedding_{i}' for i in range (len(output_embeddings['single']))]
-    activations_multi.append(output_embeddings['multi'])
+    activations_multi += output_embeddings['multi']
     labels_multi  += [f'output_embedding_{i}' for i in range (len(output_embeddings['multi']))]
 
 

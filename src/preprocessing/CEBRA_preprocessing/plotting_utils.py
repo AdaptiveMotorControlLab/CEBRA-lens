@@ -25,6 +25,8 @@ def plot_cka_heatmaps(cka_matrices,annot, titles, cbar_label='CKA score', color_
                       'cbar_kws': {'label': cbar_label, 'orientation': 'horizontal'}}
 
     num_layers = cka_matrices[0].shape[1]
+    num_models = cka_matrices[0].shape[0]
+
     
     # Plot each heat map
     for i, matrix in enumerate(cka_matrices):
@@ -36,8 +38,8 @@ def plot_cka_heatmaps(cka_matrices,annot, titles, cbar_label='CKA score', color_
         ax.set_xlabel('Layer')
         if ax == axs[0]:
             ax.set_ylabel('Model Instantiation', fontsize=12)
-            ax.set_yticks(np.arange(5) + 0.5)
-            ax.set_yticklabels([m for m in range(1, 6)])
+            ax.set_yticks(np.arange(num_models) + 0.5)
+            ax.set_yticklabels([m for m in range(1,num_models+1)])
         else:
             ax.set_ylabel('')
             ax.set_yticks([])
