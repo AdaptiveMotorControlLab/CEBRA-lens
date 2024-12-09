@@ -1,4 +1,4 @@
-# run using: python -m GithubFolder.src.scripts.layer_activation_retrieval      
+# run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --filename offset10alllayers
 # attention: need to be one step above the GithubFolder to have data and finalmodels
 
 import os
@@ -22,7 +22,7 @@ from ..preprocessing.CEBRA_preprocessing.data_utils import *
 from ..preprocessing.CEBRA_preprocessing.quantification_utils import *
 import argparse
 
-def main(layer_type, session_id,filename):
+def main(model_name,layer_type, session_id,filename):
     
     print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('BEGINNING OF SCRIPT')
@@ -48,7 +48,7 @@ def main(layer_type, session_id,filename):
     valid_label = discrete_labels_val[session_id]
 
     # LOAD MODELS
-    models_folder_path = 'FinalModels/VISION/offset10'
+    models_folder_path = f'FinalModels/VISION/{model_name}'
     files_list = os.listdir(models_folder_path)
 
     models_list = []
@@ -180,17 +180,23 @@ def main(layer_type, session_id,filename):
 
    
 
+    print(activations_dict['act_single'])
+    print(activations_dict['labels_single'])
+    print(len(activations_dict['labels_single']))
+    
 
     # Save activations to a pickle file
     with open(os.path.join('data/activations', f'{filename}.pkl'), 'wb') as f:
         pickle.dump(activations_dict, f)
-    print(activations_dict)
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
-        '--layer_type', type=str, default='all', help="Type of layer to process ('all' or 'conv')"
+        '--model_name', type=str, default='offset10', help="name of the folder where the models (assuming they are under FinalModels/VISION)"
+    )
+    parser.add_argument(
+        '--layer_type', type=str, default='conv', help="Type of layer to process ('all' or 'conv')"
     )
     parser.add_argument(
         '--session_id', type=int, default=3, help="session id for the analysis, used to retrieve the correct data and multi-session model"
@@ -200,4 +206,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     print(args)
-    main(args.layer_type, args.session_id, args.filename)
+    main(args.model_name,args.layer_type, args.session_id, args.filename)
