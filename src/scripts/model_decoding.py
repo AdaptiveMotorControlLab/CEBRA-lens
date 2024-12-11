@@ -1,9 +1,5 @@
-# run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --filename offset10alllayers
-# attention: need to be one step above the GithubFolder to have data and finalmodels
+#run using % python -m GithubFolder.src.scripts.model_decoding --model_name offset10 --session_id 3
 
-import os
-import pickle
-import torch
 import torch.nn as nn
 
 from ..preprocessing.CEBRA_preprocessing.plotting_utils import *
