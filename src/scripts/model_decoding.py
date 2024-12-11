@@ -35,6 +35,10 @@ def main(model_name, session_id):
     # LOAD MODELS
     models = model_loader(model_name= model_name)
 
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('Decoding models...')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
+
     results_untrained, results_single, results_multi = decoding_models(
     models['UT'], 
     models['single'], 
