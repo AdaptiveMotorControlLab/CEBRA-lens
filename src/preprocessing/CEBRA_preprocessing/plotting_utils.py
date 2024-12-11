@@ -363,8 +363,6 @@ def plot_accuracy_comparison(results_untrained, results_single, results_multi):
     plt.show()
 
 
-
-
 def plot_embeddings_singlevmulti(embeddings_single, embeddings_multi, embeddings_untrained_single, embeddings_untrained_multi, y):
     """
     Plot the 3D embeddings for both single and multi layers, comparing untrained and trained models.
@@ -376,16 +374,21 @@ def plot_embeddings_singlevmulti(embeddings_single, embeddings_multi, embeddings
     - embeddings_untrained_multi: Untrained embeddings (multi-layer).
     - y: Data to be plotted alongside embeddings.
     """
-    num_layers = len(embeddings_single)
+    num_models = len(embeddings_single)
+    if num_models >5: #truncate above 5 for plotting clarity
+       num_models = 5
+       embeddings_single = embeddings_single[:5]
+       embeddings_multi = embeddings_multi [:5]
 
-    fig, axs = plt.subplots(2, num_layers+1, figsize=(15, 10), subplot_kw={'projection': '3d'})
+
+    fig, axs = plt.subplots(2, num_models+1, figsize=(15, 10), subplot_kw={'projection': '3d'})
 
     # Flatten the array of axes for easier indexing
     axs = axs.flatten()
 
     # Separate the axes into untrained and trained lists
-    axs_single = axs[:num_layers+1]
-    axs_multi = axs[num_layers+1:]
+    axs_single = axs[:num_models+1]
+    axs_multi = axs[num_models+1:]
 
     i = 0
     for ax, ax_multi in zip(axs_single, axs_multi):

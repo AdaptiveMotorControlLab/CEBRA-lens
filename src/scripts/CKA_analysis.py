@@ -1,4 +1,4 @@
-
+# run using python -m GithubFolder.src.scripts.CKA_analysis --filename offset10-mse --bool_comput True
 import os
 import pickle
 import numpy as np
@@ -56,7 +56,7 @@ def main(filename,bool_comput,saving_foldername,num_trained_models,debugging):
         activations_multi =  activations_dict['act_multi']
         activations_single = activations_dict['act_single']
 
-        num_layers = (len(activations_UT)-2)//2
+        num_layers = (len(activations_UT)-2)//2 # This assumes that there will always be only 1 instance of single UT and 1 multi UT.
         output_embeddings_idxs = [i for i in range(1,num_trained_models+1)][::-1]
 
         embeddings_untrained_single = activations_UT[:num_layers] + [activations_UT[-2]]

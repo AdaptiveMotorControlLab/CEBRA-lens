@@ -9,6 +9,57 @@ import pickle
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 
+
+def model_loader(model_name):
+    # LOAD MODELS
+    models_folder_path = f'FinalModels/VISION/{model_name}'
+    files_list = os.listdir(models_folder_path)
+
+    models_list = []
+    for file in files_list: # load only the torch models for cpu usage
+        if file.endswith("torch.pt"):
+            models_list.append(file)
+
+    models_list
+    print('Number of models: ',len(models_list))
+    print(models_list)
+
+    models_untrained = [] # will be multi_ut, single_ut
+    models_single = [] # will be all the singles trained
+    models_multi = [] # will be all the multi trained
+
+
+    for model in models_list:
+
+        loaded_model = cebra.CEBRA.load(os.path.join(models_folder_path,model), backend = 'torch', map_location=torch.device('cpu')).to('cpu')
+        if 'UT' in model:
+            models_untrained.append(loaded_model)
+
+        elif 'multi' in model:
+            models_multi.append(loaded_model)
+
+        else:
+            models_single.append(loaded_model)
+
+    models = {
+        'UT': models_untrained,
+        'single': models_single,
+        'multi': models_multi
+    }
+
+    # check the models
+    print('# of Untrained models: ',len(models["UT"]))
+    print('# of Single Trained models: ',len(models["single"]))
+    print('# of Single Trained models: ',len(models["multi"]))
+
+    print('Solver Untrained model 1: ',models["UT"][0].solver_name_) # HERE IT'S SINGLE SESSION FIRST
+    print('Solver Untrained model 2: ',models["UT"][1].solver_name_)
+    print('key single: ', models["single"][0].solver_name_)
+    print('key multi: ',models["multi"][0].solver_name_)
+
+    return models
+
+
 def process_activations(activations,output_embeddings):
     """
     Classify activations into three groups based on their prefix.

@@ -151,7 +151,7 @@ def decoding_pos_dir(embedding_train, embedding_test, label_train, label_test):
 
    return test_score, pos_test_err, pos_test_score
 
-def decoding_models(models_untrained, models_single, models_multi, X, y, discrete_labels_val, valid_datas, decoding_frames):
+def decoding_models(models_untrained, models_single, models_multi, X, y, valid_datas,discrete_labels_val):
     """
     Processes untrained, single, and multi models to obtain their decoding results.
     
@@ -161,9 +161,9 @@ def decoding_models(models_untrained, models_single, models_multi, X, y, discret
     - models_multi: List of multi models.
     - X: Training data for the models.
     - y: Labels for the training data.
-    - discrete_labels_val: Validation labels for testing.
     - valid_datas: Validation data for testing.
-    - decoding_frames: Function used to decode the frames.
+    - discrete_labels_val: Validation labels for testing.
+
     
     Returns:
     - results_untrained: Decoding results for untrained models.
@@ -178,9 +178,9 @@ def decoding_models(models_untrained, models_single, models_multi, X, y, discret
     
     # Labels and data
     label_train = y
-    label_test = discrete_labels_val[3]
+    label_test = discrete_labels_val
     data_train = X
-    data_test = valid_datas[3].neural
+    data_test = valid_datas
     
     # UNTRAINED models
     for i, model in enumerate(models_untrained):
