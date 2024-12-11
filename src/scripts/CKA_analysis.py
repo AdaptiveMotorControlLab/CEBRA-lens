@@ -144,6 +144,7 @@ def main(filename,bool_comput,saving_foldername,num_trained_models,debugging):
 
 
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
@@ -152,7 +153,7 @@ if __name__ == "__main__":
     )
     
     parser.add_argument(
-        '--bool_comput', type=bool, default=False, help="If True, will recompute and overwrite the cka matrices"
+        '--bool_comput', type=int, default=0, help="If True, will recompute and overwrite the cka matrices (0 or 1)"
     )
 
     parser.add_argument(
@@ -162,7 +163,7 @@ if __name__ == "__main__":
         '--num_trained_models', type=int, default=5, help="number of trained instances per solver (e.g. 5)"
     )
     parser.add_argument(
-        '--debugging', type=bool, default=False, help="Debugging mode"
+        '--debugging', type=int, default=0, help="Debugging mode (0 or 1)"
     )
     
     args = parser.parse_args()
