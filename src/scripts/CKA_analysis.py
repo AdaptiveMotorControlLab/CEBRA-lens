@@ -2,19 +2,7 @@
 import os
 import pickle
 import numpy as np
-import torch
-import torch.nn as nn
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-import statsmodels.api as sm
 from tqdm import tqdm
-from scipy.linalg import block_diag
-from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
-from random import sample
-
 from ..preprocessing.CEBRA_preprocessing.plotting_utils import *
 from ..preprocessing.CEBRA_preprocessing.data_utils import *
 from ..preprocessing.CEBRA_preprocessing.quantification_utils import *

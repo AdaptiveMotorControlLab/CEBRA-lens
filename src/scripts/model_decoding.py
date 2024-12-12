@@ -1,13 +1,13 @@
 #run using % python -m GithubFolder.src.scripts.model_decoding --model_name offset10 --session_id 3
 
 import torch.nn as nn
-
+import matplotlib as plt
 from ..preprocessing.CEBRA_preprocessing.plotting_utils import *
 from ..preprocessing.CEBRA_preprocessing.data_utils import *
 from ..preprocessing.CEBRA_preprocessing.quantification_utils import *
 import argparse
 
-def main(model_name, session_id):
+def main(model_name, session_id,bool_plot_loss):
     
     print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('BEGINNING OF SCRIPT')
@@ -34,6 +34,33 @@ def main(model_name, session_id):
 
     # LOAD MODELS
     models = model_loader(model_name= model_name)
+
+    if bool_plot_loss:
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        print('Plotting lossess...')
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
+
+
+        fig, axs = plt.subplots(1, 2, figsize=(15, 7))
+
+        # Plot for single models
+        for i in range(len(models['single'])):
+            axs[0].plot(models['single'][i].state_dict_['loss'], c='blue', alpha=0.6)
+        axs[0].set_xlabel("Steps", fontsize=15)
+        axs[0].set_ylabel("Loss", fontsize=15)
+        axs[0].set_title("Single Models", fontsize=20)
+
+        # Plot for multi models
+        for i in range(len(models['multi'])):
+            axs[1].plot(models['multi'][i].state_dict_['loss'], c='orange', alpha=0.6)
+        axs[1].set_xlabel("Steps", fontsize=15)
+        axs[1].set_ylabel("Loss", fontsize=15)
+        axs[1].set_title("Multi Models", fontsize=20)
+
+        plt.tight_layout()
+        plt.show()
+
+
 
     print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('Decoding models...')
@@ -69,8 +96,10 @@ if __name__ == "__main__":
     parser.add_argument(
         '--session_id', type=int, default=3, help="session id for the analysis, used to retrieve the correct data and multi-session model"
     )
- 
+    parser.add_argument(
+        '--bool_plot_loss', type=int, default=1, help="Plots losses of the models"
+    )
 
     args = parser.parse_args()
     print('INPUT PARAMETERS: ', args)
-    main(args.model_name, args.session_id)
+    main(args.model_name, args.session_id,args.bool_plot_loss)

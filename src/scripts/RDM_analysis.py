@@ -2,14 +2,8 @@
 import os
 import pickle
 import numpy as np
-import torch
-import torch.nn as nn
 import seaborn as sns
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-import statsmodels.api as sm
 from tqdm import tqdm
 from scipy.linalg import block_diag
 from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
@@ -61,8 +55,8 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id):
         print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
         # BINNING
-        num_samples = 200
         num_bins = 30
+        num_samples = 200 if len(train_data)/30 >= 200 else int(len(train_data)/30) 
         step_distance = 30
         idxs = np.zeros((num_bins,num_samples))
 
@@ -224,7 +218,7 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id):
     # Customize plot
     plt.xlabel('Depth of layer')
     plt.ylabel('Correlation')
-    plt.title('Correlation to Oracle RDM')
+    plt.title(f'Correlation to Oracle RDM for {filename}')
     sns.despine()
     plt.legend()
     plt.show()
