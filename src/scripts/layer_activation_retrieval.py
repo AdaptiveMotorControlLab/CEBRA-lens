@@ -157,7 +157,7 @@ def main(model_name,layer_type, session_id,filename, bool_plot_embeddings):
         attach_hooks(model.model_[session_id],f'multi{i}',True, layer_type=layer_type)
         output_embeddings['multi'].append(model.transform(train_data,session_id = session_id).T)
     
-    activations_dict = process_activations(activations,output_embeddings) #TODO: change process_activations so it takes the output embedding as well
+    activations_dict = process_activations(activations,output_embeddings) 
 
     # Save activations to a pickle file
     with open(os.path.join('data/activations', f'{filename}.pkl'), 'wb') as f:

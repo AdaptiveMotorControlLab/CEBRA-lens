@@ -194,28 +194,24 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id):
     pastel_blue = colors[4]
     grey = sns.color_palette("Greys")[5]
 
-    # Plot untrained data
+    #  UT
     for i in range(2):
         sns.lineplot(x=np.arange(1,len(all_corrs['single'][i])+1), y=all_corrs['UT'][i],
                     linestyle='--', marker='D', color=grey, alpha = 0.5,label='Untrained' if i == 0 else "")
-
-    # Plot multi data
+    #  MULTI
     for i in range(num_trained_models):
         sns.lineplot(x=np.arange(1,len(all_corrs['single'][i])+1), y=all_corrs['multi'][i],
                     linestyle='-', marker='D', color=pastel_purple,alpha = 0.5, label='Multi' if i == 0 else "")
-
-    # Plot single data
+    #  SINGLE
     for i in range(num_trained_models):
         sns.lineplot(x=np.arange(1,len(all_corrs['single'][i])+1), y=all_corrs['single'][i],
                     linestyle='-', marker='D', color=pastel_blue,alpha = 0.5, label='Single' if i == 0 else "")
 
-    # Plot mean lines for multi and single
     sns.lineplot(x=np.arange(1,len(all_corrs['single'][i])+1), y=mean_multi,
                 linestyle='-', color=pastel_purple, linewidth=2.5, label='Mean Multi')
     sns.lineplot(x=np.arange(1,len(all_corrs['single'][i])+1), y=mean_single,
                 linestyle='-', color=pastel_blue, linewidth=2.5, label='Mean Single')
 
-    # Customize plot
     plt.xlabel('Depth of layer')
     plt.ylabel('Correlation')
     plt.title(f'Correlation to Oracle RDM for {filename}')

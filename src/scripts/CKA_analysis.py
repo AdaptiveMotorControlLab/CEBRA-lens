@@ -95,7 +95,6 @@ def main(filename,bool_comput,saving_foldername,num_trained_models,debugging):
                 os.makedirs(directory)
 
             
-            # save in the directory:
             np.save(f'{directory}/cka_matrix_single.npy', cka_matrix_single)
             np.save(f'{directory}/cka_matrix_multi.npy', cka_matrix_multi)
             np.save(f'{directory}/cka_matrix_sm.npy', cka_matrix_sm)
@@ -116,20 +115,16 @@ def main(filename,bool_comput,saving_foldername,num_trained_models,debugging):
         cka_matrix_multivmulti = np.load(f'{directory}/cka_matrix_multivmulti.npy')
 
     if not debugging:
-        # Call the plotting function for Plot 1
         plot_cka_heatmaps(
             cka_matrices=[cka_matrix_single, cka_matrix_multi, cka_matrix_sm],
             titles=['Single-session', 'Multi-session', 'Single vs Multi'],
             annot = False
         )
-        # Call the plotting function for Plot 2
         plot_cka_heatmaps(
             cka_matrices=[cka_matrix_sm, cka_matrix_singlevsingle, cka_matrix_multivmulti],
             titles=['Single vs Multi', 'Single vs Single', 'Multi vs Multi'],
             annot = False
         )
-
-
 
 
 

@@ -74,7 +74,7 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id,num_
         distances_intra = {'multi': [], 'single': [], 'UT' : []}  
         distances_rep = {'multi': [], 'single': [], 'UT' : []}  
 
-
+        # Loop over the untrained models
         embeddings_untrained_single = activations_dict['act_UT'][:num_layers] + [activations_dict['act_UT'][-2]] 
         embeddings_untrained_multi = activations_dict['act_UT'][num_layers:-2] + [activations_dict['act_UT'][-1]] 
 
@@ -146,7 +146,7 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id,num_
     #TODO: make it flexible on the distance metric (cosine/euclid)
     layers = list(range(1, num_layers + 2))
     sns.set_theme(style="white")
-    # Define pastel colors
+
     colors = sns.color_palette("hls",8)
     pastel_purple = colors[6]
     pastel_blue = colors[4]
@@ -155,33 +155,27 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id,num_
     for key,dist in distances.items():
         plt.figure(figsize=(10, 6))
 
-        # Plot for Multi model instances
         for dist_multi in dist['multi']:
-            plt.plot(layers, dist_multi, alpha=0.5, color=pastel_purple)  # Plot with transparency for individual instances
+            plt.plot(layers, dist_multi, alpha=0.5, color=pastel_purple) 
 
-        # Plot the mean of Multi model instances
         mean_multi_intra = np.mean(dist['multi'], axis=0)
         plt.plot(layers, mean_multi_intra, marker='o', color=pastel_purple, label=f'Multi {key} Mean', linewidth=2)
 
-        # Plot for Single model instances
         for dist_single in dist['single']:
-            plt.plot(layers, dist_single, alpha=0.5, color=pastel_blue)  # Plot with transparency for individual instances
+            plt.plot(layers, dist_single, alpha=0.5, color=pastel_blue) 
 
-        # Plot the mean of Single model instances
         mean_single_intra = np.mean(dist['single'], axis=0)
         plt.plot(layers, mean_single_intra, marker='s', color=pastel_blue, label=f'Single {key} Mean', linewidth=2)
 
         plt.plot(layers,dist['UT'][1], linestyle='--', marker='D', color=grey, alpha = 0.5, label = 'Untrained')
         plt.plot(layers,dist['UT'][0],linestyle='--', marker='D', color=grey, alpha = 0.5, label = '')
 
-        # Customize the plot
         plt.xlabel('Layer')
         plt.ylabel(f'Mean {key} Distance (Cosine)')
         plt.title(f'Evolution of Mean {key} Distance Across Layers (Multi vs Single); {filename}')
         plt.legend(title='Model Type')
         sns.despine()
 
-        # Show the plot
         plt.tight_layout()
         plt.show()
 

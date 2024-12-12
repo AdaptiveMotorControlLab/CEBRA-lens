@@ -48,16 +48,16 @@ def main(model_name, session_id,bool_plot_loss):
             axs[0].plot(models['single'][i].state_dict_['loss'], c='blue', alpha=0.6)
         axs[0].set_xlabel("Steps", fontsize=15)
         axs[0].set_ylabel("Loss", fontsize=15)
-        axs[0].set_title("Single Models", fontsize=20)
+        axs[0].set_title("Single-session", fontsize=20)
 
         # Plot for multi models
         for i in range(len(models['multi'])):
             axs[1].plot(models['multi'][i].state_dict_['loss'], c='orange', alpha=0.6)
         axs[1].set_xlabel("Steps", fontsize=15)
         axs[1].set_ylabel("Loss", fontsize=15)
-        axs[1].set_title("Multi Models", fontsize=20)
+        axs[1].set_title("Multi-session", fontsize=20)
 
-        plt.tight_layout()
+        fig.suptitle("Losses",fontsize=30)        
         plt.show()
 
 
