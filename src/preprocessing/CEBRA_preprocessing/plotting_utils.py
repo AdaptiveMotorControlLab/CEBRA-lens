@@ -113,7 +113,7 @@ def plot_allen(ax, embedding, label, gray = False, idx_order = (0,1,2)):
 
 
 
-def plot_tsne_embeddings_layers(embeddings_tsne_untrained, embeddings_tsne_trained,labels,sample_plot = 100, solver = 'single-session', comparison = 'untrained',data = 'HPC'):
+def plot_tsne_embeddings_layers(embeddings_tsne_untrained, embeddings_tsne_trained, labels, sample_plot = 100, solver = 'single-session', comparison = 'untrained',data = 'HPC'):
 
 
     num_layers = len(embeddings_tsne_trained)
