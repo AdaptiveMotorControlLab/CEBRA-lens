@@ -143,6 +143,7 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id,num_
     print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     
     #TODO: encapsulate all of this into a function that takes a dictionnnary of distances
+    #TODO: make it flexible on the distance metric (cosine/euclid)
     layers = list(range(1, num_layers + 2))
     sns.set_theme(style="white")
     # Define pastel colors
@@ -176,7 +177,7 @@ def main(filename,bool_comput,saving_filename,num_trained_models,session_id,num_
         # Customize the plot
         plt.xlabel('Layer')
         plt.ylabel(f'Mean {key} Distance (Cosine)')
-        plt.title(f'Evolution of Mean {key} Distance Across Layers (Multi vs Single)')
+        plt.title(f'Evolution of Mean {key} Distance Across Layers (Multi vs Single); {filename}')
         plt.legend(title='Model Type')
         sns.despine()
 

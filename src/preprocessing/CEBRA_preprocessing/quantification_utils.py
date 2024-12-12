@@ -2,8 +2,6 @@
 import numpy as np
 import cebra
 import cebra.datasets
-import copy
-import torch
 import sklearn.metrics
 from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
 from sklearn.preprocessing import StandardScaler
@@ -105,13 +103,10 @@ def compute_mean_repetition_distances(embeddings_list, idxs,num_classes,num_repe
         layer_mean_distances = []
         
         for class_idx in range(num_classes):
-            print(class_idx)
             repetition_centroids = []
             
             for rep in range(num_repetitions):
-                print(rep*900,rep*900+30)
                 rep_indices = idxs[class_idx][rep*30:(rep+1)*30]  # Get indices for the current repetition
-                print(rep_indices)
                 rep_data = emb[:, rep_indices].T  # Get data for the current repetition
                 centroid = np.mean(rep_data, axis=0)  # Compute centroid
                 repetition_centroids.append(centroid)
