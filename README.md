@@ -13,7 +13,7 @@ Measuring the robustness of a model is critical in vision decoding. To measure r
 
 ## Repository organization
 
-The Github repository contains all the code used for the project without the Models and the Data.
+The Github repository contains all the code used for the project without the Models and the Data. The data can be found [here](https://figshare.com/s/60adb075234c2cc51fa3?file=36869049) and an example usage of the data can be found in this [demo](https://cebra.ai/docs/demo_notebooks/Demo_Allen.html).
 
 The `Notebooks` folder contains all the relevant notebooks:
 - `ModelGeneratorVISUAL.ipynb`and `ModelGeneratorHPC.ipynb` were used to generate the models used in the analysis notebooks
