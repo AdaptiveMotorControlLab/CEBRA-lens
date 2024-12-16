@@ -58,10 +58,8 @@ def compute_inter_bin_distances(embeddings_list, idxs, num_bins, metric="cosine"
 def compute_intra_bin_distances(embeddings_list, idxs, num_bins, metric="cosine"):
     intra_bin_distances_all = []
     for i in range(len(embeddings_list)):
-
         # one list per layer
         layer_intra_distances = []
-
         # for each bin compute the mean distance
         for bin_idx in range(num_bins):
             if metric == "euclidean":

@@ -24,9 +24,10 @@ def model_loader(model_name):
     print("Number of models: ", len(models_list))
     print(models_list)
 
-    models_untrained = []  # will be multi_ut, single_ut
-    models_single = []  # will be all the singles trained
-    models_multi = []  # will be all the multi trained
+    models_single_UT = [] # will be all the singles untrained
+    models_multi_UT = [] # will be all the singles untrained
+    models_single_TR = []  # will be all the singles trained
+    models_multi_TR = []  # will be all the multi trained
 
     for model in models_list:
 
@@ -35,31 +36,33 @@ def model_loader(model_name):
             backend="torch",
             map_location=torch.device("cpu"),
         ).to("cpu")
-        if "UT" in model:
-            models_untrained.append(loaded_model)
-
-        elif "multi" in model:
-            models_multi.append(loaded_model)
-
+        if "_UT" in model:
+            if loaded_model.solver_name_ == "multi-session":
+                models_multi_UT.append(loaded_model)
+            elif loaded_model.solver_name_ == "single-session":
+                models_single_UT.append(loaded_model)
+            else: # e.g. Unified
+                raise NotImplementedError("Only single session and multi session are implemented")
+        
+        # TODO: This should be changed to elif "TR" in model. 
+        # Models were trained without this label but it might be clearer in the future
         else:
-            models_single.append(loaded_model)
+            if loaded_model.solver_name_ == "multi-session":
+                models_multi_TR.append(loaded_model)
+            elif loaded_model.solver_name_ == "single-session":
+                models_single_TR.append(loaded_model)
+            else: # e.g. Unified
+                raise NotImplementedError("Only single session and multi session are implemented")
 
-    models = {"UT": models_untrained, "single": models_single, "multi": models_multi}
+    models = {"single_UT": models_single_UT, "multi_UT": models_multi_UT, "single_TR": models_single_TR, "multi_TR": models_multi_TR}
 
     # check the models
-    print("# of Untrained models: ", len(models["UT"]))
-    print("# of Single Trained models: ", len(models["single"]))
-    print("# of Single Trained models: ", len(models["multi"]))
-
-    print(
-        "Solver Untrained model 1: ", models["UT"][0].solver_name_
-    )  # HERE IT'S SINGLE SESSION FIRST
-    print("Solver Untrained model 2: ", models["UT"][1].solver_name_)
-    print("key single: ", models["single"][0].solver_name_)
-    print("key multi: ", models["multi"][0].solver_name_)
+    print("# of Single Untrained models: ", len(models["single_UT"]))
+    print("# of Single Trained models: ", len(models["single_TR"]))
+    print("# of Multi Untrained models: ", len(models["multi_UT"]))
+    print("# of Multi Trained models: ", len(models["multi_TR"]))
 
     return models
-
 
 def process_activations(activations, output_embeddings):
     """
