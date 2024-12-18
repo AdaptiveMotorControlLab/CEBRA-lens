@@ -2,5 +2,7 @@
 from .activations import *
 from .transform import *
 from .quantification import *
+from .plotting import *
+from .utils_allen import *
 # selects what files can be imported when doing from CEBRA_Lens import * --> keep env clean
 #__all__ = ['get_layer_activations']

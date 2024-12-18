@@ -3,8 +3,6 @@
 import pickle
 import argparse
 from GithubFolder.src.cebra_lens import cebra_lens as lens
-from GithubFolder.src.preprocessing.CEBRA_preprocessing.plotting_utils import compare_embeddings_layers
-from GithubFolder.src.preprocessing.CEBRA_preprocessing.data_utils import get_single_session_datasets
 import matplotlib.pyplot as plt
 
 def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 'data/tSNE/offset10.pkl', session_id = 3, bool_comput = False, num_samples = 200):
@@ -18,7 +16,7 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
     _, _, discrete_labels_train, _ = (
-        get_single_session_datasets()
+        lens.utils_allen.get_single_session_datasets()
     )
     train_label = discrete_labels_train[session_id]
 
@@ -41,9 +39,9 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
             tSNE_dict = pickle.load(f)
 
     print('yeee')
-    fig1 = compare_embeddings_layers(tSNE_dict["single"]["UT"][0],tSNE_dict["single"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig2 = compare_embeddings_layers(tSNE_dict["multi"]["UT"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig3 = compare_embeddings_layers(tSNE_dict["single"]["TR"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200, comparison_labels= ('tSNE',["Single", "Multi"]))
+    fig1 = lens.plotting.compare_embeddings_layers(tSNE_dict["single"]["UT"][0],tSNE_dict["single"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
+    fig2 = lens.plotting.compare_embeddings_layers(tSNE_dict["multi"]["UT"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
+    fig3 = lens.plotting.compare_embeddings_layers(tSNE_dict["single"]["TR"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200, comparison_labels= ('tSNE',["Single", "Multi"]))
 
     plt.show()
 

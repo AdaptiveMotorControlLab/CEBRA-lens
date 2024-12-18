@@ -3,11 +3,6 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import seaborn as sns
 
-
-#######################################################################
-############################### CLEANED ###############################
-#######################################################################
-
 def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
     r_ind = label[:, 1] == 1
     l_ind = label[:, 2] == 1
@@ -82,7 +77,7 @@ def plot_embedding_layers(axs, embeddings: list, labels: np.ndarray, title_prefi
     """
     Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
     
-    Args:
+    Parameters:
     -----------
     axs : list
         List of matplotlib axes objects where the embeddings will be plotted.
@@ -125,7 +120,7 @@ def compare_embeddings_layers(embeddings_1: list, embeddings_2: list, labels: np
     Compare embeddings across layers for two sets of embeddings.
     This function takes two sets of embeddings and compares them layer by layer. It plots the embeddings in a 3D space
     for visual comparison. Used with CEBRA embeddings and tSNE embeddings. 
-    Args:
+    Parameters:
     -----------
     embeddings_1 : list
         A list of embeddings for the first set of data (e.g., untrained model). 
@@ -182,7 +177,7 @@ def plot_embeddings_singlevmulti(
     Plot the 3D embeddings for both single and multi session, comparing untrained and trained models.
     This function plots the 3D embeddings to visually compare the trained and untrained models in both single-session and multi-session scenarios.
 
-    Args:
+    Parameters:
     -----------
     embeddings_single : list
         List of trained embeddings (single-session).
@@ -260,15 +255,27 @@ def plot_cka_heatmaps(
     figsize: tuple =(15, 5),
 ):
     """
-    Plot CKA heatmaps for different matrix comparisons.
+    This function generates heatmaps for various CKA matrices to visualize the similarity between different sets of embeddings.
 
     Parameters:
-    - cka_matrices (dict): Dictionnary of CKA matrices
-    - show_cbar (bool): If True shows the color bar
-    - cbar_label (str): Label for the color bar
-    - color_map: The palette to use for the heatmap
-    - figsize: Size of the figure for the subplots
+    -----------
+    cka_matrices : dict
+        Dictionary of CKA matrices.
+    show_cbar : bool
+        If True, shows the color bar.
+    cbar_label : str
+        Label for the color bar.
+    color_map : str or matplotlib.colors.Colormap
+        The palette to use for the heatmap.
+    figsize : tuple
+        Size of the figure for the subplots (width, height).
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The matplotlib figure object containing the CKA heatmaps.
     """
+
     num_comparisons = len(cka_matrices)
     # Create a figure and set of subplots
     fig, axs = plt.subplots(1, num_comparisons, figsize=figsize)
@@ -314,177 +321,3 @@ def plot_cka_heatmaps(
     plt.subplots_adjust(wspace=0.1, right=0.9)
     fig.suptitle("Similarity between model representations (CKA)", fontsize=16)
     return fig
-
-#######################################################################
-############################ TO BE CLEANED ############################
-#######################################################################
-
-
-
-def plot_activations(
-    input_data,
-    embeddings_untrained,
-    embeddings_trained,
-    sample_plot=100,
-    solver="single",
-    comparison="untrained",
-):
-    num_layers = len(embeddings_trained)
-
-    # Set up the figure and gridspec layout
-    fig = plt.figure(figsize=(10, 15))
-    fig.suptitle(f"Comparison between layers ({solver})", fontsize=20)
-    gs = gridspec.GridSpec(num_layers + 1, 2)  # Create a grid with 5 rows and 2 columns
-
-    # Create a subplot that spans both columns for the top plot
-    ax_top = fig.add_subplot(gs[0, :])  # Top row, spanning both columns
-    ax_top.imshow(input_data.T[:, 0:sample_plot])
-    ax_top.set_title("Input Data")
-    # ax_top.axis('off')
-    ax_top.set_ylabel("Channel #")
-    ax_top.set_xlabel("Time")
-    ax_top.grid(False)
-
-    # Now set up the existing subplots for the comparisons
-    titles = []
-    if comparison == "untrained":
-        for layer in range(1, num_layers):
-            titles.append(f"Layer {layer} Untrained")
-            titles.append(f"Layer {layer} Trained")
-        titles.append(f"Output Untrained")
-        titles.append(f"Output Trained")
-    else:
-        for layer in range(1, num_layers):
-            titles.append(f"Layer {layer} Single")
-            titles.append(f"Layer {layer} Multi")
-
-        titles.append(f"Output Single")
-        titles.append(f"Output Multi")
-
-    # Create each subplot
-    axes = []
-    for i in range(num_layers):
-        for j in range(2):
-            ax = fig.add_subplot(gs[i + 1, j])  # Shift down by 1 row for each layer
-            axes.append(ax)
-
-    # Interleave untrained and trained embeddings
-    ax_images = [None] * (2 * num_layers)
-    ax_images[::2] = embeddings_untrained  # Place untrained embeddings at even indices
-    ax_images[1::2] = embeddings_trained  # Place trained embeddings at odd indices
-
-    for ax, img, title in zip(axes, ax_images, titles):
-        ax.imshow(img[:, 0:sample_plot], cmap="magma")
-        ax.set_title(title)
-        ax.set_ylabel("Unit #")
-        ax.set_xlabel("Time")
-        ax.grid(False)  # Hide gridlines
-        # ax.axis('off')  # Hide axis for the subplots
-
-    # Adjust layout for better spacing
-    plt.tight_layout()
-    plt.show()
-
-def plot_rdm(rdms, titles, metric="Normalized Euclidean distance"):
-    # Create the plot
-    fig, ax = plt.subplots(1, 2)
-    fig.set_size_inches(10, 7)
-
-    # Generate tick labels
-    tick_labels = [str(i) for i in range(0, 930, 30)]
-
-    for i, rdm in enumerate(rdms):
-        # Display the RDM using imshow
-        cax = ax[i].imshow(rdm, cmap="viridis", aspect="auto")
-
-        # Set title and show the plot
-        ax[i].set_title(titles[i])
-
-        # Set ticks and tick labels
-        num_ticks = len(tick_labels)
-        ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-        ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-        ax[i].set_xticklabels(tick_labels, rotation=90, ha="right")
-        ax[i].set_yticklabels(tick_labels)
-
-    plt.suptitle("Representational Dissimilarity Matrix (RDM)")
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.2)
-
-    # Add colorbar with a label
-    fig.colorbar(cax, ax=ax, orientation="horizontal", fraction=0.05, label=metric)
-
-    plt.show()
-
-
-def plot_accuracy_comparison(results_untrained, results_single, results_multi):
-    """
-    Plot the accuracy comparison across untrained, single-session, and multi-session models.
-
-    Parameters:
-    - results_untrained: Results for untrained models (array).
-    - results_single: Results for single-session models (array).
-    - results_multi: Results for multi-session models (array).
-    """
-    # Define pastel colors
-    colors = sns.color_palette("hls", 8)
-    pastel_purple = colors[6]
-    pastel_blue = colors[4]
-    grey = sns.color_palette("Greys")[5]
-
-    # Extract the position error (accuracy) from each model's results
-    acc1 = results_untrained[:, 2]
-    acc2 = results_single[:, 2]
-    acc3 = results_multi[:, 2]
-
-    # Compute the mean of the accuracy for each model
-    mean_error1 = np.mean(acc1)
-    mean_error2 = np.mean(acc2)
-    mean_error3 = np.mean(acc3)
-
-    # Create the figure and axis for plotting
-    fig, ax = plt.subplots(figsize=(5, 3))
-
-    # X positions for each model
-    x_positions = [1, 2, 3]
-
-    # Plot the accuracy errors (scatter points)
-    ax.scatter(np.ones_like(acc1) * x_positions[0], acc1, color=grey, alpha=0.3)
-    ax.scatter(np.ones_like(acc2) * x_positions[1], acc2, color=pastel_blue, alpha=0.3)
-    ax.scatter(
-        np.ones_like(acc3) * x_positions[2], acc3, color=pastel_purple, alpha=0.3
-    )
-
-    # Plot the means (highlighted as larger points)
-    ax.scatter(
-        x_positions[0], mean_error1, color=grey, s=50, label="Mean untrained", zorder=5
-    )
-    ax.scatter(
-        x_positions[1],
-        mean_error2,
-        color=pastel_blue,
-        s=50,
-        label="Mean single-session",
-        zorder=5,
-    )
-    ax.scatter(
-        x_positions[2],
-        mean_error3,
-        color=pastel_purple,
-        s=50,
-        label="Mean multi-session",
-        zorder=5,
-    )
-
-    # Set labels, title, and other plot settings
-    ax.set_xlabel("Model")
-    ax.set_ylabel("Accuracy (%)")
-    ax.set_title("Comparison of Accuracy Across Models")
-    ax.set_xticks(x_positions)
-    ax.set_xticklabels(["Untrained", "Single-session", "Multi-session"])
-    ax.legend()
-    sns.despine()
-
-    # Show the plot
-    plt.show()
-

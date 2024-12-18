@@ -1,5 +1,5 @@
 "All relevant functions for CKA analysis."
-
+from tqdm import tqdm
 import numpy as np
 
 def compute_single_CKA_layers(embeddings_1: list, embeddings_2: list) -> np.ndarray:
@@ -33,67 +33,65 @@ def compute_single_CKA_layers(embeddings_1: list, embeddings_2: list) -> np.ndar
                 )
     return cka_matrix
 
-def compute_multi_CKA_layers(activations_dict: dict, comparisons: list) -> list:
+def compute_multi_CKA_layers(activations_dict: dict, comparison: tuple) -> np.ndarray:
     """
     Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
     Args:
       activations_dict (dict): A dictionary where keys are strings in the format
                             'model_identifier_layer' and values are activations.
-      comparisons (list): A list of tuples where each tuple contains two strings representing the models and layers 
-                to be compared. For example, [('single_UT', 'single_TR'), ('single_TR', 'multi_TR')].
+      comparison : A tuple containing two strings representing the models and layers 
+                to be compared. For example: ('single_UT', 'single_TR')
     Returns:
-      list: A list of CKA matrices for each comparison. Each matrix is stored in a dictionary with keys formatted as 
-          '{comparison[0]}_v_{comparison[1]}'. Example of key: 'single_UT_v_single_TR'.
+      cka_matrix (np.ndarray): A CKA matrix with rows being instances of the model and columns the layers
     """
-    # ex of comparisons : [('single_UT','single_TR'),('single_TR','multi_TR')] # make that if the number of models instantiated is not the same then it compares all to the 1st model
-    # --> if len(single) != len(UT) use UT[0], single[i]
-    # --> if = then just do multi[i], single[i]
 
 
-    for i,comparison in enumerate(comparisons):
+    
 
-      if not isinstance(comparison, tuple):
-            raise ValueError(f"Each comparison must be a tuple. Comparison {i} is of type: {type(comparison)}.")
-
-
-  
-      parts_1 = comparison[0].split('_')
-      parts_2 = comparison[1].split('_')
-      prefixes = (parts_1[0],parts_2[0])
-      suffixes = (parts_1[1],parts_2[1])
-
-      activations_1 = activations_dict[prefixes[0]][suffixes[0]]
-      activations_2 = activations_dict[prefixes[1]][suffixes[1]]
-
-      cka_matrices = {}
-
-      # if not the same length, compare embeddings to the first instance. else compare pairwise.
-      if  len(activations_1) != len(activations_2):
-        if len(activations_1) > len(activations_2):
-          embeddings_1 = activations_1
-          embeddings_2 = activations_2[0] 
-
-        elif len(activations_1) < len(activations_2):
-          embeddings_1 = activations_2
-          embeddings_2 = activations_1[0] 
-
-        cka_matrix = np.zeros((len(embeddings_1),len(embeddings_1[0])))
-        for j in range(len(embeddings_1)):
-          cka_matrix[j,:] = compute_single_CKA_layers(embeddings_1[j],embeddings_2)
-        
-
-      else:
-        cka_matrix = np.zeros((len(embeddings_1),len(embeddings_1[0])))
-        for j in range(len(embeddings_1)):
-          cka_matrix[j,:] = compute_single_CKA_layers(embeddings_1[j],embeddings_2[j])
-        
-      cka_matrices[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
+    if not isinstance(comparison, tuple):
+          raise ValueError(f"A comparison must be a tuple. Comparison is of type: {type(comparison)}.")
 
 
 
+    parts_1 = comparison[0].split('_')
+    parts_2 = comparison[1].split('_')
+    prefixes = (parts_1[0],parts_2[0])
+    suffixes = (parts_1[1],parts_2[1])
 
+    activations_1 = activations_dict[prefixes[0]][suffixes[0]]
+    activations_2 = activations_dict[prefixes[1]][suffixes[1]]
 
-    return cka_matrices
+    # if not the same length, compare embeddings to the first instance. else compare pairwise.
+    if  len(activations_1) != len(activations_2):
+      if len(activations_1) > len(activations_2):
+        embeddings_1 = activations_1
+        embeddings_2 = activations_2[0] 
+
+      elif len(activations_1) < len(activations_2):
+        embeddings_1 = activations_2
+        embeddings_2 = activations_1[0] 
+
+      cka_matrix = np.zeros((len(embeddings_1),len(embeddings_1[0])))
+      for j in tqdm(range(len(embeddings_1))):
+        cka_matrix[j,:] = compute_single_CKA_layers(embeddings_1[j],embeddings_2)
+      
+    # example when compare intra model single_TR v single_TR, only compare to the first instantiation
+    elif comparison[0] == comparison[1]:
+      embeddings_1 = activations_1
+      embeddings_2 = activations_2[0] 
+      cka_matrix = np.zeros((len(embeddings_1),len(embeddings_1[0])))
+      for j in tqdm(range(len(embeddings_1))):
+              cka_matrix[j,:] = compute_single_CKA_layers(embeddings_1[j],embeddings_2)
+              
+       
+    else:
+      embeddings_1 = activations_1
+      embeddings_2 = activations_2
+      cka_matrix = np.zeros((len(embeddings_1),len(embeddings_1[0])))
+      for j in tqdm(range(len(embeddings_1))):
+        cka_matrix[j,:] = compute_single_CKA_layers(embeddings_1[j],embeddings_2[j])
+
+    return cka_matrix
     
 
 

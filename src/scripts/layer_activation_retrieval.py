@@ -1,24 +1,15 @@
 # run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --filename offset10alllayers
 # attention: need to be one step above the GithubFolder to have data and finalmodels
 
-import os
 import pickle
-import torch.nn as nn
 import argparse
 import cebra
-
 from GithubFolder.src.cebra_lens import cebra_lens as lens
-from GithubFolder.src.preprocessing.CEBRA_preprocessing.data_utils import (
-    get_single_session_datasets,
-    model_loader,
-)
-from GithubFolder.src.preprocessing.CEBRA_preprocessing.plotting_utils import (
-    plot_embeddings_singlevmulti,
-)
 
 
 
-def main(model_name, layer_type, session_id, filename, bool_plot_embeddings):
+
+def main(model_name, session_id, filename, bool_plot_embeddings):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -29,15 +20,15 @@ def main(model_name, layer_type, session_id, filename, bool_plot_embeddings):
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
     # LOAD DATA
-    train_datas, valid_datas, discrete_labels_train, discrete_labels_val = (
-        get_single_session_datasets()
+    train_datas, _, discrete_labels_train, _ = (
+        lens.utils_allen.get_single_session_datasets()
     )
 
     train_data = train_datas[session_id].neural
     train_label = discrete_labels_train[session_id]
 
     # LOAD MODELS
-    models = model_loader(model_name=model_name)
+    models = lens.utils_allen.model_loader(model_name=model_name)
 
     if bool_plot_embeddings:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -75,7 +66,7 @@ def main(model_name, layer_type, session_id, filename, bool_plot_embeddings):
             X, session_id=session_id
         )  # only take the first untrained model for plotting
 
-        fig = plot_embeddings_singlevmulti(
+        fig = lens.plotting.plot_embeddings_singlevmulti(
             embeddings_single,
             embeddings_multi,
             embeddings_untrained_single,
@@ -120,12 +111,7 @@ if __name__ == "__main__":
         default="offset10",
         help="name of the folder where the models (assuming they are under FinalModels/VISION)",
     )
-    parser.add_argument(
-        "--layer_type",
-        type=str,
-        default="conv",
-        help="Type of layer to process ('all' or 'conv')",
-    )
+
     parser.add_argument(
         "--session_id",
         type=int,
@@ -146,7 +132,6 @@ if __name__ == "__main__":
     print(args)
     main(
         args.model_name,
-        args.layer_type,
         args.session_id,
         args.filename,
         args.bool_plot_embeddings,
