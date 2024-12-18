@@ -3,7 +3,7 @@
 import pickle
 import argparse
 from GithubFolder.src.CEBRA_Lens import CEBRA_Lens as Lens
-from GithubFolder.src.preprocessing.CEBRA_preprocessing.plotting_utils import compare_tsne_embeddings_layers
+from GithubFolder.src.preprocessing.CEBRA_preprocessing.plotting_utils import compare_embeddings_layers
 from GithubFolder.src.preprocessing.CEBRA_preprocessing.data_utils import get_single_session_datasets
 import matplotlib.pyplot as plt
 
@@ -41,9 +41,9 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
             tSNE_dict = pickle.load(f)
 
     print('yeee')
-    fig1 = compare_tsne_embeddings_layers(tSNE_dict["single"]["UT"][0],tSNE_dict["single"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig2 = compare_tsne_embeddings_layers(tSNE_dict["multi"]["UT"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig3 = compare_tsne_embeddings_layers(tSNE_dict["single"]["TR"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200, comparison_labels= ('tSNE',["Single", "Multi"]))
+    fig1 = compare_embeddings_layers(tSNE_dict["single"]["UT"][0],tSNE_dict["single"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
+    fig2 = compare_embeddings_layers(tSNE_dict["multi"]["UT"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
+    fig3 = compare_embeddings_layers(tSNE_dict["single"]["TR"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200, comparison_labels= ('tSNE',["Single", "Multi"]))
 
     plt.show()
 

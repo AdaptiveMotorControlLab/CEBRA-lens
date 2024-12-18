@@ -165,3 +165,5 @@ src/preprocessing/.DS_Store
 src/.DS_Store
 .DS_Store
 src/preprocessing/image_processing/.DS_Store
+/tests
+src/scripts/script_tester.ipynb
