@@ -7,7 +7,7 @@ import torch.nn as nn
 import argparse
 import cebra
 
-from GithubFolder.src.CEBRA_Lens import CEBRA_Lens as Lens
+from GithubFolder.src.cebra_lens import cebra_lens as lens
 from GithubFolder.src.preprocessing.CEBRA_preprocessing.data_utils import (
     get_single_session_datasets,
     model_loader,
@@ -89,7 +89,7 @@ def main(model_name, layer_type, session_id, filename, bool_plot_embeddings):
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
     activations2 = {}
-    activations2 = Lens.activations.get_activations_multi_model(
+    activations2 = lens.activations.get_activations_multi_model(
         models=models,
         data=train_data,
         session_id=session_id,
@@ -97,7 +97,7 @@ def main(model_name, layer_type, session_id, filename, bool_plot_embeddings):
         layer_type="conv",
     )
 
-    activations_dict = Lens.activations.process_activations(activations2)
+    activations_dict = lens.activations.process_activations(activations2)
 
 
     with open(f"{filename}.pkl", "wb") as f:

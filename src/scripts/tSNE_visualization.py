@@ -2,7 +2,7 @@
 
 import pickle
 import argparse
-from GithubFolder.src.CEBRA_Lens import CEBRA_Lens as Lens
+from GithubFolder.src.cebra_lens import cebra_lens as lens
 from GithubFolder.src.preprocessing.CEBRA_preprocessing.plotting_utils import compare_embeddings_layers
 from GithubFolder.src.preprocessing.CEBRA_preprocessing.data_utils import get_single_session_datasets
 import matplotlib.pyplot as plt
@@ -30,7 +30,7 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
         print("Computing tSNE embeddings...")
         print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-        tSNE_dict = Lens.transform.run_tsne_and_save(activations_dict,tsne_filepath,num_samples)
+        tSNE_dict = lens.transform.run_tsne_and_save(activations_dict,tsne_filepath,num_samples)
     
     else:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
