@@ -5,7 +5,14 @@ import argparse
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 import matplotlib.pyplot as plt
 
-def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 'data/tSNE/offset10.pkl', session_id = 3, bool_comput = False, num_samples = 200):
+
+def main(
+    activations_filepath="data/activations/offset10.pkl",
+    tsne_filepath="data/tSNE/offset10.pkl",
+    session_id=3,
+    bool_comput=False,
+    num_samples=200,
+):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -15,21 +22,21 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
     print("Loading activations...")
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-    _, _, discrete_labels_train, _ = (
-        lens.utils_allen.get_single_session_datasets()
-    )
+    _, _, discrete_labels_train, _ = lens.utils_allen.get_single_session_datasets()
     train_label = discrete_labels_train[session_id]
 
     with open(activations_filepath, "rb") as f:
         activations_dict = pickle.load(f)
-    
+
     if bool_comput:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         print("Computing tSNE embeddings...")
         print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-        tSNE_dict = lens.transform.run_tsne_and_save(activations_dict,tsne_filepath,num_samples)
-    
+        tSNE_dict = lens.transform.run_tsne_and_save(
+            activations_dict, tsne_filepath, num_samples
+        )
+
     else:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         print("Loading tSNE embeddings...")
@@ -38,14 +45,32 @@ def main(activations_filepath = 'data/activations/offset10.pkl',tsne_filepath = 
         with open(tsne_filepath, "rb") as f:
             tSNE_dict = pickle.load(f)
 
-    print('yeee')
-    fig1 = lens.plotting.compare_embeddings_layers(tSNE_dict["single"]["UT"][0],tSNE_dict["single"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig2 = lens.plotting.compare_embeddings_layers(tSNE_dict["multi"]["UT"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200)
-    fig3 = lens.plotting.compare_embeddings_layers(tSNE_dict["single"]["TR"][0],tSNE_dict["multi"]["TR"][0],labels=train_label, data_label="Visual",sample_plot=200, comparison_labels= ('tSNE',["Single", "Multi"]))
+    print("yeee")
+    fig1 = lens.plotting.compare_embeddings_layers(
+        tSNE_dict["single"]["UT"][0],
+        tSNE_dict["single"]["TR"][0],
+        labels=train_label,
+        data_label="Visual",
+        sample_plot=200,
+    )
+    fig2 = lens.plotting.compare_embeddings_layers(
+        tSNE_dict["multi"]["UT"][0],
+        tSNE_dict["multi"]["TR"][0],
+        labels=train_label,
+        data_label="Visual",
+        sample_plot=200,
+    )
+    fig3 = lens.plotting.compare_embeddings_layers(
+        tSNE_dict["single"]["TR"][0],
+        tSNE_dict["multi"]["TR"][0],
+        labels=train_label,
+        data_label="Visual",
+        sample_plot=200,
+        comparison_labels=("tSNE", ["Single", "Multi"]),
+    )
 
     plt.show()
 
-    
 
 if __name__ == "__main__":
 
@@ -53,14 +78,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--activations_filepath",
         type=str,
-        default='data/activations/offset10.pkl',
+        default="data/activations/offset10.pkl",
         help="Path to the activations file.",
     )
 
     parser.add_argument(
         "--tsne_filepath",
         type=str,
-        default='data/tSNE/offset10.pkl',
+        default="data/tSNE/offset10.pkl",
         help="Path to the tSNE embeddings file.",
     )
 

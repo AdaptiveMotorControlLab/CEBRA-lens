@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 # Min-Max normalization function
 def normalize_minmax(rdm):
     rdm_min = np.min(rdm)

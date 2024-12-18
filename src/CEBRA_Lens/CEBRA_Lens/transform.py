@@ -5,7 +5,8 @@ from tqdm import tqdm
 import numpy as np
 import pickle
 
-def apply_tsne(layer_activation: np.ndarray, num_samples: int)-> np.ndarray:
+
+def apply_tsne(layer_activation: np.ndarray, num_samples: int) -> np.ndarray:
     """
     Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
     This function performs dimensionality reduction on the layer activation data to generate a 2D embedding using t-SNE.
@@ -13,7 +14,7 @@ def apply_tsne(layer_activation: np.ndarray, num_samples: int)-> np.ndarray:
     Parameters:
     -----------
     layer_activation : np.ndarray
-        A 2D numpy array representing the activation of neurons in a layer. The shape should be 
+        A 2D numpy array representing the activation of neurons in a layer. The shape should be
         (num_neurons, num_samples) or (num_samples, num_neurons).
     num_samples : int
         The number of samples to use for t-SNE transformation.
@@ -33,7 +34,9 @@ def apply_tsne(layer_activation: np.ndarray, num_samples: int)-> np.ndarray:
     return tsne_embedding
 
 
-def run_tsne_and_save(activations_dict: dict,filepath: str,num_samples: int=200)-> dict:
+def run_tsne_and_save(
+    activations_dict: dict, filepath: str, num_samples: int = 200
+) -> dict:
     """
     Runs t-SNE on the provided activations dictionary and saves the results to a pickle file.
     This function performs t-SNE on the activations data and stores the resulting embeddings in a pickle file for later use.
@@ -54,23 +57,27 @@ def run_tsne_and_save(activations_dict: dict,filepath: str,num_samples: int=200)
     """
 
     if num_samples < 200:
-        print(f"Warning: Minimum number of samples is 200 to ensure good functioning. Provided: {num_samples}. Processing with 200...")
+        print(
+            f"Warning: Minimum number of samples is 200 to ensure good functioning. Provided: {num_samples}. Processing with 200..."
+        )
         num_samples = 200
 
     tsne_embeddings = {}
     for outer_key, outer_value in activations_dict.items():
         tsne_embeddings[outer_key] = {}
-        for inner_key, outer_list in tqdm(outer_value.items(), desc=f'Processing {outer_key}'):
+        for inner_key, outer_list in tqdm(
+            outer_value.items(), desc=f"Processing {outer_key}"
+        ):
             tsne_embeddings[outer_key][inner_key] = []
-            for inner_list in tqdm(outer_list, desc=f'Processing {outer_key} {inner_key}'):
-                processed_inner_list = [apply_tsne(arr,num_samples=num_samples) for arr in inner_list]
+            for inner_list in tqdm(
+                outer_list, desc=f"Processing {outer_key} {inner_key}"
+            ):
+                processed_inner_list = [
+                    apply_tsne(arr, num_samples=num_samples) for arr in inner_list
+                ]
                 tsne_embeddings[outer_key][inner_key].append(processed_inner_list)
-    with open(
-       filepath, "wb"
-    ) as f:
+    with open(filepath, "wb") as f:
         pickle.dump(tsne_embeddings, f)
 
     print("DONE")
     return tsne_embeddings
-
-

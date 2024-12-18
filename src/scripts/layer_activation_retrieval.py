@@ -7,8 +7,6 @@ import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 
 
-
-
 def main(model_name, session_id, filename, bool_plot_embeddings):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -74,7 +72,7 @@ def main(model_name, session_id, filename, bool_plot_embeddings):
             y,
         )
         fig.show()
-        
+
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("Retrieving layer activations...")
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
@@ -90,16 +88,11 @@ def main(model_name, session_id, filename, bool_plot_embeddings):
 
     activations_dict = lens.activations.process_activations(activations2)
 
-
     with open(f"{filename}.pkl", "wb") as f:
         pickle.dump(activations_dict, f)
-        print(
-            "\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-        )
+        print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         print("Layer activations saved!")
-        print(
-            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
-        )
+        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
 
 if __name__ == "__main__":

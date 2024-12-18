@@ -3,6 +3,7 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import seaborn as sns
 
+
 def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
     r_ind = label[:, 1] == 1
     l_ind = label[:, 2] == 1
@@ -73,10 +74,18 @@ def plot_allen(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
 
     return ax
 
-def plot_embedding_layers(axs, embeddings: list, labels: np.ndarray, title_prefix: str, sample_plot: int = 200, data_label="HPC"):
+
+def plot_embedding_layers(
+    axs,
+    embeddings: list,
+    labels: np.ndarray,
+    title_prefix: str,
+    sample_plot: int = 200,
+    data_label="HPC",
+):
     """
     Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
-    
+
     Parameters:
     -----------
     axs : list
@@ -92,7 +101,7 @@ def plot_embedding_layers(axs, embeddings: list, labels: np.ndarray, title_prefi
     data_label : str
         Label indicating data source. Can be "HPC" or "Visual".
     """
-    
+
     num_layers = len(embeddings)
 
     labels_list = [labels[:sample_plot]] * num_layers
@@ -100,9 +109,12 @@ def plot_embedding_layers(axs, embeddings: list, labels: np.ndarray, title_prefi
     titles.append(f"{title_prefix} Output")
 
     for i, (label, ax) in enumerate(zip(labels_list, axs)):
-        if embeddings[i].shape[0] < embeddings[i].shape[1]: # should be num Samples X num Neurons
+        if (
+            embeddings[i].shape[0] < embeddings[i].shape[1]
+        ):  # should be num Samples X num Neurons
             embedding = embeddings[i].T
-        else: embedding = embeddings[i]
+        else:
+            embedding = embeddings[i]
 
         embedding = embedding[:sample_plot, :]
         if data_label == "HPC":
@@ -110,22 +122,32 @@ def plot_embedding_layers(axs, embeddings: list, labels: np.ndarray, title_prefi
         elif data_label == "Visual":
             ax = plot_allen(ax, embedding, label)
         else:
-            raise NotImplementedError(f"label {data_label} not yet implemented. Use either Visual or HPC")
+            raise NotImplementedError(
+                f"label {data_label} not yet implemented. Use either Visual or HPC"
+            )
 
         ax.set_title(titles[i], y=1)
         ax.axis("off")
 
-def compare_embeddings_layers(embeddings_1: list, embeddings_2: list, labels: np.ndarray, sample_plot=200, comparison_labels: tuple =('tSNE',["Untrained","Trained"]), data_label="HPC"):
+
+def compare_embeddings_layers(
+    embeddings_1: list,
+    embeddings_2: list,
+    labels: np.ndarray,
+    sample_plot=200,
+    comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
+    data_label="HPC",
+):
     """
     Compare embeddings across layers for two sets of embeddings.
     This function takes two sets of embeddings and compares them layer by layer. It plots the embeddings in a 3D space
-    for visual comparison. Used with CEBRA embeddings and tSNE embeddings. 
+    for visual comparison. Used with CEBRA embeddings and tSNE embeddings.
     Parameters:
     -----------
     embeddings_1 : list
-        A list of embeddings for the first set of data (e.g., untrained model). 
+        A list of embeddings for the first set of data (e.g., untrained model).
     embeddings_2 : list
-        A list of embeddings for the second set of data (e.g., trained model). 
+        A list of embeddings for the second set of data (e.g., trained model).
     labels : np.ndarray
         An array of labels corresponding to the data labels (e.g. frame number).
     sample_plot : int
@@ -139,26 +161,47 @@ def compare_embeddings_layers(embeddings_1: list, embeddings_2: list, labels: np
     fig : matplotlib.figure.Figure
         The matplotlib figure object containing the plots of the t-SNE embeddings.
     """
-    
+
     num_layers_1 = len(embeddings_1)
     num_layers_2 = len(embeddings_2)
 
-    #Padding the shorter embedding to match the number of layers in the longer embedding
+    # Padding the shorter embedding to match the number of layers in the longer embedding
     if num_layers_1 > num_layers_2:
         embeddings_2 += [np.empty_like(embeddings_2[0])] * (num_layers_1 - num_layers_2)
     elif num_layers_2 > num_layers_1:
         embeddings_1 += [np.empty_like(embeddings_1[0])] * (num_layers_2 - num_layers_1)
 
-    fig, axs = plt.subplots(2, max(num_layers_1, num_layers_2), figsize=(15, 10), subplot_kw={"projection": "3d"})
+    fig, axs = plt.subplots(
+        2,
+        max(num_layers_1, num_layers_2),
+        figsize=(15, 10),
+        subplot_kw={"projection": "3d"},
+    )
 
     axs_1 = axs[0, :]
     axs_2 = axs[1, :]
 
-    
-    plot_embedding_layers(axs = axs_1, embeddings = embeddings_1, labels = labels, title_prefix = comparison_labels[1][0], sample_plot = sample_plot,data_label = data_label)
-    plot_embedding_layers(axs = axs_2, embeddings = embeddings_2, labels = labels, title_prefix = comparison_labels[1][1], sample_plot = sample_plot,data_label = data_label)
+    plot_embedding_layers(
+        axs=axs_1,
+        embeddings=embeddings_1,
+        labels=labels,
+        title_prefix=comparison_labels[1][0],
+        sample_plot=sample_plot,
+        data_label=data_label,
+    )
+    plot_embedding_layers(
+        axs=axs_2,
+        embeddings=embeddings_2,
+        labels=labels,
+        title_prefix=comparison_labels[1][1],
+        sample_plot=sample_plot,
+        data_label=data_label,
+    )
 
-    fig.suptitle(f"{comparison_labels[0]} across layers({comparison_labels[1][0]} - {comparison_labels[1][1]})", fontsize=20)
+    fig.suptitle(
+        f"{comparison_labels[0]} across layers({comparison_labels[1][0]} - {comparison_labels[1][1]})",
+        fontsize=20,
+    )
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.tight_layout()
 
@@ -199,17 +242,19 @@ def plot_embeddings_singlevmulti(
     # Assert that the inputs are of correct type
     assert isinstance(embeddings_single, list), "embeddings_single should be a list"
     assert isinstance(embeddings_multi, list), "embeddings_multi should be a list"
-    assert isinstance(embeddings_untrained_single, np.ndarray), "embeddings_untrained_single should be a numpy array"
-    assert isinstance(embeddings_untrained_multi, np.ndarray), "embeddings_untrained_multi should be a numpy array"
+    assert isinstance(
+        embeddings_untrained_single, np.ndarray
+    ), "embeddings_untrained_single should be a numpy array"
+    assert isinstance(
+        embeddings_untrained_multi, np.ndarray
+    ), "embeddings_untrained_multi should be a numpy array"
     assert isinstance(y, np.ndarray), "y should be a np.ndarray"
-
 
     num_models = len(embeddings_single)
     if num_models > 5:  # truncate above 5 for plotting clarity
         num_models = 5
         embeddings_single = embeddings_single[:5]
         embeddings_multi = embeddings_multi[:5]
-
 
     fig, axs = plt.subplots(
         2, num_models + 1, figsize=(15, 10), subplot_kw={"projection": "3d"}
@@ -250,9 +295,9 @@ def plot_cka_heatmaps(
     cka_matrices: dict,
     annot: bool,
     show_cbar: bool = True,
-    cbar_label: str ="CKA score",
-    color_map: str ="magma",
-    figsize: tuple =(15, 5),
+    cbar_label: str = "CKA score",
+    color_map: str = "magma",
+    figsize: tuple = (15, 5),
 ):
     """
     This function generates heatmaps for various CKA matrices to visualize the similarity between different sets of embeddings.
@@ -292,18 +337,18 @@ def plot_cka_heatmaps(
         "cbar_kws": {"label": cbar_label, "orientation": "horizontal"},
     }
     if num_comparisons == 1:
-        axs = [axs] # handle the 1 comparison case
-        
+        axs = [axs]  # handle the 1 comparison case
+
     # Plot each heat map
     for i, (key, value) in enumerate(cka_matrices.items()):
-        
+
         sns.heatmap(value, ax=axs[i], annot=annot, **heatmap_kwargs)
-        
+
         num_layers = value.shape[1]
         num_models = value.shape[0]
 
-        axs[i].set_title(key.replace("_"," "))
-        print(key.replace("_"," "))
+        axs[i].set_title(key.replace("_", " "))
+        print(key.replace("_", " "))
         axs[i].set_xlabel("Layer")
         if i == 0:
             axs[i].set_ylabel("Model Instantiation", fontsize=12)
@@ -316,7 +361,6 @@ def plot_cka_heatmaps(
         axs[i].set_xticks(np.arange(num_layers) + 0.5)
         axs[i].set_xticklabels([f"L{l}" for l in range(1, num_layers + 1)])
 
-    
     # Adjust layout
     plt.subplots_adjust(wspace=0.1, right=0.9)
     fig.suptitle("Similarity between model representations (CKA)", fontsize=16)

@@ -1,9 +1,22 @@
 """Functions to retrieve and handle layer activations"""
+
 import cebra
 import torch
 import torch.nn as nn
 
-def get_activations_one_model(model: cebra.integrations.sklearn.cebra.CEBRA, data: torch.Tensor, session_id: int = -1, activations: dict = {}, name = "single", instance : int = 0, bool_train: bool = False, layer_type: str ='conv')-> dict: # what should be the type for the model ? I saw cebra.integrations.sklearn.cebra.CEBRA but seems excessively long
+
+def get_activations_one_model(
+    model: cebra.integrations.sklearn.cebra.CEBRA,
+    data: torch.Tensor,
+    session_id: int = -1,
+    activations: dict = {},
+    name="single",
+    instance: int = 0,
+    bool_train: bool = False,
+    layer_type: str = "conv",
+) -> (
+    dict
+):  # what should be the type for the model ? I saw cebra.integrations.sklearn.cebra.CEBRA but seems excessively long
     """
     Extracts activations from a single model layer.
     This function extracts activations from the specified layer of a model and stores them in a dictionary.
@@ -15,7 +28,7 @@ def get_activations_one_model(model: cebra.integrations.sklearn.cebra.CEBRA, dat
     data : torch.Tensor
         The input data to be passed through the model.
     session_id : int, optional
-        The session identifier used for selecting the appropriate model in multi-session solvers. 
+        The session identifier used for selecting the appropriate model in multi-session solvers.
         For single-session, no need to input it.
     activations : dict
         A dictionary where the activations will be stored. It is passed as an argument to directly add to a previously defined activations dictionary.
@@ -34,21 +47,47 @@ def get_activations_one_model(model: cebra.integrations.sklearn.cebra.CEBRA, dat
 
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
-        activations = _attach_hooks(activations = activations, model = model_, name = name, instance=instance,bool_train = bool_train, layer_type=layer_type)
-        _ = model.transform(data,session_id = session_id) # no need to store the output embedding. we already add a hook on it
-    
+        activations = _attach_hooks(
+            activations=activations,
+            model=model_,
+            name=name,
+            instance=instance,
+            bool_train=bool_train,
+            layer_type=layer_type,
+        )
+        _ = model.transform(
+            data, session_id=session_id
+        )  # no need to store the output embedding. we already add a hook on it
+
     elif model.solver_name_ == "single-session":
         model_ = model.model_
-        activations = _attach_hooks(activations = activations, model = model_, name = name, instance=instance,bool_train = bool_train, layer_type=layer_type)
-        _ = model.transform(data) # no need to store the output embedding. we already add a hook on it
-    
+        activations = _attach_hooks(
+            activations=activations,
+            model=model_,
+            name=name,
+            instance=instance,
+            bool_train=bool_train,
+            layer_type=layer_type,
+        )
+        _ = model.transform(
+            data
+        )  # no need to store the output embedding. we already add a hook on it
+
     else:
-        raise NotImplementedError(f"Solver {model.solver_name_} is not yet implemented.")
-    
+        raise NotImplementedError(
+            f"Solver {model.solver_name_} is not yet implemented."
+        )
 
     return activations
 
-def get_activations_multi_model(models: dict, data: torch.Tensor,session_id : int,activations: dict = {}, layer_type: str ='conv')-> dict:
+
+def get_activations_multi_model(
+    models: dict,
+    data: torch.Tensor,
+    session_id: int,
+    activations: dict = {},
+    layer_type: str = "conv",
+) -> dict:
     """
     Extracts activations from multiple models and stores them in a dictionary.
     This function demonstrates how to use the `get_activations_one_model` function by extracting activations from multiple models
@@ -73,24 +112,59 @@ def get_activations_multi_model(models: dict, data: torch.Tensor,session_id : in
         A dictionary containing the activations from all the models.
     """
 
-
     # SINGLE UT
-    for i, model in enumerate(models["single_UT"]): 
-        activations = get_activations_one_model(model, data, activations,name = 'single', instance = i, bool_train = False, layer_type = layer_type)
-    
+    for i, model in enumerate(models["single_UT"]):
+        activations = get_activations_one_model(
+            model,
+            data,
+            activations,
+            name="single",
+            instance=i,
+            bool_train=False,
+            layer_type=layer_type,
+        )
+
     # MULTI UT
-    for i, model in enumerate(models["multi_UT"]): # adds to the previously defined activations
-        activations = get_activations_one_model(model, data,session_id, activations, name = "multi", instance = i, bool_train = False, layer_type = layer_type)
+    for i, model in enumerate(
+        models["multi_UT"]
+    ):  # adds to the previously defined activations
+        activations = get_activations_one_model(
+            model,
+            data,
+            session_id,
+            activations,
+            name="multi",
+            instance=i,
+            bool_train=False,
+            layer_type=layer_type,
+        )
 
     # SINGLE TR
     for i, model in enumerate(models["single_TR"]):
-        activations = get_activations_one_model(model, data, activations,name = 'single', instance = i, bool_train = True, layer_type = layer_type)
+        activations = get_activations_one_model(
+            model,
+            data,
+            activations,
+            name="single",
+            instance=i,
+            bool_train=True,
+            layer_type=layer_type,
+        )
 
     # MULTI TR
     for i, model in enumerate(models["multi_TR"]):
-        activations = get_activations_one_model(model, data,session_id, activations,name = 'multi', instance = i, bool_train = True, layer_type = layer_type)
+        activations = get_activations_one_model(
+            model,
+            data,
+            session_id,
+            activations,
+            name="multi",
+            instance=i,
+            bool_train=True,
+            layer_type=layer_type,
+        )
 
-    #TODO: Not implemented for other model types (e.g. Unified) 
+    # TODO: Not implemented for other model types (e.g. Unified)
 
     return activations
 
@@ -102,7 +176,15 @@ def _get_activation(name, activations: dict):
 
     return hook, activations
 
-def _attach_hooks(activations: dict, model: cebra.integrations.sklearn.cebra.CEBRA, name: str,instance: int, bool_train=False, layer_type="conv")-> dict:  # only attaches hooks on convolutional layers
+
+def _attach_hooks(
+    activations: dict,
+    model: cebra.integrations.sklearn.cebra.CEBRA,
+    name: str,
+    instance: int,
+    bool_train=False,
+    layer_type="conv",
+) -> dict:  # only attaches hooks on convolutional layers
     """
     Attaches forward hooks to the specified layers of a given model to capture activations.
     This function attaches hooks to the specified layers of the model to capture activations during the forward pass.
@@ -128,7 +210,6 @@ def _attach_hooks(activations: dict, model: cebra.integrations.sklearn.cebra.CEB
         The updated dictionary containing the activations captured by the hooks.
     """
 
-    
     valid_layer_types = [
         "all",
         "conv",
@@ -147,8 +228,10 @@ def _attach_hooks(activations: dict, model: cebra.integrations.sklearn.cebra.CEB
 
     if layer_type == "conv":
         for i in range(len(model.net)):
-            if isinstance(model.net[i], nn.Conv1d) or i == len(model.net)-1:
-                hook,activations = _get_activation(f"{name}_{string_ut}_{instance}_layer_{num_layer}",activations)
+            if isinstance(model.net[i], nn.Conv1d) or i == len(model.net) - 1:
+                hook, activations = _get_activation(
+                    f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
+                )
 
                 model.net[i].register_forward_hook(hook)
                 num_layer += 1
@@ -158,11 +241,13 @@ def _attach_hooks(activations: dict, model: cebra.integrations.sklearn.cebra.CEB
             ):  # empty dict evaluate to false. here we go in the _Skip connection where some conv may be stored
                 for j in range(len(model.net[i].module)):
                     if isinstance(model.net[i].module[j], nn.Conv1d):
-                        hook,activations = _get_activation(f"{name}_{string_ut}_{instance}_layer_{num_layer}",activations)
+                        hook, activations = _get_activation(
+                            f"{name}_{string_ut}_{instance}_layer_{num_layer}",
+                            activations,
+                        )
 
                         model.net[i].module[j].register_forward_hook(hook)
                         num_layer += 1
-            
 
     elif layer_type == "all":
         for i in range(len(model.net)):
@@ -171,21 +256,28 @@ def _attach_hooks(activations: dict, model: cebra.integrations.sklearn.cebra.CEB
             ):  # empty dict evaluate to false. here we go in the _Skip connection where some conv may be stored
                 for j in range(len(model.net[i].module)):
                     if isinstance(model.net[i].module[j], nn.Conv1d):
-                        hook, activations = _get_activation(f"{name}_{string_ut}_{instance}_layer_{num_layer}",activations)
+                        hook, activations = _get_activation(
+                            f"{name}_{string_ut}_{instance}_layer_{num_layer}",
+                            activations,
+                        )
                         model.net[i].module[j].register_forward_hook(hook)
                         num_layer += 1
 
             else:
-                hook, activations= _get_activation(f"{name}_{string_ut}_{instance}_layer_{num_layer}",activations)
+                hook, activations = _get_activation(
+                    f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
+                )
 
                 model.net[i].register_forward_hook(hook)
                 num_layer += 1
     else:
-        raise NotImplementedError(f"Layer type {layer_type} not implemented. Please use either 'all' or 'conv' ")
+        raise NotImplementedError(
+            f"Layer type {layer_type} not implemented. Please use either 'all' or 'conv' "
+        )
     return activations
 
 
-def _aggregate_activations(activations:dict) -> dict:
+def _aggregate_activations(activations: dict) -> dict:
     """
     Aggregates activations by model identifier.
     This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,
@@ -214,28 +306,29 @@ def _aggregate_activations(activations:dict) -> dict:
         'model2': [[0.5, 0.6]]
     }
     """
-    
+
     aggregated_activations = {}
 
     for key, value in activations.items():
-        model_identifier = key.rsplit('_layer', 1)[0]
-        
+        model_identifier = key.rsplit("_layer", 1)[0]
+
         if model_identifier not in aggregated_activations:
             aggregated_activations[model_identifier] = []
-        
+
         aggregated_activations[model_identifier].append(value)
     return aggregated_activations
 
-def process_activations(activations: dict) ->dict:
+
+def process_activations(activations: dict) -> dict:
     """
     Processes the activations and formats them into a structured dictionary.
-    This function organizes activations into a nested structure based on solvers, training type, and instances, 
+    This function organizes activations into a nested structure based on solvers, training type, and instances,
     making it easier to access activations for different configurations (e.g., single-session, multi-session, trained, untrained).
 
     Parameters:
     -----------
     activations : dict
-        A dictionary where the keys are in the format 'SOLVER_TRAINING_INSTANCE_layer_LAYER' 
+        A dictionary where the keys are in the format 'SOLVER_TRAINING_INSTANCE_layer_LAYER'
         (e.g., 'single_UT_1_layer_2').
 
     Returns:
@@ -254,7 +347,7 @@ def process_activations(activations: dict) ->dict:
     activations_dict = {}
 
     for key, value in aggregated_activations.items():
-        parts = key.split('_')
+        parts = key.split("_")
 
         prefix = parts[0]
         if prefix not in activations_dict.keys():
@@ -265,7 +358,3 @@ def process_activations(activations: dict) ->dict:
         activations_dict[prefix][suffix].append(value)
 
     return activations_dict
-
-        
-
-

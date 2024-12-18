@@ -1,13 +1,9 @@
-import pandas as pd
 import os
 import numpy as np
 import torch
 import cebra
 import cebra.datasets
 import copy
-import pickle
-from sklearn.manifold import TSNE
-from tqdm import tqdm
 
 
 def model_loader(model_name):
@@ -37,8 +33,8 @@ def model_loader(model_name):
     print("Number of models: ", len(models_list))
     print(models_list)
 
-    models_single_UT = [] # will be all the singles untrained
-    models_multi_UT = [] # will be all the singles untrained
+    models_single_UT = []  # will be all the singles untrained
+    models_multi_UT = []  # will be all the singles untrained
     models_single_TR = []  # will be all the singles trained
     models_multi_TR = []  # will be all the multi trained
 
@@ -54,9 +50,11 @@ def model_loader(model_name):
                 models_multi_UT.append(loaded_model)
             elif loaded_model.solver_name_ == "single-session":
                 models_single_UT.append(loaded_model)
-            else: # e.g. Unified
-                raise NotImplementedError("Only single session and multi session are implemented")
-        
+            else:  # e.g. Unified
+                raise NotImplementedError(
+                    "Only single session and multi session are implemented"
+                )
+
         # TODO: This should be changed to elif "TR" in model.  This comes from the name of the file when you save the model
         # Models were trained without this label but it might be clearer in the future
         else:
@@ -64,11 +62,17 @@ def model_loader(model_name):
                 models_multi_TR.append(loaded_model)
             elif loaded_model.solver_name_ == "single-session":
                 models_single_TR.append(loaded_model)
-            else: # e.g. Unified
-                raise NotImplementedError("Only single session and multi session are implemented")
+            else:  # e.g. Unified
+                raise NotImplementedError(
+                    "Only single session and multi session are implemented"
+                )
 
-
-    models = {"single_UT": models_single_UT, "multi_UT": models_multi_UT, "single_TR": models_single_TR, "multi_TR": models_multi_TR}
+    models = {
+        "single_UT": models_single_UT,
+        "multi_UT": models_multi_UT,
+        "single_TR": models_single_TR,
+        "multi_TR": models_multi_TR,
+    }
 
     # check the models
     print("# of Single Untrained models: ", len(models["single_UT"]))
@@ -77,6 +81,7 @@ def model_loader(model_name):
     print("# of Multi Trained models: ", len(models["multi_TR"]))
 
     return models
+
 
 ########################################################################################################################
 ########################################################################################################################

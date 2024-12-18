@@ -206,9 +206,13 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
 
         with open(os.path.join(directory, f"{saving_filename}.pkl"), "wb") as f:
             pickle.dump(all_corrs, f)
-            print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+            print(
+                "\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            )
             print("RDM Matrices saved!")
-            print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
+            print(
+                "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
+            )
 
     else:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
