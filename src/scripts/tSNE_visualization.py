@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--tsne_filepath",
         type=str,
-        default="data/tSNE/offset10.pkl",
+        default=None,
         help="Path to the tSNE embeddings file.",
     )
 
@@ -111,6 +111,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    if args.tsne_filepath == None:
+        filename = args.activations_filepath.split("/")[-1].split(".")[0]
+        args.tsne_filepath = f"data/tsne/{filename}.pkl"
 
     main(
         args.activations_filepath,

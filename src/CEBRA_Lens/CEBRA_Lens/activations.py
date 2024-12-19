@@ -112,7 +112,7 @@ def get_activations_one_model(
                 cut_indices = [(4,-4),(3,-3),(2,-2),(1,-1),(0,0),(0,0)]
             
             elif model.model_architecture in ['offset5-model']:
-                cut_indices = [(1,-2),(0,1),(0,0),(0,0)]
+                cut_indices = [(1,-2),(0,-1),(0,0),(0,0)]
             
             else:
                 raise NotImplementedError(f"Padding handling for {model.model_architecture} not implemented yet.")
