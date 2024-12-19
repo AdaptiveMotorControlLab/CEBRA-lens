@@ -1,55 +1,74 @@
 import numpy as np
 from random import sample
+from scipy.spatial.distance import correlation,cdist, pdist, squareform
+from tqdm import tqdm
 
-def compute_single_RDM_layers(train_data,train_label,):
+def _rdm_binning(train_data: np.ndarray,train_label: np.ndarray,dataset_label:str = "Visual") -> np.ndarray:
+
     # BINNING
-    num_bins = 30
-    num_samples = 200 if len(train_data) / 30 >= 200 else int(len(train_data) / 30)
-    step_distance = 30
-    idxs = np.zeros((num_bins, num_samples))
+    if dataset_label == "Visual":
+        num_bins = 30
+        num_samples = 200 if len(train_data) / 30 >= 200 else int(len(train_data) / 30)
+        step_distance = 30
+        idxs = np.zeros((num_bins, num_samples))
 
-    j = 0
-    for i in range(num_bins):
+        j = 0
+        for i in range(num_bins):
 
-        full_idxs = np.where(
-            (train_label[:] >= j * step_distance)
-            & (train_label[:] < (j + 1) * step_distance)
-        )[0]
-        idxs[i, :] = sample(list(full_idxs), num_samples)
-        j = j + 1
+            full_idxs = np.where(
+                (train_label[:] >= j * step_distance)
+                & (train_label[:] < (j + 1) * step_distance)
+            )[0]
+            idxs[i, :] = sample(list(full_idxs), num_samples)
+            j = j + 1
+    elif dataset_label == "HPC":
+        #TODO: implement this
+        raise NotImplementedError("not implemented. A FAIRE")
+    else:
+        raise NotImplementedError(f"Binning not implemented for {dataset_label}. Use 'Visual' or 'HPC'.")
+    
+    return idxs.astype(int)
 
-    idxs = idxs.astype(int)
+def compute_single_RDM_layers(train_data: np.ndarray,train_label: np.ndarray,activations: list,dataset_label:str = 'Visual', metric: str = "correlation") -> list:
+    #activations should be a list of arrayts of shape numNeuronsXnumSAmples
 
+    idxs = _rdm_binning(train_data=train_data,train_label=train_label,dataset_label=dataset_label)
 
-    # Neural
-    neural_data = train_data[list(idxs.flatten()), :]
+    layer_rdm = []
 
-    # Activations
-    activations_UT = activations_dict["act_UT"]
-    activations_multi = activations_dict["act_multi"]
-    activations_single = activations_dict["act_single"]
+    for layer in activations:
+       # to ensure the right shape: numSamples X numNeurons
+       if layer.shape[0] < layer.shape[1]: 
+           layer = layer.T
 
-    num_layers = (
-        len(activations_UT) - 2
-    ) // 2  # This assumes that there will always be only 1 instance of single UT and 1 multi UT.
-    output_embeddings_idxs = [i for i in range(1, num_trained_models + 1)][::-1]
+       rdm = squareform(pdist(layer[idxs.flatten(),:], metric=metric))
+       layer_rdm.append(rdm)
+    return layer_rdm
 
-    # Output Embedding of first multi-session model instance
-    embeddings_trained_multi_all = activations_multi[:num_layers] + [
-        activations_multi[-output_embeddings_idxs[0]]
-    ]
+def compare_RDM(rdm_1: np.ndarray, rdm_2: np.ndarray, metric: str = "correlation") -> float:
+    
+    if metric == "correlation":
+        comparison = 1 - correlation(rdm_1, rdm_2)
+    else:
+        raise NotImplementedError(f"The metric {metric} is not yet implemented. Please use 'correlation'.")
 
-    embeddings_trained_multi = activations_multi[-output_embeddings_idxs[0]][
-        :, idxs.flatten()
-    ].T  # .T to keep consistency between neural data and this
+    return comparison
 
-    neural_data_rdm = squareform(pdist(neural_data, metric="euclidean"))
-    embedding_rdm = squareform(pdist(embeddings_trained_multi, metric="euclidean"))
-    # just to show that with correlation it doesn't work with neural input
-    neural_data_rdm_corr = squareform(pdist(neural_data, metric="correlation"))
-    embedding_rdm_corr = squareform(
-        pdist(embeddings_trained_multi, metric="correlation")
-    )
-    # Normalize the RDMs using Min-Max normalization
-    rdm1_normalized = normalize_minmax(neural_data_rdm)
-    rdm2_normalized = normalize_minmax(embedding_rdm)
+def compute_multi_RDM_layers(train_data: np.ndarray,train_label: np.ndarray,activations_dict: dict,dataset_label:str = 'Visual', metric: str = "correlation") -> dict:
+    
+    rdm_dict = {}
+    
+    for outer_key, outer_value in activations_dict.items():
+        rdm_dict[outer_key] = {}
+        for inner_key, outer_list in tqdm(
+            outer_value.items(), desc=f"Processing {outer_key}"
+        ):
+            rdm_dict[outer_key][inner_key] = []
+            for inner_list in tqdm(
+                outer_list, desc=f"Processing {outer_key} {inner_key}"
+            ):
+                processed_inner_list = [
+                    compute_single_RDM_layers(train_data=train_data,train_label=train_label,activations=arr,dataset_label=dataset_label,metric=metric) for arr in inner_list
+                ]
+                rdm_dict[outer_key][inner_key].append(processed_inner_list)
+

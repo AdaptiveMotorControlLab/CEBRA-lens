@@ -45,7 +45,6 @@ def main(
         with open(tsne_filepath, "rb") as f:
             tSNE_dict = pickle.load(f)
 
-    print("yeee")
     fig1 = lens.plotting.compare_embeddings_layers(
         tSNE_dict["single"]["UT"][0],
         tSNE_dict["single"]["TR"][0],
