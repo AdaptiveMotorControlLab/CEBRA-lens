@@ -35,7 +35,7 @@ def compute_single_RDM_layers(train_data: np.ndarray,train_label: np.ndarray,act
     idxs = _rdm_binning(train_data=train_data,train_label=train_label,dataset_label=dataset_label)
 
     layer_rdm = []
-
+    
     for layer in activations:
        # to ensure the right shape: numSamples X numNeurons
        if layer.shape[0] < layer.shape[1]: 
@@ -67,8 +67,7 @@ def compute_multi_RDM_layers(train_data: np.ndarray,train_label: np.ndarray,acti
             for inner_list in tqdm(
                 outer_list, desc=f"Processing {outer_key} {inner_key}"
             ):
-                processed_inner_list = [
-                    compute_single_RDM_layers(train_data=train_data,train_label=train_label,activations=arr,dataset_label=dataset_label,metric=metric) for arr in inner_list
-                ]
+                processed_inner_list = compute_single_RDM_layers(train_data=train_data,train_label=train_label,activations=inner_list,dataset_label=dataset_label,metric=metric)
+                
                 rdm_dict[outer_key][inner_key].append(processed_inner_list)
 
