@@ -385,13 +385,25 @@ def plot_activations(
     plt.tight_layout()
     plt.show()
 
-def plot_rdm(rdms, titles, metric="Normalized Euclidean distance"):
-    # Create the plot
-    fig, ax = plt.subplots(1, 2)
-    fig.set_size_inches(10, 7)
+def plot_rdm(rdms, titles, metric="Normalized Euclidean distance", dataset_label: str = "Visual"):
+ 
+    fig, ax = plt.subplots(1, len(rdms))
+    if len(rdms) == 1:
+        ax = [ax]
+        
+    y_size = max(6,3*len(rdms))
+    x_size = max(6,5*len(rdms))
+    fig.set_size_inches(x_size,y_size)
 
     # Generate tick labels
-    tick_labels = [str(i) for i in range(0, 930, 30)]
+    if dataset_label == "Visual":
+        tick_labels = [str(i) for i in range(0, 930, 30)]
+        
+    elif dataset_label == "HPC":
+        #TODO
+        raise NotImplementedError
+    else:
+        raise NotImplementedError(f"RDM Plotting for dataset {dataset_label} not yet implemented. Please use 'Visual' or 'HPC'.")
 
     for i, rdm in enumerate(rdms):
         # Display the RDM using imshow

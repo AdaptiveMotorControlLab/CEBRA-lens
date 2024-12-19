@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
 def _cut_array(array: np.ndarray, cut_indices: tuple):
     """
     Slices the input array based on the provided cut indices.
@@ -29,7 +30,7 @@ def _cut_array(array: np.ndarray, cut_indices: tuple):
         sliced_array = array
     else:
         # Otherwise, slice the array
-        sliced_array = array[:,start:end]
+        sliced_array = array[:, start:end]
     return sliced_array
 
 
@@ -41,9 +42,7 @@ def get_activations_one_model(
     instance: int = 0,
     bool_train: bool = False,
     layer_type: str = "conv",
-) -> (
-    dict
-):
+) -> dict:
     """
     Extracts activations from a single model layer.
     This function extracts activations from the specified layer of a model and stores them in a dictionary.
@@ -106,23 +105,27 @@ def get_activations_one_model(
             f"Solver {model.solver_name_} is not yet implemented."
         )
     if model.pad_before_transform:
-        if layer_type == 'conv':
+        if layer_type == "conv":
 
-            if model.model_architecture in ['offset10-model','offset10-model-mse']:
-                cut_indices = [(4,-4),(3,-3),(2,-2),(1,-1),(0,0),(0,0)]
-            
-            elif model.model_architecture in ['offset5-model']:
-                cut_indices = [(1,-2),(0,-1),(0,0),(0,0)]
-            
+            if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
+                cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
+
+            elif model.model_architecture in ["offset5-model"]:
+                cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
+
             else:
-                raise NotImplementedError(f"Padding handling for {model.model_architecture} not implemented yet.")
-        elif layer_type == 'all':
+                raise NotImplementedError(
+                    f"Padding handling for {model.model_architecture} not implemented yet."
+                )
+        elif layer_type == "all":
             raise NotImplementedError("Padding handling not implemented for 'all'.")
         else:
-            raise NotImplementedError(f"Padding handling not implemented for {layer_type}.")
+            raise NotImplementedError(
+                f"Padding handling not implemented for {layer_type}."
+            )
 
-        for i, (key,value) in enumerate( activations.items()):
-            activations[key] = _cut_array(value,cut_indices[i])
+        for i, (key, value) in enumerate(activations.items()):
+            activations[key] = _cut_array(value, cut_indices[i])
 
     return activations
 
@@ -160,51 +163,59 @@ def get_activations_multi_model(
 
     # SINGLE UT
     for i, model in enumerate(models["single_UT"]):
-        activations.update(get_activations_one_model(
-            model = model,
-            data = data,
-            name="single",
-            instance=i,
-            bool_train=False,
-            layer_type=layer_type,
-        ))
+        activations.update(
+            get_activations_one_model(
+                model=model,
+                data=data,
+                name="single",
+                instance=i,
+                bool_train=False,
+                layer_type=layer_type,
+            )
+        )
 
     # MULTI UT
     for i, model in enumerate(
         models["multi_UT"]
     ):  # adds to the previously defined activations
-        activations.update(get_activations_one_model(
-            model = model,
-            data = data,
-            session_id = session_id,
-            name="multi",
-            instance=i,
-            bool_train=False,
-            layer_type=layer_type,
-        ))
+        activations.update(
+            get_activations_one_model(
+                model=model,
+                data=data,
+                session_id=session_id,
+                name="multi",
+                instance=i,
+                bool_train=False,
+                layer_type=layer_type,
+            )
+        )
 
     # SINGLE TR
     for i, model in enumerate(models["single_TR"]):
-        activations.update(get_activations_one_model(
-            model = model,
-            data = data,
-            name="single",
-            instance=i,
-            bool_train=True,
-            layer_type=layer_type,
-        ))
+        activations.update(
+            get_activations_one_model(
+                model=model,
+                data=data,
+                name="single",
+                instance=i,
+                bool_train=True,
+                layer_type=layer_type,
+            )
+        )
 
     # MULTI TR
     for i, model in enumerate(models["multi_TR"]):
-        activations.update(get_activations_one_model(
-            model = model,
-            data = data,
-            session_id = session_id,
-            name="multi",
-            instance=i,
-            bool_train=True,
-            layer_type=layer_type,
-        ))
+        activations.update(
+            get_activations_one_model(
+                model=model,
+                data=data,
+                session_id=session_id,
+                name="multi",
+                instance=i,
+                bool_train=True,
+                layer_type=layer_type,
+            )
+        )
 
     # TODO: Not implemented for other model types (e.g. Unified)
 

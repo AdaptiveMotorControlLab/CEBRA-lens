@@ -365,3 +365,142 @@ def plot_cka_heatmaps(
     plt.subplots_adjust(wspace=0.1, right=0.9)
     fig.suptitle("Similarity between model representations (CKA)", fontsize=16)
     return fig
+
+
+def plot_rdm(
+    rdms: list,
+    titles: list,
+    metric: str = "Normalized Euclidean distance",
+    dataset_label: str = "Visual",
+    cmap: str = "viridis",
+):
+    """
+    Plots Representational Dissimilarity Matrices (RDMs) with given titles and metric.
+    Parameters:
+    -----------
+    rdms : list
+        A list of RDMs to be plotted. Each RDM should be a 2D array-like structure.
+    titles : list
+        A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
+    metric : str, optional
+        The metric used for the RDM, which will be displayed as the colorbar label. Default is "Normalized Euclidean distance".
+    dataset_label : str, optional
+        The label of the dataset, which determines the tick labels. Default is "Visual".
+        Currently supported values are "Visual" and "HPC".
+    cmap : str, optional
+        The color map to use for the plotting.
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plotted RDMs.
+    """
+
+    if len(rdms) != len(titles):
+        raise ValueError("The two lists (rdms and titles) must have the same length.")
+
+    fig, ax = plt.subplots(1, len(rdms))
+    if len(rdms) == 1:
+        ax = [ax]
+
+    y_size = max(6, 3 * len(rdms))
+    x_size = max(6, 5 * len(rdms))
+    fig.set_size_inches(x_size, y_size)
+
+    # Generate tick labels specific to the dataset
+    if dataset_label == "Visual":
+        tick_labels = [str(i) for i in range(0, 930, 30)]
+
+    elif dataset_label == "HPC":
+        # TODO
+        raise NotImplementedError
+    else:
+        raise NotImplementedError(
+            f"RDM Plotting for dataset {dataset_label} not yet implemented. Please use 'Visual' or 'HPC'."
+        )
+
+    for i, rdm in enumerate(rdms):
+
+        cax = ax[i].imshow(rdm, cmap=cmap, aspect="auto")
+        ax[i].set_title(titles[i])
+        num_ticks = len(tick_labels)
+        ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+        ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+        ax[i].set_xticklabels(tick_labels, rotation=90, ha="right")
+        ax[i].set_yticklabels(tick_labels)
+
+    plt.suptitle("Representational Dissimilarity Matrix (RDM)")
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+
+    fig.colorbar(cax, ax=ax, orientation="horizontal", fraction=0.05, label=metric)
+
+    return fig
+
+
+def plot_rdm_correlation(
+    rdm_dict: dict, title: str = "RDM comparison to Oracle", figsize: tuple = (15, 5)
+):
+
+    color_dictionnary = {
+        "single": sns.color_palette("hls", 8)[4],
+        "multi": sns.color_palette("hls", 8)[6],
+        "UT": sns.color_palette("Greys")[5],
+    }
+
+    fig, axs = plt.subplots(1, 1, figsize=figsize)
+
+    for outer_key, outer_value in rdm_dict.items():
+
+        for inner_key, outer_list in outer_value.items():
+
+            layer_values = []
+
+            if inner_key == "TR":
+                color = color_dictionnary[outer_key]
+            elif inner_key == "UT":
+                color = color_dictionnary["UT"]
+            else:
+                raise NotImplementedError(
+                    f"Color not implement for {inner_key}. It should be either 'UT' or 'TR'."
+                )
+
+            for i, inner_list in enumerate(outer_list):
+
+                values = [arr[1] for arr in inner_list]
+                layer_values.append(values)
+
+                sns.lineplot(
+                    x=np.arange(1, len(values) + 1),
+                    y=values,
+                    linestyle="-",
+                    marker="D",
+                    color=color,
+                    alpha=0.5,
+                    label=(
+                        f"{outer_key} - {inner_key}" if i == 0 else ""
+                    ),  # Label only the first line of each key
+                )
+            values = np.array(values)
+
+            if values.ndim == 1:
+                mean_values = values
+            else:
+                mean_values = np.mean(values, axis=0)
+
+            print(mean_values)
+
+            sns.lineplot(
+                x=np.arange(1, len(mean_values) + 1),
+                y=values,
+                linestyle="-",
+                marker="D",
+                color=color,
+                alpha=1,
+                label=(
+                    f"Mean {outer_key} - {inner_key}" if i == 0 else ""
+                ),  # Label only the first line of each key
+            )
+            plt.title(title, fontsize=15)
+            sns.despine()
+
+    return fig

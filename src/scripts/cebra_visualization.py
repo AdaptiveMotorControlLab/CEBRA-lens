@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def main(
     activations_filepath="data/activations/offset10.pkl",
     session_id=3,
-    ):
+):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -25,14 +25,13 @@ def main(
     with open(activations_filepath, "rb") as f:
         activations_dict = pickle.load(f)
 
-   
     fig1 = lens.plotting.compare_embeddings_layers(
         activations_dict["single"]["UT"][0],
         activations_dict["single"]["TR"][0],
         labels=train_label,
         data_label="Visual",
         sample_plot=activations_dict["single"]["TR"][0][0].shape[1],
-        comparison_labels=("CEBRA embeddings",["Untrained Single","Trained Single"])
+        comparison_labels=("CEBRA embeddings", ["Untrained Single", "Trained Single"]),
     )
     fig2 = lens.plotting.compare_embeddings_layers(
         activations_dict["multi"]["UT"][0],
@@ -40,8 +39,8 @@ def main(
         labels=train_label,
         data_label="Visual",
         sample_plot=activations_dict["multi"]["TR"][0][0].shape[1],
-        comparison_labels = ("CEBRA embeddings",["Untrained Multi","Trained Multi"])
-    )  
+        comparison_labels=("CEBRA embeddings", ["Untrained Multi", "Trained Multi"]),
+    )
     print(len(activations_dict["multi"]["TR"][0][0]))
     print(activations_dict["multi"]["TR"][0][0].shape)
     fig3 = lens.plotting.compare_embeddings_layers(
@@ -78,5 +77,4 @@ if __name__ == "__main__":
     main(
         args.activations_filepath,
         args.session_id,
-
     )

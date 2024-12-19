@@ -7,7 +7,7 @@ import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 
 
-def main(model_name, session_id, filename, bool_plot_embeddings,layer_type):
+def main(model_name, session_id, filename, bool_plot_embeddings, layer_type):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--layer_type",
         type=str,
-        default='conv',
+        default="conv",
         help="Type of layer: e.g. 'conv', 'all'",
     )
 
@@ -134,5 +134,5 @@ if __name__ == "__main__":
         args.session_id,
         args.filename,
         args.bool_plot_embeddings,
-        args.layer_type
+        args.layer_type,
     )
