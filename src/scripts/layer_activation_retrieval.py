@@ -7,7 +7,7 @@ import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 
 
-def main(model_name, session_id, filename, bool_plot_embeddings):
+def main(model_name, session_id, filename, bool_plot_embeddings,layer_type):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -77,16 +77,16 @@ def main(model_name, session_id, filename, bool_plot_embeddings):
     print("Retrieving layer activations...")
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
-    activations2 = {}
-    activations2 = lens.activations.get_activations_multi_model(
+    activations = {}
+    activations = lens.activations.get_activations_multi_model(
         models=models,
         data=train_data,
         session_id=session_id,
-        activations=activations2,
-        layer_type="conv",
+        activations=activations,
+        layer_type=layer_type,
     )
 
-    activations_dict = lens.activations.process_activations(activations2)
+    activations_dict = lens.activations.process_activations(activations)
 
     with open(f"{filename}.pkl", "wb") as f:
         pickle.dump(activations_dict, f)
@@ -117,8 +117,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--bool_plot_embeddings",
         type=int,
-        default=1,
+        default=0,
         help="Plots the output embeddings of the models (0 or 1)",
+    )
+    parser.add_argument(
+        "--layer_type",
+        type=str,
+        default='conv',
+        help="Type of layer: e.g. 'conv', 'all'",
     )
 
     args = parser.parse_args()
@@ -128,4 +134,5 @@ if __name__ == "__main__":
         args.session_id,
         args.filename,
         args.bool_plot_embeddings,
+        args.layer_type
     )

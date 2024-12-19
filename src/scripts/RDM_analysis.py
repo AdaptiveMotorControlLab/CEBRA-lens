@@ -14,8 +14,10 @@ from ..preprocessing.CEBRA_preprocessing.data_utils import *
 from ..preprocessing.CEBRA_preprocessing.quantification_utils import *
 import argparse
 
+from GithubFolder.src.cebra_lens import cebra_lens as lens
 
-def main(filename, bool_comput, saving_filename, num_trained_models, session_id):
+
+def main(filepath = "data/activations/offset10.pkl", bool_comput = 0, saving_filepath =  "data/RDM/offset10.pkl", num_trained_models = 5, session_id = 3):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -30,23 +32,19 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
     print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
     # LOAD DATA
-    train_datas, valid_datas, discrete_labels_train, discrete_labels_val = (
-        get_single_session_datasets()
+    train_datas, _, discrete_labels_train, _ = (
+        lens.utils_allen.get_single_session_datasets()
     )
 
     train_data = train_datas[session_id].neural
-    valid_data = valid_datas[session_id].neural
     train_label = discrete_labels_train[session_id]
-    valid_label = discrete_labels_val[session_id]
 
-    with open(os.path.join("data/activations", f"{filename}.pkl"), "rb") as f:
+    with open(filepath, "rb") as f:
         activations_dict = pickle.load(f)
 
     #####################################
     ####### RDM MATRIX CALCULATION ######
     #####################################
-
-    directory = f"data/RDM/"
 
     if bool_comput:
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -74,7 +72,7 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
         ########################################
         ####### Neural v MultiSessino E.G ######
         ########################################
-
+        
         # Neural
         neural_data = train_data[list(idxs.flatten()), :]
 
@@ -204,7 +202,7 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
             "multi": all_corrs_multi,
         }
 
-        with open(os.path.join(directory, f"{saving_filename}.pkl"), "wb") as f:
+        with open(saving_filepath, "wb") as f:
             pickle.dump(all_corrs, f)
             print(
                 "\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
@@ -219,7 +217,7 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
         print("Loading RDM matrices...")
         print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-        with open(os.path.join(directory, f"{saving_filename}.pkl"), "rb") as f:
+        with open(saving_filepath, "rb") as f:
             all_corrs = pickle.load(f)
 
     # PLOTTING
@@ -290,7 +288,7 @@ def main(filename, bool_comput, saving_filename, num_trained_models, session_id)
 
     plt.xlabel("Depth of layer")
     plt.ylabel("Correlation")
-    plt.title(f"Correlation to Oracle RDM for {filename}")
+    plt.title(f"Correlation to Oracle RDM for {saving_filepath.split('/')[-1].split(".")[0]}")
     sns.despine()
     plt.legend()
     plt.show()
@@ -300,9 +298,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
-        "--filename",
+        "--filepath",
         type=str,
-        default="offset10",
+        default=" data/activations/offset10.pkl",
         help="name of the activations (assuming they are under data/activations)",
     )
 
@@ -314,7 +312,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--saving_filename",
+        "--saving_filepath",
         type=str,
         default=None,
         help="name of the file where to save the RDM matrices (it will be under data/RDM/saving_filename)",
@@ -336,11 +334,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.saving_filename is None:
-        args.saving_filename = args.filename
+    if args.saving_filepath is None:
+        filename = args.filepath.split("/")[-1]
+        args.saving_filepath = os.path.join("data/CKA/", filename)
+        
     print("INPUT: ", args)
     main(
-        args.filename,
+        args.filepath,
         args.bool_comput,
         args.saving_filename,
         args.num_trained_models,

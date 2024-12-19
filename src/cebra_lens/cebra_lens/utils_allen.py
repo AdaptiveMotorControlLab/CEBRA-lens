@@ -6,7 +6,7 @@ import cebra.datasets
 import copy
 
 
-def model_loader(model_name):
+def model_loader(model_name: str) -> dict:
     """
     Load and categorize models based on their training status and session type.
     Args:

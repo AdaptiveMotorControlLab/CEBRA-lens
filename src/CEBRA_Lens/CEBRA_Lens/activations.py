@@ -3,20 +3,47 @@
 import cebra
 import torch
 import torch.nn as nn
+import numpy as np
+
+def _cut_array(array: np.ndarray, cut_indices: tuple):
+    """
+    Slices the input array based on the provided cut indices.
+    This is used to remove the padding from activations in get_activations_one_model.
+    Parameters:
+    -----------
+    array : numpy.ndarray
+        The input array to be sliced.
+    cut_indices : tuple
+        A tuple containing two integers, start and end indices for slicing.
+
+    Returns:
+    --------
+    numpy.ndarray
+        The sliced array. If both start and end indices are 0, the whole array is returned.
+    """
+
+    start = cut_indices[0]
+    end = cut_indices[1]
+    if start == 0 and end == 0:
+        # If both start and end are 0, take the whole array
+        sliced_array = array
+    else:
+        # Otherwise, slice the array
+        sliced_array = array[:,start:end]
+    return sliced_array
 
 
 def get_activations_one_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     data: torch.Tensor,
     session_id: int = -1,
-    activations: dict = {},
     name="single",
     instance: int = 0,
     bool_train: bool = False,
     layer_type: str = "conv",
 ) -> (
     dict
-):  # what should be the type for the model ? I saw cebra.integrations.sklearn.cebra.CEBRA but seems excessively long
+):
     """
     Extracts activations from a single model layer.
     This function extracts activations from the specified layer of a model and stores them in a dictionary.
@@ -30,8 +57,6 @@ def get_activations_one_model(
     session_id : int, optional
         The session identifier used for selecting the appropriate model in multi-session solvers.
         For single-session, no need to input it.
-    activations : dict
-        A dictionary where the activations will be stored. It is passed as an argument to directly add to a previously defined activations dictionary.
     instance : int
         The instance number for the model, used to label the activations.
     bool_train : bool
@@ -43,8 +68,11 @@ def get_activations_one_model(
     --------
     activations : dict
         A dictionary containing the activations from the layers of the model.
+    Notes:
+    --------
+    If the model includes padding, the padding is removed from the activations for easier downstream use.
     """
-
+    activations = {}
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
         activations = _attach_hooks(
@@ -77,6 +105,24 @@ def get_activations_one_model(
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
+    if model.pad_before_transform:
+        if layer_type == 'conv':
+
+            if model.model_architecture in ['offset10-model','offset10-model-mse']:
+                cut_indices = [(4,-4),(3,-3),(2,-2),(1,-1),(0,0),(0,0)]
+            
+            elif model.model_architecture in ['offset5-model']:
+                cut_indices = [(1,-2),(0,1),(0,0),(0,0)]
+            
+            else:
+                raise NotImplementedError(f"Padding handling for {model.model_architecture} not implemented yet.")
+        elif layer_type == 'all':
+            raise NotImplementedError("Padding handling not implemented for 'all'.")
+        else:
+            raise NotImplementedError(f"Padding handling not implemented for {layer_type}.")
+
+        for i, (key,value) in enumerate( activations.items()):
+            activations[key] = _cut_array(value,cut_indices[i])
 
     return activations
 
@@ -114,55 +160,51 @@ def get_activations_multi_model(
 
     # SINGLE UT
     for i, model in enumerate(models["single_UT"]):
-        activations = get_activations_one_model(
-            model,
-            data,
-            activations,
+        activations.update(get_activations_one_model(
+            model = model,
+            data = data,
             name="single",
             instance=i,
             bool_train=False,
             layer_type=layer_type,
-        )
+        ))
 
     # MULTI UT
     for i, model in enumerate(
         models["multi_UT"]
     ):  # adds to the previously defined activations
-        activations = get_activations_one_model(
-            model,
-            data,
-            session_id,
-            activations,
+        activations.update(get_activations_one_model(
+            model = model,
+            data = data,
+            session_id = session_id,
             name="multi",
             instance=i,
             bool_train=False,
             layer_type=layer_type,
-        )
+        ))
 
     # SINGLE TR
     for i, model in enumerate(models["single_TR"]):
-        activations = get_activations_one_model(
-            model,
-            data,
-            activations,
+        activations.update(get_activations_one_model(
+            model = model,
+            data = data,
             name="single",
             instance=i,
             bool_train=True,
             layer_type=layer_type,
-        )
+        ))
 
     # MULTI TR
     for i, model in enumerate(models["multi_TR"]):
-        activations = get_activations_one_model(
-            model,
-            data,
-            session_id,
-            activations,
+        activations.update(get_activations_one_model(
+            model = model,
+            data = data,
+            session_id = session_id,
             name="multi",
             instance=i,
             bool_train=True,
             layer_type=layer_type,
-        )
+        ))
 
     # TODO: Not implemented for other model types (e.g. Unified)
 
@@ -170,7 +212,7 @@ def get_activations_multi_model(
 
 
 # Function to create a hook that stores the activations in the dictionary
-def _get_activation(name, activations: dict):
+def _get_activation(name: str, activations: dict):
     def hook(model, input, output):
         activations[name] = output.detach().squeeze().numpy()
 
