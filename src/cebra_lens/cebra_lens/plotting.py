@@ -305,7 +305,7 @@ def plot_cka_heatmaps(
     Parameters:
     -----------
     cka_matrices : dict
-        Dictionary of CKA matrices.
+        Dictionary of CKA matrices where the keys are the comparison names and the values the matrices.
     show_cbar : bool
         If True, shows the color bar.
     cbar_label : str
@@ -440,7 +440,25 @@ def plot_rdm(
 def plot_rdm_correlation(
     rdm_dict: dict, title: str = "RDM comparison to Oracle", figsize: tuple = (15, 5)
 ):
+    """
+    Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
 
+    Parameters:
+    -----------
+    rdm_dict : dict
+        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
+        be dictionaries containing RDMs for different layers.
+    title : str, optional
+        The title for the plot (default is "RDM comparison to Oracle").
+    figsize : tuple, optional
+        A tuple representing the figure size (default is (15, 5)).
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the RDM comparison plot.
+    """
+    # TODO: make the color handling better. How ? we'll see...
     color_dictionnary = {
         "single": sns.color_palette("hls", 8)[4],
         "multi": sns.color_palette("hls", 8)[6],
@@ -500,5 +518,82 @@ def plot_rdm_correlation(
             )
             plt.title(title, fontsize=15)
             sns.despine()
+
+    return fig
+
+
+def plot_decoding(
+    results_dict: dict,
+    palette_tr: str = "hls",
+    palette_ut: str = "Greys",
+    dataset_label="Visual",
+):
+    """
+    Plots the decoding accuracy across multiple models.
+
+    Parameters:
+    -----------
+    results_dict : dict
+        A dictionary where the keys are model names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
+    palette_tr : str, optional
+        The color palette for trained models (default is "hls").
+    palette_ut : str, optional
+        The color palette for untrained models (default is "Greys").
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure displaying the comparison of decoding accuracy across models.
+    """
+
+    trained_labels = [name for name in list(results_dict.keys()) if "_TR" in name]
+    untrained_labels = [name for name in list(results_dict.keys()) if "_UT" in name]
+
+    palette_tr = sns.color_palette(palette_tr, len(trained_labels))
+    palette_ut = sns.color_palette(palette_ut, len(untrained_labels))
+
+    fig, ax = plt.subplots(figsize=(len(results_dict) * 2, 6))
+
+    # X positions for each model type
+    x_positions = list(range(1, len(results_dict) + 1))
+
+    ut_counter = 0
+    tr_counter = 0
+    if dataset_label == "Visual":
+        for i, (key, results) in enumerate(results_dict.items()):
+            acc = results[:, 2]  # accuracy
+            mean_error = np.mean(acc)
+
+            # Plot each instance
+            if key in untrained_labels:
+                color = palette_ut[ut_counter]
+                ut_counter += 1
+            else:
+                color = palette_tr[tr_counter]
+                tr_counter += 1
+
+            ax.scatter(np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3)
+
+            # Plot the means
+            ax.scatter(
+                x_positions[i],
+                mean_error,
+                color=color,
+                s=50,
+                label=f"Mean {key}",
+                zorder=5,
+            )
+
+        ax.set_xlabel("Model")
+        ax.set_ylabel("Accuracy (%)")
+        ax.set_title("Comparison of Accuracy Across Models")
+        ax.set_xticks(x_positions)
+        ax.set_xticklabels(results_dict.keys())
+        ax.legend()
+        sns.despine()
+    else:
+        raise NotImplementedError(
+            f"Plotting of {dataset_label} is not handled yet. Only 'Visual' is for now. "
+        )
 
     return fig

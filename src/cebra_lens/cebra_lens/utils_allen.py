@@ -4,6 +4,7 @@ import torch
 import cebra
 import cebra.datasets
 import copy
+import sklearn.metrics
 
 
 def model_loader(model_name: str) -> dict:
@@ -212,3 +213,83 @@ def _add_gaussian_noise(neural_data, sigma: float = 2):
 def _add_shot_noise(neural_data, scale_factor: float = 1.0):
     # Neural data * scale_factor = Poisson lambda
     return torch.poisson(neural_data * scale_factor) / scale_factor
+
+
+def _quantize_acc(frame_diff, time_window=1):
+
+    true = (abs(frame_diff) < (time_window * 30)).sum()
+    return true / len(frame_diff) * 100
+
+
+def create_sequences(embedding, labels, seq_len=10):
+    sequences = []
+    sequence_labels = []
+    for i in range(len(embedding) - seq_len):
+        seq = embedding[i : i + seq_len]
+        # Label is the frame number following the sequence
+        label = labels[i + seq_len]
+        sequences.append(seq)
+        sequence_labels.append(label)
+    return np.array(sequences), np.array(sequence_labels)
+
+
+def decoding_frames(
+    embedding_train, embedding_test, label_train, label_test, time_window=1, seq_len=1
+):
+    """1-frame decoding.
+
+    TODO(celia): Implement n-frames decoding. Started but not functional yet.
+    """
+    if seq_len > 1:
+        embedding_train, label_train = create_sequences(
+            embedding_train, label_train, seq_len
+        )
+        embedding_test, label_test = create_sequences(
+            embedding_test, label_test, seq_len
+        )
+
+    params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
+    errs = []
+    for n in params:
+        train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
+        train_valid_idx = int(len(embedding_train) / 9 * 8)
+        if seq_len > 1:
+            train_decoder.fit(
+                embedding_train[:train_valid_idx].reshape(
+                    -1, seq_len * embedding_train.shape[2]
+                ),
+                label_train[:train_valid_idx],
+            )
+            pred = train_decoder.predict(
+                embedding_train[train_valid_idx:].reshape(
+                    -1, seq_len * embedding_train.shape[2]
+                )
+            )
+        else:
+            train_decoder.fit(
+                embedding_train[:train_valid_idx], label_train[:train_valid_idx]
+            )
+            pred = train_decoder.predict(embedding_train[train_valid_idx:])
+        err = label_train[train_valid_idx:] - pred
+        errs.append(abs(err).sum())
+
+    test_decoder = cebra.KNNDecoder(
+        n_neighbors=params[np.argmin(errs)], metric="cosine"
+    )
+    if seq_len > 1:
+        test_decoder.fit(
+            embedding_train.reshape(-1, seq_len * embedding_train.shape[2]), label_train
+        )
+        frame_pred = test_decoder.predict(
+            embedding_test.reshape(-1, seq_len * embedding_test.shape[2])
+        )
+    else:
+        test_decoder.fit(embedding_train, label_train)
+        frame_pred = test_decoder.predict(embedding_test)
+
+    frame_errors = frame_pred - label_test
+    test_score = sklearn.metrics.r2_score(label_test, frame_pred)
+    test_err = np.median(abs(frame_errors))
+    test_acc = _quantize_acc(frame_errors, time_window=1)
+
+    return test_score, test_err, test_acc
