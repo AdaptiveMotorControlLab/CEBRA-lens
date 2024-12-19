@@ -487,8 +487,6 @@ def plot_rdm_correlation(
             else:
                 mean_values = np.mean(values, axis=0)
 
-            print(mean_values)
-
             sns.lineplot(
                 x=np.arange(1, len(mean_values) + 1),
                 y=values,
