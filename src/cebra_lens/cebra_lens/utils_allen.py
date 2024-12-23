@@ -1,87 +1,11 @@
-import os
+""" Utils relative to the Visual dataset"""
+
 import numpy as np
 import torch
 import cebra
 import cebra.datasets
 import copy
 import sklearn.metrics
-
-
-def model_loader(model_name: str) -> dict:
-    """
-    Load and categorize models based on their training status and session type.
-    Args:
-        model_name (str): The name of the model to load. This should correspond to a folder
-                          within "FinalModels/VISION/" containing the model files.
-    Returns:
-        dict: A dictionary containing the loaded models categorized into four keys:
-              - "single_UT": List of single-session untrained models.
-              - "multi_UT": List of multi-session untrained models.
-              - "single_TR": List of single-session trained models.
-              - "multi_TR": List of multi-session trained models.
-    """
-
-    # LOAD MODELS
-    models_folder_path = f"FinalModels/VISION/{model_name}"
-    files_list = os.listdir(models_folder_path)
-
-    models_list = []
-    for file in files_list:  # load only the torch models for cpu usage
-        if file.endswith("torch.pt"):
-            models_list.append(file)
-
-    models_list
-    print("Number of models: ", len(models_list))
-    print(models_list)
-
-    models_single_UT = []  # will be all the singles untrained
-    models_multi_UT = []  # will be all the singles untrained
-    models_single_TR = []  # will be all the singles trained
-    models_multi_TR = []  # will be all the multi trained
-
-    for model in models_list:
-
-        loaded_model = cebra.CEBRA.load(
-            os.path.join(models_folder_path, model),
-            backend="torch",
-            map_location=torch.device("cpu"),
-        ).to("cpu")
-        if "_UT" in model:
-            if loaded_model.solver_name_ == "multi-session":
-                models_multi_UT.append(loaded_model)
-            elif loaded_model.solver_name_ == "single-session":
-                models_single_UT.append(loaded_model)
-            else:  # e.g. Unified
-                raise NotImplementedError(
-                    "Only single session and multi session are implemented"
-                )
-
-        # TODO: This should be changed to elif "TR" in model.  This comes from the name of the file when you save the model
-        # Models were trained without this label but it might be clearer in the future
-        else:
-            if loaded_model.solver_name_ == "multi-session":
-                models_multi_TR.append(loaded_model)
-            elif loaded_model.solver_name_ == "single-session":
-                models_single_TR.append(loaded_model)
-            else:  # e.g. Unified
-                raise NotImplementedError(
-                    "Only single session and multi session are implemented"
-                )
-
-    models = {
-        "single_UT": models_single_UT,
-        "multi_UT": models_multi_UT,
-        "single_TR": models_single_TR,
-        "multi_TR": models_multi_TR,
-    }
-
-    # check the models
-    print("# of Single Untrained models: ", len(models["single_UT"]))
-    print("# of Single Trained models: ", len(models["single_TR"]))
-    print("# of Multi Untrained models: ", len(models["multi_UT"]))
-    print("# of Multi Trained models: ", len(models["multi_TR"]))
-
-    return models
 
 
 ########################################################################################################################

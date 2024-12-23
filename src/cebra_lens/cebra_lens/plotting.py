@@ -1,3 +1,5 @@
+"""Functions that handle the plotting (CKA, RDM, layer representation...)"""
+
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
@@ -81,7 +83,7 @@ def plot_embedding_layers(
     labels: np.ndarray,
     title_prefix: str,
     sample_plot: int = 200,
-    data_label="HPC",
+    data_label: str = "Visual",
 ):
     """
     Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
@@ -137,7 +139,7 @@ def compare_embeddings_layers(
     sample_plot=200,
     comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
     data_label="HPC",
-):
+) -> plt.Figure:
     """
     Compare embeddings across layers for two sets of embeddings.
     This function takes two sets of embeddings and compares them layer by layer. It plots the embeddings in a 3D space
@@ -215,7 +217,7 @@ def plot_embeddings_singlevmulti(
     embeddings_untrained_single: np.array,
     embeddings_untrained_multi: np.array,
     y: np.ndarray,
-):
+) -> plt.Figure:
     """
     Plot the 3D embeddings for both single and multi session, comparing untrained and trained models.
     This function plots the 3D embeddings to visually compare the trained and untrained models in both single-session and multi-session scenarios.
@@ -298,7 +300,7 @@ def plot_cka_heatmaps(
     cbar_label: str = "CKA score",
     color_map: str = "magma",
     figsize: tuple = (15, 5),
-):
+) -> plt.Figure:
     """
     This function generates heatmaps for various CKA matrices to visualize the similarity between different sets of embeddings.
 
@@ -373,7 +375,7 @@ def plot_rdm(
     metric: str = "Normalized Euclidean distance",
     dataset_label: str = "Visual",
     cmap: str = "viridis",
-):
+) -> plt.Figure:
     """
     Plots Representational Dissimilarity Matrices (RDMs) with given titles and metric.
     Parameters:
@@ -437,19 +439,22 @@ def plot_rdm(
     return fig
 
 
-def plot_rdm_correlation(
-    rdm_dict: dict, title: str = "RDM comparison to Oracle", figsize: tuple = (15, 5)
-):
+def plot_dict(
+    dictionnary: dict,
+    title: str = "Plotting dict",
+    figsize: tuple = (15, 5),
+    plotting_type: str = "rdm",
+) -> plt.Figure:
     """
-    Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
+    Goes through a dictionnary and plots each model instanciation layer by layer. It is used for distances and rdm for example.
 
     Parameters:
     -----------
-    rdm_dict : dict
-        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
-        be dictionaries containing RDMs for different layers.
+    dictionnary : dict
+        A dictionary containing the values to be plotted, where the values should
+        be dictionaries containing the quantification for different layers. It has the same form as activations_dict.
     title : str, optional
-        The title for the plot (default is "RDM comparison to Oracle").
+        The title for the plot.
     figsize : tuple, optional
         A tuple representing the figure size (default is (15, 5)).
 
@@ -458,7 +463,7 @@ def plot_rdm_correlation(
     fig : matplotlib.figure.Figure
         The generated figure containing the RDM comparison plot.
     """
-    # TODO: make the color handling better. How ? we'll see...
+
     color_dictionnary = {
         "single": sns.color_palette("hls", 8)[4],
         "multi": sns.color_palette("hls", 8)[6],
@@ -467,14 +472,18 @@ def plot_rdm_correlation(
 
     fig, axs = plt.subplots(1, 1, figsize=figsize)
 
-    for outer_key, outer_value in rdm_dict.items():
+    for outer_key, outer_value in dictionnary.items():
 
         for inner_key, outer_list in outer_value.items():
 
             layer_values = []
 
             if inner_key == "TR":
-                color = color_dictionnary[outer_key]
+                if outer_key in list(color_dictionnary.keys()):
+                    color = color_dictionnary[outer_key]
+                else:
+                    f"Color not implement for {outer_key}. It should be either 'single' or 'multi'."
+
             elif inner_key == "UT":
                 color = color_dictionnary["UT"]
             else:
@@ -483,8 +492,15 @@ def plot_rdm_correlation(
                 )
 
             for i, inner_list in enumerate(outer_list):
+                if plotting_type == "rdm":
+                    values = [arr[1] for arr in inner_list]
+                elif plotting_type == "distance":
+                    values = [arr for arr in inner_list]
+                else:
+                    raise NotImplementedError(
+                        f"Plotting not yet implemented for {plotting_type}. Please use 'rdm' or 'distance'."
+                    )
 
-                values = [arr[1] for arr in inner_list]
                 layer_values.append(values)
 
                 sns.lineplot(
@@ -522,19 +538,73 @@ def plot_rdm_correlation(
     return fig
 
 
+def plot_rdm_correlation(
+    rdm_dict: dict, title: str = "RDM comparison to Oracle", figsize: tuple = (15, 5)
+) -> plt.Figure:
+    """
+    Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
+
+    Parameters:
+    -----------
+    rdm_dict : dict
+        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
+        be dictionaries containing RDMs for different layers.
+    title : str, optional
+        The title for the plot (default is "RDM comparison to Oracle").
+    figsize : tuple, optional
+        A tuple representing the figure size (default is (15, 5)).
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the RDM comparison plot.
+    """
+
+    return plot_dict(rdm_dict, title=title, figsize=figsize, plotting_type="rdm")
+
+
+def plot_distance(
+    distance_dict: dict,
+    title: str = "Inter-repetition distance",
+    figsize: tuple = (15, 5),
+) -> plt.Figure:
+    """
+    Plots the distances across layer.
+
+    Parameters:
+    -----------
+    distance_dict : dict
+        A dictionary containing the distances to be plotted. Obtained by using lens.quantification.distance.compute_distance_layers, where values should
+        be dictionaries containing distances for different layers.  The format is the same as the activations_dict.
+    title : str, optional
+        The title for the plot (default is "Inter-repetition distance").
+    figsize : tuple, optional
+        A tuple representing the figure size (default is (15, 5)).
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the RDM comparison plot.
+    """
+
+    return plot_dict(
+        distance_dict, title=title, figsize=figsize, plotting_type="distance"
+    )
+
+
 def plot_decoding(
     results_dict: dict,
     palette_tr: str = "hls",
     palette_ut: str = "Greys",
     dataset_label="Visual",
-):
+) -> plt.Figure:
     """
     Plots the decoding accuracy across multiple models.
 
     Parameters:
     -----------
     results_dict : dict
-        A dictionary where the keys are model names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
+        A dictionary where the keys are model names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models. The names must contain either TR or UT: e.g. multi1_TR, single3_UT
     palette_tr : str, optional
         The color palette for trained models (default is "hls").
     palette_ut : str, optional

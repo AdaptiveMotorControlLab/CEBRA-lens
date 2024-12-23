@@ -26,7 +26,7 @@ def main(model_name, session_id, bool_plot_loss):
     test_label = discrete_labels_val[session_id]
 
     # LOAD MODELS
-    models = lens.utils_allen.model_loader(model_name=model_name)
+    models = lens.model.model_loader(model_name=model_name)
 
     if bool_plot_loss:
         print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")

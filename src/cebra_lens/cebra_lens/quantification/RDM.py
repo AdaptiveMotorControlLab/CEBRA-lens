@@ -1,57 +1,11 @@
+"""All the functions relative to the Representation Dissimilarity Matrix (RDM) calculation"""
+
 import numpy as np
-from random import sample
 from scipy.linalg import block_diag
 from scipy.spatial.distance import correlation, pdist, squareform
 from tqdm import tqdm
+from .misc import discrete_binning
 import torch
-
-
-def _rdm_binning(
-    train_data: torch.Tensor, train_label: torch.Tensor, dataset_label: str = "Visual"
-) -> np.ndarray:
-    """
-    Bins the training data based on the provided labels, creating indices for sampling. Used to discretize a continuous input for RDM.
-
-    Parameters:
-    -----------
-    train_data : torch.Tensor
-        The training data array of shape (num_samples, num_features).
-    train_label : torch.Tensor
-        The array of labels corresponding to the training data.
-    dataset_label : str, optional
-        The dataset type, either 'Visual' or 'HPC'. Default is 'Visual'.
-
-    Returns:
-    --------
-    np.ndarray
-        An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
-    """
-
-    # BINNING
-    if dataset_label == "Visual":
-        num_bins = 30
-        num_samples = 200 if len(train_data) / 30 >= 200 else int(len(train_data) / 30)
-        step_distance = 30
-        idxs = np.zeros((num_bins, num_samples))
-
-        j = 0
-        for i in range(num_bins):
-
-            full_idxs = np.where(
-                (train_label[:] >= j * step_distance)
-                & (train_label[:] < (j + 1) * step_distance)
-            )[0]
-            idxs[i, :] = sample(list(full_idxs), num_samples)
-            j = j + 1
-    elif dataset_label == "HPC":
-        # TODO: implement this
-        raise NotImplementedError("not implemented. A FAIRE")
-    else:
-        raise NotImplementedError(
-            f"Binning not implemented for {dataset_label}. Use 'Visual' or 'HPC'."
-        )
-
-    return idxs.astype(int)
 
 
 def create_oracle_rdm(dataset_label: str = "Visual") -> np.ndarray:
@@ -126,7 +80,7 @@ def compute_single_RDM_layers(
     ):  # if only one activation is passed instead of a list of arrays
         activations = [activations]
 
-    idxs = _rdm_binning(
+    idxs = discrete_binning(
         train_data=train_data, train_label=train_label, dataset_label=dataset_label
     )
 

@@ -2,6 +2,7 @@ import cebra
 import torch
 import numpy as np
 from ..utils_allen import decoding_frames
+from ..utils_hpc import decoding_pos_dir
 
 
 def decode_model(
@@ -35,8 +36,7 @@ def decode_model(
 
     Returns:
     --------
-    results : tuple if comes from Visual. Can be different formats depending on the decoding. (#TODO one we do HPC maybe we can have a standard format)
-        The decoding coming from the decoding function of the data type.
+    np.ndarray : Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
     """
 
     if model.solver_name_ == "multi-session":
@@ -57,6 +57,13 @@ def decode_model(
     if dataset_label == "Visual":
 
         results = decoding_frames(
+            embedding_train=train,
+            label_train=train_label,
+            embedding_test=test,
+            label_test=test_label,
+        )
+    elif dataset_label == "HPC":
+        results = decoding_pos_dir(
             embedding_train=train,
             label_train=train_label,
             embedding_test=test,

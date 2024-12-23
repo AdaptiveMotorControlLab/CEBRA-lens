@@ -1,4 +1,5 @@
-"All relevant functions for CKA analysis."
+"""All relevant functions for Centered Kernel Alignment (CKA) analysis."""
+
 from tqdm import tqdm
 import numpy as np
 
