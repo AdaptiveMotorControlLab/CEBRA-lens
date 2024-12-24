@@ -121,10 +121,10 @@ def decode_models(
             results[i, :] = np.array(
                 decode_model(
                     model=model,
-                    X=train_data,
-                    y=train_label,
-                    valid_datas=test_data,
-                    discrete_labels_val=test_label,
+                    train_data=train_data,
+                    train_label=train_label,
+                    test_data=test_data,
+                    test_label=test_label,
                     session_id=session_id,
                     dataset_label=dataset_label,
                 )

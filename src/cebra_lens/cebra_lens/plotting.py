@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
 import seaborn as sns
-
+import torch
 
 def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
     r_ind = label[:, 1] == 1
@@ -76,6 +76,57 @@ def plot_allen(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
 
     return ax
 
+def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_plot: int=100 ,cmap:str = "magma", title: str = "Trained activations", figsize: tuple = (10,20)):
+    """
+    Plots the activations of a neural network model.
+    Parameters:
+    -----------
+    input_data : torch.Tensor
+        The input data tensor to be plotted.
+    embeddings : list
+        A list of np.ndarrays representing the embeddings/activations of each layer.
+    sample_plot : int, optional
+        The number of samples to plot along the time axis (default is 100).
+    cmap : str, optional
+        The colormap to use for the embeddings (default is "magma").
+    title : str, optional
+        The title of the plot (default is "Trained activations").
+    figsize : tuple, optional
+        The size of the figure (default is (10, 20)).
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The matplotlib figure object containing the plots.
+    """
+    
+    num_layers = len(embeddings)
+
+    # Set up the figure
+    fig, axes = plt.subplots(num_layers + 1, 1, figsize=figsize)
+    fig.suptitle(title, fontsize=20)
+
+    # Plot the input data
+    axes[0].imshow(input_data.T[:, 0:sample_plot], aspect='auto')
+    axes[0].set_title("Input Data")
+    axes[0].set_ylabel("Channel #")
+    axes[0].set_xlabel("Time")
+    axes[0].grid(False)
+
+    # Plot the embeddings for each layer
+    for i in range(num_layers):
+        axes[i + 1].imshow(embeddings[i][:, 0:sample_plot], cmap=cmap, aspect='auto')
+        if i == num_layers-1:
+            layer_title = "Output Layer"
+        else:
+            layer_title = f"Layer {i + 1}"
+        axes[i + 1].set_title(layer_title)
+        axes[i + 1].set_ylabel("Unit #")
+        axes[i + 1].set_xlabel("Time")
+        axes[i + 1].grid(False)
+
+    # Adjust layout for better spacing
+    plt.tight_layout()
+    return fig
 
 def plot_embedding_layers(
     axs,

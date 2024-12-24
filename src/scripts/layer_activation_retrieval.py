@@ -1,4 +1,4 @@
-# run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --filename offset10alllayers
+# run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --activations_filepath data/activations/offset10alllayers.pkl
 # attention: need to be one step above the GithubFolder to have data and finalmodels
 
 import pickle
@@ -7,7 +7,7 @@ import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 
 
-def main(model_name, session_id, filename, bool_plot_embeddings, layer_type):
+def main(model_name, session_id, activations_filepath, bool_plot_embeddings, layer_type):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -88,7 +88,7 @@ def main(model_name, session_id, filename, bool_plot_embeddings, layer_type):
 
     activations_dict = lens.activations.process_activations(activations)
 
-    with open(f"{filename}.pkl", "wb") as f:
+    with open(activations_filepath, "wb") as f:
         pickle.dump(activations_dict, f)
         print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         print("Layer activations saved!")
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         help="session id for the analysis, used to retrieve the correct data and multi-session model",
     )
     parser.add_argument(
-        "--filename", type=str, default="offset10", help="filename of the activations"
+        "--filepath", type=str, default="data/activations/offset10.pkl", help="filename of the activations"
     )
     parser.add_argument(
         "--bool_plot_embeddings",
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     main(
         args.model_name,
         args.session_id,
-        args.filename,
+        args.activations_filepath,
         args.bool_plot_embeddings,
         args.layer_type,
     )
