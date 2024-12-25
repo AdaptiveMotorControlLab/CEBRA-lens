@@ -8,14 +8,14 @@ from .misc import discrete_binning
 import torch
 
 
-def create_oracle_rdm(dataset_label: str = "Visual") -> np.ndarray:
+def create_oracle_rdm(dataset_label: str = "visual") -> np.ndarray:
     """
     Creates the Oracle RDM for the specified dataset.
 
     Parameters:
     -----------
     dataset_label : str, optional
-        The dataset type, either 'Visual' or 'HPC'. Default is 'Visual'.
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
 
     Returns:
     --------
@@ -23,7 +23,7 @@ def create_oracle_rdm(dataset_label: str = "Visual") -> np.ndarray:
         The Oracle RDM as a squareform distance matrix.
     """
 
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
         # Create Oracle RDM.
         one_class = np.ones((200, 200))
         all_classes = [one_class for _ in range(30)]
@@ -32,22 +32,22 @@ def create_oracle_rdm(dataset_label: str = "Visual") -> np.ndarray:
     elif dataset_label == "HPC":
         # TODO: complete this
         raise NotImplementedError(
-            f"Oracle RDM not defined for {dataset_label}. Please use 'Visual'"
+            f"Oracle RDM not defined for {dataset_label}. Please use 'visual'"
         )
 
     else:
         raise NotImplementedError(
-            f"Oracle RDM not defined for {dataset_label}. Please use 'Visual'"
+            f"Oracle RDM not defined for {dataset_label}. Please use 'visual'"
         )
 
     return oracle_rdm
 
 
 def compute_single_RDM_layers(
-    train_data: torch.Tensor,
-    train_label: torch.Tensor,
+    data: torch.Tensor,
+    label: torch.Tensor,
     activations: list,
-    dataset_label: str = "Visual",
+    dataset_label: str = "visual",
     metric: str = "correlation",
     bool_oracle: bool = "True",
 ) -> list:
@@ -56,14 +56,14 @@ def compute_single_RDM_layers(
 
     Parameters:
     -----------
-    train_data : torch.Tensor
-        The training data array of shape (num_samples, num_features).
-    train_label :torch.Tensor
-        The array of labels corresponding to the training data.
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label :torch.Tensor
+        The array of labels corresponding to the data.
     activations : list
         A list of activations, each being an array of shape (num_neurons, num_samples).
     dataset_label : str, optional
-        The dataset type, either 'Visual' or 'HPC'. Default is 'Visual'.
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
         The distance metric to use for computing the RDMs. Default is 'correlation'.
     bool_oracle : bool, optional
@@ -80,9 +80,7 @@ def compute_single_RDM_layers(
     ):  # if only one activation is passed instead of a list of arrays
         activations = [activations]
 
-    idxs = discrete_binning(
-        train_data=train_data, train_label=train_label, dataset_label=dataset_label
-    )
+    idxs = discrete_binning(data=data, label=label, dataset_label=dataset_label)
 
     layer_rdm = []
 
@@ -93,7 +91,7 @@ def compute_single_RDM_layers(
 
         rdm = pdist(layer[idxs.flatten(), :], metric=metric)
         if bool_oracle:
-            oracle_rdm = create_oracle_rdm(dataset_label="Visual")
+            oracle_rdm = create_oracle_rdm(dataset_label="visual")
             correlation = compare_RDM(rdm_1=oracle_rdm, rdm_2=rdm, metric="correlation")
         else:
             correlation = None
@@ -134,10 +132,10 @@ def compare_RDM(
 
 
 def compute_multi_RDM_layers(
-    train_data: torch.Tensor,
-    train_label: torch.Tensor,
+    data: torch.Tensor,
+    label: torch.Tensor,
     activations_dict: dict,
-    dataset_label: str = "Visual",
+    dataset_label: str = "visual",
     metric: str = "correlation",
     bool_oracle: bool = "True",
 ) -> dict:
@@ -146,14 +144,14 @@ def compute_multi_RDM_layers(
 
     Parameters:
     -----------
-    train_data : torch.Tensor
-        The training data array of shape (num_samples, num_features).
-    train_label : torch.Tensor
-        The array of labels corresponding to the training data.
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label : torch.Tensor
+        The array of labels corresponding to the data.
     activations_dict : dict
         A dictionary containing activations for different models.
     dataset_label : str, optional
-        The dataset type, either 'Visual' or 'HPC'. Default is 'Visual'.
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
         The distance metric to use for computing the RDMs. Default is 'correlation'.
     bool_oracle : bool, optional
@@ -177,8 +175,8 @@ def compute_multi_RDM_layers(
                 outer_list, desc=f"Processing {outer_key} {inner_key}"
             ):
                 processed_inner_list = compute_single_RDM_layers(
-                    train_data=train_data,
-                    train_label=train_label,
+                    data=data,
+                    label=label,
                     activations=inner_list,
                     dataset_label=dataset_label,
                     metric=metric,

@@ -1,4 +1,4 @@
-# run using python -m GithubFolder.src.scripts.distance_analysis --activations_filepath data/activations/offset10.pkl --bool_comput 1 --distance_filepath --session_id 3 --dataset_label Visual
+# run using python -m GithubFolder.src.scripts.distance_analysis --activations_filepath data/activations/offset10.pkl --bool_comput 1 --distance_filepath --session_id 3 --dataset_label visual
 import pickle
 from tqdm import tqdm
 import argparse
@@ -11,7 +11,8 @@ def main(
     bool_comput,
     distance_filepath,
     session_id,
-    dataset_label,
+    dataset_label="visual",
+    metric="cosine",
 ):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -42,63 +43,36 @@ def main(
         print("Calculating Distances...")
         print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-        # BINNING
-        idxs = lens.quantification.misc.discrete_binning(
-            train_data=train_data,
-            train_label=train_label,
-            dataset_label=dataset_label,
-            sample_mode="all",
+        interbin_distances_dict = (
+            lens.quantification.distance.compute_multi_distance_layers(
+                data=train_data,
+                label=train_label,
+                activations_dict=activations_dict,
+                dataset_label=dataset_label,
+                metric=metric,
+                distance_label="interbin",
+            )
         )
-        repetition_indices = lens.quantification.misc.repetition_binning(
-            indices=idxs, train_data=train_data, dataset_label=dataset_label
+        intrabin_distances_dict = (
+            lens.quantification.distance.compute_multi_distance_layers(
+                data=train_data,
+                label=train_label,
+                activations_dict=activations_dict,
+                dataset_label=dataset_label,
+                metric=metric,
+                distance_label="intrabin",
+            )
         )
-
-        # meme forme que activations dict.
-        interbin_distances_dict = {}
-        intrabin_distances_dict = {}
-        interrep_distances_dict = {}
-
-        for outer_key, outer_value in activations_dict.items():  # "single" or "multi"
-            interbin_distances_dict[outer_key] = {}
-            intrabin_distances_dict[outer_key] = {}
-            interrep_distances_dict[outer_key] = {}
-
-            for inner_key, outer_list in tqdm(
-                outer_value.items(), desc=f"Processing {outer_key}"
-            ):  # "UT" or "TR"
-                interbin_distances_dict[outer_key][inner_key] = []
-                intrabin_distances_dict[outer_key][inner_key] = []
-                interrep_distances_dict[outer_key][inner_key] = []
-
-                for inner_list in tqdm(
-                    outer_list, desc=f"Processing {outer_key} {inner_key}"
-                ):  # for each model instance
-
-                    interbin_distances_dict[outer_key][inner_key].append(
-                        lens.quantification.distance.compute_distance_layers(
-                            embeddings=inner_list,
-                            indices=idxs,
-                            metric="cosine",
-                            distance_label="interbin",
-                        )
-                    )
-                    intrabin_distances_dict[outer_key][inner_key].append(
-                        lens.quantification.distance.compute_distance_layers(
-                            embeddings=inner_list,
-                            indices=idxs,
-                            metric="cosine",
-                            distance_label="intrabin",
-                        )
-                    )
-                    interrep_distances_dict[outer_key][inner_key].append(
-                        lens.quantification.distance.compute_distance_layers(
-                            embeddings=inner_list,
-                            indices=idxs,
-                            repetition_indices=repetition_indices,
-                            metric="cosine",
-                            distance_label="interrep",
-                        )
-                    )
+        interrep_distances_dict = (
+            lens.quantification.distance.compute_multi_distance_layers(
+                data=train_data,
+                label=train_label,
+                activations_dict=activations_dict,
+                dataset_label=dataset_label,
+                metric=metric,
+                distance_label="interrep",
+            )
+        )
 
         distances = {
             "inter-bin": interbin_distances_dict,
@@ -107,7 +81,9 @@ def main(
         }
         with open(distance_filepath, "wb") as f:
             pickle.dump(distances, f)
+
     else:
+
         with open(distance_filepath, "rb") as f:
             distances = pickle.load(f)
 
@@ -153,8 +129,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset_label",
         type=str,
-        default="Visual",
+        default="visual",
         help="session id for the analysis, used to retrieve the correct data and multi-session model",
+    )
+    parser.add_argument(
+        "--metric",
+        type=str,
+        default="cosine",
+        help="metric to compute the distance: euclidean or cosine",
     )
     args = parser.parse_args()
 

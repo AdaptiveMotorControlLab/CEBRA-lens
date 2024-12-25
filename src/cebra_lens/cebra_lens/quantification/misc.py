@@ -27,9 +27,9 @@ def normalize_minmax(rdm: np.ndarray) -> np.ndarray:
 
 
 def discrete_binning(
-    train_data: torch.Tensor,
-    train_label: torch.Tensor,
-    dataset_label: str = "Visual",
+    data: torch.Tensor,
+    label: torch.Tensor,
+    dataset_label: str = "visual",
     sample_mode: str = "sub_sample",
 ) -> np.ndarray:
     """
@@ -37,12 +37,12 @@ def discrete_binning(
 
     Parameters:
     -----------
-    train_data : torch.Tensor
-        The training data array of shape (num_samples, num_features).
-    train_label : torch.Tensor
-        The array of labels corresponding to the training data.
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label : torch.Tensor
+        The array of labels corresponding to the data.
     dataset_label : str, optional
-        The dataset type, either 'Visual' or 'HPC'. Default is 'Visual'.
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     sample_mode : str, optional
         If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
     Returns:
@@ -52,15 +52,13 @@ def discrete_binning(
     """
 
     # BINNING
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
         num_bins = 30
 
         if sample_mode == "sub_sample":
-            num_samples = (
-                200 if len(train_data) / 30 >= 200 else int(len(train_data) / 30)
-            )
+            num_samples = 200 if len(data) / 30 >= 200 else int(len(data) / 30)
         elif sample_mode == "all":
-            num_samples = int(len(train_data) / 30)
+            num_samples = int(len(data) / 30)
         else:
             raise NotImplementedError(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
@@ -73,8 +71,7 @@ def discrete_binning(
         for i in range(num_bins):
 
             full_idxs = np.where(
-                (train_label[:] >= j * step_distance)
-                & (train_label[:] < (j + 1) * step_distance)
+                (label[:] >= j * step_distance) & (label[:] < (j + 1) * step_distance)
             )[0]
 
             if sample_mode == "sub_sample":
@@ -88,7 +85,6 @@ def discrete_binning(
 
             j = j + 1
     elif dataset_label == "HPC":
-        # TODO: implement this
 
         num_samples = 200
         num_bins = 16
@@ -105,9 +101,9 @@ def discrete_binning(
                 j = 0
 
             full_idxs = np.where(
-                (train_label[:, 0] >= j * step_distance)
-                & (train_label[:, 0] < (j + 1) * step_distance)
-                & (train_label[:, direction] == 1)
+                (label[:, 0] >= j * step_distance)
+                & (label[:, 0] < (j + 1) * step_distance)
+                & (label[:, direction] == 1)
             )[0]
 
             if sample_mode == "sub_sample":
@@ -123,17 +119,17 @@ def discrete_binning(
 
     else:
         raise NotImplementedError(
-            f"Binning not implemented for {dataset_label}. Use 'Visual' or 'HPC'."
+            f"Binning not implemented for {dataset_label}. Use 'visual' or 'HPC'."
         )
 
     return idxs.astype(int)
 
 
 def repetition_binning(
-    indices: np.ndarray, train_data, dataset_label: str = "Visual"
+    indices: np.ndarray, data, dataset_label: str = "visual"
 ) -> list:
 
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
         samples_per_rep = 900
         step = 30
     elif dataset_label == "HPC":
@@ -141,7 +137,7 @@ def repetition_binning(
     else:
         raise NotImplementedError(f"Not yet implemented for {dataset_label}.")
 
-    num_repetitions = train_data.shape[0] // samples_per_rep
+    num_repetitions = data.shape[0] // samples_per_rep
 
     repetition_idxs = []
     for i in range(indices.shape[0]):

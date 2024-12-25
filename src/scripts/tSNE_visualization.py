@@ -49,21 +49,21 @@ def main(
         tSNE_dict["single"]["UT"][0],
         tSNE_dict["single"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label="visual",
         sample_plot=200,
     )
     fig2 = lens.plotting.compare_embeddings_layers(
         tSNE_dict["multi"]["UT"][0],
         tSNE_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label="visual",
         sample_plot=200,
     )
     fig3 = lens.plotting.compare_embeddings_layers(
         tSNE_dict["single"]["TR"][0],
         tSNE_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label="visual",
         sample_plot=200,
         comparison_labels=("tSNE", ["Single", "Multi"]),
     )

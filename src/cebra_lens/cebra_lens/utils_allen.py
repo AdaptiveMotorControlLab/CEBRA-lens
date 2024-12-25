@@ -1,4 +1,4 @@
-""" Utils relative to the Visual dataset"""
+""" Utils relative to the visual dataset"""
 
 import numpy as np
 import torch

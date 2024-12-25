@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 def main(
     activations_filepath="data/activations/offset10.pkl",
     session_id=3,
+    dataset_label="visual",
 ):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -29,7 +30,7 @@ def main(
         activations_dict["single"]["UT"][0],
         activations_dict["single"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label=dataset_label,
         sample_plot=activations_dict["single"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Untrained Single", "Trained Single"]),
     )
@@ -37,7 +38,7 @@ def main(
         activations_dict["multi"]["UT"][0],
         activations_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label=dataset_label,
         sample_plot=activations_dict["multi"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Untrained Multi", "Trained Multi"]),
     )
@@ -47,7 +48,7 @@ def main(
         activations_dict["single"]["TR"][0],
         activations_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label="Visual",
+        data_label=dataset_label,
         sample_plot=activations_dict["multi"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Single", "Multi"]),
     )
@@ -70,6 +71,12 @@ if __name__ == "__main__":
         type=int,
         default=3,
         help="Session ID to use for the analysis.",
+    )
+
+    parser.add_argument(
+        "--dataset_label",
+        type=str,
+        default="visual",
     )
 
     args = parser.parse_args()

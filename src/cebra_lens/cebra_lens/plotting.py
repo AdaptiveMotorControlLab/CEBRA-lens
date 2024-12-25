@@ -6,6 +6,7 @@ import numpy as np
 import seaborn as sns
 import torch
 
+
 def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
     r_ind = label[:, 1] == 1
     l_ind = label[:, 2] == 1
@@ -76,7 +77,15 @@ def plot_allen(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
 
     return ax
 
-def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_plot: int=100 ,cmap:str = "magma", title: str = "Trained activations", figsize: tuple = (10,20)):
+
+def plot_simple_activations(
+    input_data: torch.Tensor,
+    embeddings: list,
+    sample_plot: int = 100,
+    cmap: str = "magma",
+    title: str = "Trained activations",
+    figsize: tuple = (10, 20),
+):
     """
     Plots the activations of a neural network model.
     Parameters:
@@ -98,7 +107,7 @@ def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_pl
     fig : matplotlib.figure.Figure
         The matplotlib figure object containing the plots.
     """
-    
+
     num_layers = len(embeddings)
 
     # Set up the figure
@@ -106,7 +115,7 @@ def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_pl
     fig.suptitle(title, fontsize=20)
 
     # Plot the input data
-    axes[0].imshow(input_data.T[:, 0:sample_plot], aspect='auto')
+    axes[0].imshow(input_data.T[:, 0:sample_plot], aspect="auto")
     axes[0].set_title("Input Data")
     axes[0].set_ylabel("Channel #")
     axes[0].set_xlabel("Time")
@@ -114,8 +123,8 @@ def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_pl
 
     # Plot the embeddings for each layer
     for i in range(num_layers):
-        axes[i + 1].imshow(embeddings[i][:, 0:sample_plot], cmap=cmap, aspect='auto')
-        if i == num_layers-1:
+        axes[i + 1].imshow(embeddings[i][:, 0:sample_plot], cmap=cmap, aspect="auto")
+        if i == num_layers - 1:
             layer_title = "Output Layer"
         else:
             layer_title = f"Layer {i + 1}"
@@ -128,13 +137,14 @@ def plot_simple_activations(input_data: torch.Tensor, embeddings:list, sample_pl
     plt.tight_layout()
     return fig
 
+
 def plot_embedding_layers(
     axs,
     embeddings: list,
     labels: np.ndarray,
     title_prefix: str,
     sample_plot: int = 200,
-    data_label: str = "Visual",
+    dataset_label: str = "visual",
 ):
     """
     Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
@@ -151,8 +161,8 @@ def plot_embedding_layers(
         Title of the plot (e.g., 'single' or 'multi').
     sample_plot : int
         Number of samples to plot from the embeddings (default is 200).
-    data_label : str
-        Label indicating data source. Can be "HPC" or "Visual".
+    dataset_label : str
+        Label indicating data source. Can be "HPC" or "visual".
     """
 
     num_layers = len(embeddings)
@@ -170,13 +180,13 @@ def plot_embedding_layers(
             embedding = embeddings[i]
 
         embedding = embedding[:sample_plot, :]
-        if data_label == "HPC":
+        if dataset_label == "HPC":
             ax = plot_hippocampus(ax, embedding, label)
-        elif data_label == "Visual":
+        elif dataset_label == "visual":
             ax = plot_allen(ax, embedding, label)
         else:
             raise NotImplementedError(
-                f"label {data_label} not yet implemented. Use either Visual or HPC"
+                f"label {dataset_label} not yet implemented. Use either visual or HPC"
             )
 
         ax.set_title(titles[i], y=1)
@@ -189,7 +199,7 @@ def compare_embeddings_layers(
     labels: np.ndarray,
     sample_plot=200,
     comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
-    data_label="HPC",
+    dataset_label="HPC",
 ) -> plt.Figure:
     """
     Compare embeddings across layers for two sets of embeddings.
@@ -207,7 +217,7 @@ def compare_embeddings_layers(
         The number of samples to plot from the embeddings (default is 200).
     comparison_labels : tuple
         A tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings. Example: ('tSNE',["Untrained", "Trained"]).
-    data_label : str, optional
+    dataset_label : str, optional
         A string representing the label for the data being plotted (default is "HPC").
     Returns:
     --------
@@ -240,7 +250,7 @@ def compare_embeddings_layers(
         labels=labels,
         title_prefix=comparison_labels[1][0],
         sample_plot=sample_plot,
-        data_label=data_label,
+        dataset_label=dataset_label,
     )
     plot_embedding_layers(
         axs=axs_2,
@@ -248,7 +258,7 @@ def compare_embeddings_layers(
         labels=labels,
         title_prefix=comparison_labels[1][1],
         sample_plot=sample_plot,
-        data_label=data_label,
+        dataset_label=dataset_label,
     )
 
     fig.suptitle(
@@ -424,8 +434,9 @@ def plot_rdm(
     rdms: list,
     titles: list,
     metric: str = "Normalized Euclidean distance",
-    dataset_label: str = "Visual",
+    dataset_label: str = "visual",
     cmap: str = "viridis",
+    figsize: tuple = None,
 ) -> plt.Figure:
     """
     Plots Representational Dissimilarity Matrices (RDMs) with given titles and metric.
@@ -438,8 +449,8 @@ def plot_rdm(
     metric : str, optional
         The metric used for the RDM, which will be displayed as the colorbar label. Default is "Normalized Euclidean distance".
     dataset_label : str, optional
-        The label of the dataset, which determines the tick labels. Default is "Visual".
-        Currently supported values are "Visual" and "HPC".
+        The label of the dataset, which determines the tick labels. Default is "visual".
+        Currently supported values are "visual" and "HPC".
     cmap : str, optional
         The color map to use for the plotting.
     Returns:
@@ -455,12 +466,17 @@ def plot_rdm(
     if len(rdms) == 1:
         ax = [ax]
 
-    y_size = max(6, 3 * len(rdms))
-    x_size = max(6, 5 * len(rdms))
+    if figsize == None:
+        y_size = max(6, 3 * len(rdms))
+        x_size = max(6, 5 * len(rdms))
+    elif type(figsize) == tuple:
+        x_size = figsize[0]
+        y_size = figsize[1]
+
     fig.set_size_inches(x_size, y_size)
 
     # Generate tick labels specific to the dataset
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
         tick_labels = [str(i) for i in range(0, 930, 30)]
 
     elif dataset_label == "HPC":
@@ -468,7 +484,7 @@ def plot_rdm(
         raise NotImplementedError
     else:
         raise NotImplementedError(
-            f"RDM Plotting for dataset {dataset_label} not yet implemented. Please use 'Visual' or 'HPC'."
+            f"RDM Plotting for dataset {dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
         )
 
     for i, rdm in enumerate(rdms):
@@ -647,7 +663,7 @@ def plot_decoding(
     results_dict: dict,
     palette_tr: str = "hls",
     palette_ut: str = "Greys",
-    dataset_label="Visual",
+    dataset_label="visual",
 ) -> plt.Figure:
     """
     Plots the decoding accuracy across multiple models.
@@ -680,7 +696,7 @@ def plot_decoding(
 
     ut_counter = 0
     tr_counter = 0
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
         for i, (key, results) in enumerate(results_dict.items()):
             acc = results[:, 2]  # accuracy
             mean_error = np.mean(acc)
@@ -714,7 +730,7 @@ def plot_decoding(
         sns.despine()
     else:
         raise NotImplementedError(
-            f"Plotting of {dataset_label} is not handled yet. Only 'Visual' is for now. "
+            f"Plotting of {dataset_label} is not handled yet. Only 'visual' is for now. "
         )
 
     return fig

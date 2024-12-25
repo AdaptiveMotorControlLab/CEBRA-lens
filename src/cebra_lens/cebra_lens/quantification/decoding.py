@@ -12,7 +12,7 @@ def decode_model(
     test_data: torch.Tensor,
     test_label: torch.Tensor,
     session_id: int = -1,
-    dataset_label: str = "Visual",
+    dataset_label: str = "visual",
 ) -> np.ndarray:
     """
     Decodes a single model.
@@ -32,7 +32,7 @@ def decode_model(
     session_id : int, optional
         The session ID for multi-session models. For single-session no need to input it.
     dataset_label : str, optional
-        The type of dataset being used for decoding (default is "Visual").
+        The type of dataset being used for decoding (default is "visual").
 
     Returns:
     --------
@@ -54,7 +54,7 @@ def decode_model(
             f"Solver {model.solver_name_} is not yet implemented."
         )
 
-    if dataset_label == "Visual":
+    if dataset_label == "visual":
 
         results = decoding_frames(
             embedding_train=train,
@@ -71,7 +71,7 @@ def decode_model(
         )
     else:
         raise NotImplementedError(
-            f"Decoding not implemented for {dataset_label}. Please use 'Visual'"
+            f"Decoding not implemented for {dataset_label}. Please use 'visual'"
         )
 
     return np.array(results)
@@ -84,7 +84,7 @@ def decode_models(
     test_data: torch.Tensor,
     test_label: torch.Tensor,
     session_id: int = -1,
-    dataset_label: str = "Visual",
+    dataset_label: str = "visual",
 ) -> dict:
     """
     Decodes multiple models and stores their results in a dictionary.
@@ -104,7 +104,7 @@ def decode_models(
     session_id : int, optional
         The session ID for multi-session models (default is -1 for single-session models).
     dataset_label : str, optional
-        The type of dataset being used for decoding (default is "Visual").
+        The type of dataset being used for decoding (default is "visual").
 
     Returns:
     --------

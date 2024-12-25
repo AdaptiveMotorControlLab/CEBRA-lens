@@ -1,6 +1,11 @@
+"file containing all the functions relative to distance computing"
+
 import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
+from .misc import discrete_binning, repetition_binning
+import torch
 
 
 def _compute_centroid(embedding: np.ndarray, indices: list) -> float:
@@ -254,13 +259,87 @@ def compute_distance(
     return distance
 
 
-def compute_distance_layers(
+def compute_multi_distance_layers(
+    data: torch.Tensor,
+    label: torch.Tensor,
+    activations_dict: dict,
+    dataset_label: str = "visual",
+    metric: str = "cosine",
+    distance_label: str = "interbin",
+) -> dict:
+    """
+    Computes RDMs for multiple layers of activations across multiple models.
+
+    Parameters:
+    -----------
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label : torch.Tensor
+        The array of labels corresponding to the data.
+    activations_dict : dict
+        A dictionary containing activations for different models.
+    dataset_label : str, optional
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
+    metric : str, optional
+        The distance metric to use for computing distances (default is "cosine").
+    distance_label : str, optional
+        The type of distance to compute ("interbin", "intrabin", or "interrep") (default is "interbin").
+
+    Returns:
+    --------
+    dict
+        A dictionary containing distnaces for each model, with each entry being a list of distances for the corresponding layer.
+    """
+
+    idxs = discrete_binning(
+        data=data,
+        label=label,
+        dataset_label=dataset_label,
+        sample_mode="all",
+    )
+    if distance_label == "interrep":
+
+        repetition_indices = repetition_binning(
+            indices=idxs, data=data, dataset_label=dataset_label
+        )
+    else:
+        repetition_indices = None
+
+    # same form as activation.
+    distance_dict = {}
+
+    for outer_key, outer_value in activations_dict.items():  # "single" or "multi"
+        distance_dict[outer_key] = {}
+
+        for inner_key, outer_list in tqdm(
+            outer_value.items(), desc=f"Processing {outer_key}"
+        ):  # "UT" or "TR"
+            distance_dict[outer_key][inner_key] = []
+
+            for inner_list in tqdm(
+                outer_list, desc=f"Processing {outer_key} {inner_key}"
+            ):  # for each model instance
+
+                distance_dict[outer_key][inner_key].append(
+                    compute_single_distance_layers(
+                        embeddings=inner_list,
+                        indices=idxs,
+                        repetition_indices=repetition_indices,
+                        metric=metric,
+                        distance_label=distance_label,
+                    )
+                )
+
+    return distance_dict
+
+
+def compute_single_distance_layers(
     embeddings: list,
     indices: list,
     repetition_indices: list = None,
     metric: str = "cosine",
     distance_label: str = "interbin",
-):
+) -> list:
     """
     Computes specified type of distance for multiple layers of embedding data.
 

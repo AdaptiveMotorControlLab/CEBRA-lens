@@ -7,7 +7,9 @@ import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 
 
-def main(model_name, session_id, activations_filepath, bool_plot_embeddings, layer_type):
+def main(
+    model_name, session_id, activations_filepath, bool_plot_embeddings, layer_type
+):
 
     print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     print("BEGINNING OF SCRIPT")
@@ -112,7 +114,10 @@ if __name__ == "__main__":
         help="session id for the analysis, used to retrieve the correct data and multi-session model",
     )
     parser.add_argument(
-        "--filepath", type=str, default="data/activations/offset10.pkl", help="filename of the activations"
+        "--filepath",
+        type=str,
+        default="data/activations/offset10.pkl",
+        help="filename of the activations",
     )
     parser.add_argument(
         "--bool_plot_embeddings",

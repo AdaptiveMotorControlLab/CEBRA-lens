@@ -90,7 +90,7 @@ def main(
             train_data=train_data,
             train_label=train_label,
             activations_dict=activations_dict,
-            dataset_label="Visual",
+            dataset_label="visual",
             metric="correlation",
             bool_oracle=True,
         )
