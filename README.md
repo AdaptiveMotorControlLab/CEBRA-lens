@@ -8,7 +8,7 @@ Measuring the robustness of a model is critical in vision decoding. We can thus 
 
 The final aim of this Github folder is to mimic a python package that allows the user to analyze the layers of the CEBRA models.
 
-![Abstract figure](abstractfig)
+![Abstract figure](abstractfig.png)
 
 
 ## Repository organization
