@@ -7,7 +7,6 @@ import seaborn as sns
 import torch
 
 
-
 def plot_simple_activations(
     input_data: torch.Tensor,
     embeddings: list,
@@ -509,9 +508,9 @@ def plot_dict(
                     marker="D",
                     color=color,
                     alpha=0.5,
-                    #label=(
+                    # label=(
                     #    f"{outer_key} - {inner_key}" if i == 0 else ""
-                    #),  # Label only the first line of each key
+                    # ),  # Label only the first line of each key
                 )
             layer_values = np.array(layer_values)
 
@@ -527,12 +526,13 @@ def plot_dict(
                 marker="D",
                 color=color,
                 alpha=1,
-                label=(
-                    f"Mean {outer_key} - {inner_key}"
-                ),  
+                label=(f"Mean {outer_key} - {inner_key}"),
             )
             if plotting_type == "decoding":
-                plt.xticks(np.arange(1, len(mean_values) + 1), ["Neural input"] + [str(i) for i in range(1, len(mean_values))])
+                plt.xticks(
+                    np.arange(1, len(mean_values) + 1),
+                    ["Neural input"] + [str(i) for i in range(1, len(mean_values))],
+                )
             plt.title(title, fontsize=15)
             sns.despine()
 
@@ -592,6 +592,7 @@ def plot_distance(
         distance_dict, title=title, figsize=figsize, plotting_type="distance"
     )
 
+
 def plot_layer_decoding(
     results_dict: dict, title: str = "Decoding by layer", figsize: tuple = (15, 5)
 ) -> plt.Figure:
@@ -614,7 +615,10 @@ def plot_layer_decoding(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot_dict(results_dict, title=title, figsize=figsize, plotting_type="decoding")
+    return plot_dict(
+        results_dict, title=title, figsize=figsize, plotting_type="decoding"
+    )
+
 
 def plot_decoding(
     results_dict: dict,

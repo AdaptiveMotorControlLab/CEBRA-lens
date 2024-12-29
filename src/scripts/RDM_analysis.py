@@ -12,20 +12,18 @@ def setup_logging():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_filename = os.path.splitext(os.path.basename(__file__))[0]
 
-    logs_dir = os.path.join(script_dir, 'logs')
+    logs_dir = os.path.join(script_dir, "logs")
 
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
 
-    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+    log_file_path = os.path.join(logs_dir, f"{script_filename}.log")
 
     logging.basicConfig(
         filename=log_file_path,
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-
-    
 
 
 def main(
@@ -38,7 +36,6 @@ def main(
     logging.info("Script started with arguments:")
     for arg, value in locals().items():
         logging.info(f"{arg}: {value}")
-
 
     # LOAD DATA
     train_datas, _, discrete_labels_train, _ = (
@@ -119,7 +116,6 @@ def main(
 if __name__ == "__main__":
 
     setup_logging()
-
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(

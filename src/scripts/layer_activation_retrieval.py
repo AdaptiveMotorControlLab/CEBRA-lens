@@ -5,24 +5,26 @@ from GithubFolder.src.cebra_lens import cebra_lens as lens
 import os
 import logging
 
+
 def setup_logging():
 
     # Get directory and filename
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_filename = os.path.splitext(os.path.basename(__file__))[0]
 
-    logs_dir = os.path.join(script_dir, 'logs')
+    logs_dir = os.path.join(script_dir, "logs")
 
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
 
-    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+    log_file_path = os.path.join(logs_dir, f"{script_filename}.log")
 
     logging.basicConfig(
         filename=log_file_path,
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
+
 
 def main(
     model_name, session_id, activations_filepath, bool_plot_embeddings, layer_type
@@ -98,10 +100,11 @@ def main(
     with open(activations_filepath, "wb") as f:
         pickle.dump(activations_dict, f)
 
+
 if __name__ == "__main__":
 
     setup_logging()
-    
+
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
         "--model_name",

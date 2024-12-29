@@ -2,8 +2,9 @@ import pickle
 import argparse
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 import matplotlib.pyplot as plt
-import os 
+import os
 import logging
+
 
 def setup_logging():
 
@@ -11,17 +12,17 @@ def setup_logging():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_filename = os.path.splitext(os.path.basename(__file__))[0]
 
-    logs_dir = os.path.join(script_dir, 'logs')
+    logs_dir = os.path.join(script_dir, "logs")
 
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
 
-    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+    log_file_path = os.path.join(logs_dir, f"{script_filename}.log")
 
     logging.basicConfig(
         filename=log_file_path,
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
 

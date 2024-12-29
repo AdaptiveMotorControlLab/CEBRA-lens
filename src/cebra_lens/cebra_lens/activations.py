@@ -107,7 +107,7 @@ def get_activations_one_model(
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
-    
+
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
@@ -287,7 +287,7 @@ def _attach_hooks(
         string_ut = "TR"
     num_layer = 1
 
-    handles = [] # they need to be stored to later remove them
+    handles = []  # they need to be stored to later remove them
 
     if layer_type == "conv":
         for i in range(len(model.net)):
@@ -427,13 +427,12 @@ def process_activations(activations: dict) -> dict:
     return activations_dict
 
 
-
-
 from collections import OrderedDict
 from typing import Callable, Dict, Optional
 from warnings import warn
 
 import torch
+
 
 def _remove_all_forward_hooks(
     module: torch.nn.Module, hook_fn_name: Optional[str] = None
