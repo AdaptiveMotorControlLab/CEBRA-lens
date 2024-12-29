@@ -1,19 +1,35 @@
-# run using % python -m GithubFolder.src.scripts.model_decoding --model_name offset10 --session_id 3
-
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 import matplotlib.pyplot as plt
 import argparse
+import os
+import logging
+
+
+def setup_logging():
+
+    # Get directory and filename
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_filename = os.path.splitext(os.path.basename(__file__))[0]
+
+    logs_dir = os.path.join(script_dir, 'logs')
+
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
+    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+
+    logging.basicConfig(
+        filename=log_file_path,
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 
 def main(model_name, session_id, bool_plot_loss):
 
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("BEGINNING OF SCRIPT")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
-
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Loading Data and models...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
+    logging.info("Script started with arguments:")
+    for arg, value in locals().items():
+        logging.info(f"{arg}: {value}")
 
     # LOAD DATA
     train_datas, valid_datas, discrete_labels_train, discrete_labels_val = (
@@ -29,9 +45,6 @@ def main(model_name, session_id, bool_plot_loss):
     models = lens.model.model_loader(model_name=model_name)
 
     if bool_plot_loss:
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("Plotting lossess...")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
         fig, axs = plt.subplots(1, 2, figsize=(15, 7))
 
@@ -54,10 +67,6 @@ def main(model_name, session_id, bool_plot_loss):
         fig.suptitle("Losses", fontsize=30)
         plt.show()
 
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Decoding models...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
-
     results_dict = lens.quantification.decoding.decode_models(
         models=models,
         train_data=train_data,
@@ -72,6 +81,8 @@ def main(model_name, session_id, bool_plot_loss):
 
 
 if __name__ == "__main__":
+    
+    setup_logging()
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
@@ -91,5 +102,4 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print("INPUT PARAMETERS: ", args)
     main(args.model_name, args.session_id, args.bool_plot_loss)

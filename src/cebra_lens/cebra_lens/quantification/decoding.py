@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
-
+from ..activations import process_activations, get_activations_one_model
 
 def decode_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -41,40 +41,49 @@ def decode_model(
 
     if model.solver_name_ == "multi-session":
 
-        train = model.transform(train_data, session_id)
-        test = model.transform(test_data, session_id)
+        embedding_train = model.transform(train_data, session_id)
+        embedding_test = model.transform(test_data, session_id)
 
     elif model.solver_name_ == "single-session":
 
-        train = model.transform(train_data)
-        test = model.transform(test_data)
+        embedding_train = model.transform(train_data)
+        embedding_test = model.transform(test_data)
 
     else:
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
 
+    results = _decoding_function_selection(embedding_train, train_label, embedding_test, test_label, dataset_label)
+    return np.array(results)
+
+def _decoding_function_selection(embedding_train: np.ndarray, label_train:  np.ndarray, embedding_test:   np.ndarray, label_test:  np.ndarray, dataset_label: str = "visual"):
+    
+    if embedding_train.shape[0] < embedding_train.shape[1]: # should be samples X neurons
+        embedding_train = embedding_train.T
+    if embedding_test.shape[0] < embedding_test.shape[1]: # should be samples X neurons
+        embedding_test = embedding_test.T
+
     if dataset_label == "visual":
 
-        results = decoding_frames(
-            embedding_train=train,
-            label_train=train_label,
-            embedding_test=test,
-            label_test=test_label,
-        )
+            results = decoding_frames(
+                embedding_train=embedding_train,
+                label_train=label_train,
+                embedding_test=embedding_test,
+                label_test=label_test,
+            )
     elif dataset_label == "HPC":
-        results = decoding_pos_dir(
-            embedding_train=train,
-            label_train=train_label,
-            embedding_test=test,
-            label_test=test_label,
-        )
+            results = decoding_pos_dir(
+                embedding_train=embedding_train,
+                label_train=label_train,
+                embedding_test=embedding_test,
+                label_test=label_test,
+            )
     else:
-        raise NotImplementedError(
-            f"Decoding not implemented for {dataset_label}. Please use 'visual'"
-        )
-
-    return np.array(results)
+            raise NotImplementedError(
+                f"Decoding not implemented for {dataset_label}. Please use 'visual' or 'HPC'."
+            )
+    return results
 
 
 def decode_models(
@@ -131,5 +140,65 @@ def decode_models(
             )
 
         results_dict[key] = results
+
+    return results_dict
+
+
+def decode_by_layer_single(model: cebra.integrations.sklearn.cebra.CEBRA,bool_train: bool,train_data: torch.Tensor,train_label: torch.Tensor,test_data: torch.Tensor, test_label: torch.Tensor, session_id: int, dataset_label: str ="visual", layer_type: str = "conv"):
+    
+    activations_train = get_activations_one_model(
+        model=model,
+        data=train_data,
+        name=model.solver_name_,
+        session_id=session_id,
+        bool_train=bool_train,
+        layer_type=layer_type,
+    )
+
+    activations_test = get_activations_one_model(
+        model=model,
+        data=test_data,
+        name=model.solver_name_,
+        session_id=session_id,
+        bool_train=bool_train,
+        layer_type=layer_type,
+    )
+
+    num_layers = len(activations_train)
+
+    if dataset_label in ["HPC","visual"]:
+        results = np.zeros((num_layers+1,3)) 
+    else:
+        raise NotImplementedError(
+            f"Decoding not implemented for {dataset_label}. Please use 'visual' or 'HPC'."
+        )
+    keys = list(activations_train.keys())
+    for i in range(num_layers+1):
+        
+        if i == 0:
+            results[i,:] = _decoding_function_selection(train_data, train_label, test_data, test_label, dataset_label) # neural input baseline
+        else:
+            results[i,:] = _decoding_function_selection(activations_train[keys[i-1]], train_label, activations_test[keys[i-1]], test_label, dataset_label) # layer decoding
+
+    return results
+
+def decode_by_layer_all(models_dict: dict, train_data: torch.Tensor,train_label: torch.Tensor,test_data: torch.Tensor, test_label: torch.Tensor, session_id: int = 3, dataset_label: str ="visual", layer_type: str = "conv"):
+    
+    results_dict = {}
+    for key, models in models_dict.items():
+        results_list = []
+
+        for model in models:
+            results_list.append(decode_by_layer_single(model=model,bool_train = "UT" not in key,train_data=train_data,train_label = train_label,test_data = test_data, test_label=test_label, session_id = session_id, dataset_label = dataset_label, layer_type = layer_type))
+        
+        results_dict[key] = results_list
+    
+    
+    results_dict = process_activations(results_dict)
+
+    for key,value in results_dict.items():
+        for inner_key, inner_value in value.items():
+            results_dict[key][inner_key] = inner_value[0][0]
+
 
     return results_dict

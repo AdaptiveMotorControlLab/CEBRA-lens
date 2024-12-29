@@ -1,9 +1,28 @@
-# run using python -m GithubFolder.src.scripts.cebra_visualization
-
 import pickle
 import argparse
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 import matplotlib.pyplot as plt
+import os 
+import logging
+
+def setup_logging():
+
+    # Get directory and filename
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_filename = os.path.splitext(os.path.basename(__file__))[0]
+
+    logs_dir = os.path.join(script_dir, 'logs')
+
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
+    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+
+    logging.basicConfig(
+        filename=log_file_path,
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 
 def main(
@@ -12,13 +31,9 @@ def main(
     dataset_label="visual",
 ):
 
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("BEGINNING OF SCRIPT")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Loading activations...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    logging.info("Script started with arguments:")
+    for arg, value in locals().items():
+        logging.info(f"{arg}: {value}")
 
     _, _, discrete_labels_train, _ = lens.utils_allen.get_single_session_datasets()
     train_label = discrete_labels_train[session_id]
@@ -30,7 +45,7 @@ def main(
         activations_dict["single"]["UT"][0],
         activations_dict["single"]["TR"][0],
         labels=train_label,
-        data_label=dataset_label,
+        dataset_label=dataset_label,
         sample_plot=activations_dict["single"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Untrained Single", "Trained Single"]),
     )
@@ -38,17 +53,15 @@ def main(
         activations_dict["multi"]["UT"][0],
         activations_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label=dataset_label,
+        dataset_label=dataset_label,
         sample_plot=activations_dict["multi"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Untrained Multi", "Trained Multi"]),
     )
-    print(len(activations_dict["multi"]["TR"][0][0]))
-    print(activations_dict["multi"]["TR"][0][0].shape)
     fig3 = lens.plotting.compare_embeddings_layers(
         activations_dict["single"]["TR"][0],
         activations_dict["multi"]["TR"][0],
         labels=train_label,
-        data_label=dataset_label,
+        dataset_label=dataset_label,
         sample_plot=activations_dict["multi"]["TR"][0][0].shape[1],
         comparison_labels=("CEBRA embeddings", ["Single", "Multi"]),
     )
@@ -57,6 +70,8 @@ def main(
 
 
 if __name__ == "__main__":
+
+    setup_logging()
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(

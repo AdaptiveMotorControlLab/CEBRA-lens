@@ -1,23 +1,35 @@
-# run using (e.g): python -m GithubFolder.src.scripts.layer_activation_retrieval --layer_type conv --session_id 3 --activations_filepath data/activations/offset10alllayers.pkl
-# attention: need to be one step above the GithubFolder to have data and finalmodels
-
 import pickle
 import argparse
 import cebra
 from GithubFolder.src.cebra_lens import cebra_lens as lens
+import os
+import logging
 
+def setup_logging():
+
+    # Get directory and filename
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_filename = os.path.splitext(os.path.basename(__file__))[0]
+
+    logs_dir = os.path.join(script_dir, 'logs')
+
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
+    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+
+    logging.basicConfig(
+        filename=log_file_path,
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 def main(
     model_name, session_id, activations_filepath, bool_plot_embeddings, layer_type
 ):
-
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("BEGINNING OF SCRIPT")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
-
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Loading Data and models...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
+    logging.info("Script started with arguments:")
+    for arg, value in locals().items():
+        logging.info(f"{arg}: {value}")
 
     # LOAD DATA
     train_datas, _, discrete_labels_train, _ = (
@@ -31,9 +43,6 @@ def main(
     models = lens.model.model_loader(model_name=model_name)
 
     if bool_plot_embeddings:
-        print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("Calculating output embeddings...")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 
         X = train_data
         y = train_label
@@ -75,10 +84,6 @@ def main(
         )
         fig.show()
 
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Retrieving layer activations...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
-
     activations = {}
     activations = lens.activations.get_activations_multi_model(
         models=models,
@@ -92,13 +97,11 @@ def main(
 
     with open(activations_filepath, "wb") as f:
         pickle.dump(activations_dict, f)
-        print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("Layer activations saved!")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
-
 
 if __name__ == "__main__":
 
+    setup_logging()
+    
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
         "--model_name",
@@ -133,7 +136,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print(args)
     main(
         args.model_name,
         args.session_id,

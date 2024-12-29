@@ -1,29 +1,38 @@
-# run using python -m GithubFolder.src.scripts.CKA_analysis --filename offset10-mse --bool_comput True
 import os
 from tqdm import tqdm
 import argparse
 import pickle
 from GithubFolder.src.cebra_lens import cebra_lens as lens
 import matplotlib.pyplot as plt
+import logging
 
+def setup_logging():
+
+    # Get directory and filename
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_filename = os.path.splitext(os.path.basename(__file__))[0]
+
+    logs_dir = os.path.join(script_dir, 'logs')
+
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
+    log_file_path = os.path.join(logs_dir, f'{script_filename}.log')
+
+    logging.basicConfig(
+        filename=log_file_path,
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 def main(
     activations_filepath="data/activations/offset10.pkl",
     bool_comput=0,
     saving_filepath="data/CKA/offset10.pkl",
 ):
-
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("BEGINNING OF SCRIPT")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
-    ######################
-    ####### LOADING ######
-    ######################
-
-    print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-    print("Loading activations...")
-    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    logging.info("Script started with arguments:")
+    for arg, value in locals().items():
+        logging.info(f"{arg}: {value}")
 
     with open(activations_filepath, "rb") as f:
         activations_dict = pickle.load(f)
@@ -37,10 +46,6 @@ def main(
             ("multi_TR", "multi_TR"),
         ]
 
-        print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("Calculating CKA matrices...")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
         cka_matrices = {}
         for comparison in tqdm(comparisons):
             cka_matrix = lens.quantification.compute_multi_CKA_layers(
@@ -50,12 +55,9 @@ def main(
 
         with open(saving_filepath, "wb") as f:
             pickle.dump(cka_matrices, f)
-            print(f"Succesfully saved the matrices here: {saving_filepath} ")
 
     else:
-        print("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("Loading CKA matrices...")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
         with open(saving_filepath, "rb") as f:
             cka_matrices = pickle.load(f)
 
@@ -68,6 +70,9 @@ def main(
 
 
 if __name__ == "__main__":
+
+    setup_logging()
+
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument(
@@ -96,7 +101,6 @@ if __name__ == "__main__":
     if args.saving_filepath is None:
         filename = args.activations_filepath.split("/")[-1]
         args.saving_filepath = os.path.join("data/CKA/", filename)
-    print(args.saving_filepath)
     main(
         args.activations_filepath,
         args.bool_comput,

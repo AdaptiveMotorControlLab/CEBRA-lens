@@ -38,7 +38,7 @@ def get_activations_one_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     data: torch.Tensor,
     session_id: int = -1,
-    name="single",
+    name: str = "single",
     instance: int = 0,
     bool_train: bool = False,
     layer_type: str = "conv",
@@ -50,12 +50,14 @@ def get_activations_one_model(
     Parameters:
     -----------
     model : cebra.model
-        The model from which to extract activations.
+        The cebra model from which to extract activations.
     data : torch.Tensor
-        The input data to be passed through the model.
+        The input data to be passed through the model. Shape of samples X channels (neurons).
     session_id : int, optional
         The session identifier used for selecting the appropriate model in multi-session solvers.
         For single-session, no need to input it.
+    name : str
+        A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to label the activations.
     bool_train : bool
@@ -71,10 +73,11 @@ def get_activations_one_model(
     --------
     If the model includes padding, the padding is removed from the activations for easier downstream use.
     """
+
     activations = {}
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
-        activations = _attach_hooks(
+        activations, handles = _attach_hooks(
             activations=activations,
             model=model_,
             name=name,
@@ -88,7 +91,7 @@ def get_activations_one_model(
 
     elif model.solver_name_ == "single-session":
         model_ = model.model_
-        activations = _attach_hooks(
+        activations, handles = _attach_hooks(
             activations=activations,
             model=model_,
             name=name,
@@ -104,6 +107,11 @@ def get_activations_one_model(
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
+    
+    # remove all handles to avoid activation's problems
+    for handle in handles:
+        handle.remove()
+
     if model.pad_before_transform:
         if layer_type == "conv":
 
@@ -147,7 +155,7 @@ def get_activations_multi_model(
     models : dict
         A dictionary containing different sets of models. The keys should include "single_UT", "multi_UT", "single_TR", and "multi_TR".
     data : torch.Tensor
-        The input data for which activations are to be extracted.
+        The input data for which activations are to be extracted. Shape of samples X channels (neurons).
     session_id : int
         The session identifier used for selecting the appropriate model in multi-session solvers.
     activations : dict
@@ -158,7 +166,7 @@ def get_activations_multi_model(
     Returns:
     --------
     activations : dict
-        A dictionary containing the activations from all the models.
+        A dictionary containing the activations from all the models passed as input.
     """
 
     # SINGLE UT
@@ -279,6 +287,8 @@ def _attach_hooks(
         string_ut = "TR"
     num_layer = 1
 
+    handles = [] # they need to be stored to later remove them
+
     if layer_type == "conv":
         for i in range(len(model.net)):
             if isinstance(model.net[i], nn.Conv1d) or i == len(model.net) - 1:
@@ -286,7 +296,8 @@ def _attach_hooks(
                     f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
                 )
 
-                model.net[i].register_forward_hook(hook)
+                handle = model.net[i].register_forward_hook(hook)
+                handles.append(handle)
                 num_layer += 1
 
             elif bool(
@@ -299,7 +310,8 @@ def _attach_hooks(
                             activations,
                         )
 
-                        model.net[i].module[j].register_forward_hook(hook)
+                        handle = model.net[i].module[j].register_forward_hook(hook)
+                        handles.append(handle)
                         num_layer += 1
 
     elif layer_type == "all":
@@ -313,7 +325,8 @@ def _attach_hooks(
                             f"{name}_{string_ut}_{instance}_layer_{num_layer}",
                             activations,
                         )
-                        model.net[i].module[j].register_forward_hook(hook)
+                        handle = model.net[i].module[j].register_forward_hook(hook)
+                        handles.append(handle)
                         num_layer += 1
 
             else:
@@ -321,13 +334,14 @@ def _attach_hooks(
                     f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
                 )
 
-                model.net[i].register_forward_hook(hook)
+                handle = model.net[i].register_forward_hook(hook)
+                handles.append(handle)
                 num_layer += 1
     else:
         raise NotImplementedError(
             f"Layer type {layer_type} not implemented. Please use either 'all' or 'conv' "
         )
-    return activations
+    return activations, handles
 
 
 def _aggregate_activations(activations: dict) -> dict:
@@ -411,3 +425,58 @@ def process_activations(activations: dict) -> dict:
         activations_dict[prefix][suffix].append(value)
 
     return activations_dict
+
+
+
+
+from collections import OrderedDict
+from typing import Callable, Dict, Optional
+from warnings import warn
+
+import torch
+
+def _remove_all_forward_hooks(
+    module: torch.nn.Module, hook_fn_name: Optional[str] = None
+) -> None:
+    """
+    This function removes all forward hooks in the specified module, without requiring
+    any hook handles. This lets us clean up & remove any hooks that weren't property
+    deleted.
+    Warning: Various PyTorch modules and systems make use of hooks, and thus extreme
+    caution should be exercised when removing all hooks. Users are recommended to give
+    their hook function a unique name that can be used to safely identify and remove
+    the target forward hooks.
+    Args:
+        module (nn.Module): The module instance to remove forward hooks from.
+        hook_fn_name (str, optional): Optionally only remove specific forward hooks
+            based on their function's __name__ attribute.
+            Default: None
+    """
+
+    if hook_fn_name is None:
+        warn("Removing all active hooks will break some PyTorch modules & systems.")
+
+    def _remove_hooks(m: torch.nn.Module, name: Optional[str] = None) -> None:
+        if hasattr(module, "_forward_hooks"):
+            if m._forward_hooks != OrderedDict():
+                if name is not None:
+                    dict_items = list(m._forward_hooks.items())
+                    m._forward_hooks = OrderedDict(
+                        [(i, fn) for i, fn in dict_items if fn.__name__ != name]
+                    )
+                else:
+                    m._forward_hooks: Dict[int, Callable] = OrderedDict()
+
+    def _remove_child_hooks(
+        target_module: torch.nn.Module, hook_name: Optional[str] = None
+    ) -> None:
+        for name, child in target_module._modules.items():
+            if child is not None:
+                _remove_hooks(child, hook_name)
+                _remove_child_hooks(child, hook_name)
+
+    # Remove hooks from target submodules
+    _remove_child_hooks(module, hook_fn_name)
+
+    # Remove hooks from the target module
+    _remove_hooks(module, hook_fn_name)

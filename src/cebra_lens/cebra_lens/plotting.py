@@ -7,76 +7,6 @@ import seaborn as sns
 import torch
 
 
-def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
-    r_ind = label[:, 1] == 1
-    l_ind = label[:, 2] == 1
-
-    if not gray:
-        r_cmap = "cool"
-        l_cmap = "magma"
-        r_c = label[r_ind, 0]
-        l_c = label[l_ind, 0]
-    else:
-        r_cmap = None
-        l_cmap = None
-        r_c = "gray"
-        l_c = "gray"
-
-    idx1, idx2, idx3 = idx_order
-    r = ax.scatter(
-        embedding[r_ind, idx1],
-        embedding[r_ind, idx2],
-        embedding[r_ind, idx3],
-        c=r_c,
-        cmap=r_cmap,
-        s=0.05,
-        alpha=0.75,
-    )
-    l = ax.scatter(
-        embedding[l_ind, idx1],
-        embedding[l_ind, idx2],
-        embedding[l_ind, idx3],
-        c=l_c,
-        cmap=l_cmap,
-        s=0.05,
-        alpha=0.75,
-    )
-
-    ax.grid(False)
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-    ax.xaxis.pane.set_edgecolor("w")
-    ax.yaxis.pane.set_edgecolor("w")
-    ax.zaxis.pane.set_edgecolor("w")
-
-    return ax
-
-
-def plot_allen(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
-    c = label
-
-    idx1, idx2, idx3 = idx_order
-    ax.scatter(
-        embedding[:, idx1],
-        embedding[:, idx2],
-        embedding[:, idx3],
-        c=c,
-        cmap="magma",
-        s=0.05,
-        alpha=0.75,
-    )
-
-    ax.grid(False)
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-    ax.xaxis.pane.set_edgecolor("w")
-    ax.yaxis.pane.set_edgecolor("w")
-    ax.zaxis.pane.set_edgecolor("w")
-
-    return ax
-
 
 def plot_simple_activations(
     input_data: torch.Tensor,
@@ -93,7 +23,7 @@ def plot_simple_activations(
     input_data : torch.Tensor
         The input data tensor to be plotted.
     embeddings : list
-        A list of np.ndarrays representing the embeddings/activations of each layer.
+        A list of np.ndarrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
     cmap : str, optional
@@ -154,7 +84,7 @@ def plot_embedding_layers(
     axs : list
         List of matplotlib axes objects where the embeddings will be plotted.
     embeddings : list
-        List of numpy arrays containing the embeddings for each layer.
+        List of numpy arrays containing the embeddings for each layer. Each array is shape Samples X num Neurons.
     labels : np.ndarray
         Array of labels corresponding to the embeddings (e.g., frame number).
     title_prefix : str
@@ -563,6 +493,8 @@ def plot_dict(
                     values = [arr[1] for arr in inner_list]
                 elif plotting_type == "distance":
                     values = [arr for arr in inner_list]
+                elif plotting_type == "decoding":
+                    values = [arr[2] for arr in inner_list]
                 else:
                     raise NotImplementedError(
                         f"Plotting not yet implemented for {plotting_type}. Please use 'rdm' or 'distance'."
@@ -577,28 +509,30 @@ def plot_dict(
                     marker="D",
                     color=color,
                     alpha=0.5,
-                    label=(
-                        f"{outer_key} - {inner_key}" if i == 0 else ""
-                    ),  # Label only the first line of each key
+                    #label=(
+                    #    f"{outer_key} - {inner_key}" if i == 0 else ""
+                    #),  # Label only the first line of each key
                 )
-            values = np.array(values)
+            layer_values = np.array(layer_values)
 
-            if values.ndim == 1:
-                mean_values = values
+            if layer_values.ndim == 1:
+                mean_values = layer_values
             else:
-                mean_values = np.mean(values, axis=0)
+                mean_values = np.mean(layer_values, axis=0)
 
             sns.lineplot(
                 x=np.arange(1, len(mean_values) + 1),
-                y=values,
+                y=mean_values,
                 linestyle="-",
                 marker="D",
                 color=color,
                 alpha=1,
                 label=(
-                    f"Mean {outer_key} - {inner_key}" if i == 0 else ""
-                ),  # Label only the first line of each key
+                    f"Mean {outer_key} - {inner_key}"
+                ),  
             )
+            if plotting_type == "decoding":
+                plt.xticks(np.arange(1, len(mean_values) + 1), ["Neural input"] + [str(i) for i in range(1, len(mean_values))])
             plt.title(title, fontsize=15)
             sns.despine()
 
@@ -658,6 +592,29 @@ def plot_distance(
         distance_dict, title=title, figsize=figsize, plotting_type="distance"
     )
 
+def plot_layer_decoding(
+    results_dict: dict, title: str = "Decoding by layer", figsize: tuple = (15, 5)
+) -> plt.Figure:
+    """
+    Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
+
+    Parameters:
+    -----------
+    rdm_dict : dict
+        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
+        be dictionaries containing RDMs for different layers.
+    title : str, optional
+        The title for the plot (default is "RDM comparison to Oracle").
+    figsize : tuple, optional
+        A tuple representing the figure size (default is (15, 5)).
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the RDM comparison plot.
+    """
+
+    return plot_dict(results_dict, title=title, figsize=figsize, plotting_type="decoding")
 
 def plot_decoding(
     results_dict: dict,
@@ -734,3 +691,74 @@ def plot_decoding(
         )
 
     return fig
+
+
+def plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
+    r_ind = label[:, 1] == 1
+    l_ind = label[:, 2] == 1
+
+    if not gray:
+        r_cmap = "cool"
+        l_cmap = "magma"
+        r_c = label[r_ind, 0]
+        l_c = label[l_ind, 0]
+    else:
+        r_cmap = None
+        l_cmap = None
+        r_c = "gray"
+        l_c = "gray"
+
+    idx1, idx2, idx3 = idx_order
+    r = ax.scatter(
+        embedding[r_ind, idx1],
+        embedding[r_ind, idx2],
+        embedding[r_ind, idx3],
+        c=r_c,
+        cmap=r_cmap,
+        s=0.05,
+        alpha=0.75,
+    )
+    l = ax.scatter(
+        embedding[l_ind, idx1],
+        embedding[l_ind, idx2],
+        embedding[l_ind, idx3],
+        c=l_c,
+        cmap=l_cmap,
+        s=0.05,
+        alpha=0.75,
+    )
+
+    ax.grid(False)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    ax.xaxis.pane.set_edgecolor("w")
+    ax.yaxis.pane.set_edgecolor("w")
+    ax.zaxis.pane.set_edgecolor("w")
+
+    return ax
+
+
+def plot_allen(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
+    c = label
+
+    idx1, idx2, idx3 = idx_order
+    ax.scatter(
+        embedding[:, idx1],
+        embedding[:, idx2],
+        embedding[:, idx3],
+        c=c,
+        cmap="magma",
+        s=0.05,
+        alpha=0.75,
+    )
+
+    ax.grid(False)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+    ax.xaxis.pane.set_edgecolor("w")
+    ax.yaxis.pane.set_edgecolor("w")
+    ax.zaxis.pane.set_edgecolor("w")
+
+    return ax
