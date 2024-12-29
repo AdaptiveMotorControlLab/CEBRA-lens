@@ -340,7 +340,6 @@ def plot_cka_heatmaps(
         num_models = value.shape[0]
 
         axs[i].set_title(key.replace("_", " "))
-        print(key.replace("_", " "))
         axs[i].set_xlabel("Layer")
         if i == 0:
             axs[i].set_ylabel("Model Instantiation", fontsize=12)
