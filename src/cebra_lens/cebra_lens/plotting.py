@@ -600,11 +600,11 @@ def plot_layer_decoding(
 
     Parameters:
     -----------
-    rdm_dict : dict
-        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
-        be dictionaries containing RDMs for different layers.
+    results_dict : dict
+        A dictionary containing the decoding results to be plotted. Obtained by using lens.quantification.decoding.decode_by_layer_all, where values should
+        be dictionaries containing decoding arrays for different layers.
     title : str, optional
-        The title for the plot (default is "RDM comparison to Oracle").
+        The title for the plot (default is "Decoding by layer").
     figsize : tuple, optional
         A tuple representing the figure size (default is (15, 5)).
 
