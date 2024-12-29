@@ -19,7 +19,13 @@ The `Notebooks` folder contains two notebooks:
 - `ModelGeneratorVISUAL.ipynb` which was used to generate the models for the demo analysis notebook. It is meant to be run on Colab and was thus not scripted.
 - `Demo-Notebook-Allen.ipynb` contains the demo that goes over the whole package. It is more descriptive than the scripts and more flexible. This is the reference for understanding how the functions work.
 
-The `scripts` folder contains the scripted versions of the analysis with the exception of the decoding by layer.
+The `scripts` folder contains the scripted versions of the analysis with the exception of the decoding by layer:
+- tSNE 
+- CKA 
+- RDM
+- Layer activation retrieval
+- Model decoding
+- Distance calculation
 
 Note: The notebooks that reproduce exactly the results of the report have been deleted because cleaning them would have been too time consuming and the results can be now reproduced using the package. Analysis such as GLMs were not pushed far enough to be kept in this final version of the repository and have thus been deleted. 
-All these notebooks can still be found travelling back to the commit XXXX.
+All these notebooks can still be found travelling back to the commit [f89dd1b](https://github.com/AdaptiveMotorControlLab/riccardo_workspace/commit/f89dd1b801144912348e414c53dc21e9b5c6c937).
