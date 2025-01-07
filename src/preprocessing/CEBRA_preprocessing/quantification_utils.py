@@ -1,6 +1,5 @@
 
 import numpy as np
-
 import cebra
 import cebra.datasets
 import copy
@@ -8,8 +7,6 @@ import torch
 import sklearn.metrics
 from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
 from sklearn.preprocessing import StandardScaler
-
-# Save this in a file called `cka_computation.py`
 
 import numpy as np
 from tqdm import tqdm
