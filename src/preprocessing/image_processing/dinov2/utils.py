@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
+
 class CenterPadding(torch.nn.Module):
     def __init__(self, multiple):
         super().__init__()
@@ -54,30 +55,33 @@ class Backbone:
             )
 
         self.model.eval()
-      
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.model.to(device)
         x = x.to(device)
-        print('DEVICE',device)
+        print("DEVICE", device)
 
         with torch.no_grad():
-          embedding_size = self.model(x[0:1, :, :, :]).shape[1]  # Get embedding size from the model
-          num_embeddings = x.shape[0]  # Total number of items in x
+            embedding_size = self.model(x[0:1, :, :, :]).shape[
+                1
+            ]  # Get embedding size from the model
+            num_embeddings = x.shape[0]  # Total number of items in x
 
-          # Preallocate embeddings tensor
-          embeddings = torch.empty((num_embeddings, embedding_size), device=x.device)
-          print('Total number of Batches: ',num_embeddings//10)
+            # Preallocate embeddings tensor
+            embeddings = torch.empty((num_embeddings, embedding_size), device=x.device)
+            print("Total number of Batches: ", num_embeddings // 10)
 
-          # Process in batches
-          for i in tqdm(range(0, num_embeddings, 10), desc="Processing batches"):
-            # Define the end index for the current batch
-            end_idx = min(i + 10, num_embeddings)  # Handle the last batch if it's smaller than 10
-            # Get the current batch
-            embeddings_temp = self.model(x[i:end_idx, :, :, :])
-            # Store the results in the preallocated tensor
-            embeddings[i:end_idx] = embeddings_temp
+            # Process in batches
+            for i in tqdm(range(0, num_embeddings, 10), desc="Processing batches"):
+                # Define the end index for the current batch
+                end_idx = min(
+                    i + 10, num_embeddings
+                )  # Handle the last batch if it's smaller than 10
+                # Get the current batch
+                embeddings_temp = self.model(x[i:end_idx, :, :, :])
+                # Store the results in the preallocated tensor
+                embeddings[i:end_idx] = embeddings_temp
         return embeddings
 
     @staticmethod
@@ -93,7 +97,6 @@ class Backbone:
         torch.save(embeddings, save_path)
 
         return save_path
-
 
 
 # was in thirdparty utils of anastasiia
@@ -124,6 +127,7 @@ def extract_image_paths(stimulus: str) -> List[str]:
     return image_absolute_paths
 '''
 
+
 def extract_stimuli_paths(stimuli_names):
     stimuli_paths = {}
 
@@ -135,31 +139,33 @@ def extract_stimuli_paths(stimuli_names):
     # Loop over each stimulus name to find its path
     for stimulus in stimuli_names:
         stimulus_path = os.path.join(data_dir, stimulus)
-        
+
         # Check if the path exists and is a directory
         if os.path.exists(stimulus_path) and os.path.isdir(stimulus_path):
 
             stimuli_paths[stimulus] = stimulus_path
 
         else:
-            print(f"Warning: Path for stimulus '{stimulus}' does not exist or is not a directory.")
-    
+            print(
+                f"Warning: Path for stimulus '{stimulus}' does not exist or is not a directory."
+            )
+
     return stimuli_paths
 
 
-
-
-def save_features(image_features, stimulus, backbone_name, feature_name:str="features"):
+def save_features(
+    image_features, stimulus, backbone_name, feature_name: str = "features"
+):
     """Save the embeddings in `image_features` to the corresponding `stimulus`.
-    
-    Args: 
+
+    Args:
         image_features: Embeddings to save as a `.pt` file.
-        stimulus: The stimulus it corresponds to 
+        stimulus: The stimulus it corresponds to
         backbone_name: Name of the backbone model used.
         feature_name: Str describing the type of embedding that is saved.
-        
+
     """
-    
+
     try:
         data_dir = os.environ["DATA_PATH"]
     except KeyError:
@@ -171,4 +177,3 @@ def save_features(image_features, stimulus, backbone_name, feature_name:str="fea
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     torch.save(image_features, save_path)
     print(f"Saved features for {stimulus} at {save_path}")
-

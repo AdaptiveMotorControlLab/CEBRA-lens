@@ -5,7 +5,10 @@ import pandas as pd
 
 # I dont think its needed anymore
 import sys
-sys.path.append('content/openscope_databook/databook_utils') # to make the import of utils files work
+
+sys.path.append(
+    "content/openscope_databook/databook_utils"
+)  # to make the import of utils files work
 
 from dandi_utils import dandi_download_open
 from matplotlib import cm
