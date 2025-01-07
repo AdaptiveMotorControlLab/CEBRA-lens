@@ -9,13 +9,65 @@ import pickle
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 
-def process_activations(activations,output_embeddings):
+
+def model_loader(model_name: str):
+    # LOAD MODELS
+    models_folder_path = f"FinalModels/VISION/{model_name}"
+    files_list = os.listdir(models_folder_path)
+
+    models_list = []
+    for file in files_list:  # load only the torch models for cpu usage
+        if file.endswith("torch.pt"):
+            models_list.append(file)
+
+    models_list
+    print("Number of models: ", len(models_list))
+    print(models_list)
+
+    models_untrained = []  # will be multi_ut, single_ut
+    models_single = []  # will be all the singles trained
+    models_multi = []  # will be all the multi trained
+
+    for model in models_list:
+
+        loaded_model = cebra.CEBRA.load(
+            os.path.join(models_folder_path, model),
+            backend="torch",
+            map_location=torch.device("cpu"),
+        ).to("cpu")
+        if "UT" in model:
+            models_untrained.append(loaded_model)
+
+        elif "multi" in model:
+            models_multi.append(loaded_model)
+
+        else:
+            models_single.append(loaded_model)
+
+    models = {"UT": models_untrained, "single": models_single, "multi": models_multi}
+
+    # check the models
+    print("# of Untrained models: ", len(models["UT"]))
+    print("# of Single Trained models: ", len(models["single"]))
+    print("# of Single Trained models: ", len(models["multi"]))
+
+    print(
+        "Solver Untrained model 1: ", models["UT"][0].solver_name_
+    )  # HERE IT'S SINGLE SESSION FIRST
+    print("Solver Untrained model 2: ", models["UT"][1].solver_name_)
+    print("key single: ", models["single"][0].solver_name_)
+    print("key multi: ", models["multi"][0].solver_name_)
+
+    return models
+
+
+def process_activations(activations, output_embeddings):
     """
     Classify activations into three groups based on their prefix.
-    
+
     Parameters:
     - activations: Dictionary where keys are strings (with prefixes) and values are arrays.
-    
+
     Returns:
     - activations_UT: List of activations for untrained (UT) models.
     - activations_single: List of activations for single models.
@@ -25,47 +77,57 @@ def process_activations(activations,output_embeddings):
     activations_single = []
     activations_multi = []
     labels_UT = []
-    labels_single =[]
-    labels_multi =[]
+    labels_single = []
+    labels_multi = []
 
     for key, value in activations.items():
-        parts = key.split('_')
+        parts = key.split("_")
         prefix = parts[0]
 
-        if prefix == 'multiUT' or prefix == 'singleUT':
+        if prefix == "multiUT" or prefix == "singleUT":
             activations_UT.append(value.squeeze())
             labels_UT.append(key)
-        elif prefix.startswith('single'):
+        elif prefix.startswith("single"):
             activations_single.append(value.squeeze())
             labels_single.append(key)
 
-        elif prefix.startswith('multi'):
+        elif prefix.startswith("multi"):
             activations_multi.append(value.squeeze())
             labels_multi.append(key)
 
     # add the output embeddings at the end
-    activations_UT += output_embeddings['UT']
-    labels_UT += [f'output_embedding_UT{i}' for i in range (len(output_embeddings['UT']))]
-    activations_single += output_embeddings['single']
-    labels_single += [f'output_embedding_{i}' for i in range (len(output_embeddings['single']))]
-    activations_multi += output_embeddings['multi']
-    labels_multi  += [f'output_embedding_{i}' for i in range (len(output_embeddings['multi']))]
+    activations_UT += output_embeddings["UT"]
+    labels_UT += [
+        f"output_embedding_UT{i}" for i in range(len(output_embeddings["UT"]))
+    ]
+    activations_single += output_embeddings["single"]
+    labels_single += [
+        f"output_embedding_{i}" for i in range(len(output_embeddings["single"]))
+    ]
+    activations_multi += output_embeddings["multi"]
+    labels_multi += [
+        f"output_embedding_{i}" for i in range(len(output_embeddings["multi"]))
+    ]
 
-
-
-            
     activations_dict = {
-            'act_UT':activations_UT,
-            'act_single': activations_single,
-            'act_multi': activations_multi,
-            'labels_UT' :labels_UT,
-            'labels_single':labels_single,
-            'labels_multi':labels_multi
-            }
-    
+        "act_UT": activations_UT,
+        "act_single": activations_single,
+        "act_multi": activations_multi,
+        "labels_UT": labels_UT,
+        "labels_single": labels_single,
+        "labels_multi": labels_multi,
+    }
+
     return activations_dict
 
-def run_tsne_and_save(embeddings_untrained_single, embeddings_trained_single, embeddings_untrained_multi, embeddings_trained_multi, points_viz=2000):
+
+def run_tsne_and_save(
+    embeddings_untrained_single,
+    embeddings_trained_single,
+    embeddings_untrained_multi,
+    embeddings_trained_multi,
+    points_viz=2000,
+):
     """
     Apply t-SNE to the provided embeddings and save the results.
 
@@ -75,7 +137,7 @@ def run_tsne_and_save(embeddings_untrained_single, embeddings_trained_single, em
     - embeddings_untrained_multi: List of embeddings for untrained multi-session models.
     - embeddings_trained_multi: List of embeddings for trained multi-session models.
     - points_viz: Number of points to use in the t-SNE (default is 2000).
-    
+
     Saves the t-SNE results as pickle files.
     """
     # Lists to hold the transformed embeddings
@@ -87,27 +149,44 @@ def run_tsne_and_save(embeddings_untrained_single, embeddings_trained_single, em
     # Run t-SNE for each set of embeddings
     for i in tqdm(range(len(embeddings_trained_single))):
         tsne = TSNE(n_components=3)
-        
+
         # Apply t-SNE and append to respective lists
-        embeddings_tsne_untrained_single.append(tsne.fit_transform(embeddings_untrained_single[i][:, :points_viz].T))
-        embeddings_tsne_trained_single.append(tsne.fit_transform(embeddings_trained_single[i][:, :points_viz].T))
-        embeddings_tsne_untrained_multi.append(tsne.fit_transform(embeddings_untrained_multi[i][:, :points_viz].T))
-        embeddings_tsne_trained_multi.append(tsne.fit_transform(embeddings_trained_multi[i][:, :points_viz].T))
+        embeddings_tsne_untrained_single.append(
+            tsne.fit_transform(embeddings_untrained_single[i][:, :points_viz].T)
+        )
+        embeddings_tsne_trained_single.append(
+            tsne.fit_transform(embeddings_trained_single[i][:, :points_viz].T)
+        )
+        embeddings_tsne_untrained_multi.append(
+            tsne.fit_transform(embeddings_untrained_multi[i][:, :points_viz].T)
+        )
+        embeddings_tsne_trained_multi.append(
+            tsne.fit_transform(embeddings_trained_multi[i][:, :points_viz].T)
+        )
 
     # Save the t-SNE embeddings as pickle files
-    with open('FinalModels/tSNE/VISION/tsne_embeddings_singlesession_untrained.pkl', 'wb') as f:
+    with open(
+        "FinalModels/tSNE/VISION/tsne_embeddings_singlesession_untrained.pkl", "wb"
+    ) as f:
         pickle.dump(embeddings_tsne_untrained_single, f)
 
-    with open('FinalModels/tSNE/VISION/tsne_embeddings_singlesession_trained.pkl', 'wb') as f:
+    with open(
+        "FinalModels/tSNE/VISION/tsne_embeddings_singlesession_trained.pkl", "wb"
+    ) as f:
         pickle.dump(embeddings_tsne_trained_single, f)
 
-    with open('FinalModels/tSNE/VISION/tsne_embeddings_multisession_untrained.pkl', 'wb') as f:
+    with open(
+        "FinalModels/tSNE/VISION/tsne_embeddings_multisession_untrained.pkl", "wb"
+    ) as f:
         pickle.dump(embeddings_tsne_untrained_multi, f)
 
-    with open('FinalModels/tSNE/VISION/tsne_embeddings_multisession_trained.pkl', 'wb') as f:
+    with open(
+        "FinalModels/tSNE/VISION/tsne_embeddings_multisession_trained.pkl", "wb"
+    ) as f:
         pickle.dump(embeddings_tsne_trained_multi, f)
 
-    print('DONE')
+    print("DONE")
+
 
 # NOT USED IN THE NOTEBOOKS (TO BE REMOVED)
 def multisession_preparation(stimuli: list, split: float):
@@ -123,12 +202,12 @@ def multisession_preparation(stimuli: list, split: float):
     - labels_train,labels_test: The Openscope data labels.
     - embeddings: corresponding DINOv2 embeddings
     """
-    
+
     # make sure it's in a list format
-    if isinstance(stimuli,list):
-        print('list of stimuli:', stimuli)
-        #stimuli = set(stimuli)
-    elif isinstance(stimuli,str):
+    if isinstance(stimuli, list):
+        print("list of stimuli:", stimuli)
+        # stimuli = set(stimuli)
+    elif isinstance(stimuli, str):
         stimuli = [stimuli]
 
     try:
@@ -136,58 +215,75 @@ def multisession_preparation(stimuli: list, split: float):
     except KeyError:
         raise ValueError("DATA_PATH environment variable is not set")
 
-
-    data_stimulus_path =  os.path.join(os.environ["DATA_PATH"],'df_stimulus.csv')
-    data_dff_path = os.path.join(os.environ["DATA_PATH"],'dff_trace.npy')
+    data_stimulus_path = os.path.join(os.environ["DATA_PATH"], "df_stimulus.csv")
+    data_dff_path = os.path.join(os.environ["DATA_PATH"], "dff_trace.npy")
 
     df_stimulus = pd.read_csv(data_stimulus_path)
     dff_trace = np.load(data_dff_path)
 
     data_train = []
     data_test = []
-    labels_train =[]
+    labels_train = []
     labels_test = []
     embeddings_train = []
-    embeddings_test =[]
+    embeddings_test = []
     embeddings_simple = []
 
     print(stimuli)
 
     for stimulus in stimuli:
 
-        print('Processing stimulus: ',stimulus)
+        print("Processing stimulus: ", stimulus)
 
-        print('type stimulus', type(stimulus))
-        load_path = os.path.join(os.environ["DATA_PATH"],stimulus,'Dinov2_embeddings/vitb14.pt')
-        print('OS PATH', os.environ["DATA_PATH"])
-        print('load path', load_path)
-        embeddings = torch.load(load_path,map_location=torch.device('cpu'))
+        print("type stimulus", type(stimulus))
+        load_path = os.path.join(
+            os.environ["DATA_PATH"], stimulus, "Dinov2_embeddings/vitb14.pt"
+        )
+        print("OS PATH", os.environ["DATA_PATH"])
+        print("load path", load_path)
+        embeddings = torch.load(load_path, map_location=torch.device("cpu"))
 
-        single_stimulus_df = df_stimulus[df_stimulus['stim_type'] == stimulus].reset_index()
+        single_stimulus_df = df_stimulus[
+            df_stimulus["stim_type"] == stimulus
+        ].reset_index()
 
         # Create embeddingsExtended to align with filtered_df
         embeddingsExtended = torch.empty(len(single_stimulus_df), embeddings.size(1))
 
         # Map the frame numbers to their respective indices in the embeddings tensor
-        for idx, frame in enumerate(single_stimulus_df['frame'].values):
+        for idx, frame in enumerate(single_stimulus_df["frame"].values):
 
             embeddingsExtended[idx] = embeddings[frame]
 
-        dff_trace_stimulus_all_repetitions = dff_trace[single_stimulus_df['index'].values,:]    
+        dff_trace_stimulus_all_repetitions = dff_trace[
+            single_stimulus_df["index"].values, :
+        ]
 
-        segments = _get_training_repeat_indices(single_stimulus_df) # list of tuples 
-        
-       #training sets split*10
-        train_idx = int(split*len(segments)) - 1
+        segments = _get_training_repeat_indices(single_stimulus_df)  # list of tuples
 
-        train_dff = dff_trace_stimulus_all_repetitions[segments[0][0]:segments[train_idx][1],:]
-        train_embeddings_stimulus = embeddingsExtended[segments[0][0]:segments[train_idx][1],:]
-        train_labels = single_stimulus_df['frame'].values[segments[0][0]:segments[train_idx][1]]
+        # training sets split*10
+        train_idx = int(split * len(segments)) - 1
 
-        test_dff = dff_trace_stimulus_all_repetitions[segments[train_idx+1][0]:segments[-1][1],:]
-        test_embeddings_stimulus = embeddingsExtended[segments[train_idx+1][0]:segments[-1][1],:]
-        test_labels = single_stimulus_df['frame'].values[segments[train_idx+1][0]:segments[-1][1]]
-            
+        train_dff = dff_trace_stimulus_all_repetitions[
+            segments[0][0] : segments[train_idx][1], :
+        ]
+        train_embeddings_stimulus = embeddingsExtended[
+            segments[0][0] : segments[train_idx][1], :
+        ]
+        train_labels = single_stimulus_df["frame"].values[
+            segments[0][0] : segments[train_idx][1]
+        ]
+
+        test_dff = dff_trace_stimulus_all_repetitions[
+            segments[train_idx + 1][0] : segments[-1][1], :
+        ]
+        test_embeddings_stimulus = embeddingsExtended[
+            segments[train_idx + 1][0] : segments[-1][1], :
+        ]
+        test_labels = single_stimulus_df["frame"].values[
+            segments[train_idx + 1][0] : segments[-1][1]
+        ]
+
         ##########################################
         # Filter out the frame 899
 
@@ -197,11 +293,11 @@ def multisession_preparation(stimuli: list, split: float):
         train_labels = train_labels[idx_no_899_train]
         test_labels = test_labels[idx_no_899_test]
 
-        train_dff = train_dff[idx_no_899_train,:]
-        test_dff = test_dff[idx_no_899_test,:]
+        train_dff = train_dff[idx_no_899_train, :]
+        test_dff = test_dff[idx_no_899_test, :]
 
-        train_embeddings_stimulus = train_embeddings_stimulus[idx_no_899_train,:]
-        test_embeddings_stimulus = test_embeddings_stimulus[idx_no_899_test,:]
+        train_embeddings_stimulus = train_embeddings_stimulus[idx_no_899_train, :]
+        test_embeddings_stimulus = test_embeddings_stimulus[idx_no_899_test, :]
 
         ##########################################
         data_train.append(train_dff)
@@ -214,52 +310,62 @@ def multisession_preparation(stimuli: list, split: float):
         embeddings_test.append(test_embeddings_stimulus)
         embeddings_simple.append(embeddings)
 
-    return data_train,data_test,labels_train,labels_test, embeddings_train,embeddings_test,embeddings_simple
+    return (
+        data_train,
+        data_test,
+        labels_train,
+        labels_test,
+        embeddings_train,
+        embeddings_test,
+        embeddings_simple,
+    )
 
 
 def _get_training_repeat_indices(df):
-  segments = [] # to store the tuples (start_idx,end_idx)
+    segments = []  # to store the tuples (start_idx,end_idx)
 
-  start_idx = None
-  for idx, row in df.iterrows():
-      if row['frame'] == 0:
-          if start_idx is not None:
-              # When we find a new 0, the previous segment ends here
-              segments.append((start_idx, idx - 1))
-          start_idx = idx
+    start_idx = None
+    for idx, row in df.iterrows():
+        if row["frame"] == 0:
+            if start_idx is not None:
+                # When we find a new 0, the previous segment ends here
+                segments.append((start_idx, idx - 1))
+            start_idx = idx
 
-  # Append the last segment
-  if start_idx is not None:
-      segments.append((start_idx, len(df) - 1))
+    # Append the last segment
+    if start_idx is not None:
+        segments.append((start_idx, len(df) - 1))
 
-  return segments
-
+    return segments
 
 
 def add_function_at_line(file_path, new_function, line_number):
-  """
+    """
     This function adds a line to a file. Was meant to be used to add a line to the CEBRA package when loading on COLAB.
 
     Input:
     - file_path: where the file to modify is.
     - new_function (string): the function text to insert.
     - line_number: line where the insertion should be made. Manually found by looking in the files.
-  """
-  
-  # Read the existing file content into a list of lines
-  with open(file_path, 'r') as file:
-      lines = file.readlines()
+    """
 
-  indent = 4 # manually found in the file
+    # Read the existing file content into a list of lines
+    with open(file_path, "r") as file:
+        lines = file.readlines()
 
-  indented_function = '\n'.join([(' ' * indent) + line for line in new_function.strip().split('\n')])
+    indent = 4  # manually found in the file
 
-  # Insert the new function at the desired line number
-  lines.insert(line_number, indented_function + '\n')  # Add a newline at the end
+    indented_function = "\n".join(
+        [(" " * indent) + line for line in new_function.strip().split("\n")]
+    )
 
-  # Write the modified content back to the file
-  with open(file_path, 'w') as file:
-      file.writelines(lines)
+    # Insert the new function at the desired line number
+    lines.insert(line_number, indented_function + "\n")  # Add a newline at the end
+
+    # Write the modified content back to the file
+    with open(file_path, "w") as file:
+        file.writelines(lines)
+
 
 def split_data_HPC(data, test_ratio):
     """
@@ -274,13 +380,19 @@ def split_data_HPC(data, test_ratio):
     - labels_train,labels_test: data labels.
     """
 
-    split_idx = int(len(data)* (1-test_ratio))
+    split_idx = int(len(data) * (1 - test_ratio))
     neural_train = data.neural[:split_idx]
     neural_test = data.neural[split_idx:]
     label_train = data.continuous_index[:split_idx]
     label_test = data.continuous_index[split_idx:]
 
-    return neural_train.numpy(), neural_test.numpy(), label_train.numpy(), label_test.numpy()
+    return (
+        neural_train.numpy(),
+        neural_test.numpy(),
+        label_train.numpy(),
+        label_test.numpy(),
+    )
+
 
 def separate_activations(activations):
     """
@@ -297,11 +409,12 @@ def separate_activations(activations):
     embeddings_trained = []
 
     for key, value in activations.items():
-      if 'UT' in key:
-        embeddings_untrained.append(value.squeeze().cpu().numpy())
-      else:
-        embeddings_trained.append(value.squeeze().cpu().numpy())
-    return embeddings_untrained,embeddings_trained
+        if "UT" in key:
+            embeddings_untrained.append(value.squeeze().cpu().numpy())
+        else:
+            embeddings_trained.append(value.squeeze().cpu().numpy())
+    return embeddings_untrained, embeddings_trained
+
 
 ########################################################################################################################
 ########################################################################################################################
@@ -319,21 +432,21 @@ def get_single_session_datasets(
     gaussian_noise: float = None,
 ):
     """
-    Args: 
+    Args:
         test_session: The session ID to consider as the test session. NOTE(celia): this will need
             to be changed if we want to test smaller training set number of repeats.
-        corrupted: If True, loads the corrupted dataset, see `datasets/allen/single_session_ca.py` in CEBRA 
+        corrupted: If True, loads the corrupted dataset, see `datasets/allen/single_session_ca.py` in CEBRA
             codebase.
-        pseudomice: If True, uses pseudomice rather than full, with default number of neurons per 
+        pseudomice: If True, uses pseudomice rather than full, with default number of neurons per
             mouse.
         mice: Number of mice to use (max is 4, for now). NOTE(celia): this could be increased by
-            pre-processing more mice. 
-        shot_noise: Level of shot noise (Poisson noise) to apply on the dataset. Default is None, 
+            pre-processing more mice.
+        shot_noise: Level of shot noise (Poisson noise) to apply on the dataset. Default is None,
             and that means that no noise is applied.
         gaussian_noise: Value of the standard deviaiton of the Gaussian noise to add on the data.
             Default is None, and that means that no noise is applied.
-    
-    Returns: 
+
+    Returns:
         The train and valid datasets, and the train and valid frame IDs.
     """
     train_datas, valid_datas = [], []

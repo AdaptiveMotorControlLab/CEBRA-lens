@@ -11,11 +11,11 @@ from ..preprocessing.CEBRA_preprocessing.data_utils import *
 from ..preprocessing.CEBRA_preprocessing.quantification_utils import *
 import argparse
 
-def main(model_name,layer_type, session_id,filename):
+def main(model_name,layer_type, session_id,filename, bool_plot_embeddings):
     
     print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('BEGINNING OF SCRIPT')
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
 
 
     ######################
@@ -24,7 +24,7 @@ def main(model_name,layer_type, session_id,filename):
 
     print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('Loading Data and models...')
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
 
     # LOAD DATA
     train_datas, valid_datas, discrete_labels_train, discrete_labels_val = get_single_session_datasets()
@@ -37,59 +37,51 @@ def main(model_name,layer_type, session_id,filename):
     valid_label = discrete_labels_val[session_id]
 
     # LOAD MODELS
-    models_folder_path = f'FinalModels/VISION/{model_name}'
-    files_list = os.listdir(models_folder_path)
+    models = model_loader(model_name= model_name)
 
-    models_list = []
-    for file in files_list: # load only the torch models for cpu usage
-        if file.endswith("torch.pt"):
-            models_list.append(file)
+    #############################
+    ####### PLOT EMBEDDINGS #####
+    #############################
+    if bool_plot_embeddings:
+        print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        print('Calculating output embeddings...')
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
 
-    models_list
-    print('Number of models: ',len(models_list))
-    print(models_list)
+        X = train_data
+        y = train_label
+        embeddings_single = []
+        embeddings_multi = []
 
-    models_untrained = [] # will be multi_ut, single_ut
-    models_single = [] # will be all the singles trained
-    models_multi = [] # will be all the multi trained
+        for i in range(len(models["multi"])): # assumes that the same number of single sessions and multi sessions were trained
+
+            embeddings_single.append(models['single'][i].transform(X))
+            embeddings_multi.append(models['multi'][i].transform(X,session_id = session_id))
 
 
-    for model in models_list:
 
-        loaded_model = cebra.CEBRA.load(os.path.join(models_folder_path,model), backend = 'torch', map_location=torch.device('cpu')).to('cpu')
-        if 'UT' in model:
-            models_untrained.append(loaded_model)
+        # Align the single session embeddings to the first rat
+        alignment = cebra.data.helper.OrthogonalProcrustesAlignment()
 
-        elif 'multi' in model:
-            models_multi.append(loaded_model)
+        for j in range(len(models["multi"])):
+            embeddings_single[j] = alignment.fit_transform(
+                embeddings_single[0], embeddings_single[j], y, y)
+            
+        for j in range(len(models["multi"])):
+            embeddings_multi[j] = alignment.fit_transform(
+                embeddings_multi[0], embeddings_multi[j], y, y)
+            
+        embeddings_untrained_single = models['UT'][0].transform(X) # this assumes that single will always come first. This is true if they are named in the same convention but this should be changed by a reg expression of UT + single.
+        embeddings_untrained_multi = models['UT'][1].transform(X,session_id = session_id)
 
-        else:
-            models_single.append(loaded_model)
-    
-    models = {
-        'UT': models_untrained,
-        'single': models_single,
-        'multi': models_multi
-    }
-
-    # check the models
-    print('# of Untrained models: ',len(models["UT"]))
-    print('# of Single Trained models: ',len(models["single"]))
-    print('# of Single Trained models: ',len(models["multi"]))
-
-    print('Solver Untrained model 1: ',models["UT"][0].solver_name_) # HERE IT'S SINGLE SESSION FIRST
-    print('Solver Untrained model 2: ',models["UT"][1].solver_name_)
-    print('key single: ', models["single"][0].solver_name_)
-    print('key multi: ',models["multi"][0].solver_name_)
-
+        plot_embeddings_singlevmulti(embeddings_single, embeddings_multi, embeddings_untrained_single, embeddings_untrained_multi, y)
 
     ###########################
     ####### ATTACH HOOKS ######
     ###########################
 
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('Retrieving layer activations...')
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
 
 
     # Dictionary to store activations of all models
@@ -167,16 +159,13 @@ def main(model_name,layer_type, session_id,filename):
     
     activations_dict = process_activations(activations,output_embeddings) #TODO: change process_activations so it takes the output embedding as well
 
-   
-
-    print(activations_dict['act_single'])
-    print(activations_dict['labels_single'])
-    print(len(activations_dict['labels_single']))
-
-
     # Save activations to a pickle file
     with open(os.path.join('data/activations', f'{filename}.pkl'), 'wb') as f:
         pickle.dump(activations_dict, f)
+        print('\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        print('Layer activations saved!')
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
+
 
 if __name__ == "__main__":
 
@@ -193,6 +182,10 @@ if __name__ == "__main__":
     parser.add_argument(
         '--filename', type=str, default='offset10', help="filename of the activations"
     )
+    parser.add_argument(
+        '--bool_plot_embeddings', type=int, default=1, help="Plots the output embeddings of the models (0 or 1)"
+    )
+
     args = parser.parse_args()
     print(args)
-    main(args.model_name,args.layer_type, args.session_id, args.filename)
+    main(args.model_name,args.layer_type, args.session_id, args.filename, args.bool_plot_embeddings)
