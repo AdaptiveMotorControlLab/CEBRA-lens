@@ -1,6 +1,56 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
+import seaborn as sns
+
+
+def plot_cka_heatmaps(cka_matrices,annot, titles, cbar_label='CKA score', color_map='magma', figsize=(15, 5)):
+    """
+    Plot CKA heatmaps for different matrix comparisons.
+
+    Parameters:
+    - cka_matrices: List of matrices to plot (should be a list of 3 matrices)
+    - titles: List of titles corresponding to each heatmap
+    - cbar_label: Label for the color bar
+    - color_map: The color map to use for the heatmap
+    - figsize: Size of the figure for the subplots
+    """
+    # Create a figure and set of subplots
+    fig, axs = plt.subplots(1, 3, figsize=figsize)
+
+    # Define the heat map parameters
+    cbar_ax = fig.add_axes([0.13, -0.04, 0.3, 0.03])  # Position for the color bar
+
+    heatmap_kwargs = {'cbar': True, 'cbar_ax': cbar_ax, 'vmin': 0, 'vmax': 1, 'cmap': color_map, 
+                      'cbar_kws': {'label': cbar_label, 'orientation': 'horizontal'}}
+
+    num_layers = cka_matrices[0].shape[1]
+    num_models = cka_matrices[0].shape[0]
+
+    
+    # Plot each heat map
+    for i, matrix in enumerate(cka_matrices):
+        sns.heatmap(matrix, ax=axs[i], annot=annot, **heatmap_kwargs)
+        axs[i].set_title(titles[i])
+
+    # Set labels and titles
+    for ax in axs:
+        ax.set_xlabel('Layer')
+        if ax == axs[0]:
+            ax.set_ylabel('Model Instantiation', fontsize=12)
+            ax.set_yticks(np.arange(num_models) + 0.5)
+            ax.set_yticklabels([m for m in range(1,num_models+1)])
+        else:
+            ax.set_ylabel('')
+            ax.set_yticks([])
+
+        ax.set_xticks(np.arange(num_layers) + 0.5)
+        ax.set_xticklabels([f'L{l}' for l in range(1, num_layers+1)])
+
+    # Adjust layout
+    plt.subplots_adjust(wspace=0.1, right=0.9)
+    fig.suptitle('Similarity between model representations (CKA)', fontsize=16)
+    plt.show()
 
 
 def plot_hippocampus(ax, embedding, label, gray = False, idx_order = (0,1,2)):
@@ -259,3 +309,101 @@ def plot_rdm(rdms, titles, metric='Normalized Euclidean distance'):
 
     plt.show()
 
+def plot_accuracy_comparison(results_untrained, results_single, results_multi):
+    """
+    Plot the accuracy comparison across untrained, single-session, and multi-session models.
+    
+    Parameters:
+    - results_untrained: Results for untrained models (array).
+    - results_single: Results for single-session models (array).
+    - results_multi: Results for multi-session models (array).
+    """
+    # Define pastel colors
+    colors = sns.color_palette("hls", 8)
+    pastel_purple = colors[6]
+    pastel_blue = colors[4]
+    grey = sns.color_palette("Greys")[5]
+
+    # Extract the position error (accuracy) from each model's results
+    acc1 = results_untrained[:, 2]
+    acc2 = results_single[:, 2]
+    acc3 = results_multi[:, 2]
+
+    # Compute the mean of the accuracy for each model
+    mean_error1 = np.mean(acc1)
+    mean_error2 = np.mean(acc2)
+    mean_error3 = np.mean(acc3)
+
+    # Create the figure and axis for plotting
+    fig, ax = plt.subplots(figsize=(5, 3))
+
+    # X positions for each model
+    x_positions = [1, 2, 3]
+
+    # Plot the accuracy errors (scatter points)
+    ax.scatter(np.ones_like(acc1) * x_positions[0], acc1, color=grey, alpha=0.3)
+    ax.scatter(np.ones_like(acc2) * x_positions[1], acc2, color=pastel_blue, alpha=0.3)
+    ax.scatter(np.ones_like(acc3) * x_positions[2], acc3, color=pastel_purple, alpha=0.3)
+
+    # Plot the means (highlighted as larger points)
+    ax.scatter(x_positions[0], mean_error1, color=grey, s=50, label='Mean untrained', zorder=5)
+    ax.scatter(x_positions[1], mean_error2, color=pastel_blue, s=50, label='Mean single-session', zorder=5)
+    ax.scatter(x_positions[2], mean_error3, color=pastel_purple, s=50, label='Mean multi-session', zorder=5)
+
+    # Set labels, title, and other plot settings
+    ax.set_xlabel('Model')
+    ax.set_ylabel('Accuracy (%)')
+    ax.set_title('Comparison of Accuracy Across Models')
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(['Untrained', 'Single-session', 'Multi-session'])
+    ax.legend()
+    sns.despine()
+
+    # Show the plot
+    plt.show()
+
+
+
+
+def plot_embeddings_singlevmulti(embeddings_single, embeddings_multi, embeddings_untrained_single, embeddings_untrained_multi, y):
+    """
+    Plot the 3D embeddings for both single and multi layers, comparing untrained and trained models.
+    
+    Parameters:
+    - embeddings_single: List of trained embeddings (single layer).
+    - embeddings_multi: List of trained embeddings (multi-layer).
+    - embeddings_untrained_single: Untrained embeddings (single layer).
+    - embeddings_untrained_multi: Untrained embeddings (multi-layer).
+    - y: Data to be plotted alongside embeddings.
+    """
+    num_layers = len(embeddings_single)
+
+    fig, axs = plt.subplots(2, num_layers+1, figsize=(15, 10), subplot_kw={'projection': '3d'})
+
+    # Flatten the array of axes for easier indexing
+    axs = axs.flatten()
+
+    # Separate the axes into untrained and trained lists
+    axs_single = axs[:num_layers+1]
+    axs_multi = axs[num_layers+1:]
+
+    i = 0
+    for ax, ax_multi in zip(axs_single, axs_multi):
+        if i == 0:
+            embeddings_single_plot = embeddings_untrained_single
+            embeddings_multi_plot = embeddings_untrained_multi
+            title = 'Untrained'
+        else:
+            embeddings_single_plot = embeddings_single[i-1]
+            embeddings_multi_plot = embeddings_multi[i-1]
+            title = i
+        ax = plot_allen(ax, embeddings_single_plot, y)  # Assuming `plot_allen` is defined elsewhere
+        ax.set_title(f'Single-{title}', y=1, pad=-20)
+        ax.axis('off')
+        ax_multi = plot_allen(ax_multi, embeddings_multi_plot, y)
+        ax_multi.set_title(f'Multi-{title}', y=1, pad=-20)
+        ax_multi.axis('off')
+        i += 1
+
+    plt.subplots_adjust(wspace=0, hspace=0)
+    plt.show()

@@ -5,7 +5,109 @@ import torch
 import cebra
 import cebra.datasets
 import copy
+import pickle
+from sklearn.manifold import TSNE
+from tqdm import tqdm
 
+def process_activations(activations,output_embeddings):
+    """
+    Classify activations into three groups based on their prefix.
+    
+    Parameters:
+    - activations: Dictionary where keys are strings (with prefixes) and values are arrays.
+    
+    Returns:
+    - activations_UT: List of activations for untrained (UT) models.
+    - activations_single: List of activations for single models.
+    - activations_multi: List of activations for multi models.
+    """
+    activations_UT = []
+    activations_single = []
+    activations_multi = []
+    labels_UT = []
+    labels_single =[]
+    labels_multi =[]
+
+    for key, value in activations.items():
+        parts = key.split('_')
+        prefix = parts[0]
+
+        if prefix == 'multiUT' or prefix == 'singleUT':
+            activations_UT.append(value.squeeze())
+            labels_UT.append(key)
+        elif prefix.startswith('single'):
+            activations_single.append(value.squeeze())
+            labels_single.append(key)
+
+        elif prefix.startswith('multi'):
+            activations_multi.append(value.squeeze())
+            labels_multi.append(key)
+
+    # add the output embeddings at the end
+    activations_UT += output_embeddings['UT']
+    labels_UT += [f'output_embedding_UT{i}' for i in range (len(output_embeddings['UT']))]
+    activations_single += output_embeddings['single']
+    labels_single += [f'output_embedding_{i}' for i in range (len(output_embeddings['single']))]
+    activations_multi += output_embeddings['multi']
+    labels_multi  += [f'output_embedding_{i}' for i in range (len(output_embeddings['multi']))]
+
+
+
+            
+    activations_dict = {
+            'act_UT':activations_UT,
+            'act_single': activations_single,
+            'act_multi': activations_multi,
+            'labels_UT' :labels_UT,
+            'labels_single':labels_single,
+            'labels_multi':labels_multi
+            }
+    
+    return activations_dict
+
+def run_tsne_and_save(embeddings_untrained_single, embeddings_trained_single, embeddings_untrained_multi, embeddings_trained_multi, points_viz=2000):
+    """
+    Apply t-SNE to the provided embeddings and save the results.
+
+    Parameters:
+    - embeddings_untrained_single: List of embeddings for untrained single-session models.
+    - embeddings_trained_single: List of embeddings for trained single-session models.
+    - embeddings_untrained_multi: List of embeddings for untrained multi-session models.
+    - embeddings_trained_multi: List of embeddings for trained multi-session models.
+    - points_viz: Number of points to use in the t-SNE (default is 2000).
+    
+    Saves the t-SNE results as pickle files.
+    """
+    # Lists to hold the transformed embeddings
+    embeddings_tsne_untrained_single = []
+    embeddings_tsne_trained_single = []
+    embeddings_tsne_untrained_multi = []
+    embeddings_tsne_trained_multi = []
+
+    # Run t-SNE for each set of embeddings
+    for i in tqdm(range(len(embeddings_trained_single))):
+        tsne = TSNE(n_components=3)
+        
+        # Apply t-SNE and append to respective lists
+        embeddings_tsne_untrained_single.append(tsne.fit_transform(embeddings_untrained_single[i][:, :points_viz].T))
+        embeddings_tsne_trained_single.append(tsne.fit_transform(embeddings_trained_single[i][:, :points_viz].T))
+        embeddings_tsne_untrained_multi.append(tsne.fit_transform(embeddings_untrained_multi[i][:, :points_viz].T))
+        embeddings_tsne_trained_multi.append(tsne.fit_transform(embeddings_trained_multi[i][:, :points_viz].T))
+
+    # Save the t-SNE embeddings as pickle files
+    with open('FinalModels/tSNE/VISION/tsne_embeddings_singlesession_untrained.pkl', 'wb') as f:
+        pickle.dump(embeddings_tsne_untrained_single, f)
+
+    with open('FinalModels/tSNE/VISION/tsne_embeddings_singlesession_trained.pkl', 'wb') as f:
+        pickle.dump(embeddings_tsne_trained_single, f)
+
+    with open('FinalModels/tSNE/VISION/tsne_embeddings_multisession_untrained.pkl', 'wb') as f:
+        pickle.dump(embeddings_tsne_untrained_multi, f)
+
+    with open('FinalModels/tSNE/VISION/tsne_embeddings_multisession_trained.pkl', 'wb') as f:
+        pickle.dump(embeddings_tsne_trained_multi, f)
+
+    print('DONE')
 
 # NOT USED IN THE NOTEBOOKS (TO BE REMOVED)
 def multisession_preparation(stimuli: list, split: float):

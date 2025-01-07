@@ -9,11 +9,19 @@ import sklearn.metrics
 from scipy.spatial.distance import cosine, correlation,cdist,pdist, squareform
 from sklearn.preprocessing import StandardScaler
 
+# Save this in a file called `cka_computation.py`
+
+import numpy as np
+from tqdm import tqdm
+
+
 # Min-Max normalization function
 def normalize_minmax(rdm):
     rdm_min = np.min(rdm)
     rdm_max = np.max(rdm)
     return (rdm - rdm_min) / (rdm_max - rdm_min)
+
+
 
 # Function to compute centroids and inter-bin distances for a given embeddings list
 def compute_inter_bin_distances(embeddings_list,idxs,num_bins,metric = 'cosine'):
@@ -143,6 +151,61 @@ def decoding_pos_dir(embedding_train, embedding_test, label_train, label_test):
 
    return test_score, pos_test_err, pos_test_score
 
+def decoding_models(models_untrained, models_single, models_multi, X, y, discrete_labels_val, valid_datas, decoding_frames):
+    """
+    Processes untrained, single, and multi models to obtain their decoding results.
+    
+    Parameters:
+    - models_untrained: List of untrained models.
+    - models_single: List of single models.
+    - models_multi: List of multi models.
+    - X: Training data for the models.
+    - y: Labels for the training data.
+    - discrete_labels_val: Validation labels for testing.
+    - valid_datas: Validation data for testing.
+    - decoding_frames: Function used to decode the frames.
+    
+    Returns:
+    - results_untrained: Decoding results for untrained models.
+    - results_single: Decoding results for single models.
+    - results_multi: Decoding results for multi models.
+    """
+    
+    # Initialize results arrays
+    results_untrained = np.zeros((len(models_untrained), 3))
+    results_single = np.zeros((len(models_single), 3))
+    results_multi = np.zeros((len(models_multi), 3))
+    
+    # Labels and data
+    label_train = y
+    label_test = discrete_labels_val[3]
+    data_train = X
+    data_test = valid_datas[3].neural
+    
+    # UNTRAINED models
+    for i, model in enumerate(models_untrained):
+        if i == 1:  # multi-session, need to add session_id
+            train = model.transform(data_train, session_id=3)
+            test = model.transform(data_test, session_id=3)
+        else:
+            train = model.transform(data_train)
+            test = model.transform(data_test)
+        
+        results_untrained[i] = decoding_frames(embedding_train=train, label_train=label_train, embedding_test=test, label_test=label_test)
+    
+    # SINGLE models
+    for i, model in enumerate(models_single):
+        train = model.transform(X)
+        test = model.transform(data_test)
+        results_single[i] = decoding_frames(embedding_train=train, label_train=label_train, embedding_test=test, label_test=label_test)
+    
+    # MULTI models
+    for i, model in enumerate(models_multi):
+        train = model.transform(data_train, session_id=3)
+        test = model.transform(data_test, session_id=3)
+        results_multi[i] = decoding_frames(embedding_train=train, label_train=label_train, embedding_test=test, label_test=label_test)
+    
+    return results_untrained, results_single, results_multi
 
 
 ########################################################################################################################
