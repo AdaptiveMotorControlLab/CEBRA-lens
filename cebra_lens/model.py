@@ -44,12 +44,13 @@ def model_loader(
     # models_unified_TR = []
 
     for model in models_list:
-
         loaded_model = cebra.CEBRA.load(
             os.path.join(models_folder_path, model),
             backend="torch",
             map_location=torch.device("cpu"),
-        ).to("cpu")
+        )
+        print("Loaded model")
+        loaded_model.to("cpu")
         if "_UT" in model:
             if loaded_model.solver_name_ == "multi-session":
                 models_multi_UT.append(loaded_model)
