@@ -33,7 +33,7 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
         raise FileNotFoundError(f"Folder {models_folder_path} not found.")
     models = {}
     for file in pathlib.Path.iterdir(models_folder_path):
-        if str(file).endswith(".pt") or str(file).endswith(".pth"):
+        if str(file).endswith((".pt", ".pth")):
             print(f"Model {file.stem} loading...")
             model_path = models_folder_path / file
             loaded_model = cebra.CEBRA.load(
@@ -41,11 +41,14 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
                 backend="torch",
                 map_location=torch.device("cpu"),
             ).to("cpu")
-            key = labels.get(file.stem, False)
-            if not key or not models.get(key, False):
+            key = labels.get(file.stem, None)
+            if key is None:
                 models[file.stem] = [loaded_model]
             else:
-                models[key].append(loaded_model)
+                if key not in models:
+                    models[key] = [loaded_model]
+                else:
+                    models[key].append(loaded_model)
             # what is solver_name and how is it chosen from the model file?
 
             # for now this just assigns label = model file name
