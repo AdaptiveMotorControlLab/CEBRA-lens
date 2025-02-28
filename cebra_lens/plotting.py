@@ -621,8 +621,7 @@ def plot_layer_decoding(
 
 def plot_decoding(
     results_dict: dict,
-    palette_tr: str = "hls",
-    palette_ut: str = "Greys",
+    palette: str = "hls",
     dataset_label="visual",
 ) -> plt.Figure:
     """
