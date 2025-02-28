@@ -38,7 +38,7 @@ def model_loader(
                 #what is solver_name and how is it chosen from the model file?
 
                 #for now this just assigns label = model file name
-                print(f"Solver_name =  {loaded_model.solver_name_}")
+                #print(f"Solver_name =  {loaded_model.solver_name_}")
                 models[file.stem] = loaded_model
                 print(f"Model {file.stem} loaded succesfully.")
 
