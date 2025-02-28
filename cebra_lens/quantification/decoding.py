@@ -313,7 +313,8 @@ def decode_by_layer_all(
             )
 
         results_dict[key] = results_list
-
+    print(models_dict)
+    print(results_dict)
     results_dict = process_activations(results_dict)
 
     for key, value in results_dict.items():
