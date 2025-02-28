@@ -319,12 +319,13 @@ def decode_by_layer_all(
             )
 
         results_dict[key] = results_list
-        
+
     print(results_dict)
     results_dict = process_activations(results_dict)
-
+    print(results_dict)
     for key, value in results_dict.items():
         for inner_key, inner_value in value.items():
+            #key  = single, inner_key = TR/UT
             results_dict[key][inner_key] = inner_value[0][0]
 
     return results_dict
