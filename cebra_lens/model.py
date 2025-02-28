@@ -27,7 +27,7 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
     """
 
     # LOAD MODELS
-  
+
     models_folder_path = pathlib.Path(model_dir)
     if not pathlib.Path.exists(models_folder_path):
         raise FileNotFoundError(f"Folder {models_folder_path} not found.")
@@ -42,7 +42,7 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
                 map_location=torch.device("cpu"),
             ).to("cpu")
             key = labels.get(file.stem, False)
-            if not key:
+            if not key or not models.get(key, False):
                 models[file.stem] = [loaded_model]
             else:
                 models[key].append(loaded_model)
