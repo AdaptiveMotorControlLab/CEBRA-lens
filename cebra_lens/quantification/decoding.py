@@ -315,10 +315,11 @@ def decode_by_layer_all(
         results_dict[key] = results_list
     print(models_dict)
     print(results_dict)
-    results_dict = process_activations(results_dict)
+    # no need for this cause i dont care about UT and TR model differences
+    # results_dict = process_activations(results_dict)
 
-    for key, value in results_dict.items():
-        for inner_key, inner_value in value.items():
-            results_dict[key][inner_key] = inner_value[0][0]
+    # for key, value in results_dict.items():
+    #     for inner_key, inner_value in value.items():
+    #         results_dict[key][inner_key] = inner_value[0][0]
 
     return results_dict

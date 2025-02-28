@@ -435,105 +435,92 @@ def plot_rdm(
 
 
 def plot_dict(
-    dictionnary: dict,
+    dictionary: dict,
     title: str = "Plotting dict",
     figsize: tuple = (15, 5),
     plotting_type: str = "rdm",
-) -> plt.Figure:
+) -> list[plt.Figure]:
     """
-    Goes through a dictionnary and plots each model instanciation layer by layer. It is used for distances and rdm for example.
+    Goes through a dictionary and creates a separate plot for each key.
 
     Parameters:
     -----------
-    dictionnary : dict
-        A dictionary containing the values to be plotted, where the values should
-        be dictionaries containing the quantification for different layers. It has the same form as activations_dict.
+    dictionary : dict
+        A dictionary containing the values to be plotted, where keys are arbitrary strings,
+        and values are lists of arrays containing data.
     title : str, optional
-        The title for the plot.
+        The base title for each plot.
     figsize : tuple, optional
         A tuple representing the figure size (default is (15, 5)).
+    plotting_type : str, optional
+        The type of plot: 'rdm', 'distance', or 'decoding'.
 
     Returns:
     --------
-    fig : matplotlib.figure.Figure
-        The generated figure containing the RDM comparison plot.
+    figures : list of matplotlib.figure.Figure
+        A list of generated figures, one per dictionary key.
     """
 
-    color_dictionnary = {
-        "single": sns.color_palette("hls", 8)[4],
-        "multi": sns.color_palette("hls", 8)[6],
-        "UT": sns.color_palette("Greys")[5],
-    }
+    # Get a color palette with a unique color per key
+    unique_keys = list(dictionary.keys())
+    colors = sns.color_palette("husl", len(unique_keys))
 
     fig, axs = plt.subplots(1, 1, figsize=figsize)
 
-    for outer_key, outer_value in dictionnary.items():
+    for idx, (key, data_list) in enumerate(dictionary.items()):
+        color = colors[idx]  # Assign a unique color per key
+        layer_values = []
 
-        for inner_key, outer_list in outer_value.items():
-
-            layer_values = []
-
-            if inner_key == "TR":
-                if outer_key in list(color_dictionnary.keys()):
-                    color = color_dictionnary[outer_key]
-                else:
-                    f"Color not implement for {outer_key}. It should be either 'single' or 'multi'."
-
-            elif inner_key == "UT":
-                color = color_dictionnary["UT"]
+        for i, inner_list in enumerate(data_list):
+            if plotting_type == "rdm":
+                values = [arr[1] for arr in inner_list]  # Extract second column
+            elif plotting_type == "distance":
+                values = [arr for arr in inner_list]  # Use raw values
+            elif plotting_type == "decoding":
+                values = [arr[2] for arr in inner_list]  # Extract third column
             else:
                 raise NotImplementedError(
-                    f"Color not implement for {inner_key}. It should be either 'UT' or 'TR'."
+                    f"Plotting not yet implemented for {plotting_type}. Please use 'rdm', 'distance', or 'decoding'."
                 )
 
-            for i, inner_list in enumerate(outer_list):
-                if plotting_type == "rdm":
-                    values = [arr[1] for arr in inner_list]
-                elif plotting_type == "distance":
-                    values = [arr for arr in inner_list]
-                elif plotting_type == "decoding":
-                    values = [arr[2] for arr in inner_list]
-                else:
-                    raise NotImplementedError(
-                        f"Plotting not yet implemented for {plotting_type}. Please use 'rdm' or 'distance'."
-                    )
+            layer_values.append(values)
 
-                layer_values.append(values)
-
-                sns.lineplot(
-                    x=np.arange(1, len(values) + 1),
-                    y=values,
-                    linestyle="-",
-                    marker="D",
-                    color=color,
-                    alpha=0.5,
-                    # label=(
-                    #    f"{outer_key} - {inner_key}" if i == 0 else ""
-                    # ),  # Label only the first line of each key
-                )
-            layer_values = np.array(layer_values)
-
-            if layer_values.ndim == 1:
-                mean_values = layer_values
-            else:
-                mean_values = np.mean(layer_values, axis=0)
-
+            # Plot individual layers
             sns.lineplot(
-                x=np.arange(1, len(mean_values) + 1),
-                y=mean_values,
+                x=np.arange(1, len(values) + 1),
+                y=values,
                 linestyle="-",
                 marker="D",
                 color=color,
-                alpha=1,
-                label=(f"Mean {outer_key} - {inner_key}"),
+                alpha=0.5,
             )
-            if plotting_type == "decoding":
-                plt.xticks(
-                    np.arange(1, len(mean_values) + 1),
-                    ["Neural input"] + [str(i) for i in range(1, len(mean_values))],
-                )
-            plt.title(title, fontsize=15)
-            sns.despine()
+
+        layer_values = np.array(layer_values)
+
+        # Compute mean if multiple layers exist
+        mean_values = (
+            layer_values if layer_values.ndim == 1 else np.mean(layer_values, axis=0)
+        )
+
+        # Plot mean line
+        sns.lineplot(
+            x=np.arange(1, len(mean_values) + 1),
+            y=mean_values,
+            linestyle="-",
+            marker="D",
+            color=color,
+            alpha=1,
+            label=f"Mean {key}",
+        )
+
+        # Customize x-ticks for decoding plots
+        if plotting_type == "decoding":
+            plt.xticks(
+                np.arange(1, len(mean_values) + 1),
+                ["Neural input"] + [str(i) for i in range(1, len(mean_values))],
+            )
+        plt.title(title, fontsize=15)
+        sns.despine()
 
     return fig
 
