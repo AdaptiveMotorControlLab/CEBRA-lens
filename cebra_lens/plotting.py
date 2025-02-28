@@ -632,10 +632,8 @@ def plot_decoding(
     -----------
     results_dict : dict
         A dictionary where the keys are model names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models. The names must contain either TR or UT: e.g. multi1_TR, single3_UT
-    palette_tr : str, optional
-        The color palette for trained models (default is "hls").
-    palette_ut : str, optional
-        The color palette for untrained models (default is "Greys").
+    palette: str, optional (default is "hls")
+        The color palette to use for the plot.
 
     Returns:
     --------
@@ -643,32 +641,20 @@ def plot_decoding(
         The generated figure displaying the comparison of decoding accuracy across models.
     """
 
-    trained_labels = [name for name in list(results_dict.keys()) if "_TR" in name]
-    untrained_labels = [name for name in list(results_dict.keys()) if "_UT" in name]
-
-    palette_tr = sns.color_palette(palette_tr, len(trained_labels))
-    palette_ut = sns.color_palette(palette_ut, len(untrained_labels))
+    palette = sns.color_palette(palette, len(results_dict))
 
     fig, ax = plt.subplots(figsize=(len(results_dict) * 2, 6))
 
     # X positions for each model type
     x_positions = list(range(1, len(results_dict) + 1))
 
-    ut_counter = 0
-    tr_counter = 0
+    # ut_counter = 0
+    # tr_counter = 0
     if dataset_label == "visual":
         for i, (key, results) in enumerate(results_dict.items()):
             acc = results[:, 2]  # accuracy
             mean_error = np.mean(acc)
-
-            # Plot each instance
-            if key in untrained_labels:
-                color = palette_ut[ut_counter]
-                ut_counter += 1
-            else:
-                color = palette_tr[tr_counter]
-                tr_counter += 1
-
+            color = palette[i]
             ax.scatter(np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3)
 
             # Plot the means
