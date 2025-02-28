@@ -5,7 +5,7 @@ import cebra
 import torch
 
 
-def model_loader(model_dir: str, labels: dict = None) -> dict:
+def model_loader(model_dir: str, labels: dict = {}) -> dict:
     """
     Load and categorize models based on their training status and session type.
     Parameters:
@@ -27,11 +27,11 @@ def model_loader(model_dir: str, labels: dict = None) -> dict:
     """
 
     # LOAD MODELS
-    models = {key: [] for key in labels.values()}
+  
     models_folder_path = pathlib.Path(model_dir)
     if not pathlib.Path.exists(models_folder_path):
         raise FileNotFoundError(f"Folder {models_folder_path} not found.")
-
+    models = {}
     for file in pathlib.Path.iterdir(models_folder_path):
         if str(file).endswith(".pt") or str(file).endswith(".pth"):
             print(f"Model {file.stem} loading...")
@@ -41,12 +41,15 @@ def model_loader(model_dir: str, labels: dict = None) -> dict:
                 backend="torch",
                 map_location=torch.device("cpu"),
             ).to("cpu")
-            key = labels.get(file.stem, file.stem)
+            key = labels.get(file.stem, False)
+            if not key:
+                models[file.stem] = [loaded_model]
+            else:
+                models[key].append(loaded_model)
             # what is solver_name and how is it chosen from the model file?
 
             # for now this just assigns label = model file name
             # print(f"Solver_name =  {loaded_model.solver_name_}")
-            models[key].append(loaded_model)
             print(f"Model {file.stem} loaded succesfully.")
 
     return models
