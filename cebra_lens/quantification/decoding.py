@@ -177,7 +177,6 @@ def decode_models(
 
 def decode_by_layer_single(
     model: cebra.integrations.sklearn.cebra.CEBRA,
-    bool_train: bool,
     train_data: torch.Tensor,
     train_label: np.ndarray,
     test_data: torch.Tensor,
@@ -193,8 +192,6 @@ def decode_by_layer_single(
     ----------
     model : cebra.integrations.sklearn.cebra.CEBRA
         The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-    bool_train : bool
-        Flag indicating whether the model is trained or not.
     train_data : torch.Tensor
         The training data used for model transformation.
     train_label : np.ndarray
@@ -221,7 +218,6 @@ def decode_by_layer_single(
         data=train_data,
         name=model.solver_name_,
         session_id=session_id,
-        bool_train=bool_train,
         layer_type=layer_type,
     )
 
@@ -230,7 +226,6 @@ def decode_by_layer_single(
         data=test_data,
         name=model.solver_name_,
         session_id=session_id,
-        bool_train=bool_train,
         layer_type=layer_type,
     )
 
@@ -307,7 +302,6 @@ def decode_by_layer_all(
             results_list.append(
                 decode_by_layer_single(
                     model=model,
-                    bool_train="UT" not in key,
                     train_data=train_data,
                     train_label=train_label,
                     test_data=test_data,

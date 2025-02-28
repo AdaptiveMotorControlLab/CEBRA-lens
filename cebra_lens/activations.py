@@ -40,7 +40,6 @@ def get_activations_one_model(
     session_id: int = -1,
     name: str = "single",
     instance: int = 0,
-    bool_train: bool = False,
     layer_type: str = "conv",
 ) -> dict:
     """
@@ -60,7 +59,6 @@ def get_activations_one_model(
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to label the activations.
-    bool_train : bool
         Whether the model was trained or not. Appends 'TR' if true and 'UT' if false.
     layer_type : str, optional
         The type of layer to extract activations from. Defaults to 'conv'.
@@ -82,7 +80,6 @@ def get_activations_one_model(
             model=model_,
             name=name,
             instance=instance,
-            bool_train=bool_train,
             layer_type=layer_type,
         )
         _ = model.transform(
@@ -96,7 +93,6 @@ def get_activations_one_model(
             model=model_,
             name=name,
             instance=instance,
-            bool_train=bool_train,
             layer_type=layer_type,
         )
         _ = model.transform(
@@ -177,7 +173,6 @@ def get_activations_multi_model(
                 data=data,
                 name="single",
                 instance=i,
-                bool_train=False,
                 layer_type=layer_type,
             )
         )
@@ -193,7 +188,6 @@ def get_activations_multi_model(
                 session_id=session_id,
                 name="multi",
                 instance=i,
-                bool_train=False,
                 layer_type=layer_type,
             )
         )
@@ -206,7 +200,6 @@ def get_activations_multi_model(
                 data=data,
                 name="single",
                 instance=i,
-                bool_train=True,
                 layer_type=layer_type,
             )
         )
@@ -220,7 +213,6 @@ def get_activations_multi_model(
                 session_id=session_id,
                 name="multi",
                 instance=i,
-                bool_train=True,
                 layer_type=layer_type,
             )
         )
@@ -243,7 +235,6 @@ def _attach_hooks(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     name: str,
     instance: int,
-    bool_train=False,
     layer_type="conv",
 ) -> dict:  # only attaches hooks on convolutional layers
     """
@@ -260,8 +251,6 @@ def _attach_hooks(
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
         An instance identifier to differentiate between multiple instances.
-    bool_train : bool
-        Whether the model was trained or not. Attaches 'TR' if true and 'UT' if false.
     layer_type : str
         The type of layer from which to extract activations (e.g., convolutional).
 
@@ -281,10 +270,6 @@ def _attach_hooks(
             f"Invalid layer_type: {layer_type}. Expected one of {valid_layer_types}"
         )
 
-    if not (bool_train):  # attach _UT when it's not a trained model
-        string_ut = "UT"
-    else:
-        string_ut = "TR"
     num_layer = 1
 
     handles = []  # they need to be stored to later remove them
@@ -293,7 +278,7 @@ def _attach_hooks(
         for i in range(len(model.net)):
             if isinstance(model.net[i], nn.Conv1d) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
-                    f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
+                    f"{name}_{instance}_layer_{num_layer}", activations
                 )
 
                 handle = model.net[i].register_forward_hook(hook)
@@ -306,7 +291,7 @@ def _attach_hooks(
                 for j in range(len(model.net[i].module)):
                     if isinstance(model.net[i].module[j], nn.Conv1d):
                         hook, activations = _get_activation(
-                            f"{name}_{string_ut}_{instance}_layer_{num_layer}",
+                            f"{name}_{instance}_layer_{num_layer}",
                             activations,
                         )
 
@@ -322,7 +307,7 @@ def _attach_hooks(
                 for j in range(len(model.net[i].module)):
                     if isinstance(model.net[i].module[j], nn.Conv1d):
                         hook, activations = _get_activation(
-                            f"{name}_{string_ut}_{instance}_layer_{num_layer}",
+                            f"{name}_{instance}_layer_{num_layer}",
                             activations,
                         )
                         handle = model.net[i].module[j].register_forward_hook(hook)
@@ -331,7 +316,7 @@ def _attach_hooks(
 
             else:
                 hook, activations = _get_activation(
-                    f"{name}_{string_ut}_{instance}_layer_{num_layer}", activations
+                    f"{name}_{instance}_layer_{num_layer}", activations
                 )
 
                 handle = model.net[i].register_forward_hook(hook)
