@@ -27,6 +27,7 @@ def model_loader(
     
     for file in pathlib.Path.iterdir(models_folder_path):
         if str(file).endswith(".pt") or str(file).endswith(".pth"):
+                print(f"Model {file.stem} loading...")
                 model_path = models_folder_path / file
                 loaded_model = cebra.CEBRA.load(model_path,
                 backend="torch",
