@@ -166,6 +166,7 @@ def get_activations_multi_model(
     """
 
     for model_name, models in models.items():
+        print(model_name)
         for i, model in enumerate(models):
             activations.update(
                 get_activations_one_model(
@@ -351,21 +352,7 @@ def process_activations(activations: dict) -> dict:
         - 'multi': ...
     """
 
-    # first aggregate all the layers of the activations into models
     aggregated_activations = _aggregate_activations(activations=activations)
 
-    # then format into a structured dictionnary
-    activations_dict = {}
-
-    for key, value in aggregated_activations.items():
-        parts = key.split("_")
-
-        prefix = parts[0]
-        if prefix not in activations_dict.keys():
-            activations_dict[prefix] = dict()
-        suffix = parts[1]
-        if suffix not in activations_dict[prefix].keys():
-            activations_dict[prefix][suffix] = []
-        activations_dict[prefix][suffix].append(value)
-
-    return activations_dict
+    #potentially delete process_activations and directly use _aggregate_activations
+    return aggregated_activations

@@ -313,5 +313,4 @@ def decode_by_layer_all(
             )
 
         results_dict[key] = results_list
-
     return results_dict
