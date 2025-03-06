@@ -165,59 +165,18 @@ def get_activations_multi_model(
         A dictionary containing the activations from all the models passed as input.
     """
 
-    # SINGLE UT
-    for i, model in enumerate(models["single_UT"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                name="single",
-                instance=i,
-                layer_type=layer_type,
+    for model_name, models in models.items():
+        for i, model in enumerate(models):
+            activations.update(
+                get_activations_one_model(
+                    model=model,
+                    data=data,
+                    session_id=session_id,
+                    name=model_name,
+                    instance=i,
+                    layer_type=layer_type,
+                )
             )
-        )
-
-    # MULTI UT
-    for i, model in enumerate(
-        models["multi_UT"]
-    ):  # adds to the previously defined activations
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                session_id=session_id,
-                name="multi",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # SINGLE TR
-    for i, model in enumerate(models["single_TR"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                name="single",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # MULTI TR
-    for i, model in enumerate(models["multi_TR"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                session_id=session_id,
-                name="multi",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # TODO: Not implemented for other model types (e.g. Unified)
 
     return activations
 
