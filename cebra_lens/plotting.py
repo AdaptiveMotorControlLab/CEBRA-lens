@@ -634,8 +634,6 @@ def plot_decoding(
     # X positions for each model type
     x_positions = list(range(1, len(results_dict) + 1))
 
-    # ut_counter = 0
-    # tr_counter = 0
     if dataset_label == "visual":
         for i, (key, results) in enumerate(results_dict.items()):
             acc = results[:, 2]  # accuracy
