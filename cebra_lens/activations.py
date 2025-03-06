@@ -352,7 +352,16 @@ def process_activations(activations: dict) -> dict:
         - 'multi': ...
     """
 
+    # first aggregate all the layers of the activations into models
     aggregated_activations = _aggregate_activations(activations=activations)
 
-    #potentially delete process_activations and directly use _aggregate_activations
+    activations_dict = {}
+
+    for key, value in aggregated_activations.items():
+        prefix = "_".join(key.split("_")[:-1])
+        if prefix not in activations_dict.keys():
+            activations_dict[prefix] = []
+        activations_dict[prefix].append(value)
+
+    # potentially delete process_activations and directly use _aggregate_activations
     return aggregated_activations
