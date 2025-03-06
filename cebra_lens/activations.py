@@ -364,4 +364,4 @@ def process_activations(activations: dict) -> dict:
         activations_dict[prefix].append(value)
 
     # potentially delete process_activations and directly use _aggregate_activations
-    return aggregated_activations
+    return activations_dict
