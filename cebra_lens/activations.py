@@ -362,6 +362,6 @@ def process_activations(activations: dict) -> dict:
         if prefix not in activations_dict.keys():
             activations_dict[prefix] = []
         activations_dict[prefix].append(value)
-
+    print("testiraj")
     # potentially delete process_activations and directly use _aggregate_activations
     return activations_dict
