@@ -313,4 +313,6 @@ def decode_layer_models(
             )
 
         results_dict[key] = results_list
+    print(results_dict)
+    
     return results_dict
