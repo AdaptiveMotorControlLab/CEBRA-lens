@@ -132,14 +132,15 @@ def compare_embeddings_layers(
 ) -> plt.Figure:
     """
     Compare embeddings across layers for two sets of embeddings.
+    Embedding are activations.process_activations(activation) outputs.
     This function takes two sets of embeddings and compares them layer by layer. It plots the embeddings in a 3D space
     for visual comparison. Used with CEBRA embeddings and tSNE embeddings.
     Parameters:
     -----------
     embeddings_1 : list
-        A list of embeddings for the first set of data (e.g., untrained model).
+        A list of embeddings for the first set of data (e.g. activation_dict[model_name][0]).
     embeddings_2 : list
-        A list of embeddings for the second set of data (e.g., trained model).
+        A list of embeddings for the second set of data.
     labels : np.ndarray
         An array of labels corresponding to the data labels (e.g. frame number).
     sample_plot : int
@@ -574,9 +575,7 @@ def plot_distance(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot(
-        distance_dict, title=title, figsize=figsize, plotting_type="distance"
-    )
+    return plot(distance_dict, title=title, figsize=figsize, plotting_type="distance")
 
 
 def plot_layer_decoding(
@@ -601,9 +600,7 @@ def plot_layer_decoding(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot(
-        results_dict, title=title, figsize=figsize, plotting_type="decoding"
-    )
+    return plot(results_dict, title=title, figsize=figsize, plotting_type="decoding")
 
 
 def plot_decoding(
