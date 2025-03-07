@@ -43,7 +43,7 @@ def create_oracle_rdm(dataset_label: str = "visual") -> np.ndarray:
     return oracle_rdm
 
 
-def compute_single_RDM_layers(
+def compute_RDM_model(
     data: torch.Tensor,
     label: torch.Tensor,
     activations: list,
@@ -131,7 +131,7 @@ def compare_RDM(
     return comparison
 
 
-def compute_multi_RDM_layers(
+def compute_RDM_models(
     data: torch.Tensor,
     label: torch.Tensor,
     activations_dict: dict,
@@ -165,24 +165,18 @@ def compute_multi_RDM_layers(
 
     rdm_dict = {}
 
-    for outer_key, outer_value in activations_dict.items():
-        rdm_dict[outer_key] = {}
-        for inner_key, outer_list in tqdm(
-            outer_value.items(), desc=f"Processing {outer_key}"
-        ):
-            rdm_dict[outer_key][inner_key] = []
-            for inner_list in tqdm(
-                outer_list, desc=f"Processing {outer_key} {inner_key}"
-            ):
-                processed_inner_list = compute_single_RDM_layers(
-                    data=data,
-                    label=label,
-                    activations=inner_list,
-                    dataset_label=dataset_label,
-                    metric=metric,
-                    bool_oracle=bool_oracle,
-                )
+    for model_label, activations in activations_dict.items():
+        rdm_dict[model_label] = []
+        for activations in tqdm(model_label, desc=f"Processing {model_label}"):
+            processed_inner_list = compute_RDM_model(
+                data=data,
+                label=label,
+                activations=activations,
+                dataset_label=dataset_label,
+                metric=metric,
+                bool_oracle=bool_oracle,
+            )
 
-                rdm_dict[outer_key][inner_key].append(processed_inner_list)
+            rdm_dict[model_label].append(processed_inner_list)
 
     return rdm_dict
