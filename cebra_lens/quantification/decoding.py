@@ -291,7 +291,8 @@ def decode_layer_models(
     Returns:
     -------
     dict
-        A result dictionnary containing the results for each solver and trained or untrained in the same format as the layer activations (cf  lens.activations.process_activations()).
+        A result dictionnary containing the results of decoding for each layer for each model inside each category:
+        e.g. {category: [2darray_model1_results, 2darray:model2_results, ...]}
     """
 
     results_dict = {}

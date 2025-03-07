@@ -441,13 +441,13 @@ def plot(
     plotting_type: str = "rdm",
 ) -> list[plt.Figure]:
     """
-    Goes through a dictionary and creates a plot where the x-axis represents the model layers, while on the y-axis is the plotting_type value. It is used to plot RDMs, distances, or decoding values. Depending on the number of keys in the dictionary, it will create a separate plot for each key, a key being a model category label.
+    Goes through a dictionary and creates a plot where the x-axis represents the model layers, while on the y-axis is the plotting_type value. It is used to plot RDMs, distances, or decoding accuracy values. Depending on the number of keys in the dictionary, it will create a separate plot for each key, a key being a model category label.
 
     Parameters:
     -----------
     dictionary : dict
         A dictionary containing the values to be plotted, where keys are the model category labels or if the model labels where not given the model name,
-        and values are lists of arrays containing data - data can be RDM, distance metric or decoding values.
+        and values are lists of arrays containing data - data can be RDM, distance metric or decoding accuracy values.
     title : str, optional
         The base title for each plot.
     figsize : tuple, optional
@@ -556,7 +556,7 @@ def plot_distance(
     figsize: tuple = (15, 5),
 ) -> plt.Figure:
     """
-    Plots the distances across layer.
+    Plots the distances across layer for models in results_dict.
 
     Parameters:
     -----------
@@ -583,13 +583,13 @@ def plot_layer_decoding(
     results_dict: dict, title: str = "Decoding by layer", figsize: tuple = (15, 5)
 ) -> plt.Figure:
     """
-    Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
+    Plots the decoding accuracy across layer for models in results_dict.
 
     Parameters:
     -----------
     results_dict : dict
-        A dictionary containing the decoding results to be plotted. Obtained by using lens.quantification.decoding.decode_by_layer_all, where values should
-        be dictionaries containing decoding arrays for different layers.
+        A dictionary containing the decoding results to be plotted. Obtained by using lens.quantification.decoding.decode_layer_models, where values should
+        be lists containing decoding 2d-arrays for different layers.
     title : str, optional
         The title for the plot (default is "Decoding by layer").
     figsize : tuple, optional
@@ -617,7 +617,7 @@ def plot_decoding(
     Parameters:
     -----------
     results_dict : dict
-        A dictionary where the keys are model category labels or model file names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
+        A dictionary where the keys are model category labels or model file names and the values are 2d-arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
     palette: str, optional (default is "hls")
         The color palette to use for the plot.
 

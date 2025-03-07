@@ -34,7 +34,7 @@ def _cut_array(array: np.ndarray, cut_indices: tuple):
     return sliced_array
 
 
-def get_activations_one_model(
+def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     data: torch.Tensor,
     session_id: int = -1,
@@ -134,7 +134,7 @@ def get_activations_one_model(
     return activations
 
 
-def get_activations_multi_model(
+def get_activations_models(
     models: dict,
     data: torch.Tensor,
     session_id: int,
