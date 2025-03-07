@@ -434,20 +434,20 @@ def plot_rdm(
     return fig
 
 
-def plot_dict(
+def plot(
     dictionary: dict,
     title: str = "Plotting dict",
     figsize: tuple = (15, 5),
     plotting_type: str = "rdm",
 ) -> list[plt.Figure]:
     """
-    Goes through a dictionary and creates a separate plot for each key.
+    Goes through a dictionary and creates a plot where the x-axis represents the model layers, while on the y-axis is the plotting_type value. It is used to plot RDMs, distances, or decoding values. Depending on the number of keys in the dictionary, it will create a separate plot for each key, a key being a model category label.
 
     Parameters:
     -----------
     dictionary : dict
-        A dictionary containing the values to be plotted, where keys are arbitrary strings,
-        and values are lists of arrays containing data.
+        A dictionary containing the values to be plotted, where keys are the model category labels or if the model labels where not given the model name,
+        and values are lists of arrays containing data - data can be RDM, distance metric or decoding values.
     title : str, optional
         The base title for each plot.
     figsize : tuple, optional
@@ -547,7 +547,7 @@ def plot_rdm_correlation(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot_dict(rdm_dict, title=title, figsize=figsize, plotting_type="rdm")
+    return plot(rdm_dict, title=title, figsize=figsize, plotting_type="rdm")
 
 
 def plot_distance(
@@ -574,7 +574,7 @@ def plot_distance(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot_dict(
+    return plot(
         distance_dict, title=title, figsize=figsize, plotting_type="distance"
     )
 
@@ -601,7 +601,7 @@ def plot_layer_decoding(
         The generated figure containing the RDM comparison plot.
     """
 
-    return plot_dict(
+    return plot(
         results_dict, title=title, figsize=figsize, plotting_type="decoding"
     )
 
