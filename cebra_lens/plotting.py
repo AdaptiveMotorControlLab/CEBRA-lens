@@ -617,7 +617,7 @@ def plot_decoding(
     Parameters:
     -----------
     results_dict : dict
-        A dictionary where the keys are model names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models. The names must contain either TR or UT: e.g. multi1_TR, single3_UT
+        A dictionary where the keys are model category labels or model file names and the values are arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
     palette: str, optional (default is "hls")
         The color palette to use for the plot.
 

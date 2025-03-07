@@ -132,7 +132,7 @@ def decode_models(
     Parameters:
     -----------
     models : dict
-        A dictionary where keys are model names and values are lists of model objects to be decoded.
+        A dictionary where keys are model category labels or model file names and values are lists of model objects to be decoded.
     train_data : torch.Tensor
         The training data used for model transformation.
     train_label : torch.Tensor
@@ -149,7 +149,7 @@ def decode_models(
     Returns:
     --------
     results_dict : dict
-        A dictionary where the keys are the model names, and the values are the corresponding decoding results.
+        A dictionary where the keys are the model category labels or model names, and the values are the corresponding decoding results.
     """
 
     results_dict = {}
@@ -175,7 +175,7 @@ def decode_models(
     return results_dict
 
 
-def decode_by_layer_single(
+def decode_layer_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     train_data: torch.Tensor,
     train_label: np.ndarray,
@@ -256,7 +256,7 @@ def decode_by_layer_single(
     return results
 
 
-def decode_by_layer_all(
+def decode_layer_models(
     models_dict: dict,
     train_data: torch.Tensor,
     train_label: np.ndarray,
@@ -267,7 +267,7 @@ def decode_by_layer_all(
     layer_type: str = "conv",
 ):
     """
-    Decode neural data by layer using a given CEBRA model.
+    Decode neural data by layer using a given CEBRA models.
 
     Parameters:
     ----------
@@ -300,7 +300,7 @@ def decode_by_layer_all(
 
         for model in models:
             results_list.append(
-                decode_by_layer_single(
+                decode_layer_model(
                     model=model,
                     train_data=train_data,
                     train_label=train_label,
