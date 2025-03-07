@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
-from ..activations import process_activations, get_activations_one_model
+from ..activations import process_activations, get_activations_model
 
 
 def decode_model(
@@ -213,7 +213,7 @@ def decode_layer_model(
         A numpy array containing the decoding results for each layer and the neural input baseline.
     """
 
-    activations_train = get_activations_one_model(
+    activations_train = get_activations_model(
         model=model,
         data=train_data,
         name=model.solver_name_,
@@ -221,7 +221,7 @@ def decode_layer_model(
         layer_type=layer_type,
     )
 
-    activations_test = get_activations_one_model(
+    activations_test = get_activations_model(
         model=model,
         data=test_data,
         name=model.solver_name_,

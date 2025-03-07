@@ -9,7 +9,7 @@ import numpy as np
 def _cut_array(array: np.ndarray, cut_indices: tuple):
     """
     Slices the input array based on the provided cut indices.
-    This is used to remove the padding from activations in get_activations_one_model.
+    This is used to remove the padding from activations in get_activations_model.
     Parameters:
     -----------
     array : numpy.ndarray
@@ -344,7 +344,7 @@ def process_activations(activations: dict) -> dict:
     --------
     activations_dict : dict
         A dictionary where the keys are the model category names, and the values are lists of activation values for each instance:
-        e.g. {'single_UT': [[instance1_activations], [instance2_activations], ...], 'single_TR': [[instance1_activations], [instance2_activations], ...]}'
+        e.g.{'single_UT': [[instance1_activations], [instance2_activations], ...], 'single_TR': [[instance1_activations], [instance2_activations], ...]}'
     """
 
     # first aggregate all the layers of the activations into models
