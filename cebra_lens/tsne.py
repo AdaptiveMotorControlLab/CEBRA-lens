@@ -76,7 +76,6 @@ def run(activations_dict: dict, num_samples: int = 200) -> dict:
 
     tsne_embeddings = {}
     for model_name, activations in activations_dict.items():
-        tsne_embeddings[model_name] = {}
         tsne_embeddings[model_name] = []
         for inner_list in tqdm(
             activations, desc=f"Processing {model_name} activations"
