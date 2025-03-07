@@ -259,7 +259,7 @@ def compute_distance(
     return distance
 
 
-def compute_multi_distance_layers(
+def compute_distance_models(
     data: torch.Tensor,
     label: torch.Tensor,
     activations_dict: dict,
@@ -308,21 +308,15 @@ def compute_multi_distance_layers(
     # same form as activation.
     distance_dict = {}
 
-    for outer_key, outer_value in activations_dict.items():  # "single" or "multi"
-        distance_dict[outer_key] = {}
-
-        for inner_key, outer_list in tqdm(
-            outer_value.items(), desc=f"Processing {outer_key}"
-        ):  # "UT" or "TR"
-            distance_dict[outer_key][inner_key] = []
-
-            for inner_list in tqdm(
-                outer_list, desc=f"Processing {outer_key} {inner_key}"
+    for model_label, activations in activations_dict.items():  # "single" or "multi"
+        distance_dict[model_label] = []
+        for activation in tqdm(
+                activations, desc=f"Processing {model_label}"
             ):  # for each model instance
 
-                distance_dict[outer_key][inner_key].append(
-                    compute_single_distance_layers(
-                        embeddings=inner_list,
+            distance_dict[model_label].append(
+                    compute_distance_model(
+                        embeddings=activation,
                         indices=idxs,
                         repetition_indices=repetition_indices,
                         metric=metric,
@@ -333,7 +327,7 @@ def compute_multi_distance_layers(
     return distance_dict
 
 
-def compute_single_distance_layers(
+def compute_distance_model(
     embeddings: list,
     indices: list,
     repetition_indices: list = None,
