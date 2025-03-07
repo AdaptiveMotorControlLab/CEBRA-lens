@@ -9,7 +9,7 @@ import numpy as np
 def _cut_array(array: np.ndarray, cut_indices: tuple):
     """
     Slices the input array based on the provided cut indices.
-    This is used to remove the padding from activations in get_activations_one_model.
+    This is used to remove the padding from activations in get_activations_model.
     Parameters:
     -----------
     array : numpy.ndarray
