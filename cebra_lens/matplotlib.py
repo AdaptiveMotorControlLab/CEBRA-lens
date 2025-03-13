@@ -114,7 +114,7 @@ def plot_rdm_correlation(
     """
 
     return _BasePlot(
-        rdm_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm"
+        results_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm"
     ).plot(**kwargs)
 
 
@@ -144,7 +144,7 @@ def plot_distance(
     """
 
     return _BasePlot(
-        distance_dict=distance_dict,
+        results_dict=distance_dict,
         title=title,
         figsize=figsize,
         plotting_type="distance",
