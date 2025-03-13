@@ -166,7 +166,6 @@ def get_activations_multi_model(
     """
 
     for model_name, models in models.items():
-        print(model_name)
         for i, model in enumerate(models):
             activations.update(
                 get_activations_one_model(

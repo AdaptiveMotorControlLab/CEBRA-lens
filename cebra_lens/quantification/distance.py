@@ -311,18 +311,18 @@ def compute_distance_models(
     for model_label, activations in activations_dict.items():  # "single" or "multi"
         distance_dict[model_label] = []
         for activation in tqdm(
-                activations, desc=f"Processing {model_label}"
-            ):  # for each model instance
+            activations, desc=f"Processing {model_label}"
+        ):  # for each model instance
 
             distance_dict[model_label].append(
-                    compute_distance_model(
-                        embeddings=activation,
-                        indices=idxs,
-                        repetition_indices=repetition_indices,
-                        metric=metric,
-                        distance_label=distance_label,
-                    )
+                compute_distance_model(
+                    embeddings=activation,
+                    indices=idxs,
+                    repetition_indices=repetition_indices,
+                    metric=metric,
+                    distance_label=distance_label,
                 )
+            )
 
     return distance_dict
 
