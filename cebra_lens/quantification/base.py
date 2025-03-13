@@ -4,9 +4,6 @@ from scipy.spatial.distance import correlation, pdist, squareform
 from tqdm import tqdm
 from .misc import discrete_binning
 import torch
-from sklearn.manifold import TSNE
-
-import pickle
 
 
 class _MultiMetric:
@@ -125,9 +122,9 @@ class RDM(_BaseMetric):
     ):
 
         if isinstance(
-            activations, (np.ndarray, torch.Tensor)
+            self.activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
-            activations = [activations]
+            activations = [self.activations]
 
         idxs = discrete_binning(data=data, label=label, dataset_label=dataset_label)
 
