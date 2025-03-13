@@ -267,7 +267,7 @@ def decode_layer_models(
     layer_type: str = "conv",
 ):
     """
-    Decode neural data by layer using a given CEBRA models.
+    Decode neural data by layer using a given CEBRA model.
 
     Parameters:
     ----------
