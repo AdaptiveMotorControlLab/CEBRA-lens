@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
-from ..activations import process_activations, get_activations_one_model
+from ..activations import process_activations, get_activations_model
 
 
 def decode_model(
@@ -132,7 +132,7 @@ def decode_models(
     Parameters:
     -----------
     models : dict
-        A dictionary where keys are model names and values are lists of model objects to be decoded.
+        A dictionary where keys are model category labels or model file names and values are lists of model objects to be decoded.
     train_data : torch.Tensor
         The training data used for model transformation.
     train_label : torch.Tensor
@@ -149,7 +149,7 @@ def decode_models(
     Returns:
     --------
     results_dict : dict
-        A dictionary where the keys are the model names, and the values are the corresponding decoding results.
+        A dictionary where the keys are the model category labels or model names, and the values are the corresponding decoding results.
     """
 
     results_dict = {}
@@ -175,7 +175,7 @@ def decode_models(
     return results_dict
 
 
-def decode_by_layer_single(
+def decode_layer_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     train_data: torch.Tensor,
     train_label: np.ndarray,
@@ -213,7 +213,7 @@ def decode_by_layer_single(
         A numpy array containing the decoding results for each layer and the neural input baseline.
     """
 
-    activations_train = get_activations_one_model(
+    activations_train = get_activations_model(
         model=model,
         data=train_data,
         name=model.solver_name_,
@@ -221,7 +221,7 @@ def decode_by_layer_single(
         layer_type=layer_type,
     )
 
-    activations_test = get_activations_one_model(
+    activations_test = get_activations_model(
         model=model,
         data=test_data,
         name=model.solver_name_,
@@ -256,7 +256,7 @@ def decode_by_layer_single(
     return results
 
 
-def decode_by_layer_all(
+def decode_layer_models(
     models_dict: dict,
     train_data: torch.Tensor,
     train_label: np.ndarray,
@@ -291,7 +291,8 @@ def decode_by_layer_all(
     Returns:
     -------
     dict
-        A result dictionnary containing the results for each solver and trained or untrained in the same format as the layer activations (cf  lens.activations.process_activations()).
+        A result dictionnary containing the results of decoding for each layer for each model inside each category:
+        e.g. {category: [2darray_model1_results, 2darray:model2_results, ...]}
     """
 
     results_dict = {}
@@ -300,7 +301,7 @@ def decode_by_layer_all(
 
         for model in models:
             results_list.append(
-                decode_by_layer_single(
+                decode_layer_model(
                     model=model,
                     train_data=train_data,
                     train_label=train_label,
@@ -313,5 +314,4 @@ def decode_by_layer_all(
             )
 
         results_dict[key] = results_list
-
     return results_dict

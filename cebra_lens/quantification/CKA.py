@@ -52,8 +52,7 @@ def compute_multi_CKA_layers(activations_dict: dict, comparison: tuple) -> np.nd
     Parameters:
     -----------
     activations_dict : dict
-        A dictionary where keys are strings in the format 'model_identifier_layer'
-        (e.g., 'single_UT_layer1', 'single_TR_layer2') and values are the corresponding activations.
+        A dictionary where keys are strings in the format 'model_identifier' and values are 2d lists with the corresponding activations.
     comparison : tuple
         A tuple containing two strings representing the models and layers to be compared.
         For example, ('single_UT', 'single_TR').
@@ -69,13 +68,8 @@ def compute_multi_CKA_layers(activations_dict: dict, comparison: tuple) -> np.nd
             f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
         )
 
-    parts_1 = comparison[0].split("_")
-    parts_2 = comparison[1].split("_")
-    prefixes = (parts_1[0], parts_2[0])
-    suffixes = (parts_1[1], parts_2[1])
-
-    activations_1 = activations_dict[prefixes[0]][suffixes[0]]
-    activations_2 = activations_dict[prefixes[1]][suffixes[1]]
+    activations_1 = activations_dict[comparison[0]]
+    activations_2 = activations_dict[comparison[1]]
 
     # if not the same length, compare embeddings to the first instance. else compare pairwise.
     if len(activations_1) != len(activations_2):

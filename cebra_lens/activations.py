@@ -9,7 +9,7 @@ import numpy as np
 def _cut_array(array: np.ndarray, cut_indices: tuple):
     """
     Slices the input array based on the provided cut indices.
-    This is used to remove the padding from activations in get_activations_one_model.
+    This is used to remove the padding from activations in `get_activations_model`.
     Parameters:
     -----------
     array : numpy.ndarray
@@ -34,7 +34,7 @@ def _cut_array(array: np.ndarray, cut_indices: tuple):
     return sliced_array
 
 
-def get_activations_one_model(
+def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     data: torch.Tensor,
     session_id: int = -1,
@@ -58,8 +58,7 @@ def get_activations_one_model(
     name : str
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
-        The instance number for the model, used to label the activations.
-        Whether the model was trained or not. Appends 'TR' if true and 'UT' if false.
+        The instance number for the model, used to differentiate between models from the same model category.
     layer_type : str, optional
         The type of layer to extract activations from. Defaults to 'conv'.
 
@@ -134,7 +133,7 @@ def get_activations_one_model(
     return activations
 
 
-def get_activations_multi_model(
+def get_activations_models(
     models: dict,
     data: torch.Tensor,
     session_id: int,
@@ -143,13 +142,13 @@ def get_activations_multi_model(
 ) -> dict:
     """
     Extracts activations from multiple models and stores them in a dictionary.
-    This function demonstrates how to use the `get_activations_one_model` function by extracting activations from multiple models
+    This function demonstrates how to use the `get_activations_model` function by extracting activations from multiple models
     and storing them in a dictionary.
 
     Parameters:
     -----------
     models : dict
-        A dictionary containing different sets of models. The keys should include "single_UT", "multi_UT", "single_TR", and "multi_TR".
+        A dictionary containing different sets of models.
     data : torch.Tensor
         The input data for which activations are to be extracted. Shape of samples X channels (neurons).
     session_id : int
@@ -165,59 +164,19 @@ def get_activations_multi_model(
         A dictionary containing the activations from all the models passed as input.
     """
 
-    # SINGLE UT
-    for i, model in enumerate(models["single_UT"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                name="single",
-                instance=i,
-                layer_type=layer_type,
+    for model_name, models in models.items():
+        print(f"Processing {model_name}...")
+        for i, model in enumerate(models):
+            activations.update(
+                get_activations_model(
+                    model=model,
+                    data=data,
+                    session_id=session_id,
+                    name=model_name,
+                    instance=i,
+                    layer_type=layer_type,
+                )
             )
-        )
-
-    # MULTI UT
-    for i, model in enumerate(
-        models["multi_UT"]
-    ):  # adds to the previously defined activations
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                session_id=session_id,
-                name="multi",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # SINGLE TR
-    for i, model in enumerate(models["single_TR"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                name="single",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # MULTI TR
-    for i, model in enumerate(models["multi_TR"]):
-        activations.update(
-            get_activations_one_model(
-                model=model,
-                data=data,
-                session_id=session_id,
-                name="multi",
-                instance=i,
-                layer_type=layer_type,
-            )
-        )
-
-    # TODO: Not implemented for other model types (e.g. Unified)
 
     return activations
 
@@ -250,7 +209,7 @@ def _attach_hooks(
     name : str
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
-        An instance identifier to differentiate between multiple instances.
+        The instance number for the model, used to differentiate between models from the same model category.
     layer_type : str
         The type of layer from which to extract activations (e.g., convolutional).
 
@@ -331,7 +290,7 @@ def _attach_hooks(
 
 def _aggregate_activations(activations: dict) -> dict:
     """
-    Aggregates activations by model identifier.
+    Aggregates activations by model identifier aka. instance.
     This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,
     and the values are the corresponding activations. It aggregates the activations by model identifier, ignoring the layer information.
 
@@ -348,9 +307,9 @@ def _aggregate_activations(activations: dict) -> dict:
     Example:
     --------
     >>> activations = {
-    ...     'model1_layer1': [0.1, 0.2],
-    ...     'model1_layer2': [0.3, 0.4],
-    ...     'model2_layer1': [0.5, 0.6]
+    ...     'model1_layer_1': [0.1, 0.2],
+    ...     'model1_layer_2': [0.3, 0.4],
+    ...     'model2_layer_1': [0.5, 0.6]
     ... }
     >>> _aggregate_activations(activations)
     {
@@ -374,39 +333,29 @@ def _aggregate_activations(activations: dict) -> dict:
 def process_activations(activations: dict) -> dict:
     """
     Processes the activations and formats them into a structured dictionary.
-    This function organizes activations into a nested structure based on solvers, training type, and instances,
-    making it easier to access activations for different configurations (e.g., single-session, multi-session, trained, untrained).
 
     Parameters:
     -----------
     activations : dict
-        A dictionary where the keys are in the format 'SOLVER_TRAINING_INSTANCE_layer_LAYER'
+        A dictionary where the keys are in the format 'MODEL_NAME_INSTANCE_layer_LAYER'
         (e.g., 'single_UT_1_layer_2').
 
     Returns:
     --------
     activations_dict : dict
-        A nested dictionary where the first level keys are the solvers, the second level keys are the training type,
-        and the values are lists of activation values for each instance. For example:
-        - 'single': {'UT': [[instance1_activations], [instance2_activations], ...], 'TR': [[instance1_activations], [instance2_activations], ...]}
-        - 'multi': ...
+        A dictionary where the keys are the model category names, and the values are lists of activation values for each instance:
+        e.g.{'single_UT': [[instance1_activations], [instance2_activations], ...], 'single_TR': [[instance1_activations], [instance2_activations], ...]}'
     """
 
     # first aggregate all the layers of the activations into models
     aggregated_activations = _aggregate_activations(activations=activations)
 
-    # then format into a structured dictionnary
     activations_dict = {}
 
     for key, value in aggregated_activations.items():
-        parts = key.split("_")
-
-        prefix = parts[0]
+        prefix = "_".join(key.split("_")[:-1])
         if prefix not in activations_dict.keys():
-            activations_dict[prefix] = dict()
-        suffix = parts[1]
-        if suffix not in activations_dict[prefix].keys():
-            activations_dict[prefix][suffix] = []
-        activations_dict[prefix][suffix].append(value)
+            activations_dict[prefix] = []
+        activations_dict[prefix].append(value)
 
     return activations_dict

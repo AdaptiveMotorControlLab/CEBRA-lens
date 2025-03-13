@@ -43,7 +43,7 @@ def create_oracle_rdm(dataset_label: str = "visual") -> np.ndarray:
     return oracle_rdm
 
 
-def compute_single_RDM_layers(
+def compute_RDM_model(
     data: torch.Tensor,
     label: torch.Tensor,
     activations: list,
@@ -131,7 +131,7 @@ def compare_RDM(
     return comparison
 
 
-def compute_multi_RDM_layers(
+def compute_RDM_models(
     data: torch.Tensor,
     label: torch.Tensor,
     activations_dict: dict,
@@ -149,7 +149,7 @@ def compute_multi_RDM_layers(
     label : torch.Tensor
         The array of labels corresponding to the data.
     activations_dict : dict
-        A dictionary containing activations for different models.
+        A dictionary containing activations for different models. e.g. activations_dict["multi_TR"][0] for the first layer of the multi_TR model. For more information on the format, see CEBRA_Lens.activations.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
@@ -165,24 +165,18 @@ def compute_multi_RDM_layers(
 
     rdm_dict = {}
 
-    for outer_key, outer_value in activations_dict.items():
-        rdm_dict[outer_key] = {}
-        for inner_key, outer_list in tqdm(
-            outer_value.items(), desc=f"Processing {outer_key}"
-        ):
-            rdm_dict[outer_key][inner_key] = []
-            for inner_list in tqdm(
-                outer_list, desc=f"Processing {outer_key} {inner_key}"
-            ):
-                processed_inner_list = compute_single_RDM_layers(
-                    data=data,
-                    label=label,
-                    activations=inner_list,
-                    dataset_label=dataset_label,
-                    metric=metric,
-                    bool_oracle=bool_oracle,
-                )
+    for model_label, activations in activations_dict.items():
+        rdm_dict[model_label] = []
+        for activation in tqdm(activations, desc=f"Processing {model_label}"):
+            processed_inner_list = compute_RDM_model(
+                data=data,
+                label=label,
+                activations=activation,
+                dataset_label=dataset_label,
+                metric=metric,
+                bool_oracle=bool_oracle,
+            )
 
-                rdm_dict[outer_key][inner_key].append(processed_inner_list)
+            rdm_dict[model_label].append(processed_inner_list)
 
     return rdm_dict

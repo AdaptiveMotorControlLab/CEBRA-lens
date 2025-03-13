@@ -259,7 +259,7 @@ def compute_distance(
     return distance
 
 
-def compute_multi_distance_layers(
+def compute_distance_models(
     data: torch.Tensor,
     label: torch.Tensor,
     activations_dict: dict,
@@ -277,7 +277,7 @@ def compute_multi_distance_layers(
     label : torch.Tensor
         The array of labels corresponding to the data.
     activations_dict : dict
-        A dictionary containing activations for different models.
+        A dictionary containing activations for different models. e.g. activations_dict["multi_TR"][0] for the first layer of the multi_TR model. For more information on the format, see CEBRA_Lens.activations.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
@@ -308,32 +308,26 @@ def compute_multi_distance_layers(
     # same form as activation.
     distance_dict = {}
 
-    for outer_key, outer_value in activations_dict.items():  # "single" or "multi"
-        distance_dict[outer_key] = {}
+    for model_label, activations in activations_dict.items():  # "single" or "multi"
+        distance_dict[model_label] = []
+        for activation in tqdm(
+            activations, desc=f"Processing {model_label}"
+        ):  # for each model instance
 
-        for inner_key, outer_list in tqdm(
-            outer_value.items(), desc=f"Processing {outer_key}"
-        ):  # "UT" or "TR"
-            distance_dict[outer_key][inner_key] = []
-
-            for inner_list in tqdm(
-                outer_list, desc=f"Processing {outer_key} {inner_key}"
-            ):  # for each model instance
-
-                distance_dict[outer_key][inner_key].append(
-                    compute_single_distance_layers(
-                        embeddings=inner_list,
-                        indices=idxs,
-                        repetition_indices=repetition_indices,
-                        metric=metric,
-                        distance_label=distance_label,
-                    )
+            distance_dict[model_label].append(
+                compute_distance_model(
+                    embeddings=activation,
+                    indices=idxs,
+                    repetition_indices=repetition_indices,
+                    metric=metric,
+                    distance_label=distance_label,
                 )
+            )
 
     return distance_dict
 
 
-def compute_single_distance_layers(
+def compute_distance_model(
     embeddings: list,
     indices: list,
     repetition_indices: list = None,
