@@ -277,7 +277,7 @@ def compute_distance_models(
     label : torch.Tensor
         The array of labels corresponding to the data.
     activations_dict : dict
-        A dictionary containing activations for different models.
+        A dictionary containing activations for different models. e.g. activations_dict["multi_TR"][0] for the first layer of the multi_TR model. For more information on the format, see CEBRA_Lens.activations.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
@@ -311,18 +311,18 @@ def compute_distance_models(
     for model_label, activations in activations_dict.items():  # "single" or "multi"
         distance_dict[model_label] = []
         for activation in tqdm(
-                activations, desc=f"Processing {model_label}"
-            ):  # for each model instance
+            activations, desc=f"Processing {model_label}"
+        ):  # for each model instance
 
             distance_dict[model_label].append(
-                    compute_distance_model(
-                        embeddings=activation,
-                        indices=idxs,
-                        repetition_indices=repetition_indices,
-                        metric=metric,
-                        distance_label=distance_label,
-                    )
+                compute_distance_model(
+                    embeddings=activation,
+                    indices=idxs,
+                    repetition_indices=repetition_indices,
+                    metric=metric,
+                    distance_label=distance_label,
                 )
+            )
 
     return distance_dict
 
