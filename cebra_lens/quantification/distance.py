@@ -277,7 +277,7 @@ def compute_distance_models(
     label : torch.Tensor
         The array of labels corresponding to the data.
     activations_dict : dict
-        A dictionary containing activations for different models.
+        A dictionary containing activations for different models. e.g. activations_dict["multi_TR"][0] for the first layer of the multi_TR model. For more information on the format, see CEBRA_Lens.activations.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional

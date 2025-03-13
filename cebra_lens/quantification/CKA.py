@@ -52,8 +52,7 @@ def compute_multi_CKA_layers(activations_dict: dict, comparison: tuple) -> np.nd
     Parameters:
     -----------
     activations_dict : dict
-        A dictionary where keys are strings in the format 'model_identifier_layer'
-        (e.g., 'single_UT_layer1', 'single_TR_layer2') and values are the corresponding activations.
+        A dictionary where keys are strings in the format 'model_identifie' and values are 2d lists with the corresponding activations.
     comparison : tuple
         A tuple containing two strings representing the models and layers to be compared.
         For example, ('single_UT', 'single_TR').
