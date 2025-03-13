@@ -7,15 +7,15 @@ import seaborn as sns
 import torch
 
 
-class _BaserPlot:
+class _BasePlot:
     def __init__(
         self,
-        dictionary: dict,
+        results_dict: dict,
         title: str = "Plotting dict",
         figsize: tuple = (15, 5),
         plotting_type: str = "rdm",
     ):
-        self.dictionary = dictionary
+        self.dictionary = results_dict
         self.title = title
         self.figsize = figsize
         self.plotting_type = plotting_type
@@ -107,7 +107,7 @@ def plot_rdm_correlation(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BaserPlot(rdm_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm").plot(**kwargs)
+    return _BasePlot(rdm_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm").plot(**kwargs)
 
 def plot_distance(
     distance_dict: dict,
@@ -134,7 +134,7 @@ def plot_distance(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BaserPlot(distance_dict=distance_dict, title=title, figsize=figsize, plotting_type="distance").plot(**kwargs)
+    return _BasePlot(distance_dict=distance_dict, title=title, figsize=figsize, plotting_type="distance").plot(**kwargs)
 
 def plot_layer_decoding(
     results_dict: dict, title: str = "Decoding by layer", figsize: tuple = (15, 5), **kwargs
@@ -158,7 +158,7 @@ def plot_layer_decoding(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BaserPlot(results_dict=results_dict, title=title, figsize=figsize, plotting_type="decoding").plot(**kwargs)
+    return _BasePlot(results_dict=results_dict, title=title, figsize=figsize, plotting_type="decoding").plot(**kwargs)
 
 class _EmbeddingLayersPlot:
     def __init__(self, embeddings_1: list, embeddings_2: list, labels: np.ndarray, sample_plot: int, comparison_labels: tuple, dataset_label: str):
