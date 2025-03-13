@@ -122,12 +122,18 @@ class RDM(_BaseMetric):
         bool_oracle: bool = "True",
     ):
 
+        self.dataset_label = dataset_label
+        self.metric = metric
+        self.data = data
+        self.label = label
+        self.bool_oracle = bool_oracle
+
         if isinstance(
             self.activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             self.activations = [self.activations]
 
-        idxs = discrete_binning(data=data, label=label, dataset_label=dataset_label)
+        idxs = discrete_binning(data=self.data, label=self.label, dataset_label=self.dataset_label)
 
         layer_rdm = []
 
@@ -136,8 +142,8 @@ class RDM(_BaseMetric):
             if layer.shape[0] < layer.shape[1]:
                 layer = layer.T
 
-            rdm = pdist(layer[idxs.flatten(), :], metric=metric)
-            if bool_oracle:
+            rdm = pdist(layer[idxs.flatten(), :], metric=self.metric)
+            if self.bool_oracle:
                 oracle_rdm = self._create_oracle_rdm()
                 correlation = self._compare_RDM(rdm_1=oracle_rdm, rdm_2=rdm)
             else:
