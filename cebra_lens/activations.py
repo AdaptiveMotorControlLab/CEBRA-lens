@@ -165,7 +165,6 @@ def get_activations_models(
     """
 
     for model_name, models in models.items():
-        print(f"Processing {model_name}...")
         for i, model in enumerate(models):
             activations.update(
                 get_activations_model(
