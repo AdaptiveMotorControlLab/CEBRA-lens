@@ -124,13 +124,13 @@ class RDM(_BaseMetric):
         if isinstance(
             self.activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
-            activations = [self.activations]
+            self.activations = [self.activations]
 
         idxs = discrete_binning(data=data, label=label, dataset_label=dataset_label)
 
         layer_rdm = []
 
-        for layer in activations:
+        for layer in self.activations:
             # to ensure the right shape: numSamples X numNeurons
             if layer.shape[0] < layer.shape[1]:
                 layer = layer.T
