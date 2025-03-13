@@ -33,14 +33,15 @@ class MultiRDM(_MultiMetric):
         self.data = self._transform()
 
     def _transform(self):
-        self.result_dict = {}
+        result_dict = {}
         for model_label, activations in self.activations_dict.items():
-            self.result_dict[model_label] = []
+            result_dict[model_label] = []
             for activation in tqdm(activations, desc=f"Processing {model_label}"):
-                self.result_dict[model_label].append(RDM(activation))
+                result_dict[model_label].append(RDM(activation))
+        return result_dict
 
     def compute(self, *args, **kwargs):
-        return super().compute(self.data, *args, **kwargs)
+        return super().compute(activations_dict=self.data, *args, **kwargs)
 
 
 class RDM(_BaseMetric):
