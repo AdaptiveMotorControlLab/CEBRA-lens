@@ -168,15 +168,15 @@ def compute_RDM_models(
     for model_label, activations in activations_dict.items():
         rdm_dict[model_label] = []
         for activation in tqdm(activations, desc=f"Processing {model_label}"):
-            processed_inner_list = compute_RDM_model(
-                data=data,
-                label=label,
-                activations=activation,
-                dataset_label=dataset_label,
-                metric=metric,
-                bool_oracle=bool_oracle,
+            rdm_dict[model_label].append(
+                compute_RDM_model(
+                    data=data,
+                    label=label,
+                    activations=activation,
+                    dataset_label=dataset_label,
+                    metric=metric,
+                    bool_oracle=bool_oracle,
+                )
             )
-
-            rdm_dict[model_label].append(processed_inner_list)
 
     return rdm_dict

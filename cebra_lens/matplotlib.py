@@ -57,7 +57,9 @@ class _BasePlot:
 
             # Compute mean if multiple layers exist
             mean_values = (
-                layer_values if layer_values.ndim == 1 else np.mean(layer_values, axis=0)
+                layer_values
+                if layer_values.ndim == 1
+                else np.mean(layer_values, axis=0)
             )
 
             # Plot mean line
@@ -80,13 +82,17 @@ class _BasePlot:
             plt.title(self.title, fontsize=15)
             sns.despine()
         return self.fig
-    
+
     def plot(self) -> plt.Figure:
         """Generates and returns the plot."""
         return self._plot()
-    
+
+
 def plot_rdm_correlation(
-    rdm_dict: dict, title: str = "RDM comparison to Oracle", figsize: tuple = (15, 5),**kwargs
+    rdm_dict: dict,
+    title: str = "RDM comparison to Oracle",
+    figsize: tuple = (15, 5),
+    **kwargs,
 ) -> plt.Figure:
     """
     Plots the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
@@ -107,7 +113,10 @@ def plot_rdm_correlation(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BasePlot(rdm_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm").plot(**kwargs)
+    return _BasePlot(
+        rdm_dict=rdm_dict, title=title, figsize=figsize, plotting_type="rdm"
+    ).plot(**kwargs)
+
 
 def plot_distance(
     distance_dict: dict,
@@ -134,10 +143,19 @@ def plot_distance(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BasePlot(distance_dict=distance_dict, title=title, figsize=figsize, plotting_type="distance").plot(**kwargs)
+    return _BasePlot(
+        distance_dict=distance_dict,
+        title=title,
+        figsize=figsize,
+        plotting_type="distance",
+    ).plot(**kwargs)
+
 
 def plot_layer_decoding(
-    results_dict: dict, title: str = "Decoding by layer", figsize: tuple = (15, 5), **kwargs
+    results_dict: dict,
+    title: str = "Decoding by layer",
+    figsize: tuple = (15, 5),
+    **kwargs,
 ) -> plt.Figure:
     """
     Plots the decoding accuracy across layer for models in results_dict.
@@ -158,10 +176,24 @@ def plot_layer_decoding(
         The generated figure containing the RDM comparison plot.
     """
 
-    return _BasePlot(results_dict=results_dict, title=title, figsize=figsize, plotting_type="decoding").plot(**kwargs)
+    return _BasePlot(
+        results_dict=results_dict,
+        title=title,
+        figsize=figsize,
+        plotting_type="decoding",
+    ).plot(**kwargs)
+
 
 class _EmbeddingLayersPlot:
-    def __init__(self, embeddings_1: list, embeddings_2: list, labels: np.ndarray, sample_plot: int, comparison_labels: tuple, dataset_label: str):
+    def __init__(
+        self,
+        embeddings_1: list,
+        embeddings_2: list,
+        labels: np.ndarray,
+        sample_plot: int,
+        comparison_labels: tuple,
+        dataset_label: str,
+    ):
         """
         Initializes the EmbeddingLayersPlot class.
 
@@ -185,9 +217,13 @@ class _EmbeddingLayersPlot:
 
         # Padding the shorter embedding to match the number of layers in the longer embedding
         if num_layers_1 > num_layers_2:
-            embeddings_2 += [np.empty_like(embeddings_2[0])] * (num_layers_1 - num_layers_2)
+            embeddings_2 += [np.empty_like(embeddings_2[0])] * (
+                num_layers_1 - num_layers_2
+            )
         elif num_layers_2 > num_layers_1:
-            embeddings_1 += [np.empty_like(embeddings_1[0])] * (num_layers_2 - num_layers_1)
+            embeddings_1 += [np.empty_like(embeddings_1[0])] * (
+                num_layers_2 - num_layers_1
+            )
 
         self.fig, self.axs = plt.subplots(
             2,
@@ -269,11 +305,11 @@ class _EmbeddingLayersPlot:
         return ax
 
     def _plot_embedding_layers(
-            self,
-            axs,
-            embeddings: list,
-            title_prefix: str,
-        ):
+        self,
+        axs,
+        embeddings: list,
+        title_prefix: str,
+    ):
         """
         Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
 
@@ -294,7 +330,7 @@ class _EmbeddingLayersPlot:
         """
         num_layers = len(embeddings)
 
-        labels_list = [self.labels[:self.sample_plot]] * num_layers
+        labels_list = [self.labels[: self.sample_plot]] * num_layers
         titles = [f"{title_prefix} Layer {layer}" for layer in range(1, num_layers)]
         titles.append(f"{title_prefix} Output")
 
@@ -306,7 +342,7 @@ class _EmbeddingLayersPlot:
             else:
                 embedding = embeddings[i]
 
-            embedding = embedding[:self.sample_plot, :]
+            embedding = embedding[: self.sample_plot, :]
             if self.dataset_label == "HPC":
                 ax = self._plot_hippocampus(ax, embedding, label)
             elif self.dataset_label == "visual":
@@ -318,33 +354,37 @@ class _EmbeddingLayersPlot:
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")
-    
+
     def _plot(self):
         """Handles plotting logic."""
-        self._plot_embedding_layers(self.axs_1, self.embeddings_1, self.comparison_labels[1][0])
-        self._plot_embedding_layers(self.axs_2, self.embeddings_2, self.comparison_labels[1][1])
+        self._plot_embedding_layers(
+            self.axs_1, self.embeddings_1, self.comparison_labels[1][0]
+        )
+        self._plot_embedding_layers(
+            self.axs_2, self.embeddings_2, self.comparison_labels[1][1]
+        )
         self.fig.suptitle(
-        f"{self.comparison_labels[0]} across layers({self.comparison_labels[1][0]} - {self.comparison_labels[1][1]})",
-        fontsize=20,
+            f"{self.comparison_labels[0]} across layers({self.comparison_labels[1][0]} - {self.comparison_labels[1][1]})",
+            fontsize=20,
         )
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.tight_layout()
-    
+
     def plot(self) -> plt.Figure:
         """Generates and returns the plot."""
         self._plot()
         return self.fig
 
-    
 
 class _DecodingPlot:
     """Plot the decoding accuracy across multiple models."""
+
     def __init__(self, results_dict: dict, palette: str, dataset_label: str):
         """
         Initializes the DecodingPlot class.
 
         Args:
-            results_dict (dict): A dictionary where the keys are model category labels or model file names 
+            results_dict (dict): A dictionary where the keys are model category labels or model file names
                 and the values are 2D arrays containing decoding results.
             palette (str, optional): The color palette to use for the plot. Default is "hls".
             dataset_label (str, optional): The dataset type. Currently only "visual" is supported.
@@ -364,7 +404,9 @@ class _DecodingPlot:
                 acc = results[:, 2]  # accuracy
                 mean_error = np.mean(acc)
                 color = self.palette[i]
-                self.ax.scatter(np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3)
+                self.ax.scatter(
+                    np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3
+                )
 
                 # Plot the means
                 self.ax.scatter(
@@ -387,7 +429,8 @@ class _DecodingPlot:
             raise NotImplementedError(
                 f"Plotting of {self.dataset_label} is not handled yet. Only 'visual' is for now. "
             )
-    def plot(self)-> plt.Figure:
+
+    def plot(self) -> plt.Figure:
         """Generates and returns the plot."""
         self._plot()
         return self.fig
@@ -416,7 +459,7 @@ def plot_decoding(
     """
     return _DecodingPlot(
         results_dict=results_dict,
-        palette = palette,
+        palette=palette,
         dataset_label=dataset_label,
     ).plot(**kwargs)
 
@@ -465,12 +508,14 @@ def compare_embeddings_layers(
 
 
 class _ActivationPlot:
-    def __init__(self, input_data: torch.Tensor,
-    embeddings: list,
-    sample_plot: int = 100,
-    cmap: str = "magma",
-    title: str = "Trained activations",
-    figsize: tuple = (10, 20),
+    def __init__(
+        self,
+        input_data: torch.Tensor,
+        embeddings: list,
+        sample_plot: int = 100,
+        cmap: str = "magma",
+        title: str = "Trained activations",
+        figsize: tuple = (10, 20),
     ):
         self.intput_data = input_data
         self.embeddings = embeddings
@@ -483,9 +528,9 @@ class _ActivationPlot:
         # Set up the figure
         self.fig, self.axes = plt.subplots(self.num_layers + 1, 1, figsize=figsize)
         self.fig.suptitle(title, fontsize=20)
-    
+
     def _plot(self):
-        self.axes[0].imshow(self.input_data.T[:, 0:self.sample_plot], aspect="auto")
+        self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
         self.axes[0].set_title("Input Data")
         self.axes[0].set_ylabel("Channel #")
         self.axes[0].set_xlabel("Time")
@@ -493,7 +538,11 @@ class _ActivationPlot:
 
         # Plot the embeddings for each layer
         for i in range(self.num_layers):
-            self.axes[i + 1].imshow(self.embeddings[i][:, 0:self.sample_plot], cmap=self.cmap, aspect="auto")
+            self.axes[i + 1].imshow(
+                self.embeddings[i][:, 0 : self.sample_plot],
+                cmap=self.cmap,
+                aspect="auto",
+            )
             if i == self.num_layers - 1:
                 layer_title = "Output Layer"
             else:
@@ -510,7 +559,8 @@ class _ActivationPlot:
         """Generates and returns the plot."""
         self._plot()
         return self.fig
-    
+
+
 def plot_activations(
     input_data: torch.Tensor,
     embeddings: list,
@@ -550,13 +600,16 @@ def plot_activations(
         figsize=figsize,
     ).plot(**kwargs)
 
+
 class _HeatMapsPlot:
-    def __init__(self, cka_matrices: dict,
-    annot: bool,
-    show_cbar: bool = True,
-    cbar_label: str = "CKA score",
-    color_map: str = "magma",
-    figsize: tuple = (15, 5),
+    def __init__(
+        self,
+        cka_matrices: dict,
+        annot: bool,
+        show_cbar: bool = True,
+        cbar_label: str = "CKA score",
+        color_map: str = "magma",
+        figsize: tuple = (15, 5),
     ):
         self.cka_matrices = cka_matrices
         self.annot = annot
@@ -582,7 +635,7 @@ class _HeatMapsPlot:
         }
         if self.num_comparisons == 1:
             axs = [axs]  # handle the 1 comparison case
-    
+
     def _plot(self):
         for i, (key, value) in enumerate(self.cka_matrices.items()):
 
@@ -607,11 +660,12 @@ class _HeatMapsPlot:
         # Adjust layout
         plt.subplots_adjust(wspace=0.1, right=0.9)
         self.fig.suptitle("Similarity between model representations (CKA)", fontsize=16)
-    
+
     def plot(self) -> plt.Figure:
         """Generates and returns the plot."""
         self._plot()
         return self.fig
+
 
 def plot_cka_heatmaps(
     cka_matrices: dict,
@@ -620,8 +674,8 @@ def plot_cka_heatmaps(
     cbar_label: str = "CKA score",
     color_map: str = "magma",
     figsize: tuple = (15, 5),
-    ) -> plt.Figure:
-        """
+) -> plt.Figure:
+    """
     This function generates heatmaps for various CKA matrices to visualize the similarity between different sets of embeddings.
 
     Parameters:
@@ -642,17 +696,18 @@ def plot_cka_heatmaps(
     fig : matplotlib.figure.Figure
         The matplotlib figure object containing the CKA heatmaps.
     """
-        return _HeatMapsPlot(
-            cka_matrices=cka_matrices,
-            annot=annot,
-            show_cbar=show_cbar,
-            cbar_label=cbar_label,
-            color_map=color_map,
-            figsize=figsize,
-        ).plot()
+    return _HeatMapsPlot(
+        cka_matrices=cka_matrices,
+        annot=annot,
+        show_cbar=show_cbar,
+        cbar_label=cbar_label,
+        color_map=color_map,
+        figsize=figsize,
+    ).plot()
+
 
 class _RDMPlots:
-    
+
     def __init__(
         self,
         rdms: list,
@@ -661,7 +716,7 @@ class _RDMPlots:
         dataset_label: str = "visual",
         cmap: str = "viridis",
         figsize: tuple = None,
-        ):
+    ):
         self.rdms = rdms
         self.titles = titles
         self.metric = metric
@@ -670,7 +725,9 @@ class _RDMPlots:
         self.figsize = figsize
 
         if len(self.rdms) != len(self.titles):
-            raise ValueError("The two lists (rdms and titles) must have the same length.")
+            raise ValueError(
+                "The two lists (rdms and titles) must have the same length."
+            )
 
         self.fig, self.ax = plt.subplots(1, len(self.rdms))
         if len(self.rdms) == 1:
@@ -696,6 +753,7 @@ class _RDMPlots:
             raise NotImplementedError(
                 f"RDM Plotting for dataset {self.dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
             )
+
     def _plot(self):
         for i, rdm in enumerate(self.rdms):
 
@@ -711,7 +769,9 @@ class _RDMPlots:
         plt.tight_layout()
         plt.subplots_adjust(bottom=0.2)
 
-        self.fig.colorbar(cax, ax=self.ax, orientation="horizontal", fraction=0.05, label=self.metric)
+        self.fig.colorbar(
+            cax, ax=self.ax, orientation="horizontal", fraction=0.05, label=self.metric
+        )
 
     def plot(self) -> plt.Figure:
         """Generates and returns the plot."""
@@ -755,4 +815,3 @@ def plot_rdm(
         cmap=cmap,
         figsize=figsize,
     ).plot()
-        

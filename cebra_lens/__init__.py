@@ -1,6 +1,5 @@
 # example of structure so that you can directly use the functions get_layer_activations instead of having to do CEBRA_Lens.activations.get_layer_activations
 from .activations import *
-from .tsne import *
 from .quantification import *
 from .matplotlib import *
 from .utils_allen import *
