@@ -15,8 +15,17 @@ class MultiRDM(_MultiMetric):
         self.base = RDM
         self.data = super().transform(self.activations_dict, self.base)
 
-    def compute(self, *args, **kwargs):
-        return super().compute(data_dict=self.data, *args, **kwargs)
+    def compute(
+        self,
+        data: torch.Tensor,
+        label: torch.Tensor,
+        dataset_label: str = "visual",
+        metric: str = "correlation",
+        bool_oracle: bool = "True",
+    ):
+        return super().compute(
+            self.data, data, label, dataset_label, metric, bool_oracle
+        )
 
 
 class RDM(_BaseMetric):

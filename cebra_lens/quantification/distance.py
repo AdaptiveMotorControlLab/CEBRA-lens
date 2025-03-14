@@ -284,7 +284,7 @@ class MultiDistance(_MultiMetric):
         self.base = Distance
         self.data_dict = super().transform(self.activations_dict, self.base)
 
-    def compute(self, data_dict, data, label, dataset_label, metric, distance_label):
+    def compute(self, data, label, dataset_label, metric, distance_label):
         """
         Computes RDMs for multiple layers of activations across multiple models.
 
@@ -322,5 +322,5 @@ class MultiDistance(_MultiMetric):
         else:
             repetition_indices = None
         return super().compute(
-            data_dict, idxs, repetition_indices, metric, distance_label
+            self.data_dict, idxs, repetition_indices, metric, distance_label
         )
