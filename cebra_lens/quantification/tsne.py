@@ -36,9 +36,7 @@ class TSne(_BaseMetric):
                 layer_activation = layer_activation.T
 
             tsne = TSNE(n_components=3)
-            tsne_embedding = tsne.fit_transform(
-                layer_activation[:, : num_samples].T
-            )
+            tsne_embedding = tsne.fit_transform(layer_activation[:, :num_samples].T)
             tsne_embeddings.append(tsne_embedding)
 
         return tsne_embeddings
