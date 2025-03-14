@@ -11,7 +11,7 @@ class TSne(_BaseMetric):
     def __init__(self, activation: np.ndarray):
         self.activation = activation
 
-    def compute(self) -> np.ndarray:
+    def compute(self, num_samples) -> np.ndarray:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
         This function performs dimensionality reduction on the layer activation data to generate a 2D embedding using t-SNE.
@@ -37,7 +37,7 @@ class TSne(_BaseMetric):
 
             tsne = TSNE(n_components=3)
             tsne_embedding = tsne.fit_transform(
-                layer_activation[:, : self.num_samples].T
+                layer_activation[:, : num_samples].T
             )
             tsne_embeddings.append(tsne_embedding)
 
@@ -74,4 +74,4 @@ class MultiTsne(_MultiMetric):
         tsne_embeddings : dict
             A dictionary containing the t-SNE embeddings, structured exactly the same as the input `activations_dict`.
         """
-        return super().compute(self.data)
+        return super().compute(self.data, self.num_samples)
