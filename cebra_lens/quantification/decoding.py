@@ -1,28 +1,77 @@
-import cebra
 import torch
 import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
-from ..activations import process_activations, get_activations_model
+from ..activations import get_activations_model
 from .base import _BaseMetric, _MultiMetric
-from tqdm import tqdm
 
 
 class MultiDecoding(_MultiMetric):
     def __init__(self, models_dict: dict):
         self.models_dict = models_dict
-        self.data = self._transform()
+        self.base = Decoding
+        self.data = super().transform(self.models_dict,self.base)
 
-    def _transform(self):
-        result_dict = {}
-        for key, models in self.models_dict.items():
-            result_dict[key] = []
-            for model in tqdm(models, desc=f"Processing {key}"):
-                result_dict[key].append(Decoding(model))
-        return result_dict
+    def compute(self,
+        train_data: torch.Tensor,
+        train_label: np.ndarray,
+        test_data: torch.Tensor,
+        test_label: np.ndarray,
+        session_id: int,
+        dataset_label: str = "visual",
+        layer_type: str = "conv",):
 
-    def compute(self, *args, **kwargs):
-        return super().compute(models_dict=self.data, *args, **kwargs)
+        """Equivalent to the method decode_layer_models"""
+        return super().compute(self.data, train_data,
+        train_label,
+        test_data,
+        test_label,
+        session_id,
+        dataset_label,
+        layer_type)
+    
+    def decode(
+        self,
+        train_data: torch.Tensor,
+        train_label: torch.Tensor,
+        test_data: torch.Tensor,
+        test_label: torch.Tensor,
+        session_id: int = -1,
+        dataset_label: str = "visual",
+    ) -> dict:
+        """
+        Decodes multiple models and stores their results in a dictionary.
+
+        Parameters:
+        -----------
+        models : dict
+            A dictionary where keys are model category labels or model file names and values are lists of model objects to be decoded.
+        train_data : torch.Tensor
+            The training data used for model transformation.
+        train_label : torch.Tensor
+            The true labels corresponding to the training data.
+        test_data : torch.Tensor
+            The test data used for model transformation.
+        test_label : torch.Tensor
+            The true labels corresponding to the test data.
+        session_id : int, optional
+            The session ID for multi-session models (default is -1 for single-session models).
+        dataset_label : str, optional
+            The type of dataset being used for decoding (default is "visual").
+
+        Returns:
+        --------
+        results_dict : dict
+            A dictionary where the keys are the model category labels or model names, and the values are the corresponding decoding results.
+        """
+
+        return super().decode(self.data, train_data,
+        train_label,
+        test_data,
+        test_label,
+        session_id,
+        dataset_label)
+    
 
 
 class Decoding(_BaseMetric):
@@ -220,61 +269,3 @@ class Decoding(_BaseMetric):
             embedding_train, train_label, embedding_test, test_label, dataset_label
         )
         return np.array(results)
-
-
-def decode_models(
-    models: dict,
-    train_data: torch.Tensor,
-    train_label: torch.Tensor,
-    test_data: torch.Tensor,
-    test_label: torch.Tensor,
-    session_id: int = -1,
-    dataset_label: str = "visual",
-) -> dict:
-    """
-    Decodes multiple models and stores their results in a dictionary.
-
-    Parameters:
-    -----------
-    models : dict
-        A dictionary where keys are model category labels or model file names and values are lists of model objects to be decoded.
-    train_data : torch.Tensor
-        The training data used for model transformation.
-    train_label : torch.Tensor
-        The true labels corresponding to the training data.
-    test_data : torch.Tensor
-        The test data used for model transformation.
-    test_label : torch.Tensor
-        The true labels corresponding to the test data.
-    session_id : int, optional
-        The session ID for multi-session models (default is -1 for single-session models).
-    dataset_label : str, optional
-        The type of dataset being used for decoding (default is "visual").
-
-    Returns:
-    --------
-    results_dict : dict
-        A dictionary where the keys are the model category labels or model names, and the values are the corresponding decoding results.
-    """
-
-    results_dict = {}
-
-    for key, models_list in models.items():
-
-        results = np.zeros((len(models_list), 3))
-        for i, model in enumerate(models_list):
-            results[i, :] = np.array(
-                decode_model(
-                    model=model,
-                    train_data=train_data,
-                    train_label=train_label,
-                    test_data=test_data,
-                    test_label=test_label,
-                    session_id=session_id,
-                    dataset_label=dataset_label,
-                )
-            )
-
-        results_dict[key] = results
-
-    return results_dict

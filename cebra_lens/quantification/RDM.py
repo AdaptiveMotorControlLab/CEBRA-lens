@@ -12,18 +12,11 @@ from .base import _BaseMetric, _MultiMetric
 class MultiRDM(_MultiMetric):
     def __init__(self, activations_dict: dict):
         self.activations_dict = activations_dict
-        self.data = self._transform()
-
-    def _transform(self):
-        result_dict = {}
-        for model_label, activations in self.activations_dict.items():
-            result_dict[model_label] = []
-            for activation in tqdm(activations, desc=f"Processing {model_label}"):
-                result_dict[model_label].append(RDM(activation))
-        return result_dict
+        self.base = RDM
+        self.data = super().transform(self.activations_dict,self.base)
 
     def compute(self, *args, **kwargs):
-        return super().compute(activations_dict=self.data, *args, **kwargs)
+        return super().compute(data_dict=self.data, *args, **kwargs)
 
 
 class RDM(_BaseMetric):
