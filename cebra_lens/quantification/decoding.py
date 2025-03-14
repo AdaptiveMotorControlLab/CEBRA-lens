@@ -209,8 +209,8 @@ class Decoding(_BaseMetric):
         for i in range(num_layers + 1):
 
             if i == 0:
-                results[i, :] = (
-                    self._decoding_function_selection()
+                results[i, :] = self._decoding_function_selection(
+                    train_data, train_label, test_data, test_label, dataset_label
                 )  # neural input baseline
             else:
                 results[i, :] = self._decoding_function_selection(
