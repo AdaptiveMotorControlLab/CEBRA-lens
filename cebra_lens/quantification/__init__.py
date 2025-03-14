@@ -1,5 +1,5 @@
-from .CKA import *
-from .RDM import *
+from .cka import *
+from .rdm import *
 from .misc import *
 from .distance import *
 from .decoding import *
