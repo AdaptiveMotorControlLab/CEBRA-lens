@@ -6,6 +6,7 @@ import numpy as np
 import pickle
 from .base import _BaseMetric, _MultiMetric
 
+
 class TSne(_BaseMetric):
     def __init__(self, activation: np.ndarray):
         self.activation = activation
@@ -35,11 +36,14 @@ class TSne(_BaseMetric):
                 layer_activation = layer_activation.T
 
             tsne = TSNE(n_components=3)
-            tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
+            tsne_embedding = tsne.fit_transform(
+                layer_activation[:, : self.num_samples].T
+            )
             tsne_embeddings.append(tsne_embedding)
 
         return tsne_embeddings
-    
+
+
 class MultiTsne(_MultiMetric):
 
     def __init__(self, activations_dict, num_samples=200):
@@ -51,7 +55,7 @@ class MultiTsne(_MultiMetric):
             )
             self.num_samples = 200
         self.base = TSne
-        self.data = super().transform(self.activations_dict,self.base)
+        self.data = super().transform(self.activations_dict, self.base)
 
     def compute(self, *args, **kwargs) -> dict:
         """
@@ -70,4 +74,4 @@ class MultiTsne(_MultiMetric):
         tsne_embeddings : dict
             A dictionary containing the t-SNE embeddings, structured exactly the same as the input `activations_dict`.
         """
-        return super().compute(data_dict=self.data,*args, **kwargs)
+        return super().compute(data_dict=self.data, *args, **kwargs)

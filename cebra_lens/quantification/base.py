@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import numpy as np
 
+
 class _BaseMetric:
     """
     Base class for metric computations.

@@ -10,26 +10,30 @@ class MultiDecoding(_MultiMetric):
     def __init__(self, models_dict: dict):
         self.models_dict = models_dict
         self.base = Decoding
-        self.data = super().transform(self.models_dict,self.base)
+        self.data = super().transform(self.models_dict, self.base)
 
-    def compute(self,
+    def compute(
+        self,
         train_data: torch.Tensor,
         train_label: np.ndarray,
         test_data: torch.Tensor,
         test_label: np.ndarray,
         session_id: int,
         dataset_label: str = "visual",
-        layer_type: str = "conv",):
-
+        layer_type: str = "conv",
+    ):
         """Equivalent to the method decode_layer_models"""
-        return super().compute(self.data, train_data,
-        train_label,
-        test_data,
-        test_label,
-        session_id,
-        dataset_label,
-        layer_type)
-    
+        return super().compute(
+            self.data,
+            train_data,
+            train_label,
+            test_data,
+            test_label,
+            session_id,
+            dataset_label,
+            layer_type,
+        )
+
     def decode(
         self,
         train_data: torch.Tensor,
@@ -65,13 +69,15 @@ class MultiDecoding(_MultiMetric):
             A dictionary where the keys are the model category labels or model names, and the values are the corresponding decoding results.
         """
 
-        return super().decode(self.data, train_data,
-        train_label,
-        test_data,
-        test_label,
-        session_id,
-        dataset_label)
-    
+        return super().decode(
+            self.data,
+            train_data,
+            train_label,
+            test_data,
+            test_label,
+            session_id,
+            dataset_label,
+        )
 
 
 class Decoding(_BaseMetric):
@@ -80,6 +86,7 @@ class Decoding(_BaseMetric):
 
     def _decoding_function_selection(
         # figure out what to do about the arguments and parameters
+        self,
         embedding_train: np.ndarray,
         label_train: np.ndarray,
         embedding_test: np.ndarray,

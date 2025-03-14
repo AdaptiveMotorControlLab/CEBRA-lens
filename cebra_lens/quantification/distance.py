@@ -5,12 +5,12 @@ from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from .misc import discrete_binning, repetition_binning
-from .base import _BaseMetric,_MultiMetric
+from .base import _BaseMetric, _MultiMetric
 
 
 class DistanceMetric:
 
-    def compute_centroid(self,embedding: np.ndarray, indices: list) -> float:
+    def compute_centroid(self, embedding: np.ndarray, indices: list) -> float:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
@@ -29,7 +29,9 @@ class DistanceMetric:
         bin_data = embedding[:, indices.flatten()]  # Get data for the current bin
         return np.mean(bin_data, axis=1)  # Compute centroid
 
-    def scale_embedding(self,embedding: np.ndarray, metric: str = "cosine") -> np.ndarray:
+    def scale_embedding(
+        self, embedding: np.ndarray, metric: str = "cosine"
+    ) -> np.ndarray:
         """
         Scales the embedding data based on the specified metric.
 
@@ -48,16 +50,18 @@ class DistanceMetric:
 
         if metric == "euclidean":
             scaler = StandardScaler()
-            return scaler.fit_transform(embedding.T).T  # Standardize across each dimension
+            return scaler.fit_transform(
+                embedding.T
+            ).T  # Standardize across each dimension
         elif metric == "cosine":
             return embedding
         else:
             raise NotImplementedError(
                 f"The scaling for metric {metric} is not yet implemented. Please use 'cosine' or 'euclidean'."
             )
-        
+
     def compute_centroids(
-        self,embedding: np.ndarray, indices: list, metric: str = "cosine"
+        self, embedding: np.ndarray, indices: list, metric: str = "cosine"
     ) -> list:
         """
         Computes the centroid of a single embedding (e.g. single layer) for all the bins.
@@ -85,19 +89,13 @@ class DistanceMetric:
         return centroids
 
 
-
-
-
 class Intrabin(DistanceMetric):
-    def __init__(self,indices,
-                    repetition_indices,
-                    metric):
+    def __init__(self, indices, repetition_indices, metric):
         self.indices = indices
         self.repetition_indices = repetition_indices
         self.metric = metric
-    def compute(
-        self,embedding: np.ndarray
-    ) -> float:
+
+    def compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
@@ -125,26 +123,21 @@ class Intrabin(DistanceMetric):
             intra_distances = pdist(
                 bin_data, metric=self.metric
             )  # Pairwise distances within the bin -> distances is list of x1x2,x1x3,x1x4...
-            mean_intra_distance = np.mean(intra_distances)  # Mean of the pairwise distances
+            mean_intra_distance = np.mean(
+                intra_distances
+            )  # Mean of the pairwise distances
             distances.append(mean_intra_distance)
 
         return np.mean(distances)
 
 
-
-       
 class Interrep(DistanceMetric):
-    def __init__(self,indices,
-                    repetition_indices,
-                    metric):
+    def __init__(self, indices, repetition_indices, metric):
         self.indices = indices
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def compute(
-        self,
-        embedding: np.ndarray
-    ) -> float:
+    def compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
@@ -180,7 +173,9 @@ class Interrep(DistanceMetric):
                 )
 
             # Compute pairwise distances between centroids using cosine distance
-            bin_distances = cdist(repetition_centroids, repetition_centroids, metric=self.metric)
+            bin_distances = cdist(
+                repetition_centroids, repetition_centroids, metric=self.metric
+            )
 
             # Extract non-diagonal elements to get distances between different repetitions
             non_diagonal_distances = bin_distances[
@@ -191,17 +186,15 @@ class Interrep(DistanceMetric):
 
         return np.mean(distances)
 
+
 class Interbin(DistanceMetric):
-    def __init__(self,indices,
-                    repetition_indices,
-                    metric):
+    def __init__(self, indices, repetition_indices, metric):
         self.indices = indices
         self.repetition_indices = repetition_indices
         self.metric = metric
+
     # Function to compute centroids and inter-bin distances for a given embedding
-    def compute(
-        self,embedding: np.ndarray
-    ) -> float:
+    def compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
@@ -220,7 +213,9 @@ class Interbin(DistanceMetric):
             The mean inter-bin distance across the embedding (e.g. across one layer).
         """
 
-        centroids = self.compute_centroids(embedding=embedding, indices=self.indices, metric=self.metric)
+        centroids = self.compute_centroids(
+            embedding=embedding, indices=self.indices, metric=self.metric
+        )
 
         # Compute pairwise distances between centroids using cosine distance
         distances = cdist(centroids, centroids, metric=self.metric)
@@ -266,29 +261,28 @@ class Distance(_BaseMetric):
         """
 
         if distance_label == "interbin":
-            distance = Interbin(indices,repetition_indices,metric)
+            distance = Interbin(indices, repetition_indices, metric)
         elif distance_label == "intrabin":
-            distance = Intrabin(indices,repetition_indices,metric)
+            distance = Intrabin(indices, repetition_indices, metric)
         elif distance_label == "interrep":
-            distance = Interrep(indices,repetition_indices,metric)
+            distance = Interrep(indices, repetition_indices, metric)
         else:
             raise NotImplementedError(
-                f"Distance {distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'.")
+                f"Distance {distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
+            )
         layer_distances = []
         for embedding in embeddings:
 
-            layer_distances.append(
-                distance.compute(embedding)
-            )
+            layer_distances.append(distance.compute(embedding))
 
         return layer_distances
+
 
 class MultiDistance(_MultiMetric):
     def __init__(self, activations_dict):
         self.activations_dict = activations_dict
         self.base = Distance
-        self.data_dict = super().transform(self.activations_dict,self.base)
-        
+        self.data_dict = super().transform(self.activations_dict, self.base)
 
     def compute(self, data_dict, data, label, dataset_label, metric, distance_label):
         """
@@ -327,4 +321,6 @@ class MultiDistance(_MultiMetric):
             )
         else:
             repetition_indices = None
-        return super().compute(data_dict, idxs, repetition_indices, metric, distance_label)
+        return super().compute(
+            data_dict, idxs, repetition_indices, metric, distance_label
+        )

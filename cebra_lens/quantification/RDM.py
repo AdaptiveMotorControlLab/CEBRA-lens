@@ -13,7 +13,7 @@ class MultiRDM(_MultiMetric):
     def __init__(self, activations_dict: dict):
         self.activations_dict = activations_dict
         self.base = RDM
-        self.data = super().transform(self.activations_dict,self.base)
+        self.data = super().transform(self.activations_dict, self.base)
 
     def compute(self, *args, **kwargs):
         return super().compute(data_dict=self.data, *args, **kwargs)
