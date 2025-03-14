@@ -74,4 +74,4 @@ class MultiTsne(_MultiMetric):
         tsne_embeddings : dict
             A dictionary containing the t-SNE embeddings, structured exactly the same as the input `activations_dict`.
         """
-        return super().compute(self.data_dict)
+        return super().compute(self.data)
