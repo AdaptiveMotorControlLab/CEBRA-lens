@@ -12,7 +12,7 @@ class MultiDecoding(_MultiMetric):
         self.base = Decoding
         self.data = super().transform(self.models_dict, self.base)
 
-    def compute(
+    def decode_layer(
         self,
         train_data: torch.Tensor,
         train_label: np.ndarray,

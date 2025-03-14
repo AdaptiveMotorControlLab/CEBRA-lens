@@ -57,7 +57,7 @@ class MultiTsne(_MultiMetric):
         self.base = TSne
         self.data = super().transform(self.activations_dict, self.base)
 
-    def compute(self, *args, **kwargs) -> dict:
+    def compute(self) -> dict:
         """
         Runs t-SNE on the provided activations dictionary and saves the results to a pickle file.
         This function performs t-SNE on the activations data.
@@ -74,4 +74,4 @@ class MultiTsne(_MultiMetric):
         tsne_embeddings : dict
             A dictionary containing the t-SNE embeddings, structured exactly the same as the input `activations_dict`.
         """
-        return super().compute(data_dict=self.data, *args, **kwargs)
+        return super().compute(self.data_dict)
