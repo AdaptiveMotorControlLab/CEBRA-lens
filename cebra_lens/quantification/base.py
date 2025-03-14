@@ -17,7 +17,7 @@ class _MultiMetric(_BaseMetric):
         result_dict = {}
         for model_label, activations in data_dict.items():
             result_dict[model_label] = []
-            for activation in tqdm(activations, desc=f"Processing {model_label}"):
+            for activation in activations:
                 result_dict[model_label].append(BaseClass(activation))
         return result_dict
 
@@ -37,5 +37,5 @@ class _MultiMetric(_BaseMetric):
             result_dict[label] = []
             for value in tqdm(values, desc=f"Processing {label}"):
                 result_dict[label].append(value.decode(*args, **kwargs))
-            result_dict[label] = np.array([result_dict])
+            result_dict[label] = np.array(result_dict[label])
         return result_dict
