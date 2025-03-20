@@ -3,15 +3,18 @@
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 import numpy as np
-import pickle
-from .base import _BaseMetric, _MultiMetric
+from .base import _BaseMetric
 
 
-class TSne(_BaseMetric):
-    def __init__(self, activation: np.ndarray):
-        self.activation = activation
+class Tsne(_BaseMetric):
+    def __init__(self, num_samples:int = 200,
+                 #activation: np.ndarray
+                 ):
+        super().__init__(self)
+        self.num_samples = num_samples
+        self._check_num_samples()
 
-    def compute(self, num_samples) -> np.ndarray:
+    def compute(self, activation) -> np.ndarray:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
         This function performs dimensionality reduction on the layer activation data to generate a 2D embedding using t-SNE.
@@ -30,46 +33,34 @@ class TSne(_BaseMetric):
             The 2D embedding produced by t-SNE.
         """
         tsne_embeddings = []
-        for layer_activation in self.activation:
+        for layer_activation in activation:
             # Check that it's num_neurons X num_samples: Assumption that we always have num_neurons < num_samples
             if layer_activation.shape[0] > layer_activation.shape[1]:
                 layer_activation = layer_activation.T
 
             tsne = TSNE(n_components=3)
-            tsne_embedding = tsne.fit_transform(layer_activation[:, :num_samples].T)
+            tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
             tsne_embeddings.append(tsne_embedding)
 
         return tsne_embeddings
+    
+    # def save(self):
+    #     return super().save()
+    
+    # def load(self):
+    #     return super().load()
+    
+    # def plot(self):
+    #     return super().plot()
+    
+    # @property
+    # get_
+    # set_for parameters which are extra in the compute
 
-
-class MultiTsne(_MultiMetric):
-
-    def __init__(self, activations_dict, num_samples=200):
-        self.activations_dict = activations_dict
-        self.num_samples = num_samples
+    def _check_num_samples(self):
         if self.num_samples < 200:
             print(
                 f"Warning: Minimum number of samples is 200 to ensure good functioning. Provided: {self.num_samples}. Processing with 200..."
             )
             self.num_samples = 200
-        self.base = TSne
-        self.data = super().transform(self.activations_dict, self.base)
 
-    def compute(self) -> dict:
-        """
-        Runs t-SNE on the provided activations dictionary and saves the results to a pickle file.
-        This function performs t-SNE on the activations data.
-
-        Parameters:
-        -----------
-        activations_dict : dict
-            A dictionary containing the activations. More information on the format can be found in CEBRA_Lens.activations.
-        num_samples : int
-            The number of samples to use for t-SNE transformation.
-
-        Returns:
-        --------
-        tsne_embeddings : dict
-            A dictionary containing the t-SNE embeddings, structured exactly the same as the input `activations_dict`.
-        """
-        return super().compute(self.data, self.num_samples)
