@@ -5,7 +5,7 @@ from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from .misc import discrete_binning, repetition_binning
-from .base import _BaseMetric, _MultiMetric
+from .base import _BaseMetric
 
 
 class DistanceMetric:
