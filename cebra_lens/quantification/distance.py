@@ -298,3 +298,9 @@ class Distance(_BaseMetric):
         
         return super().compute(distance._compute)
     
+    def load(self,filepath,data):
+        return super().load(filepath,data)
+    
+    def save(self, filepath, data):
+        return super().save(filepath,data)
+    

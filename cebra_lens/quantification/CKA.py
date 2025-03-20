@@ -125,8 +125,8 @@ class CKA:
 
 
 class MultiCKA:
-    def __init__(self, activations_dict, comparison):
-        self.activations_dict = activations_dict
+    def __init__(self,comparison):
+
         if not isinstance(comparison, tuple):
             raise ValueError(
                 f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
@@ -143,7 +143,7 @@ class MultiCKA:
                 cka = CKA(embeddings_1[j], embeddings_2)
             self.cka_matrix[j, :] = cka.compute()
 
-    def compute(self):
+    def compute(self, activations_dict):
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -163,8 +163,8 @@ class MultiCKA:
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
 
-        activations_1 = self.activations_dict[self.comparisonX]
-        activations_2 = self.activations_dict[self.comparisonY]
+        activations_1 = activations_dict[self.comparisonX]
+        activations_2 = activations_dict[self.comparisonY]
 
         # if not the same length, compare embeddings to the first instance. else compare pairwise.
         if len(activations_1) != len(activations_2):

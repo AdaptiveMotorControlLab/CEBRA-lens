@@ -138,4 +138,10 @@ class RDM(_BaseMetric):
             activations = [activations]
 
         return super().compute(self._compute)
+    
+    def load(self,filepath,data):
+        return super().load(filepath,data)
+    
+    def save(self, filepath, data):
+        return super().save(filepath,data)
 

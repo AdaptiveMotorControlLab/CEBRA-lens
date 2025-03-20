@@ -52,3 +52,9 @@ class Tsne(_BaseMetric):
             )
             self.num_samples = 200
 
+    def load(self,filepath,data):
+        return super().load(filepath,data)
+    
+    def save(self, filepath, data):
+        return super().save(filepath,data)
+

@@ -79,7 +79,7 @@ class Decoding:
             )
         return results
 
-    def decode_by_layer(
+    def compute(
         self,
         model,
         layer_type: str = "conv",
