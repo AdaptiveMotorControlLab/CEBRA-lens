@@ -95,7 +95,7 @@ class Intrabin(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def compute(self, embedding: np.ndarray) -> float:
+    def _compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
@@ -137,7 +137,7 @@ class Interrep(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def compute(self, embedding: np.ndarray) -> float:
+    def _compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
@@ -194,7 +194,7 @@ class Interbin(DistanceMetric):
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
-    def compute(self, embedding: np.ndarray) -> float:
+    def _compute(self, embedding: np.ndarray) -> float:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
@@ -228,15 +228,40 @@ class Interbin(DistanceMetric):
 
 
 class Distance(_BaseMetric):
-    def __init__(self, activation):
-        self.activation = activation
+    def __init__(self,data, label, dataset_label,
+        metric: str = "cosine",
+        distance_label: str = "interbin"):
+
+        super().__init__(self)
+        self.data = data
+        self.label = label
+        self.dataset_label = dataset_label
+        self.metric = metric
+        self.distance_label = distance_label
+
+        self.indices, self.repetition_indices = self._define_indices()
+    
+    def _define_indices(self):
+
+        idxs = discrete_binning(
+            data=self.data,
+            label=self.label,
+            dataset_label=self.dataset_label,
+            sample_mode="all",
+        )
+        if self.distance_label == "interrep":
+
+            repetition_indices = repetition_binning(
+                indices=idxs, data=self.data, dataset_label=self.dataset_label
+            )
+        else:
+            repetition_indices = None
+        
+        return idxs, repetition_indices
+        
 
     def compute(
-        embeddings: list,
-        indices: list,
-        repetition_indices: list = None,
-        metric: str = "cosine",
-        distance_label: str = "interbin",
+        self, activations
     ) -> list:
         """
         Computes specified type of distance for multiple layers of embedding data.
@@ -259,68 +284,17 @@ class Distance(_BaseMetric):
         list
             A list of computed distances for each layer.
         """
-
-        if distance_label == "interbin":
-            distance = Interbin(indices, repetition_indices, metric)
-        elif distance_label == "intrabin":
-            distance = Intrabin(indices, repetition_indices, metric)
-        elif distance_label == "interrep":
-            distance = Interrep(indices, repetition_indices, metric)
+        self.activations = activations
+        if self.distance_label == "interbin":
+            distance = Interbin(self.indices, self.repetition_indices, self.metric)
+        elif self.distance_label == "intrabin":
+            distance = Intrabin(self.indices, self.repetition_indices, self.metric)
+        elif self.distance_label == "interrep":
+            distance = Interrep(self.indices, self.repetition_indices, self.metric)
         else:
             raise NotImplementedError(
-                f"Distance {distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
+                f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
-        layer_distances = []
-        for embedding in embeddings:
-
-            layer_distances.append(distance.compute(embedding))
-
-        return layer_distances
-
-
-class MultiDistance(_MultiMetric):
-    def __init__(self, activations_dict):
-        self.activations_dict = activations_dict
-        self.base = Distance
-        self.data_dict = super().transform(self.activations_dict, self.base)
-
-    def compute(self, data, label, dataset_label, metric, distance_label):
-        """
-        Computes RDMs for multiple layers of activations across multiple models.
-
-        Parameters:
-        -----------
-        data : torch.Tensor
-            The data array of shape (num_samples, num_features).
-        label : torch.Tensor
-            The array of labels corresponding to the data.
-        activations_dict : dict
-            A dictionary containing activations for different models. e.g. activations_dict["multi_TR"][0] for the first layer of the multi_TR model. For more information on the format, see CEBRA_Lens.activations.
-        dataset_label : str, optional
-            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
-        distance_label : str, optional
-            The type of distance to compute ("interbin", "intrabin", or "interrep") (default is "interbin").
-
-        Returns:
-        --------
-        dict
-            A dictionary containing distnaces for each model, with each entry being a list of distances for the corresponding layer.
-        """
-        idxs = discrete_binning(
-            data=data,
-            label=label,
-            dataset_label=dataset_label,
-            sample_mode="all",
-        )
-        if distance_label == "interrep":
-
-            repetition_indices = repetition_binning(
-                indices=idxs, data=data, dataset_label=dataset_label
-            )
-        else:
-            repetition_indices = None
-        return super().compute(
-            self.data_dict, idxs, repetition_indices, metric, distance_label
-        )
+        
+        return super().compute(distance._compute)
+    

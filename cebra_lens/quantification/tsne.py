@@ -14,7 +14,15 @@ class Tsne(_BaseMetric):
         self.num_samples = num_samples
         self._check_num_samples()
 
-    def compute(self, activation) -> np.ndarray:
+    def _compute(self, layer_activation):
+        if layer_activation.shape[0] > layer_activation.shape[1]:
+                layer_activation = layer_activation.T
+
+        tsne = TSNE(n_components=3)
+        tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
+        return tsne_embedding
+    
+    def compute(self, activations) -> np.ndarray:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
         This function performs dimensionality reduction on the layer activation data to generate a 2D embedding using t-SNE.
@@ -32,30 +40,10 @@ class Tsne(_BaseMetric):
         tsne_embedding : np.ndarray
             The 2D embedding produced by t-SNE.
         """
-        tsne_embeddings = []
-        for layer_activation in activation:
-            # Check that it's num_neurons X num_samples: Assumption that we always have num_neurons < num_samples
-            if layer_activation.shape[0] > layer_activation.shape[1]:
-                layer_activation = layer_activation.T
+        self.activations = activations
 
-            tsne = TSNE(n_components=3)
-            tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
-            tsne_embeddings.append(tsne_embedding)
-
-        return tsne_embeddings
+        return super().compute(self._compute)
     
-    # def save(self):
-    #     return super().save()
-    
-    # def load(self):
-    #     return super().load()
-    
-    # def plot(self):
-    #     return super().plot()
-    
-    # @property
-    # get_
-    # set_for parameters which are extra in the compute
 
     def _check_num_samples(self):
         if self.num_samples < 200:

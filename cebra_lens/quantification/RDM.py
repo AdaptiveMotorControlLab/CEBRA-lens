@@ -6,34 +6,27 @@ from scipy.spatial.distance import correlation, pdist, squareform
 from tqdm import tqdm
 from .misc import discrete_binning
 import torch
-from .base import _BaseMetric, _MultiMetric
-
-
-class MultiRDM(_MultiMetric):
-    def __init__(self, activations_dict: dict):
-        self.activations_dict = activations_dict
-        self.base = RDM
-        self.data = super().transform(self.activations_dict, self.base)
-
-    def compute(
-        self,
-        data: torch.Tensor,
-        label: torch.Tensor,
-        dataset_label: str = "visual",
-        metric: str = "correlation",
-        bool_oracle: bool = "True",
-    ):
-        return super().compute(
-            self.data, data, label, dataset_label, metric, bool_oracle
-        )
+from .base import _BaseMetric
 
 
 class RDM(_BaseMetric):
     def __init__(
-        self,
-        activations: list,
+        self,        data: torch.Tensor,
+        label: torch.Tensor,
+        dataset_label: str = "visual",
+        metric: str = "correlation",
+        bool_oracle: bool = True
     ):
-        self.activations = activations
+        super().__init__(self)
+        self.data = data
+        self.label = label
+        self.dataset_label = dataset_label
+        self.metric = metric
+        self.bool_oracle = bool_oracle
+        
+        self.idxs = discrete_binning(
+            data=self.data, label=self.label, dataset_label=self.dataset_label
+        )
 
     def _create_oracle_rdm(self):
         """
@@ -97,13 +90,23 @@ class RDM(_BaseMetric):
 
         return comparison
 
+    def _compute(self, layer_activation):
+        # to ensure the right shape: numSamples X numNeurons
+        if layer_activation.shape[0] < layer_activation.shape[1]:
+            layer_activation = layer_activation.T
+
+        rdm = pdist(layer_activation[self.idxs.flatten(), :], metric=self.metric)
+        if self.bool_oracle:
+            oracle_rdm = self._create_oracle_rdm()
+            correlation = self._compare_RDM(rdm_1=oracle_rdm, rdm_2=rdm)
+        else:
+            correlation = None
+
+        return squareform(rdm), correlation
+         
     def compute(
         self,
-        data: torch.Tensor,
-        label: torch.Tensor,
-        dataset_label: str = "visual",
-        metric: str = "correlation",
-        bool_oracle: bool = "True",
+        activations
     ):
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
@@ -128,34 +131,11 @@ class RDM(_BaseMetric):
         list
             A list of tuples, where each tuple contains the RDM for the layer and the correlation with the Oracle RDM (if computed).
         """
-        self.dataset_label = dataset_label
-        self.metric = metric
-        self.data = data
-        self.label = label
-        self.bool_oracle = bool_oracle
-
+        self.activations = activations
         if isinstance(
-            self.activations, (np.ndarray, torch.Tensor)
+            activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
-            self.activations = [self.activations]
+            activations = [activations]
 
-        idxs = discrete_binning(
-            data=self.data, label=self.label, dataset_label=self.dataset_label
-        )
+        return super().compute(self._compute)
 
-        layer_rdm = []
-
-        for layer in self.activations:
-            # to ensure the right shape: numSamples X numNeurons
-            if layer.shape[0] < layer.shape[1]:
-                layer = layer.T
-
-            rdm = pdist(layer[idxs.flatten(), :], metric=self.metric)
-            if self.bool_oracle:
-                oracle_rdm = self._create_oracle_rdm()
-                correlation = self._compare_RDM(rdm_1=oracle_rdm, rdm_2=rdm)
-            else:
-                correlation = None
-
-            layer_rdm.append((squareform(rdm), correlation))
-        return layer_rdm

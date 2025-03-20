@@ -12,12 +12,14 @@ class _BaseMetric:
     Base class for metric computations.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self,activations=None):
+        self.activations = activations if activations is not None else []
 
-    def compute(self, activations):
-        #figure something out yo
-        pass
+    def compute(self, metric_func):
+        layer_data = []
+        for layer_activation in self.activations:
+            layer_data.append(metric_func(layer_activation))
+        return layer_data
     
     # def load(self, filepath):
     #     with open(filepath, "rb") as f:
