@@ -269,8 +269,7 @@ class Decoding(_BaseMetric):
 
         else:
             raise NotImplementedError(
-                f"Solver {self.model.solver_name_} is not yet implemented."
-            )
+                f"Solver {self.model.solver_name_} is not yet implemented.")
 
         results = self._decoding_function_selection(
             embedding_train, train_label, embedding_test, test_label, dataset_label
