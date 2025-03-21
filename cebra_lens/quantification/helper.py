@@ -42,10 +42,8 @@ def center_gram(gram, unbiased=False):
     Returns:
       A symmetric matrix with centered columns and rows.
     """
-    print("Max Difference:", np.max(np.abs(gram - gram.T)))
-
-    # if not np.allclose(rounded_gram, rounded_gram.T):
-    #     raise ValueError("Input must be a symmetric matrix.")
+    if not np.allclose(gram, gram.T, rtol=1e-03, atol=0.004):
+        raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
 
     if unbiased:
