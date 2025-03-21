@@ -41,6 +41,8 @@ def center_gram(gram, unbiased=False):
     Returns:
       A symmetric matrix with centered columns and rows.
     """
+
+    print(gram)
     if not np.allclose(gram, gram.T):
         raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
