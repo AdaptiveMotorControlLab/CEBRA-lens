@@ -44,6 +44,7 @@ def center_gram(gram, unbiased=False):
     """
     rounded_gram = np.round(gram, 2)
     print(rounded_gram)
+    print("Max Difference:", np.max(np.abs(gram - gram.T)))
     if not np.allclose(rounded_gram, rounded_gram.T):
         raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
