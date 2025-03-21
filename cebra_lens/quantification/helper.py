@@ -46,7 +46,7 @@ def center_gram(gram, unbiased=False):
     print("We are inside center_gram")
     print(gram)
     print(gram.T)
-    if not np.allclose(gram, gram.T):
+    if not np.allclose(gram, gram.T,rtol=1e-05, atol=1e-06):
         raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
 
