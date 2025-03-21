@@ -51,6 +51,6 @@ class MultiModel:
         for model_label, model_list in models.items():
             result_dict[model_label] = []
             for model in tqdm(model_list, desc=f"Processing {model_label}"):
-                result_dict[model_label].append(model.decode(model))
+                result_dict[model_label].append(self.metric_class.decode(model))
             result_dict[model_label] = np.array(result_dict[model_label])
         return result_dict
