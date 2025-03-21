@@ -43,7 +43,8 @@ def center_gram(gram, unbiased=False):
       A symmetric matrix with centered columns and rows.
     """
     rounded_gram = np.round(gram, 2)
-    if not np.allclose(rounded_gram, rounded_gram.T,rtol=1e-03, atol=1e-05):
+    print(rounded_gram)
+    if not np.allclose(rounded_gram, rounded_gram.T):
         raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
 
