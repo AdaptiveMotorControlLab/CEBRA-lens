@@ -45,6 +45,7 @@ class ComparisonCKA:
 
         cka_matrix = np.zeros((1, len(embeddings_1)))
         for i in range(len(embeddings_1)):
+            print(i)
             cka_matrix[0, i] = cka(
                 gram_linear(embeddings_1[i].T),
                 gram_linear(embeddings_2[i].T),
@@ -79,7 +80,8 @@ class ComparisonCKA:
         cka_matrix : np.ndarray
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
-
+        print(self.comparisonX)
+        print(self.comparisonY)
         activations_1 = activations_dict[self.comparisonX]
         activations_2 = activations_dict[self.comparisonY]
         if len(activations_1) != len(activations_2):
@@ -93,6 +95,7 @@ class ComparisonCKA:
 
             cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
             for j in tqdm(range(len(embeddings_1))):
+                print(j)
                 cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
 
         # example when compare intra model single_TR v single_TR, only compare to the first instantiation
