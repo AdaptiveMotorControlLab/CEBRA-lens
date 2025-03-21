@@ -11,7 +11,8 @@ class Decoding:
         test_data: torch.Tensor,
         test_label: np.ndarray,
         session_id: int = -1,
-        dataset_label: str = "visual"):
+        dataset_label: str = "visual",
+        layer_type: str = "conv"):
 
         self.train_label = train_label
         self.train_data = train_data
@@ -19,6 +20,7 @@ class Decoding:
         self.test_data = test_data
         self.session_id = session_id
         self.dataset_label = dataset_label
+        self.layer_type = layer_type
 
     def _decoding_function_selection(
         # figure out what to do about the arguments and parameters
@@ -82,7 +84,6 @@ class Decoding:
     def compute(
         self,
         model,
-        layer_type: str = "conv",
     ):
         """
         Decode neural data by layer using a given CEBRA model.
@@ -117,7 +118,7 @@ class Decoding:
             data=self.train_data,
             name=model.solver_name_,
             session_id=self.session_id,
-            layer_type=layer_type,
+            layer_type=self.layer_type,
         )
 
         activations_test = get_activations_model(
@@ -125,7 +126,7 @@ class Decoding:
             data=self.test_data,
             name=model.solver_name_,
             session_id=self.session_id,
-            layer_type=layer_type,
+            layer_type=self.layer_type,
         )
 
         num_layers = len(activations_train)

@@ -36,7 +36,7 @@ class CKA:
         normalization_y = np.linalg.norm(gram_y)
         return scaled_hsic / (normalization_x * normalization_y)
 
-    def _center_gram(gram, unbiased=False):
+    def _center_gram(self,gram, unbiased=False):
         """Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
@@ -74,7 +74,7 @@ class CKA:
 
         return gram
 
-    def _gram_linear(x):
+    def _gram_linear(self,x):
         """Compute Gram (kernel) matrix for a linear kernel.
 
         Args:
