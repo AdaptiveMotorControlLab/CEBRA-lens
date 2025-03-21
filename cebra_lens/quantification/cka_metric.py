@@ -52,12 +52,13 @@ class ComparisonCKA:
         return cka_matrix
 
     def _compute_single(self, embeddings_1, embeddings_2, flag=False):
-        self.cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
+        cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
-                self.cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2[j])
+                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2[j])
             else:
-                self.cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
+                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
+        return cka_matrix
 
     def compute(self, activations_dict):
         """
@@ -81,7 +82,38 @@ class ComparisonCKA:
 
         activations_1 = activations_dict[self.comparisonX]
         activations_2 = activations_dict[self.comparisonY]
+        if len(activations_1) != len(activations_2):
+            if len(activations_1) > len(activations_2):
+                embeddings_1 = activations_1
+                embeddings_2 = activations_2[0]
 
+            elif len(activations_1) < len(activations_2):
+                embeddings_1 = activations_2
+                embeddings_2 = activations_1[0]
+
+            cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
+            for j in tqdm(range(len(embeddings_1))):
+                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
+
+        # example when compare intra model single_TR v single_TR, only compare to the first instantiation
+        elif self.comparisonX == self.comparisonY:
+            embeddings_1 = activations_1
+            embeddings_2 = activations_2[0]
+            cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
+            for j in tqdm(range(len(embeddings_1))):
+                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
+
+        else:
+            embeddings_1 = activations_1
+            embeddings_2 = activations_2
+            cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
+            for j in tqdm(range(len(embeddings_1))):
+                cka_matrix[j, :] = self._compute(
+                    embeddings_1[j], embeddings_2[j]
+                )
+
+        return cka_matrix
+    
         # if not the same length, compare embeddings to the first instance. else compare pairwise.
         if len(activations_1) != len(activations_2):
             if len(activations_1) > len(activations_2):
@@ -92,17 +124,17 @@ class ComparisonCKA:
                 embeddings_1 = activations_2
                 embeddings_2 = activations_1[0]
 
-            self._compute_single(embeddings_1, embeddings_2)
+            cka_matrix = self._compute_single(embeddings_1, embeddings_2)
 
         # example when compare intra model single_TR v single_TR, only compare to the first instantiation
         elif self.comparisonX == self.comparisonY:
             embeddings_1 = activations_1
             embeddings_2 = activations_2[0]
-            self._compute_single(embeddings_1, embeddings_2)
+            cka_matrix = self._compute_single(embeddings_1, embeddings_2)
 
         else:
             embeddings_1 = activations_1
             embeddings_2 = activations_2
-            self._compute_single(embeddings_1, embeddings_2, flag=True)
+            cka_matrix = self._compute_single(embeddings_1, embeddings_2, flag=True)
 
-        return self.cka_matrix
+        return cka_matrix
