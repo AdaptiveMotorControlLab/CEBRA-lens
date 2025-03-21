@@ -19,12 +19,11 @@ class _BasePlot:
     Attributes:
         axis: Optional axis to create the plot on.
         figsize: Figure width and height in inches.
-        dpi: Figure resolution.
     """
 
-    def __init__(self, axis, figsize: tuple, dpi: int):
+    def __init__(self, axis, figsize: tuple):
         if axis is None:
-            self.fig = plt.figure(figsize=figsize, dpi=dpi)
+            self.fig = plt.figure(figsize=figsize)
 
     def _define_ax(self, axis):
         raise NotImplementedError()
