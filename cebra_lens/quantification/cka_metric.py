@@ -2,7 +2,7 @@
 
 from tqdm import tqdm
 import numpy as np
-from helper import *
+from .helper import *
 
 class ComparisonCKA:
     def __init__(self,comparison):
