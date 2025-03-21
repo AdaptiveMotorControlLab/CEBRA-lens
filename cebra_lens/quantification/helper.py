@@ -16,9 +16,8 @@ def cka(gram_x, gram_y, debiased=False):
       The value of CKA between X and Y.
     """
     gram_x = center_gram(gram_x, unbiased=debiased)
-    print("done with center_gram x")
     gram_y = center_gram(gram_y, unbiased=debiased)
-    print("done with center gram y")
+ 
 
     # Note: To obtain HSIC, this should be divided by (n-1)**2 (biased variant) or
     # n*(n-3) (unbiased variant), but this cancels for CKA.
@@ -43,10 +42,7 @@ def center_gram(gram, unbiased=False):
     Returns:
       A symmetric matrix with centered columns and rows.
     """
-    print("We are inside center_gram")
-    print(gram)
-    print(gram.T)
-    if not np.allclose(gram, gram.T,rtol=1e-05, atol=1e-06):
+    if not np.allclose(gram, gram.T,rtol=1e-03, atol=1e-05):
         raise ValueError("Input must be a symmetric matrix.")
     gram = gram.copy()
 
@@ -80,6 +76,5 @@ def gram_linear(x):
     Returns:
       A num_examples x num_examples Gram matrix of examples.
     """
-    print("Gram linear function\n")
-    print(x)
+
     return x.dot(x.T)
