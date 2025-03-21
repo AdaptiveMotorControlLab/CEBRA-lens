@@ -118,7 +118,7 @@ class CKA:
         cka_matrix = np.zeros((1, len(self.x)))
         for i in range(len(self.x)):
             cka_matrix[0, i] = self._cka(
-                self._gram_linear(self.y[i].T),
+                self._gram_linear(self.x[i].T),
                 self._gram_linear(self.y[i].T),
             )
         return cka_matrix
