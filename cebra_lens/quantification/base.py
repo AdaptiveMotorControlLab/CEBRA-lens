@@ -36,21 +36,30 @@ class MultiModel:
         
     def __init__(self, metric_class):
         self.metric_class = metric_class
+        self.results_dict = {}
         #here we give the metric_class with defined parameters already for the calculation
 
     def compute(self, activations_dict):
-        result_dict = {}
+        self.result_dict = {}
         for model_label, activations_list in activations_dict.items():
-            result_dict[model_label] = []
+            self.result_dict[model_label] = []
             for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
-                result_dict[model_label].append(self.metric_class.compute(activations))
-        return result_dict
+                self.result_dict[model_label].append(self.metric_class.compute(activations))
+        return self.result_dict
 
     def decode(self, models):
-        result_dict = {}
+        self.result_dict = {}
         for model_label, model_list in models.items():
-            result_dict[model_label] = []
+            self.result_dict[model_label] = []
             for model in tqdm(model_list, desc=f"Processing {model_label}"):
-                result_dict[model_label].append(self.metric_class.decode(model))
-            result_dict[model_label] = np.array(result_dict[model_label])
-        return result_dict
+                self.result_dict[model_label].append(self.metric_class.decode(model))
+            self.result_dict[model_label] = np.array(self.result_dict[model_label])
+        return self.result_dict
+    
+    def load(self, filepath):
+        with open(filepath, "rb") as f:
+            self.results_dict = pickle.load(f)
+
+    def save(self, filepath):
+        with open(filepath, "wb") as f:
+            pickle.dump(self.results_dict, f)

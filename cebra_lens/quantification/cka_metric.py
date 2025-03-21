@@ -3,6 +3,7 @@
 from tqdm import tqdm
 import numpy as np
 from .helper import *
+import pickle
 
 class ComparisonCKA:
     def __init__(self,comparison):
@@ -13,6 +14,7 @@ class ComparisonCKA:
             )
         self.comparisonX = comparison[0]
         self.comparisonY = comparison[1]
+        self.cka_matrix = None
     
     def _compute(self,embeddings_1: list, embeddings_2: list) -> np.ndarray:
         """
@@ -92,17 +94,25 @@ class ComparisonCKA:
                 embeddings_2 = activations_1[0]
 
 
-            cka_matrix = self._compute_single(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2)
 
         # example when compare intra model single_TR v single_TR, only compare to the first instantiation
         elif self.comparisonX == self.comparisonY:
             embeddings_1 = activations_1
             embeddings_2 = activations_2[0]
-            cka_matrix = self._compute_single(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2)
 
         else:
             embeddings_1 = activations_1
             embeddings_2 = activations_2
-            cka_matrix = self._compute_single(embeddings_1, embeddings_2, True)
+            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2, True)
 
-        return cka_matrix
+        return self.cka_matrix
+    
+    def load(self, filepath):
+        with open(filepath, "rb") as f:
+            self.cka_matrix = pickle.load(f)
+
+    def save(self, filepath):
+        with open(filepath, "wb") as f:
+            pickle.dump(self.cka_matrix, f)
