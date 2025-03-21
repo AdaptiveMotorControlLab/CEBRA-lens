@@ -3,7 +3,8 @@
 import pathlib
 import cebra
 import torch
-
+from cebra.integrations.sklearn.cebra import CEBRA
+torch.serialization.add_safe_globals([CEBRA])
 
 def model_loader(model_dir: str, labels: dict = {}) -> dict:
     """
