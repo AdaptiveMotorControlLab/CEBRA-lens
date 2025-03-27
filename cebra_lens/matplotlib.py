@@ -354,7 +354,7 @@ def plot_decoding(
     ).plot(**kwargs)
 
 
-class _EmbeddingComparisonPlot(_BasePlot):
+class _EmbeddingComparisonPlot:
     def __init__(
         self,
         embeddings_1: list,
@@ -377,7 +377,6 @@ class _EmbeddingComparisonPlot(_BasePlot):
             dataset_label (str, optional): A string representing the label for the data being plotted.
         """
         self.figsize = (15, 10)
-        #super().__init__(axis, self.figsize)
         self.embeddings_1 = embeddings_1
         self.embeddings_2 = embeddings_2
         self.labels = labels
@@ -605,7 +604,7 @@ def compare_embeddings_layers(
     ).plot(**kwargs)
 
 
-class _ActivationPlot(_BasePlot):
+class _ActivationPlot:
     def __init__(
         self,
         input_data: torch.Tensor,
@@ -617,7 +616,6 @@ class _ActivationPlot(_BasePlot):
         title: str = "Trained activations",
     ):
         self.figsize = figsize
-        super().__init__(axis,figsize)
         self.input_data = input_data
         self.embeddings = embeddings
         self.sample_plot = sample_plot
@@ -710,7 +708,7 @@ def plot_activations(
     ).plot(**kwargs)
 
 
-class _HeatMapsPlot(_BasePlot):
+class _HeatMapsPlot:
     def __init__(
         self,
         cka_matrices: dict,
@@ -720,9 +718,7 @@ class _HeatMapsPlot(_BasePlot):
         cbar_label: str = "CKA score",
         color_map: str = "magma",
         figsize: tuple = (15, 5),
-    ):
-        super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
+    ):   
         self.cka_matrices = cka_matrices
         self.annot = annot
         self.show_cbar = show_cbar
@@ -732,7 +728,7 @@ class _HeatMapsPlot(_BasePlot):
         self.num_matrices = len(cka_matrices)
 
         self.num_comparisons = len(cka_matrices)
-
+        self.axs = self._define_ax(axis)
         self.cbar_ax = self.fig.add_axes([0.13, -0.04, 0.3, 0.03])
         self.heatmap_kwargs = {
             "cbar": show_cbar,
@@ -743,7 +739,7 @@ class _HeatMapsPlot(_BasePlot):
             "cbar_kws": {"label": cbar_label, "orientation": "horizontal"},
         }
         if self.num_comparisons == 1:
-            axs = [axs]  # handle the 1 comparison case
+            self.axs = [self.axs]  # handle the 1 comparison case
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -755,13 +751,13 @@ class _HeatMapsPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplot(
+            self.fig, self.axs = plt.subplot(
                 1, self.num_comparisons, figsize=self.figsize
             )
 
         else:
-            self.ax = axis
-        return self.ax
+            self.axs = axis
+        return self.axs
 
     def plot(self):
         for i, (key, value) in enumerate(self.cka_matrices.items()):
@@ -830,7 +826,7 @@ def plot_cka_heatmaps(
     ).plot()
 
 
-class _RDMPlots(_BasePlot):
+class _RDMPlots:
 
     def __init__(
         self,
@@ -842,7 +838,6 @@ class _RDMPlots(_BasePlot):
         cmap: str = "viridis",
         figsize: tuple = None,
     ):
-        super().__init__(axis, figsize)
         self.ax = self._define_ax(axis)
         self.rdms = rdms
         self.titles = titles
@@ -890,7 +885,7 @@ class _RDMPlots(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplots(1, len(self.rdms))
+            self.fig, self.ax = plt.subplots(1, len(self.rdms))
 
         else:
             self.ax = axis
