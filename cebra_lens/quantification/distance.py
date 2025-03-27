@@ -90,9 +90,8 @@ class DistanceMetric:
 
 
 class Intrabin(DistanceMetric):
-    def __init__(self, indices, repetition_indices, metric):
+    def __init__(self, indices,metric):
         self.indices = indices
-        self.repetition_indices = repetition_indices
         self.metric = metric
 
     def _compute(self, embedding: np.ndarray) -> float:
@@ -188,9 +187,8 @@ class Interrep(DistanceMetric):
 
 
 class Interbin(DistanceMetric):
-    def __init__(self, indices, repetition_indices, metric):
+    def __init__(self, indices, metric):
         self.indices = indices
-        self.repetition_indices = repetition_indices
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
@@ -286,9 +284,9 @@ class Distance(_BaseMetric):
         """
         self.activations = activations
         if self.distance_label == "interbin":
-            distance = Interbin(self.indices, self.repetition_indices, self.metric)
+            distance = Interbin(self.indices,self.metric)
         elif self.distance_label == "intrabin":
-            distance = Intrabin(self.indices, self.repetition_indices, self.metric)
+            distance = Intrabin(self.indices, self.metric)
         elif self.distance_label == "interrep":
             distance = Interrep(self.indices, self.repetition_indices, self.metric)
         else:
