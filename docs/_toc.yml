@@ -1,0 +1,14 @@
+format: jb-book
+root: docs/intro
+parts:
+- caption: Documentation
+  chapters:
+  - file: docs/initial_pitch
+  - file: docs/package_intro
+  - file: docs/repo_org
+
+- caption: Usage
+  chapters:
+  - file: docs/installation
+  - file: docs/metrics
+
