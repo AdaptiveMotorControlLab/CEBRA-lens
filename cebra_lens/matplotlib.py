@@ -377,6 +377,7 @@ class _EmbeddingComparisonPlot(_BasePlot):
             dataset_label (str, optional): A string representing the label for the data being plotted.
         """
         self.figsize = (15, 10)
+        super().__init__(axis, self.figsize)
         self.embeddings_1 = embeddings_1
         self.embeddings_2 = embeddings_2
         self.labels = labels
@@ -411,7 +412,7 @@ class _EmbeddingComparisonPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplots(
+            self.fig, self.ax = plt.subplots(
                 2,
                 max(self.num_layers_1, self.num_layers_2),
                 figsize=(15, 10),
