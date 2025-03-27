@@ -377,7 +377,6 @@ class _EmbeddingComparisonPlot(_BasePlot):
             dataset_label (str, optional): A string representing the label for the data being plotted.
         """
         self.figsize = (15, 10)
-        super().__init__(axis, self.figsize)
         self.embeddings_1 = embeddings_1
         self.embeddings_2 = embeddings_2
         self.labels = labels
