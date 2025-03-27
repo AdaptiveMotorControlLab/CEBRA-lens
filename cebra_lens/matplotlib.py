@@ -616,7 +616,8 @@ class _ActivationPlot(_BasePlot):
         cmap: str = "magma",
         title: str = "Trained activations",
     ):
-        super().__init__(axis, figsize)
+        self.figsize = figsize
+        super().__init__(axis, self.figsize)
 
         self.fig.suptitle(title, fontsize=20)
         self.input_data = input_data
