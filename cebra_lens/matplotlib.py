@@ -617,7 +617,7 @@ class _ActivationPlot(_BasePlot):
         title: str = "Trained activations",
     ):
         self.figsize = figsize
-        super().__init__(axis,self.figsize)
+        super().__init__(axis,figsize)
         self.input_data = input_data
         self.embeddings = embeddings
         self.sample_plot = sample_plot
