@@ -751,7 +751,7 @@ class _HeatMapsPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.fig, self.axs = plt.subplot(
+            self.fig, self.axs = plt.subplots(
                 1, self.num_comparisons, figsize=self.figsize
             )
 
