@@ -605,7 +605,7 @@ def compare_embeddings_layers(
     ).plot(**kwargs)
 
 
-class _ActivationPlot:
+class _ActivationPlot(_BasePlot):
     def __init__(
         self,
         input_data: torch.Tensor,
