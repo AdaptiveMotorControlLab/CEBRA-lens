@@ -351,7 +351,7 @@ def plot_decoding(
         axis=ax,
         palette=palette,
         dataset_label=dataset_label,
-    ).plot(**kwargs)  # Call plot method on the created ModelDecodingPlot instance
+    ).plot(**kwargs)
 
 
 class _EmbeddingComparisonPlot(_BasePlot):
@@ -617,13 +617,14 @@ class _ActivationPlot(_BasePlot):
         title: str = "Trained activations",
     ):
         super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
+
         self.fig.suptitle(title, fontsize=20)
         self.input_data = input_data
         self.embeddings = embeddings
         self.sample_plot = sample_plot
         self.cmap = cmap
         self.num_layers = len(embeddings)
+        self.axes = self._define_ax(axis)
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -635,13 +636,9 @@ class _ActivationPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplot(
-                self.num_layers + 1, 1, figsize=self.figsize
-            )
-
-        else:
-            self.ax = axis
-        return self.ax
+            fig, axes = plt.subplots(self.num_layers + 1, 1, figsize=self.figsize)
+            return axes
+        return [axis]
 
     def plot(self):
         self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
@@ -668,6 +665,7 @@ class _ActivationPlot(_BasePlot):
 
         # Adjust layout for better spacing
         plt.tight_layout()
+        return self.fig
 
 
 def plot_activations(
