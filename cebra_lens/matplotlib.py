@@ -666,7 +666,6 @@ class _ActivationPlot(_BasePlot):
 
         # Adjust layout for better spacing
         plt.tight_layout()
-        return self.fig
 
 
 def plot_activations(
