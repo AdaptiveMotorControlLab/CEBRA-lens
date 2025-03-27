@@ -605,7 +605,7 @@ def compare_embeddings_layers(
     ).plot(**kwargs)
 
 
-class _ActivationPlot(_BasePlot):
+class _ActivationPlot:
     def __init__(
         self,
         input_data: torch.Tensor,
@@ -617,15 +617,14 @@ class _ActivationPlot(_BasePlot):
         title: str = "Trained activations",
     ):
         self.figsize = figsize
-        super().__init__(axis, self.figsize)
-
-        self.fig.suptitle(title, fontsize=20)
+        super().__init__(axis,self.figsize)
         self.input_data = input_data
         self.embeddings = embeddings
         self.sample_plot = sample_plot
         self.cmap = cmap
         self.num_layers = len(embeddings)
-        self.axes = self._define_ax(axis)
+        self._define_ax(axis)
+        self.fig.suptitle(title, fontsize=20)
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -637,9 +636,10 @@ class _ActivationPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            fig, axes = plt.subplots(self.num_layers + 1, 1, figsize=self.figsize)
-            return axes
-        return [axis]
+            self.fig, self.axes = plt.subplots(self.num_layers + 1, 1, figsize=self.figsize)
+        else:
+            self.axes = [axis] + [axis.figure.add_subplot(self.num_layers + 1, 1, i+2) for i in range(self.num_layers)]
+
 
     def plot(self):
         self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
