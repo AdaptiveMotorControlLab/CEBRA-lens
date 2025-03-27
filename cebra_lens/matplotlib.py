@@ -838,14 +838,15 @@ class _RDMPlots:
         cmap: str = "viridis",
         figsize: tuple = None,
     ):
-        self.ax = self._define_ax(axis)
+  
         self.rdms = rdms
         self.titles = titles
         self.metric = metric
         self.dataset_label = dataset_label
         self.cmap = cmap
         self.figsize = figsize
-
+        self.ax = self._define_ax(axis)
+        
         if len(self.rdms) == 1:
             self.ax = [self.ax]
 
