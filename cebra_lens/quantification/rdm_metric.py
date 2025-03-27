@@ -133,9 +133,9 @@ class RDM(_BaseMetric):
         """
         self.activations = activations
         if isinstance(
-            activations, (np.ndarray, torch.Tensor)
+            self.activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
-            activations = [activations]
+            self.activations = [self.activations]
 
         return super().compute(self._compute)
     
