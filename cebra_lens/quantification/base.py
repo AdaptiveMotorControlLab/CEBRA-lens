@@ -5,7 +5,7 @@ import types
 from typing import List, Literal, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from pathlib import Path
-from decoding import DecodeModel
+from .decoding import DecodeModel
 
 
 class _BaseMetric(ABC):
