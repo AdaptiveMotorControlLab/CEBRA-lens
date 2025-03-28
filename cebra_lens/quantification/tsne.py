@@ -1,4 +1,5 @@
 """Functions to transform data e.g. tSNE, other functions can be added"""
+
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 import numpy as np
@@ -56,7 +57,7 @@ class Tsne(_BaseMetric):
     @property
     def __name__(self):
         return "tsne"
-    
+
     def plot(
         self,
         embeddings_1: list,

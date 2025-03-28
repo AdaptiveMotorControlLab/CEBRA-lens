@@ -10,6 +10,7 @@ from ..matplotlib import *
 import pickle
 from pathlib import Path
 
+
 class DistanceMetric:
 
     def compute_centroid(self, embedding: np.ndarray, indices: list) -> float:
@@ -298,19 +299,15 @@ class Distance(_BaseMetric):
             )
 
         return super().iterate_over_layers(activations, distance._compute_distance)
-    
+
     def plot(
         self,
         distance_dict: dict,
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
     ):
-        return plot_distance(
-            distance_dict,
-            title,
-            figsize
-        )
-    
+        return plot_distance(distance_dict, title, figsize)
+
     @property
     def __name__(self):
         return self.distance_label

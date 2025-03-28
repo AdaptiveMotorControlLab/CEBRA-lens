@@ -4,6 +4,7 @@ from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
 from .base import _BaseMetric
+from ..matplotlib import *
 
 
 class Decoding(_BaseMetric):
@@ -26,7 +27,7 @@ class Decoding(_BaseMetric):
         self.dataset_label = dataset_label
         self.layer_type = layer_type
 
-    def _decoding_function_selection(
+    def _decode(
         # figure out what to do about the arguments and parameters
         self,
         embedding_train: np.ndarray,
@@ -145,7 +146,7 @@ class Decoding(_BaseMetric):
         for i in range(num_layers + 1):
 
             if i == 0:
-                results[i, :] = self._decoding_function_selection(
+                results[i, :] = self._decode(
                     self.train_data,
                     self.train_label,
                     self.test_data,
@@ -153,7 +154,7 @@ class Decoding(_BaseMetric):
                     self.dataset_label,
                 )  # neural input baseline
             else:
-                results[i, :] = self._decoding_function_selection(
+                results[i, :] = self._decode(
                     activations_train[keys[i - 1]],
                     self.train_label,
                     activations_test[keys[i - 1]],
@@ -163,7 +164,24 @@ class Decoding(_BaseMetric):
 
         return results
 
-    def decode(self, model) -> np.ndarray:
+    def plot(
+        self,
+        results_dict: dict,
+        title: str = "Decoding by layer",
+        figsize: tuple = (15, 5),
+    ):
+        return plot_layer_decoding(results_dict, title, figsize)
+
+    @property
+    def __name__(self):
+        return "decode_by_layer"
+
+
+class DecodeModel(Decoding):
+    def __init__(self):
+        super().__init__(self)
+
+    def compute(self, model) -> np.ndarray:
         """
         Decodes a single model.
 
@@ -204,7 +222,7 @@ class Decoding(_BaseMetric):
                 f"Solver {model.solver_name_} is not yet implemented."
             )
 
-        results = self._decoding_function_selection(
+        results = self._decode(
             embedding_train,
             self.train_label,
             embedding_test,
@@ -212,3 +230,15 @@ class Decoding(_BaseMetric):
             self.dataset_label,
         )
         return np.array(results)
+
+    def plot(
+        self,
+        results_dict: dict,
+        palette: str = "hls",
+        dataset_label="visual",
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_decoding(results_dict, palette, dataset_label, ax)
+
+    def __name__(self):
+        return "decode_model"

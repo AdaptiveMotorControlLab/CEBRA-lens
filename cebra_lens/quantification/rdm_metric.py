@@ -11,6 +11,7 @@ import pickle
 from pathlib import Path
 from ..matplotlib import *
 
+
 class RDM(_BaseMetric):
     def __init__(
         self,
@@ -137,7 +138,7 @@ class RDM(_BaseMetric):
             activations = [activations]
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
-    
+
     def plot(
         self,
         rdms: list,

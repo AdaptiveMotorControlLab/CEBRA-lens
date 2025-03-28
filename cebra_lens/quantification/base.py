@@ -5,11 +5,14 @@ import types
 from typing import List, Literal, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from pathlib import Path
+from decoding import DecodeModel
+
 
 class _BaseMetric(ABC):
     """
     Base class for metric computations.
     """
+
     @abstractmethod
     def compute(self, activations):
         raise NotImplementedError
@@ -22,7 +25,9 @@ class _BaseMetric(ABC):
 
     def save(self, filepath, data):
         filepath = Path(filepath)
-        custom_filepath = filepath.with_stem(filepath.stem + f"_{self.__class__.__name__}")
+        custom_filepath = filepath.with_stem(
+            filepath.stem + f"_{self.__class__.__name__}"
+        )
         with open(custom_filepath, "wb") as f:
             pickle.dump(data, f)
 
@@ -42,21 +47,14 @@ class MultiModel:
         self.metric_class = metric_class
         self.results_dict = {}
 
-    def compute(self, activations_dict, flag=False):
+    def compute(self, activations_dict):
         self.result_dict = {}
         for model_label, activations_list in activations_dict.items():
             self.result_dict[model_label] = []
-            if not flag:
-                for activations in tqdm(
-                    activations_list, desc=f"Processing {model_label}"
-                ):
-                    self.result_dict[model_label].append(
-                        self.metric_class.compute(activations)
-                    )
-            else:
-                for model in tqdm(activations_list, desc=f"Processing {model_label}"):
-                    self.result_dict[model_label].append(
-                        self.metric_class.decode(model)
-                    )
+            for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
+                self.result_dict[model_label].append(
+                    self.metric_class.compute(activations)
+                )
+            if isinstance(self.metric_class, DecodeModel):
                 self.result_dict[model_label] = np.array(self.result_dict[model_label])
         return self.result_dict
