@@ -16,7 +16,7 @@ class _BaseMetric(ABC):
     def compute(self, activations):
         raise NotImplementedError
 
-    def iterate_over_layers(activations, metric_func):
+    def iterate_over_layers(self, activations, metric_func):
         layer_data = []
         for layer_activation in activations:
             layer_data.append(metric_func(layer_activation))
