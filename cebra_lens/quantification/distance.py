@@ -310,3 +310,7 @@ class Distance(_BaseMetric):
             title,
             figsize
         )
+    
+    @property
+    def __name__(self):
+        return self.distance_label

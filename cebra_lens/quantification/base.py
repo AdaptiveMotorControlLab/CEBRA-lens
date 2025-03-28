@@ -6,7 +6,7 @@ from typing import List, Literal, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-class _BaseMetric:
+class _BaseMetric(ABC):
     """
     Base class for metric computations.
     """
@@ -22,7 +22,7 @@ class _BaseMetric:
 
     def save(self, filepath, data):
         filepath = Path(filepath)
-        custom_filepath = filepath.with_stem(filepath.stem + f"_{self.get_name()}")
+        custom_filepath = filepath.with_stem(filepath.stem + f"_{self.__class__.__name__}")
         with open(custom_filepath, "wb") as f:
             pickle.dump(data, f)
 
@@ -60,11 +60,3 @@ class MultiModel:
                     )
                 self.result_dict[model_label] = np.array(self.result_dict[model_label])
         return self.result_dict
-
-    def load(self, filepath):
-        with open(filepath, "rb") as f:
-            self.results_dict = pickle.load(f)
-
-    def save(self, filepath):
-        with open(filepath, "wb") as f:
-            pickle.dump(self.results_dict, f)

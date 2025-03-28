@@ -53,9 +53,10 @@ class Tsne(_BaseMetric):
             )
             self.num_samples = 200
 
-    def get_name(self):
-        return self.__class__.__name__.lower()
-
+    @property
+    def __name__(self):
+        return "tsne"
+    
     def plot(
         self,
         embeddings_1: list,

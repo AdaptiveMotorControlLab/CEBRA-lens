@@ -206,3 +206,7 @@ class CKA(_BaseMetric):
             figsize,
             ax,
         )
+
+    @property
+    def __name__(self):
+        return "cka"
