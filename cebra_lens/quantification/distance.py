@@ -226,9 +226,14 @@ class Interbin(DistanceMetric):
 
 
 class Distance(_BaseMetric):
-    def __init__(self,data, label, dataset_label,
+    def __init__(
+        self,
+        data,
+        label,
+        dataset_label,
         metric: str = "cosine",
-        distance_label: str = "interbin"):
+        distance_label: str = "interbin",
+    ):
 
         super().__init__(self)
         self.data = data
@@ -238,7 +243,7 @@ class Distance(_BaseMetric):
         self.distance_label = distance_label
 
         self.indices, self.repetition_indices = self._define_indices()
-    
+
     def _define_indices(self):
 
         idxs = discrete_binning(
@@ -254,13 +259,10 @@ class Distance(_BaseMetric):
             )
         else:
             repetition_indices = None
-        
-        return idxs, repetition_indices
-        
 
-    def compute(
-        self, activations
-    ) -> list:
+        return idxs, repetition_indices
+
+    def compute(self, activations) -> list:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
@@ -292,6 +294,5 @@ class Distance(_BaseMetric):
             raise NotImplementedError(
                 f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
-        
+
         return super().iterate_over_layers(activations, distance._compute_distance)
-    

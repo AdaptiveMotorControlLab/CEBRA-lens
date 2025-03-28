@@ -11,11 +11,12 @@ from .base import _BaseMetric
 
 class RDM(_BaseMetric):
     def __init__(
-        self,        data: torch.Tensor,
+        self,
+        data: torch.Tensor,
         label: torch.Tensor,
         dataset_label: str = None,
         metric: str = "correlation",
-        bool_oracle: bool = True
+        bool_oracle: bool = True,
     ):
         super().__init__(self)
         self.data = data
@@ -23,7 +24,7 @@ class RDM(_BaseMetric):
         self.dataset_label = dataset_label
         self.metric = metric
         self.bool_oracle = bool_oracle
-        
+
         self.idxs = discrete_binning(
             data=self.data, label=self.label, dataset_label=self.dataset_label
         )
@@ -103,11 +104,8 @@ class RDM(_BaseMetric):
             correlation = None
 
         return squareform(rdm), correlation
-         
-    def compute(
-        self,
-        activations
-    ):
+
+    def compute(self, activations):
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
@@ -137,4 +135,3 @@ class RDM(_BaseMetric):
             activations = [activations]
 
         return super().iterate_over_layers(activations, self._compute_layer)
-

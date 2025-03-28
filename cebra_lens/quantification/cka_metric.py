@@ -1,12 +1,18 @@
-"""All relevant functions for Centered Kernel Alignment (CKA) analysis."""
+"""
+All relevant functions for Centered Kernel Alignment (CKA) analysis.
+
+CKA computation was taken from https://github.com/amathislab/DeepDraw
+
+"""
 
 from tqdm import tqdm
 import numpy as np
 import pickle
 from .base import _BaseMetric
 
+
 class ComparisonCKA(_BaseMetric):
-    def __init__(self,comparison):
+    def __init__(self, comparison):
 
         if not isinstance(comparison, tuple):
             raise ValueError(
@@ -16,7 +22,7 @@ class ComparisonCKA(_BaseMetric):
         self.comparisonY = comparison[1]
         self.cka_matrix = None
 
-    def center_gram(self,gram, unbiased=False):
+    def center_gram(self, gram, unbiased=False):
         """Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
@@ -53,8 +59,8 @@ class ComparisonCKA(_BaseMetric):
             gram -= means[None, :]
 
         return gram
-    
-    def cka(self,gram_x, gram_y, debiased=False):
+
+    def cka(self, gram_x, gram_y, debiased=False):
         """Compute CKA.
 
         Args:
@@ -67,7 +73,6 @@ class ComparisonCKA(_BaseMetric):
         """
         gram_x = self.center_gram(gram_x, unbiased=debiased)
         gram_y = self.center_gram(gram_y, unbiased=debiased)
-    
 
         # Note: To obtain HSIC, this should be divided by (n-1)**2 (biased variant) or
         # n*(n-3) (unbiased variant), but this cancels for CKA.
@@ -77,8 +82,7 @@ class ComparisonCKA(_BaseMetric):
         normalization_y = np.linalg.norm(gram_y)
         return scaled_hsic / (normalization_x * normalization_y)
 
-
-    def gram_linear(self,x):
+    def gram_linear(self, x):
         """Compute Gram (kernel) matrix for a linear kernel.
 
         Args:
@@ -89,8 +93,8 @@ class ComparisonCKA(_BaseMetric):
         """
 
         return x.dot(x.T)
-    
-    def _compute_cka(self,embeddings_1: list, embeddings_2: list) -> np.ndarray:
+
+    def _compute_cka(self, embeddings_1: list, embeddings_2: list) -> np.ndarray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
@@ -155,7 +159,7 @@ class ComparisonCKA(_BaseMetric):
         cka_matrix : np.ndarray
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
-  
+
         activations_1 = activations_dict[self.comparisonX]
         activations_2 = activations_dict[self.comparisonY]
         if len(activations_1) != len(activations_2):
@@ -166,7 +170,6 @@ class ComparisonCKA(_BaseMetric):
             elif len(activations_1) < len(activations_2):
                 embeddings_1 = activations_2
                 embeddings_2 = activations_1[0]
-
 
             self.cka_matrix = self._compute_single(embeddings_1, embeddings_2)
 
@@ -182,4 +185,3 @@ class ComparisonCKA(_BaseMetric):
             self.cka_matrix = self._compute_single(embeddings_1, embeddings_2, True)
 
         return self.cka_matrix
-

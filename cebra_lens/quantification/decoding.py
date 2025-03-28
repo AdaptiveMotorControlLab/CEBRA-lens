@@ -5,14 +5,18 @@ from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
 from .base import _BaseMetric
 
+
 class Decoding(_BaseMetric):
-    def __init__(self, train_data: torch.Tensor,
+    def __init__(
+        self,
+        train_data: torch.Tensor,
         train_label: np.ndarray,
         test_data: torch.Tensor,
         test_label: np.ndarray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: str = "conv"):
+        layer_type: str = "conv",
+    ):
 
         self.train_label = train_label
         self.train_data = train_data
@@ -142,7 +146,11 @@ class Decoding(_BaseMetric):
 
             if i == 0:
                 results[i, :] = self._decoding_function_selection(
-                    self.train_data, self.train_label, self.test_data, self.test_label, self.dataset_label
+                    self.train_data,
+                    self.train_label,
+                    self.test_data,
+                    self.test_label,
+                    self.dataset_label,
                 )  # neural input baseline
             else:
                 results[i, :] = self._decoding_function_selection(
@@ -155,10 +163,7 @@ class Decoding(_BaseMetric):
 
         return results
 
-    def decode(
-        self,model
-
-    ) -> np.ndarray:
+    def decode(self, model) -> np.ndarray:
         """
         Decodes a single model.
 
@@ -196,9 +201,14 @@ class Decoding(_BaseMetric):
 
         else:
             raise NotImplementedError(
-                f"Solver {model.solver_name_} is not yet implemented.")
+                f"Solver {model.solver_name_} is not yet implemented."
+            )
 
         results = self._decoding_function_selection(
-            embedding_train, self.train_label, embedding_test, self.test_label, self.dataset_label
+            embedding_train,
+            self.train_label,
+            embedding_test,
+            self.test_label,
+            self.dataset_label,
         )
         return np.array(results)

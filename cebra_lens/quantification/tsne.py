@@ -8,22 +8,25 @@ from ..matplotlib import *
 import pickle
 from pathlib import Path
 
+
 class Tsne(_BaseMetric):
-    def __init__(self, num_samples:int = 200,
-                 #activation: np.ndarray
-                 ):
+    def __init__(
+        self,
+        num_samples: int = 200,
+        # activation: np.ndarray
+    ):
         super().__init__(self)
         self.num_samples = num_samples
         self._check_num_samples()
 
     def _compute_layer(self, layer_activation):
         if layer_activation.shape[0] > layer_activation.shape[1]:
-                layer_activation = layer_activation.T
+            layer_activation = layer_activation.T
 
         tsne = TSNE(n_components=3)
-        tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
+        tsne_embedding = tsne.fit_transform(layer_activation[:, : self.num_samples].T)
         return tsne_embedding
-    
+
     def compute(self, activations) -> np.ndarray:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
@@ -43,7 +46,6 @@ class Tsne(_BaseMetric):
             The 2D embedding produced by t-SNE.
         """
         return super().iterate_over_layers(activations, self._compute_layer)
-    
 
     def _check_num_samples(self):
         if self.num_samples < 200:
@@ -55,23 +57,33 @@ class Tsne(_BaseMetric):
     def get_name(self):
         return self.__class__.__name__.lower()
 
-    def plot(self, embeddings_1: list,
-    embeddings_2: list,
-    labels: np.ndarray,
-    sample_plot: int = 200,
-    comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
-    dataset_label: str = "HPC",
-    ax: Optional[matplotlib.axes.Axes] = None,):
-        return compare_embeddings_layers(embeddings_1, embeddings_2, labels, sample_plot, comparison_labels, dataset_label, ax)
-         
-    def save(self,filepath, data):
+    def plot(
+        self,
+        embeddings_1: list,
+        embeddings_2: list,
+        labels: np.ndarray,
+        sample_plot: int = 200,
+        comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
+        dataset_label: str = "HPC",
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return compare_embeddings_layers(
+            embeddings_1,
+            embeddings_2,
+            labels,
+            sample_plot,
+            comparison_labels,
+            dataset_label,
+            ax,
+        )
+
+    def save(self, filepath, data):
         filepath = Path(filepath)
         custom_filepath = filepath.with_stem(filepath.stem + f"_{self.get_name()}")
         with open(custom_filepath, "wb") as f:
-             pickle.dump(data, f)
-         
+            pickle.dump(data, f)
+
     def load(self, filepath):
         with open(filepath, "rb") as f:
-             data = pickle.load(f)
+            data = pickle.load(f)
         return data
-        

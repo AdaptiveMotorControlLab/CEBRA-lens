@@ -9,27 +9,28 @@ class _BaseMetric:
     """
     Base class for metric computations.
     """
+
     def compute(self, activations):
         raise NotImplementedError
-    
+
     def iterate_over_layers(activations, metric_func):
         layer_data = []
         for layer_activation in activations:
             layer_data.append(metric_func(layer_activation))
         return layer_data
-    
+
     def load(self, filepath, data):
-       raise NotImplementedError
-    
+        raise NotImplementedError
+
     def save(self, filepath, data):
         raise NotImplementedError
-    
+
     def plot(self):
         raise NotImplementedError
-        
+
 
 class MultiModel:
-        
+
     def __init__(self, metric_class):
         self.metric_class = metric_class
         self.results_dict = {}
@@ -39,14 +40,20 @@ class MultiModel:
         for model_label, activations_list in activations_dict.items():
             self.result_dict[model_label] = []
             if not flag:
-                for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
-                    self.result_dict[model_label].append(self.metric_class.compute(activations))
+                for activations in tqdm(
+                    activations_list, desc=f"Processing {model_label}"
+                ):
+                    self.result_dict[model_label].append(
+                        self.metric_class.compute(activations)
+                    )
             else:
                 for model in tqdm(activations_list, desc=f"Processing {model_label}"):
-                    self.result_dict[model_label].append(self.metric_class.decode(model))
+                    self.result_dict[model_label].append(
+                        self.metric_class.decode(model)
+                    )
                 self.result_dict[model_label] = np.array(self.result_dict[model_label])
         return self.result_dict
-    
+
     def load(self, filepath):
         with open(filepath, "rb") as f:
             self.results_dict = pickle.load(f)
