@@ -190,7 +190,6 @@ class DecodeModel(Decoding):
     ):
 
         super().__init__(
-            self,
             train_data,
             train_label,
             test_data,
