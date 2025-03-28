@@ -2,10 +2,10 @@
 
 from tqdm import tqdm
 import numpy as np
-from .helper import *
 import pickle
+from .base import _BaseMetric
 
-class ComparisonCKA:
+class ComparisonCKA(_BaseMetric):
     def __init__(self,comparison):
 
         if not isinstance(comparison, tuple):
@@ -15,8 +15,82 @@ class ComparisonCKA:
         self.comparisonX = comparison[0]
         self.comparisonY = comparison[1]
         self.cka_matrix = None
+
+    def center_gram(self,gram, unbiased=False):
+        """Center a symmetric Gram matrix.
+
+        This is equvialent to centering the (possibly infinite-dimensional) features
+        induced by the kernel before computing the Gram matrix.
+
+        Args:
+        gram: A num_examples x num_examples symmetric matrix.
+        unbiased: Whether to adjust the Gram matrix in order to compute an unbiased
+            estimate of HSIC. Note that this estimator may be negative.
+
+        Returns:
+        A symmetric matrix with centered columns and rows.
+        """
+        if not np.allclose(gram, gram.T, rtol=1e-03, atol=0.004):
+            raise ValueError("Input must be a symmetric matrix.")
+        gram = gram.copy()
+
+        if unbiased:
+            # This formulation of the U-statistic, from Szekely, G. J., & Rizzo, M.
+            # L. (2014). Partial distance correlation with methods for dissimilarities.
+            # The Annals of Statistics, 42(6), 2382-2412, seems to be more numerically
+            # stable than the alternative from Song et al. (2007).
+            n = gram.shape[0]
+            np.fill_diagonal(gram, 0)
+            means = np.sum(gram, 0, dtype=np.float64) / (n - 2)
+            means -= np.sum(means) / (2 * (n - 1))
+            gram -= means[:, None]
+            gram -= means[None, :]
+            np.fill_diagonal(gram, 0)
+        else:
+            means = np.mean(gram, 0, dtype=np.float64)
+            means -= np.mean(means) / 2
+            gram -= means[:, None]
+            gram -= means[None, :]
+
+        return gram
     
-    def _compute(self,embeddings_1: list, embeddings_2: list) -> np.ndarray:
+    def cka(self,gram_x, gram_y, debiased=False):
+        """Compute CKA.
+
+        Args:
+        gram_x: A num_examples x num_examples Gram matrix.
+        gram_y: A num_examples x num_examples Gram matrix.
+        debiased: Use unbiased estimator of HSIC. CKA may still be biased.
+
+        Returns:
+        The value of CKA between X and Y.
+        """
+        gram_x = self.center_gram(gram_x, unbiased=debiased)
+        gram_y = self.center_gram(gram_y, unbiased=debiased)
+    
+
+        # Note: To obtain HSIC, this should be divided by (n-1)**2 (biased variant) or
+        # n*(n-3) (unbiased variant), but this cancels for CKA.
+        scaled_hsic = gram_x.ravel().dot(gram_y.ravel())
+
+        normalization_x = np.linalg.norm(gram_x)
+        normalization_y = np.linalg.norm(gram_y)
+        return scaled_hsic / (normalization_x * normalization_y)
+
+
+    def gram_linear(self,x):
+        """Compute Gram (kernel) matrix for a linear kernel.
+
+        Args:
+        x: A num_examples x num_features matrix of features.
+
+        Returns:
+        A num_examples x num_examples Gram matrix of examples.
+        """
+
+        return x.dot(x.T)
+    
+    def _compute_cka(self,embeddings_1: list, embeddings_2: list) -> np.ndarray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
@@ -47,9 +121,9 @@ class ComparisonCKA:
 
         cka_matrix = np.zeros((1, len(embeddings_1)))
         for i in range(len(embeddings_1)):
-            cka_matrix[0, i] = cka(
-                gram_linear(embeddings_1[i].T),
-                gram_linear(embeddings_2[i].T),
+            cka_matrix[0, i] = self.cka(
+                self.gram_linear(embeddings_1[i].T),
+                self.gram_linear(embeddings_2[i].T),
             )
         return cka_matrix
 
@@ -57,9 +131,9 @@ class ComparisonCKA:
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
-                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2[j])
+                cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2[j])
             else:
-                cka_matrix[j, :] = self._compute(embeddings_1[j], embeddings_2)
+                cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
     def compute(self, activations_dict):
@@ -116,3 +190,4 @@ class ComparisonCKA:
     def save(self, filepath):
         with open(filepath, "wb") as f:
             pickle.dump(self.cka_matrix, f)
+

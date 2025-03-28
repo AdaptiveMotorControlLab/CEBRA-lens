@@ -13,7 +13,7 @@ class RDM(_BaseMetric):
     def __init__(
         self,        data: torch.Tensor,
         label: torch.Tensor,
-        dataset_label: str = "visual",
+        dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True
     ):
@@ -90,7 +90,7 @@ class RDM(_BaseMetric):
 
         return comparison
 
-    def _compute(self, layer_activation):
+    def _compute_layer(self, layer_activation):
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
             layer_activation = layer_activation.T
@@ -131,13 +131,12 @@ class RDM(_BaseMetric):
         list
             A list of tuples, where each tuple contains the RDM for the layer and the correlation with the Oracle RDM (if computed).
         """
-        self.activations = activations
         if isinstance(
             activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
-        return super().compute(self._compute)
+        return super().compute(activations, self._compute_layer)
     
     def load(self,filepath,data):
         return super().load(filepath,data)

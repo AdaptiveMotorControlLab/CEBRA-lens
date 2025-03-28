@@ -14,7 +14,7 @@ class Tsne(_BaseMetric):
         self.num_samples = num_samples
         self._check_num_samples()
 
-    def _compute(self, layer_activation):
+    def _compute_layer(self, layer_activation):
         if layer_activation.shape[0] > layer_activation.shape[1]:
                 layer_activation = layer_activation.T
 
@@ -40,9 +40,7 @@ class Tsne(_BaseMetric):
         tsne_embedding : np.ndarray
             The 2D embedding produced by t-SNE.
         """
-        self.activations = activations
-
-        return super().compute(self._compute)
+        return super().iterate_over_layers(activations, self._compute_layer)
     
 
     def _check_num_samples(self):
@@ -52,9 +50,9 @@ class Tsne(_BaseMetric):
             )
             self.num_samples = 200
 
-    # def load(self,filepath,data):
-    #     return super().load(filepath,data)
+    def load(self,filepath,data):
+        return super().load(filepath,data)
     
-    # def save(self, filepath, data):
-    #     return super().save(filepath,data)
+    def save(self, filepath, data):
+        return super().save(filepath,data)
 

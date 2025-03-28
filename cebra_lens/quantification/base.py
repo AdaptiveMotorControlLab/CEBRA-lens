@@ -9,13 +9,12 @@ class _BaseMetric:
     """
     Base class for metric computations.
     """
-
-    def __init__(self,activations=None):
-        self.activations = activations if activations is not None else []
-
-    def compute(self, metric_func):
+    def compute(self):
+        raise NotImplementedError
+    
+    def iterate_over_layers(activations, metric_func):
         layer_data = []
-        for layer_activation in self.activations:
+        for layer_activation in activations:
             layer_data.append(metric_func(layer_activation))
         return layer_data
     
@@ -37,23 +36,18 @@ class MultiModel:
     def __init__(self, metric_class):
         self.metric_class = metric_class
         self.results_dict = {}
-        #here we give the metric_class with defined parameters already for the calculation
 
-    def compute(self, activations_dict):
+    def compute(self, activations_dict, flag=False):
         self.result_dict = {}
         for model_label, activations_list in activations_dict.items():
             self.result_dict[model_label] = []
-            for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
-                self.result_dict[model_label].append(self.metric_class.compute(activations))
-        return self.result_dict
-
-    def decode(self, models):
-        self.result_dict = {}
-        for model_label, model_list in models.items():
-            self.result_dict[model_label] = []
-            for model in tqdm(model_list, desc=f"Processing {model_label}"):
-                self.result_dict[model_label].append(self.metric_class.decode(model))
-            self.result_dict[model_label] = np.array(self.result_dict[model_label])
+            if not flag:
+                for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
+                    self.result_dict[model_label].append(self.metric_class.compute(activations))
+            else:
+                for model in tqdm(activations_list, desc=f"Processing {model_label}"):
+                    self.result_dict[model_label].append(self.metric_class.decode(model))
+                self.result_dict[model_label] = np.array(self.result_dict[model_label])
         return self.result_dict
     
     def load(self, filepath):

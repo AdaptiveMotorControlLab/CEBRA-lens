@@ -3,9 +3,9 @@ import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
+from .base import _BaseMetric
 
-
-class Decoding:
+class Decoding(_BaseMetric):
     def __init__(self, train_data: torch.Tensor,
         train_label: np.ndarray,
         test_data: torch.Tensor,

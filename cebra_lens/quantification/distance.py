@@ -94,7 +94,7 @@ class Intrabin(DistanceMetric):
         self.indices = indices
         self.metric = metric
 
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
@@ -136,7 +136,7 @@ class Interrep(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
@@ -192,7 +192,7 @@ class Interbin(DistanceMetric):
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
@@ -282,7 +282,6 @@ class Distance(_BaseMetric):
         list
             A list of computed distances for each layer.
         """
-        self.activations = activations
         if self.distance_label == "interbin":
             distance = Interbin(self.indices, self.metric)
         elif self.distance_label == "intrabin":
@@ -294,7 +293,7 @@ class Distance(_BaseMetric):
                 f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
         
-        return super().compute(distance._compute)
+        return super().compute(activations, distance._compute_distance)
     
     def load(self,filepath,data):
         return super().load(filepath,data)
