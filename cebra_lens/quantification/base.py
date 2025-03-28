@@ -5,7 +5,6 @@ import types
 from typing import List, Literal, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from pathlib import Path
-from .decoding import DecodeModel
 
 
 class _BaseMetric(ABC):
@@ -48,6 +47,7 @@ class MultiModel:
         self.results_dict = {}
 
     def compute(self, activations_dict):
+        from .decoding import DecodeModel
         self.result_dict = {}
         for model_label, activations_list in activations_dict.items():
             self.result_dict[model_label] = []
