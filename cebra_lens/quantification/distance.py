@@ -293,11 +293,5 @@ class Distance(_BaseMetric):
                 f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
         
-        return super().compute(activations, distance._compute_distance)
-    
-    def load(self,filepath,data):
-        return super().load(filepath,data)
-    
-    def save(self, filepath, data):
-        return super().save(filepath,data)
+        return super().iterate_over_layers(activations, distance._compute_distance)
     

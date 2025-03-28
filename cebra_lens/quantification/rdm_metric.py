@@ -136,11 +136,5 @@ class RDM(_BaseMetric):
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
-        return super().compute(activations, self._compute_layer)
-    
-    def load(self,filepath,data):
-        return super().load(filepath,data)
-    
-    def save(self, filepath, data):
-        return super().save(filepath,data)
+        return super().iterate_over_layers(activations, self._compute_layer)
 

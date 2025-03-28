@@ -182,12 +182,4 @@ class ComparisonCKA(_BaseMetric):
             self.cka_matrix = self._compute_single(embeddings_1, embeddings_2, True)
 
         return self.cka_matrix
-    
-    def load(self, filepath):
-        with open(filepath, "rb") as f:
-            self.cka_matrix = pickle.load(f)
-
-    def save(self, filepath):
-        with open(filepath, "wb") as f:
-            pickle.dump(self.cka_matrix, f)
 

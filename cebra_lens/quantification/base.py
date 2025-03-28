@@ -9,7 +9,7 @@ class _BaseMetric:
     """
     Base class for metric computations.
     """
-    def compute(self):
+    def compute(self, activations):
         raise NotImplementedError
     
     def iterate_over_layers(activations, metric_func):
