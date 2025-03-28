@@ -21,7 +21,7 @@ class RDM(_BaseMetric):
         metric: str = "correlation",
         bool_oracle: bool = True,
     ):
-        super().__init__(self)
+        super().__init__()
         self.data = data
         self.label = label
         self.dataset_label = dataset_label

@@ -238,7 +238,7 @@ class Distance(_BaseMetric):
         distance_label: str = "interbin",
     ):
 
-        super().__init__(self)
+        super().__init__()
         self.data = data
         self.label = label
         self.dataset_label = dataset_label

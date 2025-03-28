@@ -15,7 +15,7 @@ class Tsne(_BaseMetric):
         num_samples: int = 200,
         # activation: np.ndarray
     ):
-        super().__init__(self)
+        super().__init__()
         self.num_samples = num_samples
         self._check_num_samples()
 
