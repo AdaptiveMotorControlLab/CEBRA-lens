@@ -19,13 +19,10 @@ class _BaseMetric:
         return layer_data
     
     def load(self, filepath, data):
-        with open(filepath, "rb") as f:
-            data = pickle.load(f)
-        return data
+       raise NotImplementedError
     
     def save(self, filepath, data):
-        with open(filepath, "wb") as f:
-            pickle.dump(data, f)
+        raise NotImplementedError
     
     def plot(self):
         raise NotImplementedError

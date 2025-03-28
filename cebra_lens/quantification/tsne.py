@@ -4,7 +4,9 @@ from sklearn.manifold import TSNE
 from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
-
+from ..matplotlib import *
+import pickle
+from pathlib import Path
 
 class Tsne(_BaseMetric):
     def __init__(self, num_samples:int = 200,
@@ -50,4 +52,26 @@ class Tsne(_BaseMetric):
             )
             self.num_samples = 200
 
+    def get_name(self):
+        return self.__class__.__name__.lower()
 
+    def plot(self, embeddings_1: list,
+    embeddings_2: list,
+    labels: np.ndarray,
+    sample_plot: int = 200,
+    comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
+    dataset_label: str = "HPC",
+    ax: Optional[matplotlib.axes.Axes] = None,):
+        return compare_embeddings_layers(embeddings_1, embeddings_2, labels, sample_plot, comparison_labels, dataset_label, ax)
+         
+    def save(self,filepath, data):
+        filepath = Path(filepath)
+        custom_filepath = filepath.with_stem(filepath.stem + f"_{self.get_name()}")
+        with open(custom_filepath, "wb") as f:
+             pickle.dump(data, f)
+         
+    def load(self, filepath):
+        with open(filepath, "rb") as f:
+             data = pickle.load(f)
+        return data
+        
