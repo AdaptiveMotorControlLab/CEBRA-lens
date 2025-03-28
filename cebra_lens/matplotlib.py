@@ -19,57 +19,33 @@ class _BasePlot:
     Attributes:
         axis: Optional axis to create the plot on.
         figsize: Figure width and height in inches.
-        dpi: Figure resolution.
     """
 
-    def __init__(self, axis, figsize: tuple, dpi: int):
+    def __init__(self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[float, float]):
         if axis is None:
-            self.fig = plt.figure(figsize=figsize, dpi=dpi)
-
-    def _define_ax(self, axis):
-        raise NotImplementedError()
+            self.fig, self.ax = plt.subplots(figsize=figsize)
+        else:
+            self.ax = axis
+            self.fig = self.ax.figure
 
     def plot(self, **kwargs):
         raise NotImplementedError()
 
 
 class _GenericPlot(_BasePlot):
-    def __init__(
-        self, axis: Optional[matplotlib.axes.Axes], figsize: tuple, title: str
-    ):
+    def __init__(self, axis: Optional[matplotlib.axes.Axes], figsize: tuple, title: str):
         super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
         self.title = title
-        self.unique_keys = list(self.results_dict.keys())
-        self.colors = sns.color_palette("husl", len(self.unique_keys))
-
-    def _define_ax(self, axis: Optional[plt.Axes]):
-        """Define the ax on which to generate the plot.
-
-        Args:
-            axis: A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
-
-        Returns:
-            A ``matplotlib.axes.Axes`` on which to generate the plot.
-        """
-        if axis is None:
-            fig, ax = plt.subplots(
-                1, 1, figsize=self.fig.get_size_inches()
-            )  # Correctly set fig & ax
-            self.fig = fig  # Store the figure
-            return ax
-        return axis
+        self.unique_keys = []
+        self.colors = []
 
     def plot(self, plot_data):
         for idx, (key, data_list) in enumerate(plot_data.items()):
-            color = self.colors[idx]  # Assign a unique color per key
+            color = self.colors[idx]
             layer_values = []
 
-            for i, values in enumerate(data_list):
-
+            for values in data_list:
                 layer_values.append(values)
-
-                # Plot individual layers
                 sns.lineplot(
                     x=np.arange(1, len(values) + 1),
                     y=values,
@@ -77,18 +53,15 @@ class _GenericPlot(_BasePlot):
                     marker="D",
                     color=color,
                     alpha=0.5,
+                    ax=self.ax,  # Ensure correct axis usage
                 )
 
             layer_values = np.array(layer_values)
 
-            # Compute mean if multiple layers exist
             mean_values = (
-                layer_values
-                if layer_values.ndim == 1
-                else np.mean(layer_values, axis=0)
+                layer_values if layer_values.ndim == 1 else np.mean(layer_values, axis=0)
             )
 
-            # Plot mean line
             sns.lineplot(
                 x=np.arange(1, len(mean_values) + 1),
                 y=mean_values,
@@ -97,17 +70,11 @@ class _GenericPlot(_BasePlot):
                 color=color,
                 alpha=1,
                 label=f"Mean {key}",
+                ax=self.ax,
             )
 
-            # # Customize x-ticks for decoding plots
-            # if self.plotting_type == "decoding":
-            #     plt.xticks(
-            #         np.arange(1, len(mean_values) + 1),
-            #         ["Neural input"] + [str(i) for i in range(1, len(mean_values))],
-            #     )
-            plt.title(self.title, fontsize=15)
-            sns.despine()
-
+        self.ax.set_title(self.title, fontsize=15)
+        sns.despine(ax=self.ax)
 
 class RDMPlot(_GenericPlot):
     def __init__(
@@ -296,8 +263,7 @@ def plot_layer_decoding(
         figsize=figsize,
     ).plot(**kwargs)
 
-
-class _DecodingPlot(_BasePlot):
+class ModelDecodingPlot(_BasePlot):
     """Plot the decoding accuracy across multiple models."""
 
     def __init__(
@@ -308,7 +274,7 @@ class _DecodingPlot(_BasePlot):
         axis: Optional[matplotlib.axes.Axes],
     ):
         """
-        Initializes the DecodingPlot class.
+        Initializes the ModelDecodingPlot class.
 
         Args:
             results_dict (dict): A dictionary where the keys are model category labels or model file names
@@ -316,58 +282,42 @@ class _DecodingPlot(_BasePlot):
             palette (str, optional): The color palette to use for the plot. Default is "hls".
             dataset_label (str, optional): The dataset type. Currently only "visual" is supported.
         """
-        self.figsize = (len(results_dict) * 2, 6)
-        super().__init__(axis, self.figsize)
-        self.ax = self._define_ax(axis)
+        self.figsize = (len(results_dict) * 2, 6)  # Set figure size based on the number of models
+        super().__init__(axis, self.figsize)  # Call parent constructor to initialize self.fig and self.ax
         self.results_dict = results_dict
-        self.palette = sns.color_palette(palette, len(results_dict))
-        self.dataset_label = dataset_label
-
-    def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
-        """Define the ax on which to generate the plot.
-
-        Args:
-            axis: A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
-
-        Returns:
-            A ``matplotlib.axes.Axes`` on which to generate the plot.
-        """
-        if axis is None:
-            self.ax, self.fig = plt.subplots(figsize=self.figsize)
-        else:
-            self.ax = axis
-        return self.ax
+        self.palette = sns.color_palette(palette, len(results_dict))  # Define a color palette
+        self.dataset_label = dataset_label  # Define dataset label
 
     def plot(self, **kwargs):
         """Handles plotting logic"""
-        x_positions = list(range(1, len(self.results_dict) + 1))
+        x_positions = list(range(1, len(self.results_dict) + 1))  # X positions for scatter points
 
-        if self.dataset_label == "visual":
+        if self.dataset_label == "visual":  # Only handle 'visual' dataset label for now
             for i, (key, results) in enumerate(self.results_dict.items()):
-                acc = results[:, 2]  # accuracy
-                mean_error = np.mean(acc)
-                color = self.palette[i]
+                acc = results[:, 2]  # Extract accuracy data from the 3rd column (index 2)
+                mean_error = np.mean(acc)  # Calculate the mean accuracy
+                color = self.palette[i]  # Get the color from the palette
                 self.ax.scatter(
                     np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3
                 )
 
-                # Plot the means
+                # Plot the mean accuracy
                 self.ax.scatter(
                     x_positions[i],
                     mean_error,
                     color=color,
                     s=50,
                     label=f"Mean {key}",
-                    zorder=5,
+                    zorder=5,  # Bring mean point to the top
                 )
 
             self.ax.set_xlabel("Model")
             self.ax.set_ylabel("Accuracy (%)")
             self.ax.set_title("Comparison of Accuracy Across Models")
             self.ax.set_xticks(x_positions)
-            self.ax.set_xticklabels(self.results_dict.keys())
-            self.ax.legend()
-            sns.despine()
+            self.ax.set_xticklabels(self.results_dict.keys())  # Set model names as x-tick labels
+            self.ax.legend()  # Show legend for model labels
+            sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
         else:
             raise NotImplementedError(
                 f"Plotting of {self.dataset_label} is not handled yet. Only 'visual' is for now. "
@@ -396,7 +346,7 @@ def plot_decoding(
     fig : matplotlib.figure.Figure
         The generated figure displaying the comparison of decoding accuracy across models.
     """
-    return _DecodingPlot(
+    return ModelDecodingPlot(
         results_dict=results_dict,
         axis=ax,
         palette=palette,
@@ -404,7 +354,7 @@ def plot_decoding(
     ).plot(**kwargs)
 
 
-class _EmbeddingComparisonPlot(_BasePlot):
+class _EmbeddingComparisonPlot:
     def __init__(
         self,
         embeddings_1: list,
@@ -427,7 +377,6 @@ class _EmbeddingComparisonPlot(_BasePlot):
             dataset_label (str, optional): A string representing the label for the data being plotted.
         """
         self.figsize = (15, 10)
-        super().__init__(axis, self.figsize)
         self.embeddings_1 = embeddings_1
         self.embeddings_2 = embeddings_2
         self.labels = labels
@@ -462,7 +411,7 @@ class _EmbeddingComparisonPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplots(
+            self.fig, self.ax = plt.subplots(
                 2,
                 max(self.num_layers_1, self.num_layers_2),
                 figsize=(15, 10),
@@ -655,7 +604,7 @@ def compare_embeddings_layers(
     ).plot(**kwargs)
 
 
-class _ActivationPlot(_BasePlot):
+class _ActivationPlot:
     def __init__(
         self,
         input_data: torch.Tensor,
@@ -666,14 +615,14 @@ class _ActivationPlot(_BasePlot):
         cmap: str = "magma",
         title: str = "Trained activations",
     ):
-        super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
-        self.fig.suptitle(title, fontsize=20)
+        self.figsize = figsize
         self.input_data = input_data
         self.embeddings = embeddings
         self.sample_plot = sample_plot
         self.cmap = cmap
         self.num_layers = len(embeddings)
+        self._define_ax(axis)
+        self.fig.suptitle(title, fontsize=20)
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -685,13 +634,10 @@ class _ActivationPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplot(
-                self.num_layers + 1, 1, figsize=self.figsize
-            )
-
+            self.fig, self.axes = plt.subplots(self.num_layers + 1, 1, figsize=self.figsize)
         else:
-            self.ax = axis
-        return self.ax
+            self.axes = [axis] + [axis.figure.add_subplot(self.num_layers + 1, 1, i+2) for i in range(self.num_layers)]
+
 
     def plot(self):
         self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
@@ -762,7 +708,7 @@ def plot_activations(
     ).plot(**kwargs)
 
 
-class _HeatMapsPlot(_BasePlot):
+class _HeatMapsPlot:
     def __init__(
         self,
         cka_matrices: dict,
@@ -772,9 +718,7 @@ class _HeatMapsPlot(_BasePlot):
         cbar_label: str = "CKA score",
         color_map: str = "magma",
         figsize: tuple = (15, 5),
-    ):
-        super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
+    ):   
         self.cka_matrices = cka_matrices
         self.annot = annot
         self.show_cbar = show_cbar
@@ -784,7 +728,7 @@ class _HeatMapsPlot(_BasePlot):
         self.num_matrices = len(cka_matrices)
 
         self.num_comparisons = len(cka_matrices)
-
+        self.axs = self._define_ax(axis)
         self.cbar_ax = self.fig.add_axes([0.13, -0.04, 0.3, 0.03])
         self.heatmap_kwargs = {
             "cbar": show_cbar,
@@ -795,7 +739,7 @@ class _HeatMapsPlot(_BasePlot):
             "cbar_kws": {"label": cbar_label, "orientation": "horizontal"},
         }
         if self.num_comparisons == 1:
-            axs = [axs]  # handle the 1 comparison case
+            self.axs = [self.axs]  # handle the 1 comparison case
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -807,13 +751,13 @@ class _HeatMapsPlot(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplot(
+            self.fig, self.axs = plt.subplots(
                 1, self.num_comparisons, figsize=self.figsize
             )
 
         else:
-            self.ax = axis
-        return self.ax
+            self.axs = axis
+        return self.axs
 
     def plot(self):
         for i, (key, value) in enumerate(self.cka_matrices.items()):
@@ -882,7 +826,7 @@ def plot_cka_heatmaps(
     ).plot()
 
 
-class _RDMPlots(_BasePlot):
+class _RDMPlots:
 
     def __init__(
         self,
@@ -894,15 +838,15 @@ class _RDMPlots(_BasePlot):
         cmap: str = "viridis",
         figsize: tuple = None,
     ):
-        super().__init__(axis, figsize)
-        self.ax = self._define_ax(axis)
+  
         self.rdms = rdms
         self.titles = titles
         self.metric = metric
         self.dataset_label = dataset_label
         self.cmap = cmap
         self.figsize = figsize
-
+        self.ax = self._define_ax(axis)
+        
         if len(self.rdms) == 1:
             self.ax = [self.ax]
 
@@ -942,7 +886,7 @@ class _RDMPlots(_BasePlot):
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.ax, self.fig = plt.subplots(1, len(self.rdms))
+            self.fig, self.ax = plt.subplots(1, len(self.rdms))
 
         else:
             self.ax = axis
