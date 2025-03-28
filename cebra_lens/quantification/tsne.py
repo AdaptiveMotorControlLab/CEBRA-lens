@@ -1,5 +1,4 @@
 """Functions to transform data e.g. tSNE, other functions can be added"""
-
 from sklearn.manifold import TSNE
 from tqdm import tqdm
 import numpy as np
@@ -19,7 +18,7 @@ class Tsne(_BaseMetric):
         self.num_samples = num_samples
         self._check_num_samples()
 
-    def _compute_layer(self, layer_activation):
+    def _compute_per_layer(self, layer_activation):
         if layer_activation.shape[0] > layer_activation.shape[1]:
             layer_activation = layer_activation.T
 
@@ -45,7 +44,7 @@ class Tsne(_BaseMetric):
         tsne_embedding : np.ndarray
             The 2D embedding produced by t-SNE.
         """
-        return super().iterate_over_layers(activations, self._compute_layer)
+        return super().iterate_over_layers(activations, self._compute_per_layer)
 
     def _check_num_samples(self):
         if self.num_samples < 200:
@@ -76,14 +75,3 @@ class Tsne(_BaseMetric):
             dataset_label,
             ax,
         )
-
-    def save(self, filepath, data):
-        filepath = Path(filepath)
-        custom_filepath = filepath.with_stem(filepath.stem + f"_{self.get_name()}")
-        with open(custom_filepath, "wb") as f:
-            pickle.dump(data, f)
-
-    def load(self, filepath):
-        with open(filepath, "rb") as f:
-            data = pickle.load(f)
-        return data

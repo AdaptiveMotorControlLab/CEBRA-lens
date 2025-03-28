@@ -7,11 +7,12 @@ CKA computation was taken from https://github.com/amathislab/DeepDraw
 
 from tqdm import tqdm
 import numpy as np
-import pickle
 from .base import _BaseMetric
+from ..matplotlib import *
+import pickle
+from pathlib import Path
 
-
-class ComparisonCKA(_BaseMetric):
+class CKA(_BaseMetric):
     def __init__(self, comparison):
 
         if not isinstance(comparison, tuple):
@@ -131,7 +132,7 @@ class ComparisonCKA(_BaseMetric):
             )
         return cka_matrix
 
-    def _compute_single(self, embeddings_1, embeddings_2, flag=False):
+    def _compute_per_layer(self, embeddings_1, embeddings_2, flag=False):
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
@@ -171,17 +172,37 @@ class ComparisonCKA(_BaseMetric):
                 embeddings_1 = activations_2
                 embeddings_2 = activations_1[0]
 
-            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
 
         # example when compare intra model single_TR v single_TR, only compare to the first instantiation
         elif self.comparisonX == self.comparisonY:
             embeddings_1 = activations_1
             embeddings_2 = activations_2[0]
-            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
 
         else:
             embeddings_1 = activations_1
             embeddings_2 = activations_2
-            self.cka_matrix = self._compute_single(embeddings_1, embeddings_2, True)
+            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2, True)
 
         return self.cka_matrix
+
+    def plot(
+        self,
+        cka_matrices: dict,
+        annot: bool,
+        show_cbar: bool = True,
+        cbar_label: str = "CKA score",
+        color_map: str = "magma",
+        figsize: tuple = (15, 5),
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_cka_heatmaps(
+            cka_matrices,
+            annot,
+            show_cbar,
+            cbar_label,
+            color_map,
+            figsize,
+            ax,
+        )

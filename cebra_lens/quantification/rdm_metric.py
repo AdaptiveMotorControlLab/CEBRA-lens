@@ -7,7 +7,9 @@ from tqdm import tqdm
 from .misc import discrete_binning
 import torch
 from .base import _BaseMetric
-
+import pickle
+from pathlib import Path
+from ..matplotlib import *
 
 class RDM(_BaseMetric):
     def __init__(
@@ -91,7 +93,7 @@ class RDM(_BaseMetric):
 
         return comparison
 
-    def _compute_layer(self, layer_activation):
+    def _compute_per_layer(self, layer_activation):
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
             layer_activation = layer_activation.T
@@ -134,4 +136,24 @@ class RDM(_BaseMetric):
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
-        return super().iterate_over_layers(activations, self._compute_layer)
+        return super().iterate_over_layers(activations, self._compute_per_layer)
+    
+    def plot(
+        self,
+        rdms: list,
+        titles: list,
+        metric: str = "Normalized Euclidean distance",
+        dataset_label: str = "visual",
+        cmap: str = "viridis",
+        figsize: tuple = None,
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_rdm(
+            rdms,
+            titles,
+            metric,
+            dataset_label,
+            cmap,
+            figsize,
+            ax,
+        )

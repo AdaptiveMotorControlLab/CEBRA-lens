@@ -6,7 +6,9 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
-
+from ..matplotlib import *
+import pickle
+from pathlib import Path
 
 class DistanceMetric:
 
@@ -296,3 +298,15 @@ class Distance(_BaseMetric):
             )
 
         return super().iterate_over_layers(activations, distance._compute_distance)
+    
+    def plot(
+        self,
+        distance_dict: dict,
+        title: str = "Inter-repetition distance",
+        figsize: tuple = (15, 5),
+    ):
+        return plot_distance(
+            distance_dict,
+            title,
+            figsize
+        )
