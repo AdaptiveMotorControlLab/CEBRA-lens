@@ -48,6 +48,7 @@ class MultiModel:
 
     def compute(self, activations_dict):
         from .decoding import DecodeModel
+
         self.result_dict = {}
         for model_label, activations_list in activations_dict.items():
             self.result_dict[model_label] = []

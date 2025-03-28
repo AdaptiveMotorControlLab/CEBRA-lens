@@ -178,8 +178,27 @@ class Decoding(_BaseMetric):
 
 
 class DecodeModel(Decoding):
-    def __init__(self):
-        super().__init__(self)
+    def __init__(
+        self,
+        train_data: torch.Tensor,
+        train_label: np.ndarray,
+        test_data: torch.Tensor,
+        test_label: np.ndarray,
+        session_id: int = -1,
+        dataset_label: str = "visual",
+        layer_type: str = "conv",
+    ):
+
+        super().__init__(
+            self,
+            train_data,
+            train_label,
+            test_data,
+            test_label,
+            session_id,
+            dataset_label,
+            layer_type,
+        )
 
     def compute(self, model) -> np.ndarray:
         """
