@@ -6,6 +6,9 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
+from ..matplotlib import *
+import pickle
+from pathlib import Path
 
 
 class DistanceMetric:
@@ -90,11 +93,12 @@ class DistanceMetric:
 
 
 class Intrabin(DistanceMetric):
-    def __init__(self, indices,metric):
+    def __init__(self, indices, metric):
+
         self.indices = indices
         self.metric = metric
 
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
@@ -136,7 +140,7 @@ class Interrep(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
@@ -192,7 +196,7 @@ class Interbin(DistanceMetric):
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
-    def _compute(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: np.ndarray) -> float:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
@@ -226,11 +230,16 @@ class Interbin(DistanceMetric):
 
 
 class Distance(_BaseMetric):
-    def __init__(self,data, label, dataset_label,
+    def __init__(
+        self,
+        data,
+        label,
+        dataset_label,
         metric: str = "cosine",
-        distance_label: str = "interbin"):
+        distance_label: str = "interbin",
+    ):
 
-        super().__init__(self)
+        super().__init__()
         self.data = data
         self.label = label
         self.dataset_label = dataset_label
@@ -238,7 +247,7 @@ class Distance(_BaseMetric):
         self.distance_label = distance_label
 
         self.indices, self.repetition_indices = self._define_indices()
-    
+
     def _define_indices(self):
 
         idxs = discrete_binning(
@@ -254,13 +263,10 @@ class Distance(_BaseMetric):
             )
         else:
             repetition_indices = None
-        
-        return idxs, repetition_indices
-        
 
-    def compute(
-        self, activations
-    ) -> list:
+        return idxs, repetition_indices
+
+    def compute(self, activations) -> list:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
@@ -282,9 +288,9 @@ class Distance(_BaseMetric):
         list
             A list of computed distances for each layer.
         """
-        self.activations = activations
         if self.distance_label == "interbin":
-            distance = Interbin(self.indices,self.metric)
+            distance = Interbin(self.indices, self.metric)
+
         elif self.distance_label == "intrabin":
             distance = Intrabin(self.indices, self.metric)
         elif self.distance_label == "interrep":
@@ -293,12 +299,17 @@ class Distance(_BaseMetric):
             raise NotImplementedError(
                 f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
-        
-        return super().compute(distance._compute)
-    
-    def load(self,filepath,data):
-        return super().load(filepath,data)
-    
-    def save(self, filepath, data):
-        return super().save(filepath,data)
-    
+
+        return super().iterate_over_layers(activations, distance._compute_distance)
+
+    def plot(
+        self,
+        distance_dict: dict,
+        title: str = "Inter-repetition distance",
+        figsize: tuple = (15, 5),
+    ):
+        return plot_distance(distance_dict, title, figsize)
+
+    @property
+    def __name__(self):
+        return self.distance_label

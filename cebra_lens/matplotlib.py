@@ -21,7 +21,9 @@ class _BasePlot:
         figsize: Figure width and height in inches.
     """
 
-    def __init__(self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[float, float]):
+    def __init__(
+        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[float, float]
+    ):
         if axis is None:
             self.fig, self.ax = plt.subplots(figsize=figsize)
         else:
@@ -282,19 +284,30 @@ class ModelDecodingPlot(_BasePlot):
             palette (str, optional): The color palette to use for the plot. Default is "hls".
             dataset_label (str, optional): The dataset type. Currently only "visual" is supported.
         """
-        self.figsize = (len(results_dict) * 2, 6)  # Set figure size based on the number of models
-        super().__init__(axis, self.figsize)  # Call parent constructor to initialize self.fig and self.ax
+        self.figsize = (
+            len(results_dict) * 2,
+            6,
+        )  # Set figure size based on the number of models
+        super().__init__(
+            axis, self.figsize
+        )  # Call parent constructor to initialize self.fig and self.ax
         self.results_dict = results_dict
-        self.palette = sns.color_palette(palette, len(results_dict))  # Define a color palette
+        self.palette = sns.color_palette(
+            palette, len(results_dict)
+        )  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
 
     def plot(self, **kwargs):
         """Handles plotting logic"""
-        x_positions = list(range(1, len(self.results_dict) + 1))  # X positions for scatter points
+        x_positions = list(
+            range(1, len(self.results_dict) + 1)
+        )  # X positions for scatter points
 
         if self.dataset_label == "visual":  # Only handle 'visual' dataset label for now
             for i, (key, results) in enumerate(self.results_dict.items()):
-                acc = results[:, 2]  # Extract accuracy data from the 3rd column (index 2)
+                acc = results[
+                    :, 2
+                ]  # Extract accuracy data from the 3rd column (index 2)
                 mean_error = np.mean(acc)  # Calculate the mean accuracy
                 color = self.palette[i]  # Get the color from the palette
                 self.ax.scatter(
@@ -315,7 +328,9 @@ class ModelDecodingPlot(_BasePlot):
             self.ax.set_ylabel("Accuracy (%)")
             self.ax.set_title("Comparison of Accuracy Across Models")
             self.ax.set_xticks(x_positions)
-            self.ax.set_xticklabels(self.results_dict.keys())  # Set model names as x-tick labels
+            self.ax.set_xticklabels(
+                self.results_dict.keys()
+            )  # Set model names as x-tick labels
             self.ax.legend()  # Show legend for model labels
             sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
         else:
@@ -634,10 +649,15 @@ class _ActivationPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.fig, self.axes = plt.subplots(self.num_layers + 1, 1, figsize=self.figsize)
-        else:
-            self.axes = [axis] + [axis.figure.add_subplot(self.num_layers + 1, 1, i+2) for i in range(self.num_layers)]
 
+            self.fig, self.axes = plt.subplots(
+                self.num_layers + 1, 1, figsize=self.figsize
+            )
+        else:
+            self.axes = [axis] + [
+                axis.figure.add_subplot(self.num_layers + 1, 1, i + 2)
+                for i in range(self.num_layers)
+            ]
 
     def plot(self):
         self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
@@ -718,7 +738,7 @@ class _HeatMapsPlot:
         cbar_label: str = "CKA score",
         color_map: str = "magma",
         figsize: tuple = (15, 5),
-    ):   
+    ):
         self.cka_matrices = cka_matrices
         self.annot = annot
         self.show_cbar = show_cbar
@@ -838,7 +858,7 @@ class _RDMPlots:
         cmap: str = "viridis",
         figsize: tuple = None,
     ):
-  
+
         self.rdms = rdms
         self.titles = titles
         self.metric = metric
@@ -846,7 +866,7 @@ class _RDMPlots:
         self.cmap = cmap
         self.figsize = figsize
         self.ax = self._define_ax(axis)
-        
+
         if len(self.rdms) == 1:
             self.ax = [self.ax]
 

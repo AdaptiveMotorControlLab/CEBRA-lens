@@ -3,16 +3,21 @@ import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
+from .base import _BaseMetric
+from ..matplotlib import *
 
 
-class Decoding:
-    def __init__(self, train_data: torch.Tensor,
+class Decoding(_BaseMetric):
+    def __init__(
+        self,
+        train_data: torch.Tensor,
         train_label: np.ndarray,
         test_data: torch.Tensor,
         test_label: np.ndarray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: str = "conv"):
+        layer_type: str = "conv",
+    ):
 
         self.train_label = train_label
         self.train_data = train_data
@@ -22,7 +27,7 @@ class Decoding:
         self.dataset_label = dataset_label
         self.layer_type = layer_type
 
-    def _decoding_function_selection(
+    def _decode(
         # figure out what to do about the arguments and parameters
         self,
         embedding_train: np.ndarray,
@@ -141,11 +146,15 @@ class Decoding:
         for i in range(num_layers + 1):
 
             if i == 0:
-                results[i, :] = self._decoding_function_selection(
-                    self.train_data, self.train_label, self.test_data, self.test_label, self.dataset_label
+                results[i, :] = self._decode(
+                    self.train_data,
+                    self.train_label,
+                    self.test_data,
+                    self.test_label,
+                    self.dataset_label,
                 )  # neural input baseline
             else:
-                results[i, :] = self._decoding_function_selection(
+                results[i, :] = self._decode(
                     activations_train[keys[i - 1]],
                     self.train_label,
                     activations_test[keys[i - 1]],
@@ -155,10 +164,42 @@ class Decoding:
 
         return results
 
-    def decode(
-        self,model
+    def plot(
+        self,
+        results_dict: dict,
+        title: str = "Decoding by layer",
+        figsize: tuple = (15, 5),
+    ):
+        return plot_layer_decoding(results_dict, title, figsize)
 
-    ) -> np.ndarray:
+    @property
+    def __name__(self):
+        return "decode_by_layer"
+
+
+class DecodeModel(Decoding):
+    def __init__(
+        self,
+        train_data: torch.Tensor,
+        train_label: np.ndarray,
+        test_data: torch.Tensor,
+        test_label: np.ndarray,
+        session_id: int = -1,
+        dataset_label: str = "visual",
+        layer_type: str = "conv",
+    ):
+
+        super().__init__(
+            train_data,
+            train_label,
+            test_data,
+            test_label,
+            session_id,
+            dataset_label,
+            layer_type
+        )
+
+    def compute(self, model) -> np.ndarray:
         """
         Decodes a single model.
 
@@ -196,9 +237,26 @@ class Decoding:
 
         else:
             raise NotImplementedError(
-                f"Solver {model.solver_name_} is not yet implemented.")
+                f"Solver {model.solver_name_} is not yet implemented."
+            )
 
-        results = self._decoding_function_selection(
-            embedding_train, self.train_label, embedding_test, self.test_label, self.dataset_label
+        results = self._decode(
+            embedding_train,
+            self.train_label,
+            embedding_test,
+            self.test_label,
+            self.dataset_label,
         )
         return np.array(results)
+
+    def plot(
+        self,
+        results_dict: dict,
+        palette: str = "hls",
+        dataset_label="visual",
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_decoding(results_dict, palette, dataset_label, ax)
+
+    def __name__(self):
+        return "decode_model"

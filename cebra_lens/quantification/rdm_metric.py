@@ -7,23 +7,27 @@ from tqdm import tqdm
 from .misc import discrete_binning
 import torch
 from .base import _BaseMetric
+import pickle
+from pathlib import Path
+from ..matplotlib import *
 
 
 class RDM(_BaseMetric):
     def __init__(
-        self,        data: torch.Tensor,
+        self,
+        data: torch.Tensor,
         label: torch.Tensor,
-        dataset_label: str = "visual",
+        dataset_label: str = None,
         metric: str = "correlation",
-        bool_oracle: bool = True
+        bool_oracle: bool = True,
     ):
-        super().__init__(self)
+        super().__init__()
         self.data = data
         self.label = label
         self.dataset_label = dataset_label
         self.metric = metric
         self.bool_oracle = bool_oracle
-        
+
         self.idxs = discrete_binning(
             data=self.data, label=self.label, dataset_label=self.dataset_label
         )
@@ -90,7 +94,7 @@ class RDM(_BaseMetric):
 
         return comparison
 
-    def _compute(self, layer_activation):
+    def _compute_per_layer(self, layer_activation):
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
             layer_activation = layer_activation.T
@@ -103,11 +107,8 @@ class RDM(_BaseMetric):
             correlation = None
 
         return squareform(rdm), correlation
-         
-    def compute(
-        self,
-        activations
-    ):
+
+    def compute(self, activations):
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
@@ -131,17 +132,33 @@ class RDM(_BaseMetric):
         list
             A list of tuples, where each tuple contains the RDM for the layer and the correlation with the Oracle RDM (if computed).
         """
-        self.activations = activations
         if isinstance(
             self.activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             self.activations = [self.activations]
 
-        return super().compute(self._compute)
-    
-    def load(self,filepath,data):
-        return super().load(filepath,data)
-    
-    def save(self, filepath, data):
-        return super().save(filepath,data)
+        return super().iterate_over_layers(activations, self._compute_per_layer)
 
+    def plot(
+        self,
+        rdms: list,
+        titles: list,
+        metric: str = "Normalized Euclidean distance",
+        dataset_label: str = "visual",
+        cmap: str = "viridis",
+        figsize: tuple = None,
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_rdm(
+            rdms,
+            titles,
+            metric,
+            dataset_label,
+            cmap,
+            figsize,
+            ax,
+        )
+
+    @property
+    def __name__(self):
+        return "rdm"

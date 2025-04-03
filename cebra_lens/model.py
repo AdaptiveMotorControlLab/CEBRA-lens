@@ -4,6 +4,7 @@ import pathlib
 import cebra
 import torch
 
+
 def model_loader(model_dir: str, labels: dict = {}) -> dict:
     """
     Load and categorize models based on their training status and session type.

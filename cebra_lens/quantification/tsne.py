@@ -4,24 +4,29 @@ from sklearn.manifold import TSNE
 from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
+from ..matplotlib import *
+import pickle
+from pathlib import Path
 
 
 class Tsne(_BaseMetric):
-    def __init__(self, num_samples:int = 200,
-                 #activation: np.ndarray
-                 ):
-        super().__init__(self)
+    def __init__(
+        self,
+        num_samples: int = 200,
+        # activation: np.ndarray
+    ):
+        super().__init__()
         self.num_samples = num_samples
         self._check_num_samples()
 
-    def _compute(self, layer_activation):
+    def _compute_per_layer(self, layer_activation):
         if layer_activation.shape[0] > layer_activation.shape[1]:
-                layer_activation = layer_activation.T
+            layer_activation = layer_activation.T
 
         tsne = TSNE(n_components=3)
-        tsne_embedding = tsne.fit_transform(layer_activation[:, :self.num_samples].T)
+        tsne_embedding = tsne.fit_transform(layer_activation[:, : self.num_samples].T)
         return tsne_embedding
-    
+
     def compute(self, activations) -> np.ndarray:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
@@ -40,10 +45,7 @@ class Tsne(_BaseMetric):
         tsne_embedding : np.ndarray
             The 2D embedding produced by t-SNE.
         """
-        self.activations = activations
-
-        return super().compute(self._compute)
-    
+        return super().iterate_over_layers(activations, self._compute_per_layer)
 
     def _check_num_samples(self):
         if self.num_samples < 200:
@@ -52,9 +54,26 @@ class Tsne(_BaseMetric):
             )
             self.num_samples = 200
 
-    def load(self,filepath,data):
-        return super().load(filepath,data)
-    
-    def save(self, filepath, data):
-        return super().save(filepath,data)
+    @property
+    def __name__(self):
+        return "tsne"
 
+    def plot(
+        self,
+        embeddings_1: list,
+        embeddings_2: list,
+        labels: np.ndarray,
+        sample_plot: int = 200,
+        comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
+        dataset_label: str = "HPC",
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return compare_embeddings_layers(
+            embeddings_1,
+            embeddings_2,
+            labels,
+            sample_plot,
+            comparison_labels,
+            dataset_label,
+            ax,
+        )
