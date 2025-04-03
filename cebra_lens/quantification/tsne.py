@@ -58,7 +58,7 @@ class Tsne(_BaseMetric):
 
         Returns:
         --------
-        tsne_embeddings : List[Union[float, np.ndarray]]
+        List[Union[float, np.ndarray]]
             The 2D embedding produced by t-SNE for each layer of a model.
         """
         return super().iterate_over_layers(activations, self._compute_per_layer)

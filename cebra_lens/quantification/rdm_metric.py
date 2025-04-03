@@ -112,16 +112,13 @@ class RDM(_BaseMetric):
 
         Parameters:
         -----------
-            layer_activation : np.ndarray
-                A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
+        layer_activation : np.ndarray
+            A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
 
         Returns:
         --------
-            rdm : np.ndarray
-                The computed RDM as a squareform distance matrix.
-
-            correlation : float
-                The similarity score between the computed RDM and the Oracle RDM, if applicable.
+        tuple[np.ndarray, float]
+            A tuple of the computed RDM as a squareform distance matrix and the similarity score between the computed RDM and the Oracle RDM, if applicable.
         """
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
@@ -144,12 +141,12 @@ class RDM(_BaseMetric):
 
         Parameters:
         -----------
-            activations : List[np.ndarray]
-                List of 2D numpy arrays representing the activation of neurons per layer.
+        activations : List[np.ndarray]
+            List of 2D numpy arrays representing the activation of neurons per layer.
 
         Returns:
         --------
-        rdm_results : list[tuple[np.ndarray, float]]
+        List[tuple[np.ndarray, float]]
             A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(

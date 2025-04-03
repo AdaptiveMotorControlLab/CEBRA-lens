@@ -7,11 +7,13 @@ from tqdm import tqdm
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
 from ..matplotlib import *
-import pickle
-from pathlib import Path
 
 
 class DistanceMetric:
+    """
+    Base class for distance metrics.
+    This class provides methods to compute distances between embeddings and centroids.
+    """
 
     def compute_centroid(self, embedding: np.ndarray, indices: list) -> float:
         """
@@ -93,7 +95,18 @@ class DistanceMetric:
 
 
 class Intrabin(DistanceMetric):
-    def __init__(self, indices, metric):
+    """
+    Class to compute intra-bin distances for a given embedding data and indices.
+
+    Parameters:
+    -----------
+        indices : list
+            A list of indices specifying the bins.
+        metric : str, optional
+            The distance metric to use for computing distances (default is "cosine").
+    """
+
+    def __init__(self, indices: list, metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 
@@ -105,10 +118,6 @@ class Intrabin(DistanceMetric):
         -----------
         embedding : np.ndarray
             The embedding data array of shape Neurons X Samples.
-        indices : list
-            A list of indices specifying the bins.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
 
         Returns:
         --------
@@ -134,7 +143,22 @@ class Intrabin(DistanceMetric):
 
 
 class Interrep(DistanceMetric):
-    def __init__(self, indices, repetition_indices, metric):
+    """
+    Class to compute inter-repetition distances for a given embedding data, indices, and repetition indices.
+
+    Parameters:
+        indices : list
+            A list of indices specifying the bins.
+        repetition_indices : list
+            A list of lists specifying the repetition indices.
+        metric : str, optional
+            The distance metric to use for computing distances (default is "cosine").
+
+    """
+
+    def __init__(
+        self, indices: list, repetition_indices: list, metric: Optional[str] = "cosine"
+    ):
         self.indices = indices
         self.repetition_indices = repetition_indices
         self.metric = metric
@@ -147,12 +171,6 @@ class Interrep(DistanceMetric):
         -----------
         embedding : np.ndarray
             The embedding data array of shape Neurons X Samples.
-        indices : list
-            A list of indices specifying the bins.
-        repetition_indices : list
-            A list of lists specifying the repetition indices.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
 
         Returns:
         --------
@@ -190,7 +208,17 @@ class Interrep(DistanceMetric):
 
 
 class Interbin(DistanceMetric):
-    def __init__(self, indices, repetition_indices, metric):
+    """
+    Class to compute inter-bin distances for a given embedding data and indices.
+
+    Parameters:
+        indices : list
+            A list of indices specifying the bins.
+        metric : str, optional
+            The distance metric to use for computing distances (default is "cosine").
+    """
+
+    def __init__(self, indices: list, metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 
@@ -203,10 +231,6 @@ class Interbin(DistanceMetric):
         -----------
         embedding : np.ndarray
             The embedding data array of shape Neurons X Samples.
-        indices : list
-            A list of indices specifying the bins.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
 
         Returns:
         --------
@@ -229,6 +253,23 @@ class Interbin(DistanceMetric):
 
 
 class Distance(_BaseMetric):
+    """
+    A Base class to compute distances between embeddings and centroids.
+
+    Parameters:
+    -----------
+        data : torch.Tensor
+            The data array of shape (num_samples, num_features).
+        label : torch.Tensor
+            The array of labels corresponding to the data.
+        dataset_label : str, optional
+            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
+        metric : str, optional
+            The distance metric to use for computing distances (default is "cosine").
+        distance_label : str, optional
+            The type of distance to compute (default is "interbin").
+    """
+
     def __init__(
         self,
         data,
@@ -247,8 +288,10 @@ class Distance(_BaseMetric):
 
         self.indices, self.repetition_indices = self._define_indices()
 
-    def _define_indices(self):
-
+    def _define_indices(self) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+        """
+        Defines the indices for the bins and repetitions based on the specified distance label.
+        """
         idxs = discrete_binning(
             data=self.data,
             label=self.label,
@@ -265,26 +308,18 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations) -> list:
+    def compute(self, activations: List[float, np.ndarray]) -> List[float]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
         Parameters:
         -----------
-        embeddings : list
-            A list of embedding data arrays for different layers.
-        indices : list
-            A list of indices specifying the bins.
-        repetition_indices : list, optional
-            A list of lists specifying the repetition indices (default is None).
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
-        distance_label : str, optional
-            The type of distance to compute ("interbin", "intrabin", or "interrep") (default is "interbin").
+        activations : List[np.ndarray]
+            List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:
         --------
-        list
+        List[float]
             A list of computed distances for each layer.
         """
         if self.distance_label == "interbin":
@@ -300,6 +335,10 @@ class Distance(_BaseMetric):
 
         return super().iterate_over_layers(activations, distance._compute_distance)
 
+    @property
+    def __name__(self):
+        return self.distance_label
+
     def plot(
         self,
         distance_dict: dict,
@@ -307,7 +346,3 @@ class Distance(_BaseMetric):
         figsize: tuple = (15, 5),
     ):
         return plot_distance(distance_dict, title, figsize)
-
-    @property
-    def __name__(self):
-        return self.distance_label
