@@ -11,11 +11,10 @@ from .base import _BaseMetric
 from ..matplotlib import *
 import pickle
 from pathlib import Path
-from typing import Optional, String
-
+from typing import Optional
 
 class CKA(_BaseMetric):
-    def __init__(self, comparison: tuple[String, String]):
+    def __init__(self, comparison: tuple[str, str]):
 
         if not isinstance(comparison, tuple):
             raise ValueError(
