@@ -7,7 +7,8 @@ class MultiModel:
     """
     A class to compute the same metric across multiple models.
 
-    Args:
+    Parameters:
+    ----------
         metric_class (object): The metric class to be used for computation.
     """
 

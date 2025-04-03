@@ -9,10 +9,12 @@ from ..matplotlib import *
 class Tsne(_BaseMetric):
     """
     Class to compute t-SNE (t-Distributed Stochastic Neighbor Embedding) on layer activation data.
-    
-    Agrs:
+
+    Parameters:
+    -----------
         num_samples (int): The number of samples to use for t-SNE transformation. Default is 200.
-"""
+    """
+
     def __init__(
         self,
         num_samples: int = 200,
@@ -23,13 +25,15 @@ class Tsne(_BaseMetric):
 
     def _compute_per_layer(self, layer_activation: np.ndarray) -> np.ndarray:
         """
-        Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.	
-        
-        Args:
+        Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given layer activation data.
+
+        Parameters:
+        -----------
             layer_activation : np.ndarray
                 A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
 
         Returns:
+        --------
             tsne_embedding : np.ndarray
                 The 2D embedding produced by t-SNE.
         """
@@ -58,8 +62,7 @@ class Tsne(_BaseMetric):
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
     def _check_num_samples(self):
-        """Checks if the number of samples is less than 200. If so, it sets the number of samples to 200 and prints a warning message.
-        """
+        """Checks if the number of samples is less than 200. If so, it sets the number of samples to 200 and prints a warning message."""
         if self.num_samples < 200:
             print(
                 f"Warning: Minimum number of samples is 200 to ensure good functioning. Provided: {self.num_samples}. Processing with 200..."
@@ -80,7 +83,7 @@ class Tsne(_BaseMetric):
         dataset_label: str = "HPC",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        """"
+        """ "
         Plots the t-SNE embeddings of two sets of data for comparison.
         """
         return compare_embeddings_layers(

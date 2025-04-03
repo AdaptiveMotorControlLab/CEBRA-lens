@@ -11,7 +11,7 @@ from .base import _BaseMetric
 from ..matplotlib import *
 import pickle
 from pathlib import Path
-from Typing import Optional, String
+from typing import Optional, String
 
 
 class CKA(_BaseMetric):

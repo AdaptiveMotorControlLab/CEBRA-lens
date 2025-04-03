@@ -13,6 +13,10 @@ from ..matplotlib import *
 
 
 class RDM(_BaseMetric):
+    """
+    Class to compute the Representational Dissimilarity Matrix (RDM) for a given dataset.
+    """
+
     def __init__(
         self,
         data: torch.Tensor,
