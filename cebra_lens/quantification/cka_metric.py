@@ -9,12 +9,20 @@ from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
-import pickle
-from pathlib import Path
 from typing import Optional
 
 
 class CKA(_BaseMetric):
+    """ "
+    Class to compute Centered Kernel Alignment (CKA) between two sets of model types.
+
+    Parameters:
+    -----------
+    comparison : tuple
+        A tuple containing two strings representing the models and training type to be compared.
+        For example, ('single_UT', 'single_TR').
+    """
+
     def __init__(self, comparison: tuple[str, str]):
 
         if not isinstance(comparison, tuple):
@@ -25,7 +33,7 @@ class CKA(_BaseMetric):
         self.comparisonY = comparison[1]
         self.cka_matrix = None
 
-    def center_gram(self, gram, unbiased=False):
+    def center_gram(self, gram: np.ndarray, unbiased: bool = False) -> np.ndarray:
         """Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
@@ -63,7 +71,9 @@ class CKA(_BaseMetric):
 
         return gram
 
-    def cka(self, gram_x, gram_y, debiased=False):
+    def cka(
+        self, gram_x: np.ndarray, gram_y: np.ndarray, debiased: bool = False
+    ) -> float:
         """Compute CKA.
 
         Args:
@@ -85,7 +95,7 @@ class CKA(_BaseMetric):
         normalization_y = np.linalg.norm(gram_y)
         return scaled_hsic / (normalization_x * normalization_y)
 
-    def gram_linear(self, x):
+    def gram_linear(self, x: np.ndarray) -> np.ndarray:
         """Compute Gram (kernel) matrix for a linear kernel.
 
         Args:
@@ -134,7 +144,26 @@ class CKA(_BaseMetric):
             )
         return cka_matrix
 
-    def _compute_per_layer(self, embeddings_1, embeddings_2, flag=False):
+    def _compute_per_layer(
+        self, embeddings_1: list, embeddings_2: list, flag=False
+    ) -> np.ndarray:
+        """
+        Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
+
+        Parameters:
+        -----------
+        embeddings_1 : list
+            A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
+        embeddings_2 : list
+            A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
+        flag : bool
+            If True, compute CKA for each layer of the first set against the second set.
+
+        Returns:
+        --------
+        cka_matrix : np.ndarray
+            A matrix containing the CKA values for each layer.
+        """
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
@@ -151,11 +180,8 @@ class CKA(_BaseMetric):
 
         Parameters:
         -----------
-        activations_dict : dict
+        activations : dict
             A dictionary where keys are strings in the format 'model_identifie' and values are 2d lists with the corresponding activations.
-        comparison : tuple
-            A tuple containing two strings representing the models and layers to be compared.
-            For example, ('single_UT', 'single_TR').
 
         Returns:
         --------
@@ -189,6 +215,10 @@ class CKA(_BaseMetric):
 
         return self.cka_matrix
 
+    @property
+    def __name__(self):
+        return "cka"
+
     def plot(
         self,
         cka_matrices: dict,
@@ -208,7 +238,3 @@ class CKA(_BaseMetric):
             figsize,
             ax,
         )
-
-    @property
-    def __name__(self):
-        return "cka"

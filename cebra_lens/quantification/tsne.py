@@ -12,7 +12,7 @@ class Tsne(_BaseMetric):
 
     Parameters:
     -----------
-    num_samples : int 
+    num_samples : int
         The number of samples to use for t-SNE transformation. Default is 200.
     """
 

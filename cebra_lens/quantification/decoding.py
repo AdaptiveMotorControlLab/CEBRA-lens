@@ -29,6 +29,7 @@ class Decoding(_BaseMetric):
     layer_type : str, optional
         The type of layer to extract activations from. Defaults to 'conv'.
     """
+
     def __init__(
         self,
         train_data: torch.Tensor,
@@ -55,7 +56,7 @@ class Decoding(_BaseMetric):
         embedding_test: np.ndarray,
         label_test: np.ndarray,
         dataset_label: str = "visual",
-    )-> np.ndarray:
+    ) -> np.ndarray:
         """
         Decodes a model by choosing the appropriate function.
 
@@ -110,7 +111,7 @@ class Decoding(_BaseMetric):
     def compute(
         self,
         model,
-    )-> np.ndarray:
+    ) -> np.ndarray:
         """
         Decode neural data by layer using a given CEBRA model.
 
@@ -170,11 +171,11 @@ class Decoding(_BaseMetric):
                 )  # layer decoding
 
         return results
-    
+
     @property
     def __name__(self):
         return "decode_by_layer"
-    
+
     def plot(
         self,
         results_dict: dict,
@@ -187,7 +188,7 @@ class Decoding(_BaseMetric):
 class DecodeModel(Decoding):
     """
     Decoding class for decoding neural data using a given CEBRA model.
-    
+
     Parameters:
     ----------
 
@@ -266,11 +267,11 @@ class DecodeModel(Decoding):
             self.dataset_label,
         )
         return np.array(results)
-    
+
     @property
     def __name__(self):
         return "decode_model"
-    
+
     def plot(
         self,
         results_dict: dict,
@@ -279,5 +280,3 @@ class DecodeModel(Decoding):
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         return plot_decoding(results_dict, palette, dataset_label, ax)
-
-
