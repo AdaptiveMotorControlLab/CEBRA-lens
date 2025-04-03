@@ -85,7 +85,7 @@ class Tsne(_BaseMetric):
         dataset_label: str = "HPC",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        """ "
+        """
         Plots the t-SNE embeddings of two sets of data for comparison.
         """
         return compare_embeddings_layers(
