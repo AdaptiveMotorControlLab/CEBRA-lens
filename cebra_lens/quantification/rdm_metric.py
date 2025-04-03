@@ -18,16 +18,16 @@ class RDM(_BaseMetric):
 
     Parameters:
     -----------
-        data : torch.Tensor
-            The data array of shape (num_samples, num_features).
-        label : torch.Tensor
-            The array of labels corresponding to the data.
-        dataset_label : str, optional
-            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
-        metric : str, optional
-            The distance metric to use for computing the RDMs. Default is 'correlation'.
-        bool_oracle : bool, optional
-            Whether to compute and compare with the Oracle RDM. Default is True.
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label : torch.Tensor
+        The array of labels corresponding to the data.
+    dataset_label : str, optional
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
+    metric : str, optional
+        The distance metric to use for computing the RDMs. Default is 'correlation'.
+    bool_oracle : bool, optional
+        Whether to compute and compare with the Oracle RDM. Default is True.
     """
 
     def __init__(

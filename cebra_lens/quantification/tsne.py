@@ -12,7 +12,8 @@ class Tsne(_BaseMetric):
 
     Parameters:
     -----------
-        num_samples (int): The number of samples to use for t-SNE transformation. Default is 200.
+    num_samples : int 
+        The number of samples to use for t-SNE transformation. Default is 200.
     """
 
     def __init__(
@@ -29,13 +30,13 @@ class Tsne(_BaseMetric):
 
         Parameters:
         -----------
-            layer_activation : np.ndarray
-                A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
+        layer_activation : np.ndarray
+            A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
 
         Returns:
         --------
-            tsne_embedding : np.ndarray
-                The 2D embedding produced by t-SNE.
+        tsne_embedding : np.ndarray
+            The 2D embedding produced by t-SNE.
         """
         if layer_activation.shape[0] > layer_activation.shape[1]:
             layer_activation = layer_activation.T

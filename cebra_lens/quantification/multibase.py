@@ -9,7 +9,8 @@ class MultiModel:
 
     Parameters:
     ----------
-        metric_class (object): The metric class to be used for computation.
+    metric_class : object
+        The metric class to be used for computation.
     """
 
     def __init__(self, metric_class: object):

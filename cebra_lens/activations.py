@@ -19,7 +19,7 @@ def _cut_array(array: np.ndarray, cut_indices: tuple):
 
     Returns:
     --------
-    numpy.ndarray
+    np.ndarray
         The sliced array. If both start and end indices are 0, the whole array is returned.
     """
 
