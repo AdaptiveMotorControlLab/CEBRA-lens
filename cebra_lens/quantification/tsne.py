@@ -44,15 +44,17 @@ class Tsne(_BaseMetric):
         tsne_embedding = tsne.fit_transform(layer_activation[:, : self.num_samples].T)
         return tsne_embedding
 
-    def compute(self, activations: np.ndarray) -> List[Union[float, np.ndarray]]:
+    def compute(
+        self, activations: List[float, np.ndarray]
+    ) -> List[Union[float, np.ndarray]]:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given activations data per layer.
         This function performs dimensionality reduction on each layer activation data to generate a 2D embeddings using t-SNE.
 
         Parameters:
         -----------
-        activations : np.ndarray
-            Numpy array representing the activation of neurons per layer.
+        activations : List[np.ndarray]
+            List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:
         --------

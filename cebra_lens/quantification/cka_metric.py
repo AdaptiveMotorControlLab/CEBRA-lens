@@ -13,6 +13,7 @@ import pickle
 from pathlib import Path
 from typing import Optional
 
+
 class CKA(_BaseMetric):
     def __init__(self, comparison: tuple[str, str]):
 
