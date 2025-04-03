@@ -11,10 +11,10 @@ from .base import _BaseMetric
 from ..matplotlib import *
 import pickle
 from pathlib import Path
-
+from Typing import Optional, String
 
 class CKA(_BaseMetric):
-    def __init__(self, comparison):
+    def __init__(self, comparison: tuple[String, String]):
 
         if not isinstance(comparison, tuple):
             raise ValueError(
@@ -142,7 +142,7 @@ class CKA(_BaseMetric):
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations_dict):
+    def compute(self, activations: dict)-> np.ndarray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -162,8 +162,8 @@ class CKA(_BaseMetric):
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
 
-        activations_1 = activations_dict[self.comparisonX]
-        activations_2 = activations_dict[self.comparisonY]
+        activations_1 = activations[self.comparisonX]
+        activations_2 = activations[self.comparisonY]
         if len(activations_1) != len(activations_2):
             if len(activations_1) > len(activations_2):
                 embeddings_1 = activations_1
