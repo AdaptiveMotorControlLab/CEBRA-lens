@@ -13,6 +13,7 @@ import pickle
 from pathlib import Path
 from Typing import Optional, String
 
+
 class CKA(_BaseMetric):
     def __init__(self, comparison: tuple[String, String]):
 
@@ -142,7 +143,7 @@ class CKA(_BaseMetric):
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations: dict)-> np.ndarray:
+    def compute(self, activations: dict) -> np.ndarray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,

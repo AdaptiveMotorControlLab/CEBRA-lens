@@ -196,7 +196,7 @@ class DecodeModel(Decoding):
             test_label,
             session_id,
             dataset_label,
-            layer_type
+            layer_type,
         )
 
     def compute(self, model) -> np.ndarray:
