@@ -2,7 +2,7 @@
 
 import numpy as np
 from scipy.linalg import block_diag
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
 from scipy.spatial.distance import correlation, pdist, squareform
 from .misc import discrete_binning
 import torch
@@ -132,19 +132,19 @@ class RDM(_BaseMetric):
         return squareform(rdm), correlation
 
     def compute(
-        self, activations: List[float, np.ndarray]
-    ) -> List[tuple[np.ndarray, float]]:
+        self, activations: List[Union[float, np.ndarray]]
+    ) -> List[Tuple[np.ndarray, float]]:
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
         Parameters:
         -----------
-        activations : List[np.ndarray]
+        activations : List[Union[float, np.ndarray]]
             List of 2D numpy arrays representing the activation of neurons per layer.
 
         Returns:
         --------
-        List[tuple[np.ndarray, float]]
+        List[Tuple[np.ndarray, float]]:
             A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(
