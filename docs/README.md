@@ -1,6 +1,6 @@
 # CEBRA-Lens jupyter-book
 
-Documentation for the usage of CEBRA-Lens
+Documentation for the usage of CEBRA-Lens.
 
 ## Usage
 
@@ -10,11 +10,11 @@ If you'd like to develop and/or build the CEBRA-Lens jupyter-book book, you shou
 
 1. Clone this repository
 2. Run `pip install -r requirements.txt` (it is recommended you do this within a virtual environment)
-3. (Optional) Edit the books source files located in the `cebra_lens_jupyter_book/` directory
-4. Run `jupyter-book clean cebra_lens_jupyter_book/` to remove any existing builds
-5. Run `jupyter-book build cebra_lens_jupyter_book/`
+3. (Optional) Edit the books source files located in the `docs/` directory
+4. Run `jupyter-book clean docs/` to remove any existing builds
+5. Run `jupyter-book build docs/`
 
-A fully-rendered HTML version of the book will be built in `cebra_lens_jupyter_book/_build/html/`.
+A fully-rendered HTML version of the book will be built in `docs/_build/html/`.
 
 ### Hosting the book
 
