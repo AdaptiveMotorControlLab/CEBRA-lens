@@ -2,13 +2,11 @@
 
 import numpy as np
 from scipy.linalg import block_diag
+from typing import List, Optional
 from scipy.spatial.distance import correlation, pdist, squareform
-from tqdm import tqdm
 from .misc import discrete_binning
 import torch
 from .base import _BaseMetric
-import pickle
-from pathlib import Path
 from ..matplotlib import *
 
 
