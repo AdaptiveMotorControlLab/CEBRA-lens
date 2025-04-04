@@ -18,12 +18,12 @@ class CKA(_BaseMetric):
 
     Parameters:
     -----------
-    comparison : tuple
+    comparison : Tuple[str,str]
         A tuple containing two strings representing the models and training type to be compared.
         For example, ('single_UT', 'single_TR').
     """
 
-    def __init__(self, comparison: tuple[str, str]):
+    def __init__(self, comparison: Tuple[str, str]):
 
         if not isinstance(comparison, tuple):
             raise ValueError(

@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
-from tqdm import tqdm
+from typing import List, Optional, Tuple, Union
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
 from ..matplotlib import *
@@ -308,13 +308,13 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations: List[float, np.ndarray]) -> List[float]:
+    def compute(self, activations: List[Union[float, np.ndarray]]) -> List[float]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
         Parameters:
         -----------
-        activations : List[np.ndarray]
+        activations : List[Union[float, np.ndarray]]
             List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:

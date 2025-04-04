@@ -4,6 +4,7 @@ from sklearn.manifold import TSNE
 import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
+from typing import List, Optional, Union
 
 
 class Tsne(_BaseMetric):
@@ -46,7 +47,7 @@ class Tsne(_BaseMetric):
         return tsne_embedding
 
     def compute(
-        self, activations: List[float, np.ndarray]
+        self, activations: List[Union[float, np.ndarray]]
     ) -> List[Union[float, np.ndarray]]:
         """
         Applies t-SNE (t-Distributed Stochastic Neighbor Embedding) to the given activations data per layer.
@@ -54,7 +55,7 @@ class Tsne(_BaseMetric):
 
         Parameters:
         -----------
-        activations : List[np.ndarray]
+        activations : List[Union[float, np.ndarray]]
             List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:

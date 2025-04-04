@@ -104,7 +104,7 @@ class RDM(_BaseMetric):
 
     def _compute_per_layer(
         self, layer_activation: np.ndarray
-    ) -> tuple[np.ndarray, float]:
+    ) -> Tuple[np.ndarray, float]:
         """
         Computes the RDM for a given layer's activation.
 
@@ -115,7 +115,7 @@ class RDM(_BaseMetric):
 
         Returns:
         --------
-        tuple[np.ndarray, float]
+        Tuple[np.ndarray, float]
             A tuple of the computed RDM as a squareform distance matrix and the similarity score between the computed RDM and the Oracle RDM, if applicable.
         """
         # to ensure the right shape: numSamples X numNeurons
