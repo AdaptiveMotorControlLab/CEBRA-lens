@@ -3,16 +3,16 @@ import numpy as np
 import pickle
 import types
 from typing import List, Literal, Optional, Tuple, Union
-from abc import ABC, abstractmethod
+import abc
 from pathlib import Path
 
 
-class _BaseMetric(ABC):
+class _BaseMetric:
     """
     Base class for metrics computations.
     """
 
-    @abstractmethod
+    @abc.abstractmethod
     def compute(self, activations: dict) -> dict:
         raise NotImplementedError
 
@@ -50,6 +50,6 @@ class _BaseMetric(ABC):
             data = pickle.load(f)
         return data
 
-    @abstractmethod
+    @abc.abstractmethod
     def plot(self):
         raise NotImplementedError

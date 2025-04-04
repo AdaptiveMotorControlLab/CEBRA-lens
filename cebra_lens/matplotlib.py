@@ -1,4 +1,5 @@
 """Matplotlib interface to CEBRA-Lens."""
+
 import abc
 from typing import Optional, Tuple
 import seaborn as sns
@@ -35,7 +36,7 @@ class _BasePlot:
 
 class _GenericPlot(_BasePlot):
     """Generic plot class for plotting RDM, distance, and decoding results.
-    
+
     Attributes:
     ----------
     axis : Optional[matplotlib.axes.Axes]
@@ -46,6 +47,7 @@ class _GenericPlot(_BasePlot):
         Title of the plot.
 
     """
+
     def __init__(
         self, axis: Optional[matplotlib.axes.Axes], figsize: tuple, title: str
     ):
@@ -54,9 +56,9 @@ class _GenericPlot(_BasePlot):
         self.unique_keys = []
         self.colors = []
 
-    def plot(self, plot_data: dict)->None:
+    def plot(self, plot_data: dict) -> None:
         """Handles plotting logic.
-        
+
         Parameters:
         -----------
         plot_data: dict
@@ -103,7 +105,7 @@ class _GenericPlot(_BasePlot):
 
 class RDMPlot(_GenericPlot):
     """Plot the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
-    
+
     Attributes:
     ----------
     results_dict : dict
@@ -115,11 +117,12 @@ class RDMPlot(_GenericPlot):
     axis : Optional[matplotlib.axes.Axes]
         Optional axis to create the plot on.
     """
+
     def __init__(
         self,
-        results_dict:dict,
-        title:str="RDM Plot",
-        figsize:tuple[float, float]=(15, 5),
+        results_dict: dict,
+        title: str = "RDM Plot",
+        figsize: tuple[float, float] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
         super().__init__(axis, figsize, title)
@@ -147,7 +150,7 @@ class RDMPlot(_GenericPlot):
 
 class DistancePlot(_GenericPlot):
     """Plot the distances across layers for models in results_dict.
-    
+
     Attributes:
     ----------
     results_dict: dict
@@ -159,6 +162,7 @@ class DistancePlot(_GenericPlot):
     axis: Optional[matplotlib.axes.Axes]
         Optional axis to create the plot on.
     """
+
     def __init__(
         self,
         results_dict: dict,
@@ -193,7 +197,7 @@ class DistancePlot(_GenericPlot):
 
 class DecodingPlot(_GenericPlot):
     """Plot the decoding accuracy across layers for models in results_dict.
-    
+
     Attributes:
     ----------
     results_dict: dict
@@ -205,6 +209,7 @@ class DecodingPlot(_GenericPlot):
     axis: Optional[matplotlib.axes.Axes]
         Optional axis to create the plot on.
     """
+
     def __init__(
         self,
         results_dict: dict,
@@ -335,7 +340,7 @@ def plot_layer_decoding(
 
 class ModelDecodingPlot(_BasePlot):
     """Class for plotting decoding accuracy across models.
-    
+
     Attributes:
     ----------
     results_dict :dict
@@ -443,7 +448,7 @@ def plot_decoding(
 
 class _EmbeddingComparisonPlot:
     """Class for comparing embeddings across layers.
-    
+
     Attributes:
     ----------
     embeddings_1 : list
@@ -702,7 +707,7 @@ def compare_embeddings_layers(
 
 class _ActivationPlot:
     """Class for plotting activations of a neural network model.
-    
+
     Attributes:
     ----------
     input_data : torch.Tensor
@@ -720,6 +725,7 @@ class _ActivationPlot:
     title : str
         The title of the plot (default is "Trained activations").
     """
+
     def __init__(
         self,
         input_data: torch.Tensor,
@@ -835,7 +841,7 @@ def plot_activations(
 
 class _HeatMapsPlot:
     """Class for plotting CKA heatmaps.
-    
+
     Attributes:
     ----------
     cka_matrices : dict
@@ -853,6 +859,7 @@ class _HeatMapsPlot:
     figsize : tuple[float, float]
         The size of the figure (width, height).
     """
+
     def __init__(
         self,
         cka_matrices: dict,
@@ -976,7 +983,7 @@ def plot_cka_heatmaps(
 
 class _RDMPlots:
     """Class for plotting Representational Dissimilarity Matrices (RDMs).
-    
+
     Attributes:
     ----------
     rdms : list
@@ -992,6 +999,7 @@ class _RDMPlots:
     figsize : tuple[float, float]
         The size of the figure (width, height).
     """
+
     def __init__(
         self,
         rdms: list,
@@ -1091,7 +1099,7 @@ def plot_rdm(
 ) -> plt.Figure:
     """
     Plots Representational Dissimilarity Matrices (RDMs) with given titles and metric.
-    
+
     Parameters:
     -----------
     rdms : list
@@ -1109,7 +1117,7 @@ def plot_rdm(
         The size of the figure (width, height). Default is None.
     ax : Optional[matplotlib.axes.Axes], optional
         The axis on which to plot the RDMs. If None, a new axis will be created.
-    
+
     Returns:
     --------
     fig : matplotlib.figure.Figure
