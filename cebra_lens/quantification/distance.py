@@ -308,7 +308,7 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations: List[float, np.ndarray]) -> List[float]:
+    def compute(self, activations: list[float, np.ndarray]) -> list[float]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 

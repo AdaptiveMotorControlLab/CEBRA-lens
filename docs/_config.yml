@@ -18,4 +18,4 @@ repository:
   branch: main
 
 launch_buttons:
-  colab_url: "https://colab.research.google.com/github/AdaptiveMotorControlLab/examples/yourdemo.ipynb"
+  colab_url: "https://colab.research.google.com/github/AdaptiveMotorControlLab/demos/usage_demo.ipynb"

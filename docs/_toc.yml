@@ -10,5 +10,11 @@ parts:
 - caption: Usage
   chapters:
   - file: docs/installation
-  - file: docs/metrics
+  - file: docs/usage
+
+- caption: Examples
+  chapters:
+  - file: docs/examples/UsageDemo.ipynb
+  - file: docs/examples/ModelGenerator.ipynb
+
 
