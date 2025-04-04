@@ -17,7 +17,9 @@ class _BaseMetric:
         raise NotImplementedError
 
     def iterate_over_layers(
-        self, activations: List[Union[float, np.ndarray]], metric_func: types.FunctionType
+        self,
+        activations: List[Union[float, np.ndarray]],
+        metric_func: types.FunctionType,
     ) -> List[Union[float, np.ndarray]]:
         """
         Iterate over each layer of activations and apply the metric function to compute the desired metric.

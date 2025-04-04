@@ -31,7 +31,7 @@ class MultiModel:
             if isinstance(self.metric_class, DecodeModel):
                 self.result_dict[model_label] = np.array(self.result_dict[model_label])
         return self.result_dict
-    
+
     def plot(self, *args, **kwargs):
         """
         Plots the results of the metric computation.
