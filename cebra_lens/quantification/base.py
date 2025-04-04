@@ -3,63 +3,53 @@ import numpy as np
 import pickle
 import types
 from typing import List, Literal, Optional, Tuple, Union
+import abc
+from pathlib import Path
 
 
 class _BaseMetric:
     """
-    Base class for metric computations.
+    Base class for metrics computations.
     """
 
-    def __init__(self,activations=None):
-        self.activations = activations if activations is not None else []
+    @abc.abstractmethod
+    def compute(self, activations: dict) -> dict:
+        raise NotImplementedError
 
-    def compute(self, metric_func):
+    def iterate_over_layers(
+        self, activations: List[float, np.ndarray], metric_func: types.FunctionType
+    ) -> List[Union[float, np.ndarray]]:
+        """
+        Iterate over each layer of activations and apply the metric function to compute the desired metric.
+
+        Parameters:
+        -----------
+            activations : List[np.ndarray]
+            List of 2D numpy array representing the activation of neurons per layer.
+
+        Returns:
+        --------
+            layer_data : List[Union[float, np.ndarray]]
+            The computed metric for each layer.
+        """
         layer_data = []
-        for layer_activation in self.activations:
+        for layer_activation in activations:
             layer_data.append(metric_func(layer_activation))
         return layer_data
-    
-    def load(self, filepath, data):
+
+    def save(self, filepath: str, data: dict) -> None:
+        filepath = Path(filepath)
+        custom_filepath = filepath.with_stem(
+            filepath.stem + f"_{self.__class__.__name__}"
+        )
+        with open(custom_filepath, "wb") as f:
+            pickle.dump(data, f)
+
+    def load(self, filepath: str) -> dict:
         with open(filepath, "rb") as f:
             data = pickle.load(f)
         return data
-    
-    def save(self, filepath, data):
-        with open(filepath, "wb") as f:
-            pickle.dump(data, f)
-    
+
+    @abc.abstractmethod
     def plot(self):
         raise NotImplementedError
-        
-
-class MultiModel:
-        
-    def __init__(self, metric_class):
-        self.metric_class = metric_class
-        self.results_dict = {}
-        #here we give the metric_class with defined parameters already for the calculation
-
-    def compute(self, activations_dict):
-        self.result_dict = {}
-        for model_label, activations_list in activations_dict.items():
-            self.result_dict[model_label] = []
-            for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
-                self.result_dict[model_label].append(self.metric_class.compute(activations))
-        return self.result_dict
-
-    def decode(self, models):
-        self.result_dict = {}
-        for model_label, model_list in models.items():
-            self.result_dict[model_label] = []
-            for model in tqdm(model_list, desc=f"Processing {model_label}"):
-                self.result_dict[model_label].append(self.metric_class.decode(model))
-            self.result_dict[model_label] = np.array(self.result_dict[model_label])
-        return self.result_dict
-    
-    def load(self, filepath):
-        with open(filepath, "rb") as f:
-            self.results_dict = pickle.load(f)
-
-    def save(self, filepath):
-        with open(filepath, "wb") as f:
-            pickle.dump(self.results_dict, f)

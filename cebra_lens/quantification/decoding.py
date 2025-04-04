@@ -1,18 +1,45 @@
+import cebra
 import torch
 import numpy as np
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
+from .base import _BaseMetric
+from ..matplotlib import *
 
 
-class Decoding:
-    def __init__(self, train_data: torch.Tensor,
+class Decoding(_BaseMetric):
+    """
+    Decoding class for decoding neural data by layer using a given CEBRA model.
+
+    Parameter:
+    ----------
+    train_data : torch.Tensor
+        The training data used for model transformation.
+    train_label : np.ndarray
+        The true labels corresponding to the training data.
+    test_data : torch.Tensor
+        The validation data used for testing the model.
+    test_label : np.ndarray
+        The true labels corresponding to the validation data.
+    session_id : int, optional
+        The session ID for multi-session models. For single-session no need to input it.
+    dataset_label : str, optional
+        The type of dataset being used for decoding (default is "visual").
+    layer_type : str, optional
+        The type of layer to extract activations from. Defaults to 'conv'.
+    """
+
+    def __init__(
+        self,
+        train_data: torch.Tensor,
         train_label: np.ndarray,
         test_data: torch.Tensor,
         test_label: np.ndarray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: str = "conv"):
+        layer_type: str = "conv",
+    ):
 
         self.train_label = train_label
         self.train_data = train_data
@@ -22,15 +49,14 @@ class Decoding:
         self.dataset_label = dataset_label
         self.layer_type = layer_type
 
-    def _decoding_function_selection(
-        # figure out what to do about the arguments and parameters
+    def _decode(
         self,
         embedding_train: np.ndarray,
         label_train: np.ndarray,
         embedding_test: np.ndarray,
         label_test: np.ndarray,
         dataset_label: str = "visual",
-    ):
+    ) -> np.ndarray:
         """
         Decodes a model by choosing the appropriate function.
 
@@ -49,7 +75,8 @@ class Decoding:
 
         Returns:
         --------
-        np.ndarray : Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
+        np.ndarray
+            Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
         """
         if (
             embedding_train.shape[0] < embedding_train.shape[1]
@@ -84,7 +111,7 @@ class Decoding:
     def compute(
         self,
         model,
-    ):
+    ) -> np.ndarray:
         """
         Decode neural data by layer using a given CEBRA model.
 
@@ -92,20 +119,6 @@ class Decoding:
         ----------
         model : cebra.integrations.sklearn.cebra.CEBRA
             The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-        train_data : torch.Tensor
-            The training data used for model transformation.
-        train_label : np.ndarray
-            The true labels corresponding to the training data.
-        test_data : torch.Tensor
-            The validation data used for testing the model.
-        test_label : np.ndarray
-            The true labels corresponding to the validation data.
-        session_id : int, optional
-            The session ID for multi-session models. For single-session no need to input it.
-        dataset_label : str, optional
-            The type of dataset being used for decoding (default is "visual").
-        layer_type : str, optional
-            The type of layer to extract activations from. Defaults to 'conv'.
 
         Returns:
         -------
@@ -141,11 +154,15 @@ class Decoding:
         for i in range(num_layers + 1):
 
             if i == 0:
-                results[i, :] = self._decoding_function_selection(
-                    self.train_data, self.train_label, self.test_data, self.test_label, self.dataset_label
+                results[i, :] = self._decode(
+                    self.train_data,
+                    self.train_label,
+                    self.test_data,
+                    self.test_label,
+                    self.dataset_label,
                 )  # neural input baseline
             else:
-                results[i, :] = self._decoding_function_selection(
+                results[i, :] = self._decode(
                     activations_train[keys[i - 1]],
                     self.train_label,
                     activations_test[keys[i - 1]],
@@ -155,10 +172,64 @@ class Decoding:
 
         return results
 
-    def decode(
-        self,model
+    @property
+    def __name__(self):
+        return "decode_by_layer"
 
-    ) -> np.ndarray:
+    def plot(
+        self,
+        results_dict: dict,
+        title: str = "Decoding by layer",
+        figsize: tuple = (15, 5),
+    ):
+        return plot_layer_decoding(results_dict, title, figsize)
+
+
+class DecodeModel(Decoding):
+    """
+    Decoding class for decoding neural data using a given CEBRA model.
+
+    Parameters:
+    ----------
+
+    train_data : torch.Tensor
+        The training data used for model transformation.
+    train_label : np.ndarray
+        The true labels corresponding to the training data.
+    test_data : torch.Tensor
+        The validation data used for testing the model.
+    test_label : np.ndarray
+        The true labels corresponding to the validation data.
+    session_id : int, optional
+        The session ID for multi-session models. For single-session no need to input it.
+    dataset_label : str, optional
+        The type of dataset being used for decoding (default is "visual").
+    layer_type : str, optional
+        The type of layer to extract activations from. Defaults to 'conv'.
+    """
+
+    def __init__(
+        self,
+        train_data: torch.Tensor,
+        train_label: np.ndarray,
+        test_data: torch.Tensor,
+        test_label: np.ndarray,
+        session_id: int = -1,
+        dataset_label: str = "visual",
+        layer_type: str = "conv",
+    ):
+
+        super().__init__(
+            train_data,
+            train_label,
+            test_data,
+            test_label,
+            session_id,
+            dataset_label,
+            layer_type,
+        )
+
+    def compute(self, model: cebra.integrations.sklearn.cebra.CEBRA) -> np.ndarray:
         """
         Decodes a single model.
 
@@ -166,22 +237,11 @@ class Decoding:
         -----------
         model : cebra.integrations.sklearn.cebra.CEBRA
             The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-        train_data : torch.Tensor
-            The training data used for model transformation.
-        train_label : np.ndarray
-            The true labels corresponding to the training data.
-        test_data : torch.Tensor
-            The validation data used for testing the model.
-        test_label : np.ndarray
-            The true labels corresponding to the validation data.
-        session_id : int, optional
-            The session ID for multi-session models. For single-session no need to input it.
-        dataset_label : str, optional
-            The type of dataset being used for decoding (default is "visual").
 
         Returns:
         --------
-        np.ndarray : Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
+        np.ndarray
+            Numpy array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
         """
 
         if model.solver_name_ == "multi-session":
@@ -196,9 +256,27 @@ class Decoding:
 
         else:
             raise NotImplementedError(
-                f"Solver {model.solver_name_} is not yet implemented.")
+                f"Solver {model.solver_name_} is not yet implemented."
+            )
 
-        results = self._decoding_function_selection(
-            embedding_train, self.train_label, embedding_test, self.test_label, self.dataset_label
+        results = self._decode(
+            embedding_train,
+            self.train_label,
+            embedding_test,
+            self.test_label,
+            self.dataset_label,
         )
         return np.array(results)
+
+    @property
+    def __name__(self):
+        return "decode_model"
+
+    def plot(
+        self,
+        results_dict: dict,
+        palette: str = "hls",
+        dataset_label="visual",
+        ax: Optional[matplotlib.axes.Axes] = None,
+    ):
+        return plot_decoding(results_dict, palette, dataset_label, ax)
