@@ -7,7 +7,10 @@ import numpy as np
 import numpy.typing as npt
 from typing import Tuple, Dict, List
 
-def _cut_array(array: npt.NDArray, cut_indices: Tuple[np.int64, np.int64])-> npt.NDArray:
+
+def _cut_array(
+    array: npt.NDArray, cut_indices: Tuple[np.int64, np.int64]
+) -> npt.NDArray:
     """
     Slices the input array based on the provided cut indices.
     This is used to remove the padding from activations in `get_activations_model`.
@@ -135,7 +138,7 @@ def get_activations_model(
 
 
 def get_activations_models(
-    models: Dict[str, List[ cebra.integrations.sklearn.cebra.CEBRA]],
+    models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
     data: torch.Tensor,
     session_id: int,
     activations: Dict[str, npt.NDArray] = {},
@@ -288,7 +291,9 @@ def _attach_hooks(
     return activations, handles
 
 
-def _aggregate_activations(activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
+def _aggregate_activations(
+    activations: Dict[str, npt.NDArray],
+) -> Dict[str, npt.NDArray]:
     """
     Aggregates activations by model identifier aka. instance.
     This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,

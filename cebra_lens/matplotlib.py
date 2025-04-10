@@ -1,13 +1,14 @@
 """Matplotlib interface to CEBRA-Lens."""
 
-import abc
-from typing import Optional, Tuple, List
+from abc import *
+from typing import Optional, Tuple, List, Dict
 import seaborn as sns
 import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import numpy.typing as npt
+
 
 class _BasePlot:
     """Base plotting class.
@@ -21,7 +22,9 @@ class _BasePlot:
     """
 
     def __init__(
-        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[np.float64, np.float64]
+        self,
+        axis: Optional[matplotlib.axes.Axes],
+        figsize: Tuple[np.float64, np.float64],
     ):
         if axis is None:
             self.fig, self.ax = plt.subplots(figsize=figsize)
@@ -29,7 +32,7 @@ class _BasePlot:
             self.ax = axis
             self.fig = self.ax.figure
 
-    @abc.abstractmethod
+    @abstractmethod
     def plot(self, **kwargs):
         raise NotImplementedError()
 
@@ -56,13 +59,13 @@ class _GenericPlot(_BasePlot):
         self.unique_keys = []
         self.colors = []
 
-    def plot(self, plot_data: dict) -> None:
-        """Handles plotting logic.
+    def plot(self, plot_data: Dict[str, npt.NDArray]) -> None:
+        """Create a plot where the x-axis corresponds to layer and the y-axis to the calculated metric per layer.
 
         Parameters:
         -----------
-        plot_data: dict
-            Dictionary containing the data to be plotted.
+        plot_data: Dict[str, npt.NDArray]
+            Dictionary containing the data to be plotted. Where the keys represent the model label, and the values are the metric values per layer for each model inside a model label category.
         """
         for idx, (key, data_list) in enumerate(plot_data.items()):
             color = self.colors[idx]
@@ -108,8 +111,8 @@ class RDMPlot(_GenericPlot):
 
     Attributes:
     ----------
-    results_dict : dict
-        Dictionary containing the RDMs to be plotted.
+    results_dict : Dict[str, npt.NDArray]
+        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str
         Title of the plot.
     figsize : Tuple[np.float64, np.float64]
@@ -120,7 +123,7 @@ class RDMPlot(_GenericPlot):
 
     def __init__(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         title: str = "RDM Plot",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
@@ -153,8 +156,8 @@ class DistancePlot(_GenericPlot):
 
     Attributes:
     ----------
-    results_dict: dict
-        Dictionary containing the distances to be plotted.
+    results_dict : Dict[str, npt.NDArray]
+        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title: str
         Title of the plot.
     figsize: Tuple[np.float64, np.float64]
@@ -165,7 +168,7 @@ class DistancePlot(_GenericPlot):
 
     def __init__(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         title: str = "Distance plot",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
@@ -200,8 +203,8 @@ class DecodingPlot(_GenericPlot):
 
     Attributes:
     ----------
-    results_dict: dict
-        Dictionary containing the decoding results to be plotted.
+    results_dict : Dict[str, npt.NDArray]
+        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title: str
         Title of the plot.
     figsize: Tuple[np.float64, np.float64]
@@ -212,7 +215,7 @@ class DecodingPlot(_GenericPlot):
 
     def __init__(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         title: str = "Decoding plot",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
@@ -243,7 +246,7 @@ class DecodingPlot(_GenericPlot):
 
 
 def plot_rdm_correlation(
-    rdm_dict: dict,
+    rdm_dict: Dict[str, npt.NDArray],
     title: str = "RDM comparison to Oracle",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -254,9 +257,8 @@ def plot_rdm_correlation(
 
     Parameters:
     -----------
-    rdm_dict : dict
-        A dictionary containing the RDMs to be plotted. Obtained by using lens.quantification.RDM.compute_multi_RDM_layers, where values should
-        be dictionaries containing RDMs for different layers.
+    rdm_dict : Dict[str, npt.NDArray]
+        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str, optional
         The title for the plot (default is "RDM comparison to Oracle").
     figsize : Tuple, optional
@@ -275,7 +277,7 @@ def plot_rdm_correlation(
 
 
 def plot_distance(
-    distance_dict: dict,
+    distance_dict: Dict[str, npt.NDArray],
     title: str = "Inter-repetition distance",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
@@ -285,9 +287,8 @@ def plot_distance(
 
     Parameters:
     -----------
-    distance_dict : dict
-        A dictionary containing the distances to be plotted. Obtained by using lens.quantification.distance.compute_distance_layers, where values should
-        be dictionaries containing distances for different layers.  The format is the same as the activations_dict.
+    distance_dict : Dict[str, npt.NDArray]
+        A dictionary containing the distances to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str, optional
         The title for the plot (default is "Inter-repetition distance").
     figsize : Tuple, optional
@@ -307,7 +308,7 @@ def plot_distance(
 
 
 def plot_layer_decoding(
-    results_dict: dict,
+    results_dict: Dict[str, npt.NDArray],
     title: str = "Decoding by layer",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
@@ -317,9 +318,8 @@ def plot_layer_decoding(
 
     Parameters:
     -----------
-    results_dict : dict
-        A dictionary containing the decoding results to be plotted. Obtained by using lens.quantification.decoding.decode_layer_models, where values should
-        be lists containing decoding 2d-arrays for different layers.
+    results_dict : Dict[str, npt.NDArray]
+        A dictionary containing the decoding results to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str, optional
         The title for the plot (default is "Decoding by layer").
     figsize : Tuple, optional
@@ -343,7 +343,7 @@ class ModelDecodingPlot(_BasePlot):
 
     Attributes:
     ----------
-    results_dict :dict
+    results_dict : Dict[str, npt.NDArrays]
         A dictionary where the keys are model category labels or model file names and the values are 2D arrays containing decoding results.
     palette : str
         The color palette to use for the plot. Default is "hls".
@@ -355,7 +355,7 @@ class ModelDecodingPlot(_BasePlot):
 
     def __init__(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArrays],
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
@@ -417,7 +417,7 @@ class ModelDecodingPlot(_BasePlot):
 
 
 def plot_decoding(
-    results_dict: dict,
+    results_dict: Dict[str, npt.NDArrays],
     palette: str = "hls",
     dataset_label="visual",
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -428,8 +428,8 @@ def plot_decoding(
 
     Parameters:
     -----------
-    results_dict : dict
-        A dictionary where the keys are model category labels or model file names and the values are 2d-arrays containing decoding results gathered by lens.quantification.decoding.decode_models.
+    results_dict : Dict[str, npt.NDArrays]
+        A dictionary where the keys are model category labels or model file names and the values are 2d-arrays containing decoding results.
     palette: str, optional (default is "hls")
         The color palette to use for the plot.
 
@@ -844,7 +844,7 @@ class _HeatMapsPlot:
 
     Attributes:
     ----------
-    cka_matrices : dict
+    cka_matrices : Dict[str, npt.NDArrays]
         A dictionary where the keys are the comparison names and the values are the CKA matrices.
     annot : bool
         If True, shows the values in the heatmap cells.
@@ -862,7 +862,7 @@ class _HeatMapsPlot:
 
     def __init__(
         self,
-        cka_matrices: dict,
+        cka_matrices: Dict[str, npt.NDArrays],
         annot: bool,
         axis: Optional[matplotlib.axes.Axes],
         show_cbar: bool = True,
@@ -941,7 +941,7 @@ class _HeatMapsPlot:
 
 
 def plot_cka_heatmaps(
-    cka_matrices: dict,
+    cka_matrices: Dict[str, npt.NDArrays],
     annot: bool,
     show_cbar: bool = True,
     cbar_label: str = "CKA score",
@@ -954,7 +954,7 @@ def plot_cka_heatmaps(
 
     Parameters:
     -----------
-    cka_matrices : dict
+    cka_matrices : Dict[str, npt.NDArrays]
         Dictionary of CKA matrices where the keys are the comparison names and the values the matrices.
     show_cbar : bool
         If True, shows the color bar.
@@ -1002,7 +1002,7 @@ class _RDMPlots:
 
     def __init__(
         self,
-        rdms: List[Tuple[npt.NDArray,np.float64]],
+        rdms: List[Tuple[npt.NDArray, np.float64]],
         titles: List[str],
         axis: Optional[matplotlib.axes.Axes],
         metric: str = "Normalized Euclidean distance",

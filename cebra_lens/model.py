@@ -5,7 +5,10 @@ import cebra
 import torch
 from typing import Dict, List
 
-def model_loader(model_dir: str, labels: Dict = {}) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
+
+def model_loader(
+    model_dir: str, labels: Dict = {}
+) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
     Load and categorize models based on their training status and session type.
     Parameters:

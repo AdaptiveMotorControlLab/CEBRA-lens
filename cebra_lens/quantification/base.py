@@ -7,6 +7,7 @@ from abc import *
 from pathlib import Path
 from numpy.typing import npt
 
+
 class _BaseMetric:
     """
     Base class for metrics computations.
@@ -15,7 +16,7 @@ class _BaseMetric:
     @abstractmethod
     def compute(self, activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
         """
-        Every metric which inherits ``_BaseMetric`` needs to implement a compute function. 
+        Every metric which inherits ``_BaseMetric`` needs to implement a compute function.
         The compute function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
 
         Parameters:
@@ -91,7 +92,7 @@ class _BaseMetric:
     @abstractmethod
     def plot(self):
         """
-        Every metric which inherits ``_BaseMetric`` needs to implement a plot function. 
+        Every metric which inherits ``_BaseMetric`` needs to implement a plot function.
         The plot function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
         """
         raise NotImplementedError

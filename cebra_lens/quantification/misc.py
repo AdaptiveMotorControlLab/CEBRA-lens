@@ -6,6 +6,7 @@ import torch
 import typing.numpy as npt
 from typing import List
 
+
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     """
     Normalizes a given array using Min-Max normalization.

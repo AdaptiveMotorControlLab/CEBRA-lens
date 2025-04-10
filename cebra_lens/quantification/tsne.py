@@ -7,6 +7,7 @@ from ..matplotlib import *
 from typing import List, Optional, Union
 import numpy.typing as npt
 
+
 class Tsne(_BaseMetric):
     """
     Compute t-SNE (t-Distributed Stochastic Neighbor Embedding) on layer activation data.

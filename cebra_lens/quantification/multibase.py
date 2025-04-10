@@ -4,6 +4,7 @@ import numpy as np
 from typing import Dict
 import numpy.typing as npt
 
+
 class MultiModel:
     """
     Compute the same metric across multiple models.

@@ -12,6 +12,7 @@ from ..matplotlib import *
 from typing import Optional, List, Dict
 import numpy.typing as npt
 
+
 class CKA(_BaseMetric):
     """ "
     Compute the Centered Kernel Alignment (CKA) between two sets of model types.
@@ -107,7 +108,9 @@ class CKA(_BaseMetric):
 
         return x.dot(x.T)
 
-    def _compute_cka(self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray]) -> npt.NDArray:
+    def _compute_cka(
+        self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray]
+    ) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
@@ -145,7 +148,10 @@ class CKA(_BaseMetric):
         return cka_matrix
 
     def _compute_per_layer(
-        self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray], flag=False
+        self,
+        embeddings_1: List[npt.NDArray],
+        embeddings_2: List[npt.NDArray],
+        flag=False,
     ) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
@@ -216,7 +222,7 @@ class CKA(_BaseMetric):
         return self.cka_matrix
 
     @property
-    def __name__(self)->str:
+    def __name__(self) -> str:
         return "cka"
 
     def plot(

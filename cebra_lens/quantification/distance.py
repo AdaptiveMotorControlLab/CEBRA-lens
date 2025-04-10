@@ -9,13 +9,16 @@ from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
 
+
 class DistanceMetric:
     """
     Base class for distance metrics.
     This class provides methods to compute distances between embeddings and centroids.
     """
 
-    def compute_centroid(self, embedding: npt.NDArray, indices: List[np.int64]) -> np.float64:
+    def compute_centroid(
+        self, embedding: npt.NDArray, indices: List[np.int64]
+    ) -> np.float64:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
@@ -157,7 +160,10 @@ class Interrep(DistanceMetric):
     """
 
     def __init__(
-        self, indices: List[np.int64], repetition_indices: List[np.int64], metric: Optional[str] = "cosine"
+        self,
+        indices: List[np.int64],
+        repetition_indices: List[np.int64],
+        metric: Optional[str] = "cosine",
     ):
         self.indices = indices
         self.repetition_indices = repetition_indices
@@ -308,7 +314,9 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations: List[Union[np.float64, npt.NDArray]]) -> List[np.float64]:
+    def compute(
+        self, activations: List[Union[np.float64, npt.NDArray]]
+    ) -> List[np.float64]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 

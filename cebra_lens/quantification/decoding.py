@@ -9,6 +9,7 @@ from ..matplotlib import *
 import numpy.typing as npt
 from typing import Dict
 
+
 class Decoding(_BaseMetric):
     """
     Decoding class for decoding neural data by layer using a given CEBRA model.
@@ -59,7 +60,7 @@ class Decoding(_BaseMetric):
         dataset_label: str = "visual",
     ) -> npt.NDArray:
         """
-        Decodes a model by choosing the appropriate function base on the dataset. 
+        Decodes a model by choosing the appropriate function base on the dataset.
         Currently compatible with multi-session and single-session data only.
 
         Parameters:

@@ -5,7 +5,10 @@ import cebra.datasets
 import numpy.typing as npt
 from typing import List
 
-def get_single_session_datasets(rats:List[str]=['achilles','buddy','cicero','gatsby']):
+
+def get_single_session_datasets(
+    rats: List[str] = ["achilles", "buddy", "cicero", "gatsby"]
+):
     """
     Args:
         rats:  List of names of the different sessions
@@ -13,10 +16,15 @@ def get_single_session_datasets(rats:List[str]=['achilles','buddy','cicero','gat
     Returns:
       The train and valid datasets, and the train and valid labels.
     """
-    train_datas, valid_datas, continuous_labels_train, continuous_labels_val = [], [], [], []
+    train_datas, valid_datas, continuous_labels_train, continuous_labels_val = (
+        [],
+        [],
+        [],
+        [],
+    )
 
     for i in rats:
-        data = cebra.datasets.init('rat-hippocampus-single-{i}')
+        data = cebra.datasets.init("rat-hippocampus-single-{i}")
         neural_train, neural_valid, label_train, label_valid = split_data_HPC(data)
         train_datas.append(neural_train)
         valid_datas.append(neural_valid)
@@ -24,7 +32,8 @@ def get_single_session_datasets(rats:List[str]=['achilles','buddy','cicero','gat
         continuous_labels_val.append(label_valid)
 
     return train_datas, valid_datas, continuous_labels_train, continuous_labels_val
-    
+
+
 def decoding_pos_dir(
     embedding_train: npt.NDArray,
     embedding_test: npt.NDArray,
@@ -69,7 +78,7 @@ def decoding_pos_dir(
     return test_score, pos_test_err, pos_test_score
 
 
-def split_data_HPC(data: object, test_ratio: float=0.3):
+def split_data_HPC(data: object, test_ratio: float = 0.3):
     """
     Splits the given data into training and testing sets based on the specified test ratio.
     Args:
