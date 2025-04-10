@@ -2,17 +2,33 @@
 
 import numpy as np
 from scipy.linalg import block_diag
+from typing import List, Optional, Tuple, Union
 from scipy.spatial.distance import correlation, pdist, squareform
-from tqdm import tqdm
 from .misc import discrete_binning
 import torch
 from .base import _BaseMetric
-import pickle
-from pathlib import Path
 from ..matplotlib import *
+import numpy.typing as npt
 
 
 class RDM(_BaseMetric):
+    """
+    Compute the Representational Dissimilarity Matrix (RDM) for a given activation layer.
+
+    Parameters:
+    -----------
+    data : torch.Tensor
+        The data array of shape (num_samples, num_features).
+    label : torch.Tensor
+        The array of labels corresponding to the data.
+    dataset_label : str, optional
+        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
+    metric : str, optional
+        The distance metric to use for computing the RDMs. Default is 'correlation'.
+    bool_oracle : bool, optional
+        Whether to compute and compare with the Oracle RDM. Default is True.
+    """
+
     def __init__(
         self,
         data: torch.Tensor,
@@ -36,14 +52,9 @@ class RDM(_BaseMetric):
         """
         Creates the Oracle RDM for the specified dataset.
 
-        Parameters:
-        -----------
-        dataset_label : str, optional
-            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
-
         Returns:
         --------
-        np.ndarray
+        npt.NDArray
             The Oracle RDM as a squareform distance matrix.
         """
 
@@ -66,18 +77,16 @@ class RDM(_BaseMetric):
 
         return oracle_rdm
 
-    def _compare_RDM(self, rdm_1: np.ndarray, rdm_2: np.ndarray) -> float:
+    def _compare_RDM(self, rdm_1: npt.NDArray, rdm_2: npt.NDArray) -> float:
         """
         Compares two RDMs using the specified metric.
 
         Parameters:
         -----------
-        rdm_1 : np.ndarray
+        rdm_1 : npt.NDArray
             The first RDM to compare.
-        rdm_2 : np.ndarray
+        rdm_2 : npt.NDArray
             The second RDM to compare.
-        metric : str, optional
-            The distance metric to use for comparison. Default is 'correlation'.
 
         Returns:
         --------
@@ -94,7 +103,22 @@ class RDM(_BaseMetric):
 
         return comparison
 
-    def _compute_per_layer(self, layer_activation):
+    def _compute_per_layer(
+        self, layer_activation: npt.NDArray
+    ) -> Tuple[npt.NDArray, float]:
+        """
+        Computes the RDM for a given layer's activation.
+
+        Parameters:
+        -----------
+        layer_activation : npt.NDArray
+            A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
+
+        Returns:
+        --------
+        Tuple[npt.NDArray, float]
+            A tuple of the computed RDM as a squareform distance matrix and the similarity score between the computed RDM and the Oracle RDM, if applicable.
+        """
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
             layer_activation = layer_activation.T
@@ -108,41 +132,37 @@ class RDM(_BaseMetric):
 
         return squareform(rdm), correlation
 
-    def compute(self, activations):
+    def compute(
+        self, activations: List[Union[float, npt.NDArray]]
+    ) -> List[Tuple[npt.NDArray, float]]:
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
         Parameters:
         -----------
-        data : torch.Tensor
-            The data array of shape (num_samples, num_features).
-        label :torch.Tensor
-            The array of labels corresponding to the data.
-        activations : list
-            A list of activations, each being an array of shape (num_neurons, num_samples).
-        dataset_label : str, optional
-            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
-        metric : str, optional
-            The distance metric to use for computing the RDMs. Default is 'correlation'.
-        bool_oracle : bool, optional
-            Whether to compute and compare with the Oracle RDM. Default is True.
+        activations : List[Union[float, npt.NDArray]]
+            List of 2D numpy arrays representing the activation of neurons per layer.
 
         Returns:
         --------
-        list
-            A list of tuples, where each tuple contains the RDM for the layer and the correlation with the Oracle RDM (if computed).
+        List[Tuple[npt.NDArray, float]]:
+            A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(
-            activations, (np.ndarray, torch.Tensor)
+            activations, (npt.NDArray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
+    @property
+    def __name__(self):
+        return "rdm"
+
     def plot(
         self,
-        rdms: list,
-        titles: list,
+        rdms: List[npt.NDArray],
+        titles: List[Tuple[npt.NDArray, float]],
         metric: str = "Normalized Euclidean distance",
         dataset_label: str = "visual",
         cmap: str = "viridis",
@@ -158,7 +178,3 @@ class RDM(_BaseMetric):
             figsize,
             ax,
         )
-
-    @property
-    def __name__(self):
-        return "rdm"

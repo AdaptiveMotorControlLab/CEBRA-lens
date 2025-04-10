@@ -1,3 +1,4 @@
+import cebra
 import torch
 import numpy as np
 from ..utils_allen import decoding_frames
@@ -5,15 +6,38 @@ from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
 from .base import _BaseMetric
 from ..matplotlib import *
+import numpy.typing as npt
+from typing import Dict
 
 
 class Decoding(_BaseMetric):
+    """
+    Decoding class for decoding neural data by layer using a given CEBRA model.
+
+    Parameter:
+    ----------
+    train_data : torch.Tensor
+        The training data used for model transformation.
+    train_label : npt.NDArray
+        The true labels corresponding to the training data.
+    test_data : torch.Tensor
+        The validation data used for testing the model.
+    test_label : npt.NDArray
+        The true labels corresponding to the validation data.
+    session_id : int, optional
+        The session ID for multi-session models. For single-session no need to input it.
+    dataset_label : str, optional
+        The type of dataset being used for decoding (default is "visual").
+    layer_type : str, optional
+        The type of layer to extract activations from. Defaults to 'conv'.
+    """
+
     def __init__(
         self,
         train_data: torch.Tensor,
-        train_label: np.ndarray,
+        train_label: npt.NDArray,
         test_data: torch.Tensor,
-        test_label: np.ndarray,
+        test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
         layer_type: str = "conv",
@@ -28,33 +52,37 @@ class Decoding(_BaseMetric):
         self.layer_type = layer_type
 
     def _decode(
-        # figure out what to do about the arguments and parameters
         self,
-        embedding_train: np.ndarray,
-        label_train: np.ndarray,
-        embedding_test: np.ndarray,
-        label_test: np.ndarray,
+        embedding_train: npt.NDArray,
+        label_train: npt.NDArray,
+        embedding_test: npt.NDArray,
+        label_test: npt.NDArray,
         dataset_label: str = "visual",
-    ):
+    ) -> npt.NDArray:
         """
-        Decodes a model by choosing the appropriate function.
+        Decodes a model by choosing the appropriate function base on the dataset.
+        Currently compatible with multi-session and single-session data only.
 
         Parameters:
         -----------
-        embedding_train : np.ndarray
+        embedding_train : npt.NDArray
             The part of the output embedding to use as training for the decoding.
-        train_label : np.ndarray
+        train_label : npt.NDArray
             The true labels corresponding to the training data.
-        embedding_test : np.ndarray
+        embedding_test : npt.NDArray
             The part of the output embedding to use as testing for the decoding.
-        test_label : np.ndarray
+        test_label : npt.NDArray
             The true labels corresponding to the validation data.
         dataset_label : str, optional
             The type of dataset being used for decoding (default is "visual").
 
         Returns:
         --------
-        np.ndarray : Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
+        npt.NDArray
+            Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
+
+        TODO(eloise): implement decoding for unified data.
+
         """
         if (
             embedding_train.shape[0] < embedding_train.shape[1]
@@ -89,7 +117,7 @@ class Decoding(_BaseMetric):
     def compute(
         self,
         model,
-    ):
+    ) -> npt.NDArray:
         """
         Decode neural data by layer using a given CEBRA model.
 
@@ -97,24 +125,10 @@ class Decoding(_BaseMetric):
         ----------
         model : cebra.integrations.sklearn.cebra.CEBRA
             The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-        train_data : torch.Tensor
-            The training data used for model transformation.
-        train_label : np.ndarray
-            The true labels corresponding to the training data.
-        test_data : torch.Tensor
-            The validation data used for testing the model.
-        test_label : np.ndarray
-            The true labels corresponding to the validation data.
-        session_id : int, optional
-            The session ID for multi-session models. For single-session no need to input it.
-        dataset_label : str, optional
-            The type of dataset being used for decoding (default is "visual").
-        layer_type : str, optional
-            The type of layer to extract activations from. Defaults to 'conv'.
 
         Returns:
         -------
-        np.ndarray
+        npt.NDArray
             A numpy array containing the decoding results for each layer and the neural input baseline.
         """
 
@@ -164,26 +178,48 @@ class Decoding(_BaseMetric):
 
         return results
 
+    @property
+    def __name__(self):
+        return "decode_by_layer"
+
     def plot(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         title: str = "Decoding by layer",
         figsize: tuple = (15, 5),
     ):
         return plot_layer_decoding(results_dict, title, figsize)
 
-    @property
-    def __name__(self):
-        return "decode_by_layer"
-
 
 class DecodeModel(Decoding):
+    """
+    Decoding class for decoding neural data using a given CEBRA model.
+
+    Parameters:
+    ----------
+
+    train_data : torch.Tensor
+        The training data used for model transformation.
+    train_label : npt.NDArray
+        The true labels corresponding to the training data.
+    test_data : torch.Tensor
+        The validation data used for testing the model.
+    test_label : npt.NDArray
+        The true labels corresponding to the validation data.
+    session_id : int, optional
+        The session ID for multi-session models. For single-session no need to input it.
+    dataset_label : str, optional
+        The type of dataset being used for decoding (default is "visual").
+    layer_type : str, optional
+        The type of layer to extract activations from. Defaults to 'conv'.
+    """
+
     def __init__(
         self,
         train_data: torch.Tensor,
-        train_label: np.ndarray,
+        train_label: npt.NDArray,
         test_data: torch.Tensor,
-        test_label: np.ndarray,
+        test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
         layer_type: str = "conv",
@@ -196,10 +232,10 @@ class DecodeModel(Decoding):
             test_label,
             session_id,
             dataset_label,
-            layer_type
+            layer_type,
         )
 
-    def compute(self, model) -> np.ndarray:
+    def compute(self, model: cebra.integrations.sklearn.cebra.CEBRA) -> npt.NDArray:
         """
         Decodes a single model.
 
@@ -207,22 +243,11 @@ class DecodeModel(Decoding):
         -----------
         model : cebra.integrations.sklearn.cebra.CEBRA
             The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-        train_data : torch.Tensor
-            The training data used for model transformation.
-        train_label : np.ndarray
-            The true labels corresponding to the training data.
-        test_data : torch.Tensor
-            The validation data used for testing the model.
-        test_label : np.ndarray
-            The true labels corresponding to the validation data.
-        session_id : int, optional
-            The session ID for multi-session models. For single-session no need to input it.
-        dataset_label : str, optional
-            The type of dataset being used for decoding (default is "visual").
 
         Returns:
         --------
-        np.ndarray : Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
+        npt.NDArray
+            Numpy array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
         """
 
         if model.solver_name_ == "multi-session":
@@ -249,14 +274,15 @@ class DecodeModel(Decoding):
         )
         return np.array(results)
 
+    @property
+    def __name__(self):
+        return "decode_model"
+
     def plot(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         palette: str = "hls",
         dataset_label="visual",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         return plot_decoding(results_dict, palette, dataset_label, ax)
-
-    def __name__(self):
-        return "decode_model"
