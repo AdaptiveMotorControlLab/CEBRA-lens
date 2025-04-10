@@ -3,21 +3,23 @@
 from random import sample
 import numpy as np
 import torch
+import typing.numpy as npt
+from typing import List
 
 
-def normalize_minmax(rdm: np.ndarray) -> np.ndarray:
+def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     """
     Normalizes a given array using Min-Max normalization.
 
     Parameters:
     -----------
-    rdm : np.ndarray
+    rdm : npt.NDArray
         A NumPy array to be normalized. This can be any numeric array, such as an RDM (Representational
         Dissimilarity Matrix), where values are normalized to the range [0, 1].
 
     Returns:
     --------
-    np.ndarray
+    npt.NDArray
         A normalized NumPy array where the minimum value is scaled to 0 and the maximum value is scaled to 1.
     """
 
@@ -31,7 +33,7 @@ def discrete_binning(
     label: torch.Tensor,
     dataset_label: str = "visual",
     sample_mode: str = "sub_sample",
-) -> np.ndarray:
+) -> npt.NDArray:
     """
     Bins the training data based on the provided labels, creating indices for sampling. Used to discretize a continuous input for RDM.
 
@@ -47,7 +49,7 @@ def discrete_binning(
         If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
     Returns:
     --------
-    np.ndarray
+    npt.NDArray
         An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
     """
 
@@ -126,8 +128,8 @@ def discrete_binning(
 
 
 def repetition_binning(
-    indices: np.ndarray, data, dataset_label: str = "visual"
-) -> list:
+    indices: npt.NDArray, data, dataset_label: str = "visual"
+) -> List[np.int64]:
 
     if dataset_label == "visual":
         samples_per_rep = 900

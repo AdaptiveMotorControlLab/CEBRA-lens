@@ -1,23 +1,54 @@
 import cebra
 import numpy as np
 import sklearn
+import cebra.datasets
+import numpy.typing as npt
+from typing import List
+
+
+def get_single_session_datasets(
+    rats: List[str] = ["achilles", "buddy", "cicero", "gatsby"]
+):
+    """
+    Args:
+        rats:  List of names of the different sessions
+
+    Returns:
+      The train and valid datasets, and the train and valid labels.
+    """
+    train_datas, valid_datas, continuous_labels_train, continuous_labels_val = (
+        [],
+        [],
+        [],
+        [],
+    )
+
+    for i in rats:
+        data = cebra.datasets.init("rat-hippocampus-single-{i}")
+        neural_train, neural_valid, label_train, label_valid = split_data_HPC(data)
+        train_datas.append(neural_train)
+        valid_datas.append(neural_valid)
+        continuous_labels_train.append(label_train)
+        continuous_labels_val.append(label_valid)
+
+    return train_datas, valid_datas, continuous_labels_train, continuous_labels_val
 
 
 def decoding_pos_dir(
-    embedding_train: np.ndarray,
-    embedding_test: np.ndarray,
-    label_train: np.ndarray,
-    label_test: np.ndarray,
+    embedding_train: npt.NDArray,
+    embedding_test: npt.NDArray,
+    label_train: npt.NDArray,
+    label_test: npt.NDArray,
 ):
     """
     Decodes position and direction from embeddings using K-Nearest Neighbors (KNN) and evaluates the performance.
     Parameters:
     ----------
-    embedding_train : np.ndarray
-    embedding_test : np.ndarray
-    label_train : np.ndarray
+    embedding_train : npt.NDArray
+    embedding_test : npt.NDArray
+    label_train : npt.NDArray
         Training labels, where the first column represents position and the second column represents direction.
-    label_test : np.ndarray
+    label_test : npt.NDArray
         Testing labels, where the first column represents position and the second column represents direction.
     Returns:
     -------
@@ -47,7 +78,7 @@ def decoding_pos_dir(
     return test_score, pos_test_err, pos_test_score
 
 
-def split_data_HPC(data: object, test_ratio: float):
+def split_data_HPC(data: object, test_ratio: float = 0.3):
     """
     Splits the given data into training and testing sets based on the specified test ratio.
     Args:
