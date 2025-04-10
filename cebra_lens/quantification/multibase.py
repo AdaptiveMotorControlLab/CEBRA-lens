@@ -37,12 +37,13 @@ class MultiModel:
         self.result_dict = {}
         for model_label, activations_list in activations.items():
             self.result_dict[model_label] = []
-            for activations in tqdm(activations_list, desc=f"Processing {model_label}"):
+            for activations in tqdm(activations_list,
+                                    desc=f"Processing {model_label}"):
                 self.result_dict[model_label].append(
-                    self.metric_class.compute(activations)
-                )
+                    self.metric_class.compute(activations))
             if isinstance(self.metric_class, DecodeModel):
-                self.result_dict[model_label] = np.array(self.result_dict[model_label])
+                self.result_dict[model_label] = np.array(
+                    self.result_dict[model_label])
         return self.result_dict
 
     def plot(self, *args, **kwargs):
