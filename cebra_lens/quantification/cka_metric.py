@@ -10,7 +10,7 @@ import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
 from typing import Optional
-
+import numpy.typing as npt
 
 class CKA(_BaseMetric):
     """ "
@@ -33,7 +33,7 @@ class CKA(_BaseMetric):
         self.comparisonY = comparison[1]
         self.cka_matrix = None
 
-    def center_gram(self, gram: np.ndarray, unbiased: bool = False) -> np.ndarray:
+    def center_gram(self, gram: npt.NDArray, unbiased: bool = False) -> npt.NDArray:
         """Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
@@ -72,7 +72,7 @@ class CKA(_BaseMetric):
         return gram
 
     def cka(
-        self, gram_x: np.ndarray, gram_y: np.ndarray, debiased: bool = False
+        self, gram_x: npt.NDArray, gram_y: npt.NDArray, debiased: bool = False
     ) -> float:
         """Compute CKA.
 
@@ -95,7 +95,7 @@ class CKA(_BaseMetric):
         normalization_y = np.linalg.norm(gram_y)
         return scaled_hsic / (normalization_x * normalization_y)
 
-    def gram_linear(self, x: np.ndarray) -> np.ndarray:
+    def gram_linear(self, x: npt.NDArray) -> npt.NDArray:
         """Compute Gram (kernel) matrix for a linear kernel.
 
         Args:
@@ -107,7 +107,7 @@ class CKA(_BaseMetric):
 
         return x.dot(x.T)
 
-    def _compute_cka(self, embeddings_1: list, embeddings_2: list) -> np.ndarray:
+    def _compute_cka(self, embeddings_1: list, embeddings_2: list) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
@@ -122,7 +122,7 @@ class CKA(_BaseMetric):
 
         Returns:
         --------
-        cka_matrix : np.ndarray
+        cka_matrix : npt.NDArray
             A one-row array containing the CKA values for each layer.
         """
 
@@ -146,7 +146,7 @@ class CKA(_BaseMetric):
 
     def _compute_per_layer(
         self, embeddings_1: list, embeddings_2: list, flag=False
-    ) -> np.ndarray:
+    ) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
 
@@ -161,7 +161,7 @@ class CKA(_BaseMetric):
 
         Returns:
         --------
-        cka_matrix : np.ndarray
+        cka_matrix : npt.NDArray
             A matrix containing the CKA values for each layer.
         """
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
@@ -172,7 +172,7 @@ class CKA(_BaseMetric):
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations: dict) -> np.ndarray:
+    def compute(self, activations: dict) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -185,7 +185,7 @@ class CKA(_BaseMetric):
 
         Returns:
         --------
-        cka_matrix : np.ndarray
+        cka_matrix : npt.NDArray
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
 

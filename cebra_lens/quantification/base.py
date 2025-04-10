@@ -3,35 +3,35 @@ import numpy as np
 import pickle
 import types
 from typing import List, Union
-import abc
+from abc import *
 from pathlib import Path
-
+from numpy.typing import npt
 
 class _BaseMetric:
     """
     Base class for metrics computations.
     """
 
-    @abc.abstractmethod
+    @abstractmethod
     def compute(self, activations: dict) -> dict:
         raise NotImplementedError
 
     def iterate_over_layers(
         self,
-        activations: List[Union[float, np.ndarray]],
+        activations: List[Union[float, npt.NDArray]],
         metric_func: types.FunctionType,
-    ) -> List[Union[float, np.ndarray]]:
+    ) -> List[Union[float, npt.NDArray]]:
         """
         Iterate over each layer of activations and apply the metric function to compute the desired metric.
 
         Parameters:
         -----------
-            activations : List[np.ndarray]
+            activations : List[npt.NDArray]
             List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:
         --------
-            layer_data : List[Union[float, np.ndarray]]
+            layer_data : List[Union[float, npt.NDArray]]
             The computed metric for each layer.
         """
         layer_data = []
@@ -52,6 +52,6 @@ class _BaseMetric:
             data = pickle.load(f)
         return data
 
-    @abc.abstractmethod
+    @abstractmethod
     def plot(self):
         raise NotImplementedError

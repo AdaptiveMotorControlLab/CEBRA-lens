@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple, Union
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
 from ..matplotlib import *
-
+import numpy.typing as npt
 
 class DistanceMetric:
     """
@@ -15,13 +15,13 @@ class DistanceMetric:
     This class provides methods to compute distances between embeddings and centroids.
     """
 
-    def compute_centroid(self, embedding: np.ndarray, indices: list) -> float:
+    def compute_centroid(self, embedding: npt.NDArray, indices: list) -> float:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
         indices : list
             A list of indices specifying the bin data to compute the centroid.
@@ -35,21 +35,21 @@ class DistanceMetric:
         return np.mean(bin_data, axis=1)  # Compute centroid
 
     def scale_embedding(
-        self, embedding: np.ndarray, metric: str = "cosine"
-    ) -> np.ndarray:
+        self, embedding: npt.NDArray, metric: str = "cosine"
+    ) -> npt.NDArray:
         """
         Scales the embedding data based on the specified metric.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
         metric : str
             The distance metric to use for scaling the embedding, either "cosine" or "euclidean".
 
         Returns:
         --------
-        np.ndarray
+        npt.NDArray
             The scaled embedding data.
         """
 
@@ -66,14 +66,14 @@ class DistanceMetric:
             )
 
     def compute_centroids(
-        self, embedding: np.ndarray, indices: list, metric: str = "cosine"
+        self, embedding: npt.NDArray, indices: list, metric: str = "cosine"
     ) -> list:
         """
         Computes the centroid of a single embedding (e.g. single layer) for all the bins.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
         indices : list
             A list of indices specifying the bins to compute the centroids.
@@ -110,13 +110,13 @@ class Intrabin(DistanceMetric):
         self.indices = indices
         self.metric = metric
 
-    def _compute_distance(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> float:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
 
         Returns:
@@ -163,13 +163,13 @@ class Interrep(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def _compute_distance(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> float:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
 
         Returns:
@@ -223,13 +223,13 @@ class Interbin(DistanceMetric):
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
-    def _compute_distance(self, embedding: np.ndarray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> float:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
         Parameters:
         -----------
-        embedding : np.ndarray
+        embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
 
         Returns:
@@ -288,7 +288,7 @@ class Distance(_BaseMetric):
 
         self.indices, self.repetition_indices = self._define_indices()
 
-    def _define_indices(self) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+    def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
@@ -308,13 +308,13 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations: List[Union[float, np.ndarray]]) -> List[float]:
+    def compute(self, activations: List[Union[float, npt.NDArray]]) -> List[float]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
         Parameters:
         -----------
-        activations : List[Union[float, np.ndarray]]
+        activations : List[Union[float, npt.NDArray]]
             List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:

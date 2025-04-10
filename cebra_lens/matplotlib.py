@@ -7,7 +7,7 @@ import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-
+import numpy.typing as npt
 
 class _BasePlot:
     """Base plotting class.
@@ -455,7 +455,7 @@ class _EmbeddingComparisonPlot:
         A list of embeddings for the first set of data.
     embeddings_2 : list
         A list of embeddings for the second set of data.
-    labels : np.ndarray
+    labels : npt.NDArray
         An array of labels corresponding to the data labels.
     sample_plot : int
         The number of samples to plot from the embeddings.
@@ -471,7 +471,7 @@ class _EmbeddingComparisonPlot:
         self,
         embeddings_1: list,
         embeddings_2: list,
-        labels: np.ndarray,
+        labels: npt.NDArray,
         sample_plot: int,
         comparison_labels: tuple,
         dataset_label: str,
@@ -662,7 +662,7 @@ class _EmbeddingComparisonPlot:
 def compare_embeddings_layers(
     embeddings_1: list,
     embeddings_2: list,
-    labels: np.ndarray,
+    labels: npt.NDArray,
     sample_plot: int = 200,
     comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
     dataset_label: str = "HPC",
@@ -678,7 +678,7 @@ def compare_embeddings_layers(
         List of embeddings for the first dataset.
     embeddings_2 : list
         List of embeddings for the second dataset.
-    labels : np.ndarray
+    labels : npt.NDArray
         Array of labels for the data points.
     sample_plot : int, optional
         Number of samples to plot (default is 200).
@@ -713,7 +713,7 @@ class _ActivationPlot:
     input_data : torch.Tensor
         The input data tensor to be plotted.
     embeddings : list
-        A list of np.ndarrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
+        A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     figsize : tuple[float, float]
         The size of the figure (width, height).
     axis : Optional[matplotlib.axes.Axes]
@@ -811,7 +811,7 @@ def plot_activations(
     input_data : torch.Tensor
         The input data tensor to be plotted.
     embeddings : list
-        A list of np.ndarrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
+        A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
     cmap : str, optional

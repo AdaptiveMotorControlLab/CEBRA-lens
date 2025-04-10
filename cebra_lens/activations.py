@@ -4,9 +4,10 @@ import cebra
 import torch
 import torch.nn as nn
 import numpy as np
+import numpy.typing as npt
 
 
-def _cut_array(array: np.ndarray, cut_indices: tuple):
+def _cut_array(array: npt.NDArray, cut_indices: tuple):
     """
     Slices the input array based on the provided cut indices.
     This is used to remove the padding from activations in `get_activations_model`.
@@ -19,7 +20,7 @@ def _cut_array(array: np.ndarray, cut_indices: tuple):
 
     Returns:
     --------
-    np.ndarray
+    npt.NDArray
         The sliced array. If both start and end indices are 0, the whole array is returned.
     """
 
