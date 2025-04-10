@@ -112,7 +112,7 @@ class RDMPlot(_GenericPlot):
     Attributes:
     ----------
     results_dict : Dict[str, npt.NDArray]
-        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+        Dictionary containing the correlations to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str
         Title of the plot.
     figsize : Tuple[np.float64, np.float64]
@@ -124,7 +124,7 @@ class RDMPlot(_GenericPlot):
     def __init__(
         self,
         results_dict: Dict[str, npt.NDArray],
-        title: str = "RDM Plot",
+        title: str = "Correlation of RDM with Oracle data across layers",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
@@ -136,7 +136,13 @@ class RDMPlot(_GenericPlot):
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
     def _transform(self):
-        """Transforms results_dict into a format suitable for plotting."""
+        """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values are now corresponding to the correlation between RDM and Oracle data across layers for model label.
+
+        Returns:
+        --------
+        Dict[str,List[List[np.float64]]]
+            Dictionary where the keys correspond to the model labels, and the value to the correlation between RDM and Oracle data for each layer for each model inside a model label category.
+        """
         data = {}
         for key, data_list in self.results_dict.items():
             layer_values = []
@@ -147,17 +153,17 @@ class RDMPlot(_GenericPlot):
         return data
 
     def plot(self):
-        """Call parent plot method with transformed data."""
+        """Plots correlation of RDM with Oracle data across layers"""
         return super().plot(self.plot_data)
 
 
 class DistancePlot(_GenericPlot):
-    """Plot the distances across layers for models in results_dict.
+    """Plot the distances across layers for models in ``results_dict``.
 
     Attributes:
     ----------
     results_dict : Dict[str, npt.NDArray]
-        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+        Dictionary containing the distances to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title: str
         Title of the plot.
     figsize: Tuple[np.float64, np.float64]
@@ -169,7 +175,7 @@ class DistancePlot(_GenericPlot):
     def __init__(
         self,
         results_dict: Dict[str, npt.NDArray],
-        title: str = "Distance plot",
+        title: str = "Distance across layers",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
@@ -180,8 +186,14 @@ class DistancePlot(_GenericPlot):
         self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
-    def _transform(self):
-        """Transforms results_dict into a format suitable for plotting."""
+    def _transform(self) -> Dict[str, List[List[np.float64]]]:
+        """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values are now corresponding to the distance metric across layers for model label.
+
+        Returns:
+        --------
+        Dict[str,List[List[np.float64]]]
+            Dictionary where the keys correspond to the model labels, and the value to the distance metric for each layer for each model inside a model label category.
+        """
         data = {}
         for idx, (key, data_list) in enumerate(self.results_dict.items()):
             layer_values = []
@@ -194,17 +206,17 @@ class DistancePlot(_GenericPlot):
         return data
 
     def plot(self):
-        """Call parent plot method with transformed data."""
+        """Plots distance metric across layers"""
         return super().plot(self.plot_data)
 
 
 class DecodingPlot(_GenericPlot):
-    """Plot the decoding accuracy across layers for models in results_dict.
+    """Plot the decoding accuracy across layers for models in ``results_dict``.
 
     Attributes:
     ----------
     results_dict : Dict[str, npt.NDArray]
-        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+        Dictionary containing the decoding accuracies to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title: str
         Title of the plot.
     figsize: Tuple[np.float64, np.float64]
@@ -216,7 +228,7 @@ class DecodingPlot(_GenericPlot):
     def __init__(
         self,
         results_dict: Dict[str, npt.NDArray],
-        title: str = "Decoding plot",
+        title: str = "Decoding accuracy across layers",
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
@@ -227,8 +239,14 @@ class DecodingPlot(_GenericPlot):
         self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
-    def _transform(self):
-        """Transforms results_dict into a format suitable for plotting."""
+    def _transform(self) -> Dict[str, List[List[np.float64]]]:
+        """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values are now corresponding to the decoding accuracies across layers for model label.
+
+        Returns:
+        --------
+        Dict[str,List[List[np.float64]]]
+            Dictionary where the keys correspond to the model labels, and the value to the decoding accuracies for each layer for each model inside a model label category.
+        """
         data = {}
         for idx, (key, data_list) in enumerate(self.results_dict.items()):
             layer_values = []
@@ -241,7 +259,7 @@ class DecodingPlot(_GenericPlot):
         return data
 
     def plot(self):
-        """Call parent plot method with transformed data."""
+        """Plots decoding accuracy across layers"""
         return super().plot(self.plot_data)
 
 
@@ -283,7 +301,7 @@ def plot_distance(
     **kwargs,
 ) -> plt.Figure:
     """
-    Plots the distances across layer for models in distance_dict.
+    Plots the distances across layer for models in ``distance_dict``.
 
     Parameters:
     -----------
@@ -339,7 +357,7 @@ def plot_layer_decoding(
 
 
 class ModelDecodingPlot(_BasePlot):
-    """Class for plotting decoding accuracy across models.
+    """Plotting decoding accuracy across models.
 
     Attributes:
     ----------
@@ -375,7 +393,7 @@ class ModelDecodingPlot(_BasePlot):
         self.dataset_label = dataset_label  # Define dataset label
 
     def plot(self, **kwargs) -> None:
-        """Handles plotting logic"""
+        """Plotting logic to plot the decoding accuracies across models where the x-axis are the model labels, and the y-axis are the decoding accuracy values in (%)."""
         x_positions = list(
             range(1, len(self.results_dict) + 1)
         )  # X positions for scatter points
@@ -447,7 +465,7 @@ def plot_decoding(
 
 
 class _EmbeddingComparisonPlot:
-    """Class for comparing embeddings across layers.
+    """Plot the embedding visualization for comparison across layers.
 
     Attributes:
     ----------
@@ -527,7 +545,13 @@ class _EmbeddingComparisonPlot:
             self.ax = axis
         return self.ax
 
-    def _plot_hippocampus(ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
+    def _plot_hippocampus(
+        ax: matplotlib.axes.Axes,
+        embedding: npt.NDArray,
+        label: str,
+        gray: bool = False,
+        idx_order: Tuple[int, int, int] = (0, 1, 2),
+    ) -> matplotlib.axes.Axes:
         """Plot the hippocampus embedding."""
         r_ind = label[:, 1] == 1
         l_ind = label[:, 2] == 1
@@ -573,7 +597,14 @@ class _EmbeddingComparisonPlot:
 
         return ax
 
-    def _plot_allen(self, ax, embedding, label, gray=False, idx_order=(0, 1, 2)):
+    def _plot_allen(
+        self,
+        ax: matplotlib.axes.Axes,
+        embedding: npt.NDArray,
+        label: str,
+        gray: bool = False,
+        idx_order: Tuple[int, int, int] = (0, 1, 2),
+    ):
         """Plot the Allen embedding."""
         c = label
 
@@ -644,7 +675,7 @@ class _EmbeddingComparisonPlot:
             ax.axis("off")
 
     def plot(self):
-        """Handles plotting logic."""
+        """Plots embedding layers for models being compared"""
         self._plot_embedding_layers(
             self.axs_1, self.embeddings_1, self.comparison_labels[1][0]
         )
