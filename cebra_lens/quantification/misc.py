@@ -4,6 +4,7 @@ from random import sample
 import numpy as np
 import torch
 import typing.numpy as npt
+from typing import List
 
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     """
@@ -127,7 +128,7 @@ def discrete_binning(
 
 def repetition_binning(
     indices: npt.NDArray, data, dataset_label: str = "visual"
-) -> list:
+) -> List[np.int64]:
 
     if dataset_label == "visual":
         samples_per_rep = 900

@@ -3,8 +3,9 @@ import numpy as np
 import sklearn
 import cebra.datasets
 import numpy.typing as npt
+from typing import List
 
-def get_single_session_datasets(rats:list=['achilles','buddy','cicero','gatsby']):
+def get_single_session_datasets(rats:List[str]=['achilles','buddy','cicero','gatsby']):
     """
     Args:
         rats:  List of names of the different sessions

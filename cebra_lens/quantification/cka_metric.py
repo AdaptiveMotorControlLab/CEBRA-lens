@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
-from typing import Optional
+from typing import Optional, List
 import numpy.typing as npt
 
 class CKA(_BaseMetric):
@@ -107,7 +107,7 @@ class CKA(_BaseMetric):
 
         return x.dot(x.T)
 
-    def _compute_cka(self, embeddings_1: list, embeddings_2: list) -> npt.NDArray:
+    def _compute_cka(self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray]) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
@@ -115,9 +115,9 @@ class CKA(_BaseMetric):
 
         Parameters:
         -----------
-        embeddings_1 : list
+        embeddings_1 : List[npt.NDArray]
             A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
-        embeddings_2 : list
+        embeddings_2 : List[npt.NDArray]
             A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
 
         Returns:
@@ -145,16 +145,16 @@ class CKA(_BaseMetric):
         return cka_matrix
 
     def _compute_per_layer(
-        self, embeddings_1: list, embeddings_2: list, flag=False
+        self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray], flag=False
     ) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
 
         Parameters:
         -----------
-        embeddings_1 : list
+        embeddings_1 : List[npt.NDArray]
             A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
-        embeddings_2 : list
+        embeddings_2 : List[npt.NDArray]
             A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
         flag : bool
             If True, compute CKA for each layer of the first set against the second set.

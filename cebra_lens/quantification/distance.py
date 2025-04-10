@@ -15,7 +15,7 @@ class DistanceMetric:
     This class provides methods to compute distances between embeddings and centroids.
     """
 
-    def compute_centroid(self, embedding: npt.NDArray, indices: list) -> float:
+    def compute_centroid(self, embedding: npt.NDArray, indices: List[np.int64]) -> float:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
@@ -23,7 +23,7 @@ class DistanceMetric:
         -----------
         embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
-        indices : list
+        indices : List[np.int64]
             A list of indices specifying the bin data to compute the centroid.
 
         Returns:
@@ -66,8 +66,8 @@ class DistanceMetric:
             )
 
     def compute_centroids(
-        self, embedding: npt.NDArray, indices: list, metric: str = "cosine"
-    ) -> list:
+        self, embedding: npt.NDArray, indices: List[np.float64], metric: str = "cosine"
+    ) -> List[np.float64]:
         """
         Computes the centroid of a single embedding (e.g. single layer) for all the bins.
 
@@ -75,14 +75,14 @@ class DistanceMetric:
         -----------
         embedding : npt.NDArray
             The embedding data array of shape Neurons X Samples.
-        indices : list
+        indices : List[np.float64]
             A list of indices specifying the bins to compute the centroids.
         metric : str, optional
             The distance metric to use for scaling the embedding (default is "cosine").
 
         Returns:
         --------
-        list
+        list : List[np.float64]
             A list of computed centroid values.
         """
 
@@ -100,13 +100,13 @@ class Intrabin(DistanceMetric):
 
     Parameters:
     -----------
-        indices : list
+        indices : List[np.int64]
             A list of indices specifying the bins.
         metric : str, optional
             The distance metric to use for computing distances (default is "cosine").
     """
 
-    def __init__(self, indices: list, metric: Optional[str] = "cosine"):
+    def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 
@@ -147,9 +147,9 @@ class Interrep(DistanceMetric):
     Class to compute inter-repetition distances for a given embedding data, indices, and repetition indices.
 
     Parameters:
-        indices : list
+        indices : List[np.int64]
             A list of indices specifying the bins.
-        repetition_indices : list
+        repetition_indices : List[np.int64]
             A list of lists specifying the repetition indices.
         metric : str, optional
             The distance metric to use for computing distances (default is "cosine").
@@ -157,7 +157,7 @@ class Interrep(DistanceMetric):
     """
 
     def __init__(
-        self, indices: list, repetition_indices: list, metric: Optional[str] = "cosine"
+        self, indices: List[np.int64], repetition_indices: List[np.int64], metric: Optional[str] = "cosine"
     ):
         self.indices = indices
         self.repetition_indices = repetition_indices
@@ -212,13 +212,13 @@ class Interbin(DistanceMetric):
     Class to compute inter-bin distances for a given embedding data and indices.
 
     Parameters:
-        indices : list
+        indices : List[np.int64]
             A list of indices specifying the bins.
         metric : str, optional
             The distance metric to use for computing distances (default is "cosine").
     """
 
-    def __init__(self, indices: list, metric: Optional[str] = "cosine"):
+    def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 

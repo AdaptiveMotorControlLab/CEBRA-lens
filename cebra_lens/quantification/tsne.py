@@ -79,8 +79,8 @@ class Tsne(_BaseMetric):
 
     def plot(
         self,
-        embeddings_1: list,
-        embeddings_2: list,
+        embeddings_1: List[npt.NDArray],
+        embeddings_2: List[npt.NDArray],
         labels: npt.NDArray,
         sample_plot: int = 200,
         comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),

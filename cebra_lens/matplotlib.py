@@ -1,7 +1,7 @@
 """Matplotlib interface to CEBRA-Lens."""
 
 import abc
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import seaborn as sns
 import matplotlib.axes
 import matplotlib.pyplot as plt
@@ -14,14 +14,14 @@ class _BasePlot:
 
     Attributes:
     ----------
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         Optional axis to create the plot on.
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         Figure width and height in inches.
     """
 
     def __init__(
-        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[float, float]
+        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple[np.float64, np.float64]
     ):
         if axis is None:
             self.fig, self.ax = plt.subplots(figsize=figsize)
@@ -39,9 +39,9 @@ class _GenericPlot(_BasePlot):
 
     Attributes:
     ----------
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         Optional axis to create the plot on.
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         Figure width and height in inches.
     title : str
         Title of the plot.
@@ -49,7 +49,7 @@ class _GenericPlot(_BasePlot):
     """
 
     def __init__(
-        self, axis: Optional[matplotlib.axes.Axes], figsize: tuple, title: str
+        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple, title: str
     ):
         super().__init__(axis, figsize)
         self.title = title
@@ -112,9 +112,9 @@ class RDMPlot(_GenericPlot):
         Dictionary containing the RDMs to be plotted.
     title : str
         Title of the plot.
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         Figure width and height in inches.
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         Optional axis to create the plot on.
     """
 
@@ -122,7 +122,7 @@ class RDMPlot(_GenericPlot):
         self,
         results_dict: dict,
         title: str = "RDM Plot",
-        figsize: tuple[float, float] = (15, 5),
+        figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
         super().__init__(axis, figsize, title)
@@ -157,9 +157,9 @@ class DistancePlot(_GenericPlot):
         Dictionary containing the distances to be plotted.
     title: str
         Title of the plot.
-    figsize: tuple[float, float]
+    figsize: Tuple[np.float64, np.float64]
         Figure width and height in inches.
-    axis: Optional[matplotlib.axes.Axes]
+    axis: matplotlib.axes.Axes, optional
         Optional axis to create the plot on.
     """
 
@@ -167,7 +167,7 @@ class DistancePlot(_GenericPlot):
         self,
         results_dict: dict,
         title: str = "Distance plot",
-        figsize: tuple[float, float] = (15, 5),
+        figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
         super().__init__(axis, figsize, title)
@@ -204,9 +204,9 @@ class DecodingPlot(_GenericPlot):
         Dictionary containing the decoding results to be plotted.
     title: str
         Title of the plot.
-    figsize: tuple[float, float]
+    figsize: Tuple[np.float64, np.float64]
         Figure width and height in inches.
-    axis: Optional[matplotlib.axes.Axes]
+    axis: matplotlib.axes.Axes, optional
         Optional axis to create the plot on.
     """
 
@@ -214,7 +214,7 @@ class DecodingPlot(_GenericPlot):
         self,
         results_dict: dict,
         title: str = "Decoding plot",
-        figsize: tuple[float, float] = (15, 5),
+        figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
         super().__init__(axis, figsize, title)
@@ -245,7 +245,7 @@ class DecodingPlot(_GenericPlot):
 def plot_rdm_correlation(
     rdm_dict: dict,
     title: str = "RDM comparison to Oracle",
-    figsize: tuple[float, float] = (15, 5),
+    figsize: Tuple[np.float64, np.float64] = (15, 5),
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -259,9 +259,9 @@ def plot_rdm_correlation(
         be dictionaries containing RDMs for different layers.
     title : str, optional
         The title for the plot (default is "RDM comparison to Oracle").
-    figsize : tuple, optional
-        A tuple representing the figure size (default is (15, 5)).
-    ax : Optional[matplotlib.axes.Axes], optional
+    figsize : Tuple, optional
+        A Tuple representing the figure size (default is (15, 5)).
+    ax : matplotlib.axes.Axes, optional
 
     Returns:
     --------
@@ -277,7 +277,7 @@ def plot_rdm_correlation(
 def plot_distance(
     distance_dict: dict,
     title: str = "Inter-repetition distance",
-    figsize: tuple[float, float] = (15, 5),
+    figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
 ) -> plt.Figure:
     """
@@ -290,8 +290,8 @@ def plot_distance(
         be dictionaries containing distances for different layers.  The format is the same as the activations_dict.
     title : str, optional
         The title for the plot (default is "Inter-repetition distance").
-    figsize : tuple, optional
-        A tuple representing the figure size (default is (15, 5)).
+    figsize : Tuple, optional
+        A Tuple representing the figure size (default is (15, 5)).
 
     Returns:
     --------
@@ -309,7 +309,7 @@ def plot_distance(
 def plot_layer_decoding(
     results_dict: dict,
     title: str = "Decoding by layer",
-    figsize: tuple[float, float] = (15, 5),
+    figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
 ) -> plt.Figure:
     """
@@ -322,8 +322,8 @@ def plot_layer_decoding(
         be lists containing decoding 2d-arrays for different layers.
     title : str, optional
         The title for the plot (default is "Decoding by layer").
-    figsize : tuple, optional
-        A tuple representing the figure size (default is (15, 5)).
+    figsize : Tuple, optional
+        A Tuple representing the figure size (default is (15, 5)).
 
     Returns:
     --------
@@ -349,7 +349,7 @@ class ModelDecodingPlot(_BasePlot):
         The color palette to use for the plot. Default is "hls".
     dataset_label : str
         The dataset type. Currently only "visual" is supported.
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         The axis on which to plot. If None, a new axis will be created.
     """
 
@@ -451,29 +451,29 @@ class _EmbeddingComparisonPlot:
 
     Attributes:
     ----------
-    embeddings_1 : list
+    embeddings_1 : List[npt.NDArray]
         A list of embeddings for the first set of data.
-    embeddings_2 : list
+    embeddings_2 : List[npt.NDArray]
         A list of embeddings for the second set of data.
     labels : npt.NDArray
         An array of labels corresponding to the data labels.
     sample_plot : int
         The number of samples to plot from the embeddings.
-    comparison_labels : tuple
-        A tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings.
+    comparison_labels : Tuple
+        A Tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings.
     dataset_label : str
         A string representing the label for the data being plotted.
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         The axis on which to plot the embeddings.
     """
 
     def __init__(
         self,
-        embeddings_1: list,
-        embeddings_2: list,
+        embeddings_1: List[npt.NDArray],
+        embeddings_2: List[npt.NDArray],
         labels: npt.NDArray,
         sample_plot: int,
-        comparison_labels: tuple,
+        comparison_labels: Tuple,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
     ):
@@ -508,7 +508,7 @@ class _EmbeddingComparisonPlot:
 
         Parameters:
         -----------
-        axis: Optional[matplotlib.axes.Axes]
+        axis: matplotlib.axes.Axes, optional
             A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
 
         Returns:
@@ -600,8 +600,8 @@ class _EmbeddingComparisonPlot:
 
     def _plot_embedding_layers(
         self,
-        axs,
-        embeddings: list,
+        axs: List[matplotlib.axes.Axes],
+        embeddings: List[npt.NDArray],
         title_prefix: str,
     ):
         """
@@ -609,9 +609,9 @@ class _EmbeddingComparisonPlot:
 
         Parameters:
         -----------
-        axs : list
+        axs : List[matplotlib.axes.Axes]
             List of matplotlib axes objects where the embeddings will be plotted.
-        embeddings : list
+        embeddings : List[npt.NDArray]
             List of numpy arrays containing the embeddings for each layer. Each array is shape Samples X num Neurons.
         title_prefix : str
             Title of the plot (e.g., 'single' or 'multi').
@@ -660,11 +660,11 @@ class _EmbeddingComparisonPlot:
 
 
 def compare_embeddings_layers(
-    embeddings_1: list,
-    embeddings_2: list,
+    embeddings_1: List[npt.NDArray],
+    embeddings_2: List[npt.NDArray],
     labels: npt.NDArray,
     sample_plot: int = 200,
-    comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
+    comparison_labels: Tuple = ("tSNE", ["Untrained", "Trained"]),
     dataset_label: str = "HPC",
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -674,19 +674,19 @@ def compare_embeddings_layers(
 
     Parameters:
     -----------
-    embeddings_1 : list
+    embeddings_1 : List[npt.NDArray]
         List of embeddings for the first dataset.
-    embeddings_2 : list
+    embeddings_2 : List[npt.NDArray]
         List of embeddings for the second dataset.
     labels : npt.NDArray
         Array of labels for the data points.
     sample_plot : int, optional
         Number of samples to plot (default is 200).
-    comparison_labels : tuple, optional
+    comparison_labels : Tuple, optional
         Labels describing the embeddings (default is ("tSNE", ["Untrained", "Trained"]) ).
     dataset_label : str, optional
         Dataset identifier (default is "HPC").
-    ax : Optional[matplotlib.axes.Axes]
+    ax : matplotlib.axes.Axes, optional
         Matplotlib axes object (default is None).
 
     Returns:
@@ -712,11 +712,11 @@ class _ActivationPlot:
     ----------
     input_data : torch.Tensor
         The input data tensor to be plotted.
-    embeddings : list
+    embeddings : List[npt.NDArray]
         A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         The size of the figure (width, height).
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes, optional
         The axis on which to plot the activations. If None, a new axis will be created.
     sample_plot : int
         The number of samples to plot along the time axis (default is 100).
@@ -729,8 +729,8 @@ class _ActivationPlot:
     def __init__(
         self,
         input_data: torch.Tensor,
-        embeddings: list,
-        figsize: tuple[float, float],
+        embeddings: List[npt.NDArray],
+        figsize: Tuple[np.float64, np.float64],
         axis: Optional[matplotlib.axes.Axes],
         sample_plot: int = 100,
         cmap: str = "magma",
@@ -749,7 +749,7 @@ class _ActivationPlot:
         """Define the ax on which to generate the plot.
 
         Args:
-        axis: Optional[matplotlib.axes.Axes]
+        axis: matplotlib.axes.Axes, optional
             A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
 
         Returns:
@@ -795,11 +795,11 @@ class _ActivationPlot:
 
 def plot_activations(
     input_data: torch.Tensor,
-    embeddings: list,
+    embeddings: List[npt.NDArray],
     sample_plot: int = 100,
     cmap: str = "magma",
     title: str = "Trained activations",
-    figsize: tuple = (10, 20),
+    figsize: Tuple = (10, 20),
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -810,7 +810,7 @@ def plot_activations(
     -----------
     input_data : torch.Tensor
         The input data tensor to be plotted.
-    embeddings : list
+    embeddings : List[npt.NDArray]
         A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
@@ -818,9 +818,9 @@ def plot_activations(
         The colormap to use for the embeddings (default is "magma").
     title : str, optional
         The title of the plot (default is "Trained activations").
-    figsize : tuple, optional
+    figsize : Tuple, optional
         The size of the figure (default is (10, 20)).
-    ax : Optional[matplotlib.axes.Axes], optional
+    ax : matplotlib.axes.Axes, optional
         The axis on which to plot the activations. If None, a new axis will be created.
 
     Returns:
@@ -848,7 +848,7 @@ class _HeatMapsPlot:
         A dictionary where the keys are the comparison names and the values are the CKA matrices.
     annot : bool
         If True, shows the values in the heatmap cells.
-    axis : Optional[matplotlib.axes.Axes]
+    axis : matplotlib.axes.Axes
         The axis on which to plot the heatmaps. If None, a new axis will be created.
     show_cbar : bool
         If True, shows the color bar.
@@ -856,7 +856,7 @@ class _HeatMapsPlot:
         Label for the color bar.
     color_map : str
         The color map to use for the heatmaps.
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         The size of the figure (width, height).
     """
 
@@ -868,7 +868,7 @@ class _HeatMapsPlot:
         show_cbar: bool = True,
         cbar_label: str = "CKA score",
         color_map: str = "magma",
-        figsize: tuple = (15, 5),
+        figsize: Tuple = (15, 5),
     ):
         self.cka_matrices = cka_matrices
         self.annot = annot
@@ -897,7 +897,7 @@ class _HeatMapsPlot:
 
         Parameters:
         -----------
-        axis: Optional[matplotlib.axes.Axes]
+        axis: matplotlib.axes.Axes, optional
             A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
 
         Returns:
@@ -946,7 +946,7 @@ def plot_cka_heatmaps(
     show_cbar: bool = True,
     cbar_label: str = "CKA score",
     color_map: str = "magma",
-    figsize: tuple = (15, 5),
+    figsize: Tuple = (15, 5),
     ax: Optional[matplotlib.axes.Axes] = None,
 ) -> plt.Figure:
     """
@@ -962,7 +962,7 @@ def plot_cka_heatmaps(
         Label for the color bar.
     color_map : str or matplotlib.colors.Colormap
         The palette to use for the heatmap.
-    figsize : tuple
+    figsize : Tuple
         Size of the figure for the subplots (width, height).
 
     Returns:
@@ -986,9 +986,9 @@ class _RDMPlots:
 
     Attributes:
     ----------
-    rdms : list
+    rdms : List[Tuple[npt.NDArray,np.float64]]
         A list of RDMs to be plotted. Each RDM should be a 2D array-like structure.
-    titles : list
+    titles : List[str]
         A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
     metric : str
         The distance metric which was used for computing the RDMs. Default is 'correlation'.
@@ -996,19 +996,19 @@ class _RDMPlots:
         The type of dataset being used for decoding (default is "visual").
     cmap : str
         The color map to use for the plotting (default is "viridis").
-    figsize : tuple[float, float]
+    figsize : Tuple[np.float64, np.float64]
         The size of the figure (width, height).
     """
 
     def __init__(
         self,
-        rdms: list,
-        titles: list,
+        rdms: List[Tuple[npt.NDArray,np.float64]],
+        titles: List[str],
         axis: Optional[matplotlib.axes.Axes],
         metric: str = "Normalized Euclidean distance",
         dataset_label: str = "visual",
         cmap: str = "viridis",
-        figsize: tuple[float, float] = None,
+        figsize: Tuple[np.float64, np.float64] = None,
     ):
 
         self.rdms = rdms
@@ -1025,7 +1025,7 @@ class _RDMPlots:
         if self.figsize == None:
             self.y_size = max(6, 3 * len(rdms))
             self.x_size = max(6, 5 * len(rdms))
-        elif type(self.figsize) == tuple:
+        elif type(self.figsize) == Tuple:
             self.x_size = self.figsize[0]
             self.y_size = self.figsize[1]
 
@@ -1053,7 +1053,7 @@ class _RDMPlots:
 
         Parameters:
         -----------
-        axis : Optional[matplotlib.axes.Axes]
+        axis : matplotlib.axes.Axes, optional
             A required ``matplotlib.axes.Axes``. If None, then add an axis to the current figure.
 
         Returns:
@@ -1090,11 +1090,11 @@ class _RDMPlots:
 
 def plot_rdm(
     rdms: list,
-    titles: list,
+    titles: List[str],
     metric: Optional[str] = "Normalized Euclidean distance",
     dataset_label: Optional[str] = "visual",
     cmap: Optional[str] = "viridis",
-    figsize: Optional[tuple[float, float]] = None,
+    figsize: Optional[Tuple[np.float64, np.float64]] = None,
     ax: Optional[matplotlib.axes.Axes] = None,
 ) -> plt.Figure:
     """
@@ -1102,9 +1102,9 @@ def plot_rdm(
 
     Parameters:
     -----------
-    rdms : list
+    rdms : List[Tuple[npt.NDArray,np.float64]]
         A list of RDMs to be plotted. Each RDM should be a 2D array-like structure.
-    titles : list
+    titles : List[str]
         A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
     metric : str, optional
         The metric used for the RDM, which will be displayed as the colorbar label. Default is "Normalized Euclidean distance".
@@ -1113,9 +1113,9 @@ def plot_rdm(
         Currently supported values are "visual" and "HPC".
     cmap : str, optional
         The color map to use for the plotting.
-    figsize : tuple[float,float], optional
+    figsize : Tuple[np.float64,np.float64], optional
         The size of the figure (width, height). Default is None.
-    ax : Optional[matplotlib.axes.Axes], optional
+    ax : matplotlib.axes.Axes, optional
         The axis on which to plot the RDMs. If None, a new axis will be created.
 
     Returns:

@@ -160,8 +160,8 @@ class RDM(_BaseMetric):
 
     def plot(
         self,
-        rdms: list,
-        titles: list,
+        rdms: List[npt.NDArray],
+        titles: List[Tuple[npt.NDArray, float]],
         metric: str = "Normalized Euclidean distance",
         dataset_label: str = "visual",
         cmap: str = "viridis",
