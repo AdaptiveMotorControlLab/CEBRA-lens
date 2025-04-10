@@ -2,7 +2,7 @@ import cebra
 import numpy as np
 import sklearn
 import cebra.datasets
-
+import numpy.typing as npt
 
 def get_single_session_datasets(rats:list=['achilles','buddy','cicero','gatsby']):
     """
@@ -25,20 +25,20 @@ def get_single_session_datasets(rats:list=['achilles','buddy','cicero','gatsby']
     return train_datas, valid_datas, continuous_labels_train, continuous_labels_val
     
 def decoding_pos_dir(
-    embedding_train: np.ndarray,
-    embedding_test: np.ndarray,
-    label_train: np.ndarray,
-    label_test: np.ndarray,
+    embedding_train: npt.NDArray,
+    embedding_test: npt.NDArray,
+    label_train: npt.NDArray,
+    label_test: npt.NDArray,
 ):
     """
     Decodes position and direction from embeddings using K-Nearest Neighbors (KNN) and evaluates the performance.
     Parameters:
     ----------
-    embedding_train : np.ndarray
-    embedding_test : np.ndarray
-    label_train : np.ndarray
+    embedding_train : npt.NDArray
+    embedding_test : npt.NDArray
+    label_train : npt.NDArray
         Training labels, where the first column represents position and the second column represents direction.
-    label_test : np.ndarray
+    label_test : npt.NDArray
         Testing labels, where the first column represents position and the second column represents direction.
     Returns:
     -------
