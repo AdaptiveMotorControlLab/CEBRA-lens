@@ -7,6 +7,7 @@ from ..activations import get_activations_model
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
+from typing import Dict
 
 class Decoding(_BaseMetric):
     """
@@ -58,7 +59,8 @@ class Decoding(_BaseMetric):
         dataset_label: str = "visual",
     ) -> npt.NDArray:
         """
-        Decodes a model by choosing the appropriate function.
+        Decodes a model by choosing the appropriate function base on the dataset. 
+        Currently compatible with multi-session and single-session data only.
 
         Parameters:
         -----------
@@ -76,7 +78,10 @@ class Decoding(_BaseMetric):
         Returns:
         --------
         npt.NDArray
-            Array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
+            Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
+
+        TODO(eloise): implement decoding for unified data.
+
         """
         if (
             embedding_train.shape[0] < embedding_train.shape[1]
@@ -178,7 +183,7 @@ class Decoding(_BaseMetric):
 
     def plot(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         title: str = "Decoding by layer",
         figsize: tuple = (15, 5),
     ):
@@ -274,7 +279,7 @@ class DecodeModel(Decoding):
 
     def plot(
         self,
-        results_dict: dict,
+        results_dict: Dict[str, npt.NDArray],
         palette: str = "hls",
         dataset_label="visual",
         ax: Optional[matplotlib.axes.Axes] = None,

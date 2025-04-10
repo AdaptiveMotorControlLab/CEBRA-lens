@@ -9,12 +9,12 @@ from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
-from typing import Optional, List
+from typing import Optional, List, Dict
 import numpy.typing as npt
 
 class CKA(_BaseMetric):
     """ "
-    Class to compute Centered Kernel Alignment (CKA) between two sets of model types.
+    Compute the Centered Kernel Alignment (CKA) between two sets of model types.
 
     Parameters:
     -----------
@@ -73,7 +73,7 @@ class CKA(_BaseMetric):
 
     def cka(
         self, gram_x: npt.NDArray, gram_y: npt.NDArray, debiased: bool = False
-    ) -> float:
+    ) -> np.float64:
         """Compute CKA.
 
         Args:
@@ -172,7 +172,7 @@ class CKA(_BaseMetric):
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations: dict) -> npt.NDArray:
+    def compute(self, activations: Dict[str, npt.NDArray]) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -180,8 +180,8 @@ class CKA(_BaseMetric):
 
         Parameters:
         -----------
-        activations : dict
-            A dictionary where keys are strings in the format 'model_identifie' and values are 2d lists with the corresponding activations.
+        activations : Dict[str, npt.NDArray]
+            A dictionary where keys are strings which represent the model label and values are 2d lists with the corresponding activations per layer.
 
         Returns:
         --------
@@ -216,12 +216,12 @@ class CKA(_BaseMetric):
         return self.cka_matrix
 
     @property
-    def __name__(self):
+    def __name__(self)->str:
         return "cka"
 
     def plot(
         self,
-        cka_matrices: dict,
+        cka_matrices: Dict[str, npt.NDArray],
         annot: bool,
         show_cbar: bool = True,
         cbar_label: str = "CKA score",

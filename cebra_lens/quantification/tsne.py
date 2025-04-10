@@ -9,7 +9,7 @@ import numpy.typing as npt
 
 class Tsne(_BaseMetric):
     """
-    Class to compute t-SNE (t-Distributed Stochastic Neighbor Embedding) on layer activation data.
+    Compute t-SNE (t-Distributed Stochastic Neighbor Embedding) on layer activation data.
 
     Parameters:
     -----------

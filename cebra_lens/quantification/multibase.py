@@ -1,11 +1,12 @@
 from .decoding import DecodeModel
 from tqdm import tqdm
 import numpy as np
-
+from typing import Dict
+import numpy.typing as npt
 
 class MultiModel:
     """
-    A class to compute the same metric across multiple models.
+    Compute the same metric across multiple models.
 
     Parameters:
     ----------
@@ -17,9 +18,20 @@ class MultiModel:
         self.metric_class = metric_class
         self.results_dict = {}
 
-    def compute(self, activations: dict) -> dict:
+    def compute(self, activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
         """
         Computes the metric based on metric_class given for each model and stores the results in a dictionary.
+
+        Parameters:
+        -----------
+        activations : Dict[str, npt.NDArray]
+            A dictionary where keys are strings which represent the model label and values are 2d lists with the corresponding activations per layer.
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            A dictionary where keys are strings which represent the model label and values are 2d lists with the calculated metric per layer.
+
         """
         self.result_dict = {}
         for model_label, activations_list in activations.items():

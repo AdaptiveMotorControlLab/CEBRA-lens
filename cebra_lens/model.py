@@ -3,9 +3,9 @@
 import pathlib
 import cebra
 import torch
+from typing import Dict, List
 
-
-def model_loader(model_dir: str, labels: dict = {}) -> dict:
+def model_loader(model_dir: str, labels: Dict = {}) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
     Load and categorize models based on their training status and session type.
     Parameters:
@@ -13,7 +13,7 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
     model_dir : str
         The path of the models: e.g. FinalModels/VISION
 
-    labels : dict, optional
+    labels : Dict, optional
         A dictionary containing the labels for the models. The keys should be the model file names and the values should be the model category labels. Default is an empty dictionary:
     e.g. {'model1': 'single_UT',
         'model2': 'single_UT',
@@ -22,7 +22,7 @@ def model_loader(model_dir: str, labels: dict = {}) -> dict:
         'model5': 'single_TR',
         'model6': 'single_TR'}
     Returns:
-        dict: A dictionary containing the loaded models (label, model) where label is taken from the input dictionary given by user or if not given, the model file name.
+         Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]: A dictionary containing the loaded models (label, model) where label is taken from the input dictionary given by user or if not given, the model file name.
     """
 
     # LOAD MODELS

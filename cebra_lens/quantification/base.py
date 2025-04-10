@@ -2,7 +2,7 @@ from tqdm import tqdm
 import numpy as np
 import pickle
 import types
-from typing import List, Union
+from typing import List, Union, Dict
 from abc import *
 from pathlib import Path
 from numpy.typing import npt
@@ -13,14 +13,14 @@ class _BaseMetric:
     """
 
     @abstractmethod
-    def compute(self, activations: dict[str, npt.NDArray]) -> dict:
+    def compute(self, activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
         """
         Every metric which inherits ``_BaseMetric`` needs to implement a compute function. 
         The compute function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
 
         Parameters:
         -----------
-        activations : dict[str, npt.NDArray]
+        activations : Dict[str, npt.NDArray]
             Dictionary where the key is the model category label (str),
             and the value is a npt.NDArray containing for all the models under that label the activations per layer.
 
@@ -31,7 +31,7 @@ class _BaseMetric:
         self,
         activations: List[Union[float, npt.NDArray]],
         metric_func: types.FunctionType,
-    ) -> List[Union[float, npt.NDArray]]:
+    ) -> List[Union[np.float64, npt.NDArray]]:
         """
         Iterate over each layer of activations and apply the metric function to compute the desired metric.
 
@@ -50,7 +50,7 @@ class _BaseMetric:
             layer_data.append(metric_func(layer_activation))
         return layer_data
 
-    def save(self, filepath: str, data: dict[str, npt.NDArray]) -> None:
+    def save(self, filepath: str, data: Dict[str, npt.NDArray]) -> None:
         """
         Save data in the location filepath.
 
@@ -58,7 +58,7 @@ class _BaseMetric:
         -----------
         filepath : str
             Filepath to the location where the data wants to be stored.
-        data : dict[str, npt.NDArray]
+        data : Dict[str, npt.NDArray]
             Dictionary where the key is the model category label (str),
             and the value is a npt.NDArray containing for all the models under that label the calculated data.
         """
@@ -69,7 +69,7 @@ class _BaseMetric:
         with open(custom_filepath, "wb") as f:
             pickle.dump(data, f)
 
-    def load(self, filepath: str) -> dict[str, npt.NDArray]:
+    def load(self, filepath: str) -> Dict[str, npt.NDArray]:
         """
         Load data from the filepath location
 
@@ -80,7 +80,7 @@ class _BaseMetric:
 
         Returns:
         --------
-        dict[str, npt.NDArray]
+        Dict[str, npt.NDArray]
             Dictionary where the key is the model category label (str),
             and the value is a npt.NDArray containing for all the models under that label the calculated data.
         """

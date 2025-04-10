@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict
 from .misc import discrete_binning, repetition_binning
 from .base import _BaseMetric
 from ..matplotlib import *
@@ -15,7 +15,7 @@ class DistanceMetric:
     This class provides methods to compute distances between embeddings and centroids.
     """
 
-    def compute_centroid(self, embedding: npt.NDArray, indices: List[np.int64]) -> float:
+    def compute_centroid(self, embedding: npt.NDArray, indices: List[np.int64]) -> np.float64:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
@@ -28,7 +28,7 @@ class DistanceMetric:
 
         Returns:
         --------
-        float
+        np.float64
             The computed centroid value.
         """
         bin_data = embedding[:, indices.flatten()]  # Get data for the current bin
@@ -110,7 +110,7 @@ class Intrabin(DistanceMetric):
         self.indices = indices
         self.metric = metric
 
-    def _compute_distance(self, embedding: npt.NDArray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> np.float64:
         """
         Computes the mean intra-bin distance for the given embedding data and indices.
 
@@ -121,7 +121,7 @@ class Intrabin(DistanceMetric):
 
         Returns:
         --------
-        float
+        np.float64
             The mean intra-bin distance.
         """
 
@@ -163,7 +163,7 @@ class Interrep(DistanceMetric):
         self.repetition_indices = repetition_indices
         self.metric = metric
 
-    def _compute_distance(self, embedding: npt.NDArray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> np.float64:
         """
         Computes the mean distance between different repetitions for the given embedding data, indices, and repetition indices.
 
@@ -174,7 +174,7 @@ class Interrep(DistanceMetric):
 
         Returns:
         --------
-        float
+        np.float64
             The mean distance between different repetitions.
         """
 
@@ -223,7 +223,7 @@ class Interbin(DistanceMetric):
         self.metric = metric
 
     # Function to compute centroids and inter-bin distances for a given embedding
-    def _compute_distance(self, embedding: npt.NDArray) -> float:
+    def _compute_distance(self, embedding: npt.NDArray) -> np.float64:
         """
         Computes the mean inter-bin distance for the given embedding data (e.g. single layer) and indices.
 
@@ -234,7 +234,7 @@ class Interbin(DistanceMetric):
 
         Returns:
         --------
-        float
+        np.float64
             The mean inter-bin distance across the embedding (e.g. across one layer).
         """
 
@@ -308,18 +308,18 @@ class Distance(_BaseMetric):
 
         return idxs, repetition_indices
 
-    def compute(self, activations: List[Union[float, npt.NDArray]]) -> List[float]:
+    def compute(self, activations: List[Union[np.float64, npt.NDArray]]) -> List[np.float64]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
         Parameters:
         -----------
-        activations : List[Union[float, npt.NDArray]]
+        activations : List[Union[np.float64, npt.NDArray]]
             List of 2D numpy array representing the activation of neurons per layer.
 
         Returns:
         --------
-        List[float]
+        List[np.float64]
             A list of computed distances for each layer.
         """
         if self.distance_label == "interbin":
@@ -341,7 +341,7 @@ class Distance(_BaseMetric):
 
     def plot(
         self,
-        distance_dict: dict,
+        distance_dict: Dict[str, np.NDArray],
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
     ):
