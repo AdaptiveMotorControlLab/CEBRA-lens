@@ -37,6 +37,40 @@ def _cut_array(
         sliced_array = array[:, start:end]
     return sliced_array
 
+def compute_cut_indices_conv1d(model: nn.Module, input_shape: Tuple[int, int, int]) -> List[Tuple[int, int]]:
+    """
+    Computes cut indices for each Conv1d layer in the model based on input/output size difference.
+
+    Parameters:
+    -----------
+    model : nn.Module
+        The model to analyze.
+    input_shape : Tuple[int, int, int]
+        The shape of the dummy input (batch_size, channels, time)
+
+    Returns:
+    --------
+    List[Tuple[int, int]]
+        A list of (cut_start, cut_end) tuples for each Conv1d layer.
+    """
+    dummy_input = torch.zeros(*input_shape)
+    cuts = []
+
+    x = dummy_input.clone()
+    for layer in model.modules():
+        if isinstance(layer, nn.Conv1d):
+            input_length = x.shape[-1]
+            x = layer(x)
+            output_length = x.shape[-1]
+            total_cut = input_length - output_length
+            if total_cut < 0:
+                raise ValueError("Conv1d layer increased temporal size — unexpected behavior.")
+
+            cut_start = total_cut // 2
+            cut_end = total_cut - cut_start  # in case it's odd
+            cuts.append((cut_start, -cut_end if cut_end > 0 else None))
+
+    return cuts
 
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -115,8 +149,10 @@ def get_activations_model(
         if layer_type == nn.Conv1d:
 
             if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
+                cut_indices = compute_cut_indices_conv1d(model, data.shape)
+                print(cut_indices)
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
-
+                print(cut_indices)
             elif model.model_architecture in ["offset5-model"]:
                 cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
 
