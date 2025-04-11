@@ -24,7 +24,7 @@ def get_single_session_datasets(
     )
 
     for i in rats:
-        data = cebra.datasets.init("rat-hippocampus-single-{i}")
+        data = cebra.datasets.init(f"rat-hippocampus-single-{i}")
         neural_train, neural_valid, label_train, label_valid = split_data_HPC(data)
         train_datas.append(neural_train)
         valid_datas.append(neural_valid)
