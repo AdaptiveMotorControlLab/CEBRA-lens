@@ -3,7 +3,7 @@
 from random import sample
 import numpy as np
 import torch
-import typing.numpy as npt
+import numpy.typing as npt
 from typing import List
 
 
