@@ -7,7 +7,8 @@ from ..activations import get_activations_model
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
-from typing import Dict
+from typing import Dict, Type
+import torch.nn as nn
 
 
 class Decoding(_BaseMetric):
@@ -28,8 +29,8 @@ class Decoding(_BaseMetric):
         The session ID for multi-session models. For single-session no need to input it.
     dataset_label : str, optional
         The type of dataset being used for decoding (default is "visual").
-    layer_type : str, optional
-        The type of layer to extract activations from. Defaults to 'conv'.
+    layer_type : Type[nn.Module]
+        The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     """
 
     def __init__(
@@ -40,7 +41,7 @@ class Decoding(_BaseMetric):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: str = "conv",
+        layer_type: Type[nn.Module] = None,
     ):
 
         self.train_label = train_label
@@ -210,8 +211,8 @@ class DecodeModel(Decoding):
         The session ID for multi-session models. For single-session no need to input it.
     dataset_label : str, optional
         The type of dataset being used for decoding (default is "visual").
-    layer_type : str, optional
-        The type of layer to extract activations from. Defaults to 'conv'.
+    layer_type : Type[nn.Module]
+        The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     """
 
     def __init__(
@@ -222,7 +223,7 @@ class DecodeModel(Decoding):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: str = "conv",
+        layer_type: Type[nn.Module]= None,
     ):
 
         super().__init__(
