@@ -359,7 +359,7 @@ class ModelDecodingPlot(_BasePlot):
 
     Attributes:
     ----------
-    results_dict : Dict[str, npt.NDArrays]
+    results_dict : Dict[str, npt.NDArray]
         A dictionary where the keys are model category labels or model file names and the values are 2D arrays containing decoding results.
     palette : str
         The color palette to use for the plot. Default is "hls".
@@ -371,7 +371,7 @@ class ModelDecodingPlot(_BasePlot):
 
     def __init__(
         self,
-        results_dict: Dict[str, npt.NDArrays],
+        results_dict: Dict[str, npt.NDArray],
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
@@ -433,7 +433,7 @@ class ModelDecodingPlot(_BasePlot):
 
 
 def plot_decoding(
-    results_dict: Dict[str, npt.NDArrays],
+    results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
     dataset_label="visual",
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -444,7 +444,7 @@ def plot_decoding(
 
     Parameters:
     -----------
-    results_dict : Dict[str, npt.NDArrays]
+    results_dict : Dict[str, npt.NDArray]
         A dictionary where the keys are model category labels or model file names and the values are 2d-arrays containing decoding results.
     palette: str, optional (default is "hls")
         The color palette to use for the plot.
@@ -742,7 +742,7 @@ class _ActivationPlot:
     input_data : torch.Tensor
         The input data tensor to be plotted.
     embeddings : List[npt.NDArray]
-        A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
+        A list of npt.NDArray representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     figsize : Tuple[np.float64, np.float64]
         The size of the figure (width, height).
     axis : matplotlib.axes.Axes, optional
@@ -840,7 +840,7 @@ def plot_activations(
     input_data : torch.Tensor
         The input data tensor to be plotted.
     embeddings : List[npt.NDArray]
-        A list of npt.NDArrays representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
+        A list of npt.NDArray representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
     cmap : str, optional
@@ -873,7 +873,7 @@ class _HeatMapsPlot:
 
     Attributes:
     ----------
-    cka_matrices : Dict[str, npt.NDArrays]
+    cka_matrices : Dict[str, npt.NDArray]
         A dictionary where the keys are the comparison names and the values are the CKA matrices.
     annot : bool
         If True, shows the values in the heatmap cells.
@@ -891,7 +891,7 @@ class _HeatMapsPlot:
 
     def __init__(
         self,
-        cka_matrices: Dict[str, npt.NDArrays],
+        cka_matrices: Dict[str, npt.NDArray],
         annot: bool,
         axis: Optional[matplotlib.axes.Axes],
         show_cbar: bool = True,
@@ -970,7 +970,7 @@ class _HeatMapsPlot:
 
 
 def plot_cka_heatmaps(
-    cka_matrices: Dict[str, npt.NDArrays],
+    cka_matrices: Dict[str, npt.NDArray],
     annot: bool,
     show_cbar: bool = True,
     cbar_label: str = "CKA score",
@@ -983,7 +983,7 @@ def plot_cka_heatmaps(
 
     Parameters:
     -----------
-    cka_matrices : Dict[str, npt.NDArrays]
+    cka_matrices : Dict[str, npt.NDArray]
         Dictionary of CKA matrices where the keys are the comparison names and the values the matrices.
     show_cbar : bool
         If True, shows the color bar.
