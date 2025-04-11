@@ -35,97 +35,7 @@ def _cut_array(
     else:
         # Otherwise, slice the array
         sliced_array = array[:, start:end]
-    return sliced_array
-
-def calculate_cut_indices_general(model, num_layers: int, layer_type=None) -> List[Tuple[int, int]]:
-    """
-    Calculate cut indices for removing padding based on model properties rather than architecture name.
-    
-    Parameters:
-    -----------
-    model : cebra.integrations.sklearn.cebra.CEBRA
-        The CEBRA model from which to extract padding information.
-    num_layers : int
-        The number of layers in the model.
-    layer_type : Type[nn.Module], optional
-        The type of layer for which to calculate cut indices.
-        
-    Returns:
-    --------
-    List[Tuple[int, int]]
-        A list of tuples where each tuple contains (start_index, end_index) for cutting
-        the activations array.
-    """
-    # Only proceed if we need to handle padding
-    if not model.pad_before_transform:
-        return [(0, 0)] * num_layers
-    
-    # Get padding size from model parameters
-    # We need to infer this from model properties
-    # CEBRA models typically use padding based on kernel size and stride
-    cut_indices = []
-    
-    # Inspect model to extract Conv1d layers and their parameters
-    conv_layers = []
-    
-    def extract_conv_layers(module):
-        if isinstance(module, nn.Conv1d):
-            conv_layers.append(module)
-        for child in module.children():
-            extract_conv_layers(child)
-    
-    # Extract all Conv1d layers recursively
-    extract_conv_layers(model.model_.net)
-    
-    # Calculate appropriate padding for each layer
-    if layer_type == nn.Conv1d or layer_type is None:
-        # For Conv1d layers or all layers, calculate padding based on kernels and stride
-        paddings = []
-        receptive_field = 1  # Start with 1 for the input itself
-        
-        for conv in conv_layers:
-            # The padding effect of this layer
-            kernel_size = conv.kernel_size[0]
-            stride = conv.stride[0]
-            dilation = conv.dilation[0]
-            
-            # Calculate effective kernel size considering dilation
-            effective_kernel = kernel_size + (kernel_size - 1) * (dilation - 1)
-            
-            # Calculate how much padding this layer introduces
-            if stride == 1:
-                padding_needed = (effective_kernel - 1) // 2
-                paddings.append(padding_needed)
-            else:
-                # For stride > 1, the calculation is more complex
-                # This is a simplified approach
-                padding_needed = max(0, (effective_kernel - stride) // 2)
-                paddings.append(padding_needed)
-            
-            # Update receptive field
-            receptive_field = receptive_field * stride + (effective_kernel - stride)
-        
-        # Generate cut indices based on paddings
-        # Start with more padding at earlier layers
-        if paddings:
-            for i in range(min(len(paddings), num_layers)):
-                remaining_padding = sum(paddings[i:])
-                left_pad = remaining_padding // 2
-                right_pad = remaining_padding - left_pad
-                cut_indices.append((left_pad, -right_pad if right_pad > 0 else None))
-        
-        # Extend with no padding for remaining layers
-        while len(cut_indices) < num_layers:
-            cut_indices.append((0, None))
-    else:
-        # For non-Conv1d layers, we generally don't need padding removal
-        cut_indices = [(0, None)] * num_layers
-    
-    # Convert None to 0 for proper slicing
-    cut_indices = [(start, end if end is not None else 0) for start, end in cut_indices]
-    
-    return cut_indices
-
+    return sliced_array    
 
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -199,15 +109,12 @@ def get_activations_model(
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
-    print("Izvana")
+
+    #TODO(eloise): implement general padding
     if model.pad_before_transform:
         if layer_type == nn.Conv1d:
-            print("Tu smo")
             if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
-                cut_indices = calculate_cut_indices_general(model, len(activations), layer_type)
-                print(cut_indices)
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
-                print(cut_indices)
             elif model.model_architecture in ["offset5-model"]:
                 cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
 
