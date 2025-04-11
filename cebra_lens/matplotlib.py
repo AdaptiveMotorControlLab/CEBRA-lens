@@ -661,7 +661,7 @@ class _EmbeddingComparisonPlot:
 
             embedding = embedding[: self.sample_plot, :]
             if self.dataset_label == "HPC":
-                ax = self._plot_hippocampus(ax, embedding, label)
+                ax = self._plot_hippocampus(ax, embedding, label, gray = False)
             elif self.dataset_label == "visual":
                 ax = self._plot_allen(ax, embedding, label)
             else:
