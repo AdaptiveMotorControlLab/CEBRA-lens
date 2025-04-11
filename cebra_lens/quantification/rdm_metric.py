@@ -10,10 +10,9 @@ from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
 
-
 class RDM(_BaseMetric):
     """
-    Compute the Representational Dissimilarity Matrix (RDM) for a given activation layer.
+    Compute the Representational Dissimilarity Matrix (RDM) for a given activation.
 
     Parameters:
     -----------
