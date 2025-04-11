@@ -113,7 +113,7 @@ def get_activations_model(
     #TODO(eloise): implement general padding
     if model.pad_before_transform:
         if layer_type == nn.Conv1d:
-            if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
+            if model.model_architecture in ["offset10-model", "offset10-model-mse","offset10-model-adapt"]:
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
             elif model.model_architecture in ["offset5-model"]:
                 cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
