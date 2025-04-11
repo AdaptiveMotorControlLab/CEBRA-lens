@@ -204,7 +204,7 @@ def get_activations_model(
         if layer_type == nn.Conv1d:
             print("Tu smo")
             if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
-                cut_indices = calculate_cut_indices_general(model, len(activations), layer_type)
+                cut_indices = calculate_cut_indices_general(model.model_, len(activations), layer_type)
                 print(cut_indices)
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
                 print(cut_indices)
