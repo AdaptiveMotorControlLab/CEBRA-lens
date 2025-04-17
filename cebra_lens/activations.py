@@ -110,7 +110,7 @@ def get_activations_model(
     for handle in handles:
         handle.remove()
 
-    #TODO(eloise): implement general padding
+    #TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
     if model.pad_before_transform:
         if layer_type == nn.Conv1d:
             if model.model_architecture in ["offset10-model", "offset10-model-mse","offset10-model-adapt"]:
