@@ -21,6 +21,19 @@ class CEBRALens:
     ) -> Dict[str, npt.NDArray]:
         """
         Computes metrics for each model using a provided metric class.
+
+        Parameters:
+        -----------
+        model_data : Dict[str, List[npt.NDArray]]
+            Dictionary with model labels as keys and lists of activation arrays or other model outputs as values.
+
+        metric_class : object
+            An object that implements a `compute` method which accepts individual data samples.
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            Dictionary with model labels as keys and arrays of computed metric values as values.
         """
         result_dict = {}
         for model_label, data_list in model_data.items():
@@ -43,7 +56,35 @@ class CEBRALens:
         dataset_label: str = "visual",
     ) -> Dict[str, npt.NDArray]:
         """
-        Evaluate decoding across models using DecodeModel.
+        Computes decoding evaluation scores for CEBRA models.
+
+        Parameters:
+        -----------
+        models : Dict[str, List[CEBRA]]
+            Dictionary where the keys are model labels and values are lists of CEBRA models.
+
+        train_data : torch.Tensor
+            Input tensor for training, shape (samples, features).
+
+        train_label : npt.NDArray
+            Ground truth labels for training data.
+
+        test_data : torch.Tensor
+            Input tensor for testing, shape (samples, features).
+
+        test_label : npt.NDArray
+            Ground truth labels for test data.
+
+        session_id : int, optional
+            Session identifier used for multi-session models (default is -1).
+
+        dataset_label : str, optional
+            Label for the dataset being evaluated (default is "visual").
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            Dictionary where keys are model labels and values are decoding score arrays.
         """
         decoding_metric = DecodeModel(
             train_data, train_label, test_data, test_label, session_id, dataset_label
@@ -51,7 +92,6 @@ class CEBRALens:
         return CEBRALens.compute(models, decoding_metric)
 
     def evaluate_decoding_per_layer(
-        self,
         models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
         train_data: torch.Tensor,
         train_label: npt.NDArray,
@@ -62,7 +102,38 @@ class CEBRALens:
         layer_type: Optional[Type[nn.Module]] = None,
     ) -> Dict[str, npt.NDArray]:
         """
-        Evaluate decoding scores per layer using Decoding.
+        Computes decoding evaluation scores for each layer of CEBRA models.
+
+        Parameters:
+        -----------
+        models : Dict[str, List[CEBRA]]
+            Dictionary where the keys are model labels and values are lists of CEBRA models.
+
+        train_data : torch.Tensor
+            Input tensor for training, shape (samples, features).
+
+        train_label : npt.NDArray
+            Ground truth labels for training data.
+
+        test_data : torch.Tensor
+            Input tensor for testing, shape (samples, features).
+
+        test_label : npt.NDArray
+            Ground truth labels for test data.
+
+        session_id : int, optional
+            Session identifier used for multi-session models (default is -1).
+
+        dataset_label : str, optional
+            Label for the dataset being evaluated (default is "visual").
+
+        layer_type : Type[nn.Module], optional
+            If provided, specifies the type of layer (e.g. nn.Conv1d) from which to extract activations.
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            Dictionary where keys are model labels and values are arrays of decoding scores per layer.
         """
         decoding_metric = Decoding(
             train_data, train_label, test_data, test_label,
@@ -75,7 +146,21 @@ class CEBRALens:
         model_dir: str, labels: Dict[str, str] = {}
     ) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
         """
-        Load and categorize CEBRA models from directory.
+        Loads and categorizes CEBRA models from a given directory.
+
+        Parameters:
+        -----------
+        model_dir : str
+            Path to the directory containing model `.pt` or `.pth` files.
+
+        labels : Dict[str, str], optional
+            Dictionary mapping model file names (without extensions) to category labels.
+            If not provided, the model's own filename will be used as its label.
+
+        Returns:
+        --------
+        Dict[str, List[CEBRA]]
+            Dictionary with model category labels as keys and lists of loaded CEBRA models as values.
         """
         models_folder_path = pathlib.Path(model_dir)
         if not models_folder_path.exists():
@@ -102,7 +187,29 @@ class CEBRALens:
         layer_type: Optional[Type[nn.Module]] = None,
     ) -> Dict[str, npt.NDArray]:
         """
-        Extract and organize activations from given models.
+        Extracts and organizes activations from models.
+
+        Parameters:
+        -----------
+        models : Dict[str, List[CEBRA]]
+            Dictionary of models categorized by label.
+
+        data : torch.Tensor
+            Input tensor for the models, shape (samples, features).
+
+        session_id : int
+            Session identifier used for selecting the appropriate model.
+
+        activations : Dict[str, npt.NDArray], optional
+            Optional dictionary to store activations.
+
+        layer_type : Type[nn.Module], optional
+            Optional layer type (e.g., nn.Conv1d) to extract specific activations.
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            Dictionary with model label prefixes as keys and lists of activation arrays as values.
         """
         activations = activations or {}
 
