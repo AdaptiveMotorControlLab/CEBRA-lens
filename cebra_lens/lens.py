@@ -35,7 +35,6 @@ class CEBRALens:
         return result_dict
 
     def evaluate_decoding(
-        self,
         models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
         train_data: torch.Tensor,
         train_label: npt.NDArray,
@@ -50,7 +49,7 @@ class CEBRALens:
         decoding_metric = DecodeModel(
             train_data, train_label, test_data, test_label, session_id, dataset_label
         )
-        return self.compute(models, decoding_metric)
+        return CEBRALens.compute(models, decoding_metric)
 
     def evaluate_decoding_per_layer(
         self,
@@ -70,7 +69,7 @@ class CEBRALens:
             train_data, train_label, test_data, test_label,
             session_id, dataset_label, layer_type
         )
-        return self.compute(models, decoding_metric)
+        return CEBRALens.compute(models, decoding_metric)
 
     @staticmethod
     def load(
