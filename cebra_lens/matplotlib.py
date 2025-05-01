@@ -544,6 +544,7 @@ class _EmbeddingComparisonPlot:
         return self.ax
 
     def _plot_hippocampus(
+        self,
         ax: matplotlib.axes.Axes,
         embedding: npt.NDArray,
         label: str,
@@ -1054,7 +1055,7 @@ class _RDMPlots:
         if self.figsize == None:
             self.y_size = max(6, 3 * len(rdms))
             self.x_size = max(6, 5 * len(rdms))
-        elif type(self.figsize) == Tuple:
+        elif isinstance(self.figsize, tuple):
             self.x_size = self.figsize[0]
             self.y_size = self.figsize[1]
 

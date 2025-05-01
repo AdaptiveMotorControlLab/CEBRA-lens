@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Dict, List
+from typing import Tuple, Dict, List, Type
 
 
 def _cut_array(
@@ -35,8 +35,7 @@ def _cut_array(
     else:
         # Otherwise, slice the array
         sliced_array = array[:, start:end]
-    return sliced_array
-
+    return sliced_array    
 
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -44,7 +43,7 @@ def get_activations_model(
     session_id: int = -1,
     name: str = "single",
     instance: int = 0,
-    layer_type: str = "conv",
+    layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:
     """
     Extracts activations from a single model layer.
@@ -63,8 +62,8 @@ def get_activations_model(
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
-    layer_type : str, optional
-        The type of layer to extract activations from. Defaults to 'conv'.
+    layer_type : Type[nn.Module]
+        The type of layer to extract activations from. Defaults to None, meaning extracts activations from all layers.
 
     Returns:
     --------
@@ -111,12 +110,11 @@ def get_activations_model(
     for handle in handles:
         handle.remove()
 
+    #TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
     if model.pad_before_transform:
-        if layer_type == "conv":
-
-            if model.model_architecture in ["offset10-model", "offset10-model-mse"]:
+        if layer_type == nn.Conv1d:
+            if model.model_architecture in ["offset10-model", "offset10-model-mse","offset10-model-adapt"]:
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
-
             elif model.model_architecture in ["offset5-model"]:
                 cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
 
@@ -124,7 +122,7 @@ def get_activations_model(
                 raise NotImplementedError(
                     f"Padding handling for {model.model_architecture} not implemented yet."
                 )
-        elif layer_type == "all":
+        elif layer_type==None:
             raise NotImplementedError("Padding handling not implemented for 'all'.")
         else:
             raise NotImplementedError(
@@ -142,7 +140,7 @@ def get_activations_models(
     data: torch.Tensor,
     session_id: int,
     activations: Dict[str, npt.NDArray] = {},
-    layer_type: str = "conv",
+    layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:
     """
     Extracts activations from multiple models and stores them in a dictionary.
@@ -159,8 +157,8 @@ def get_activations_models(
         The session identifier used for selecting the appropriate model in multi-session solvers.
     activations : Dict[str, npt.NDArray]
         A dictionary to store the activations. If passed as an argument, the new keys will be concatenated to the existing dictionary.
-    layer_type : str
-        The type of layer from which to extract activations (e.g., convolutional).
+    layer_type : Type[nn.Module]
+        The type of layer from which to extract activations (e.g., nn.Conv1d).
 
     Returns:
     --------
@@ -197,7 +195,7 @@ def _attach_hooks(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     name: str,
     instance: int,
-    layer_type="conv",
+    layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:  # only attaches hooks on convolutional layers
     """
     Attaches forward hooks to the specified layers of a given model to capture activations.
@@ -213,8 +211,8 @@ def _attach_hooks(
         A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
-    layer_type : str
-        The type of layer from which to extract activations (e.g., convolutional).
+    layer_type : Type[nn.Module]
+        The type of layer from which to extract activations (e.g., nn.Conv1d).
 
     Returns:
     --------
@@ -222,23 +220,13 @@ def _attach_hooks(
         The updated dictionary containing the activations captured by the hooks. Please refer to ``activations`` returned by ``get_activations_model``.
     """
 
-    valid_layer_types = [
-        "all",
-        "conv",
-    ]  # TODO: add more layer types to have more specificity
-
-    if layer_type not in valid_layer_types:
-        raise ValueError(
-            f"Invalid layer_type: {layer_type}. Expected one of {valid_layer_types}"
-        )
-
     num_layer = 1
 
-    handles = []  # they need to be stored to later remove them
+    handles = []
 
-    if layer_type == "conv":
+    if layer_type:
         for i in range(len(model.net)):
-            if isinstance(model.net[i], nn.Conv1d) or i == len(model.net) - 1:
+            if isinstance(model.net[i], layer_type) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
                     f"{name}_{instance}_layer_{num_layer}", activations
                 )
@@ -249,32 +237,31 @@ def _attach_hooks(
 
             elif bool(
                 model.net[i]._modules
-            ):  # empty dict evaluate to false. here we go in the _Skip connection where some conv may be stored
-                for j in range(len(model.net[i].module)):
-                    if isinstance(model.net[i].module[j], nn.Conv1d):
+            ):
+                for submodule in model.net[i].modules():
+                    if isinstance(submodule, layer_type):
                         hook, activations = _get_activation(
                             f"{name}_{instance}_layer_{num_layer}",
                             activations,
                         )
-
-                        handle = model.net[i].module[j].register_forward_hook(hook)
+                        handle = submodule.register_forward_hook(hook)
                         handles.append(handle)
                         num_layer += 1
 
-    elif layer_type == "all":
+    else:
+        #layer_type is None meaning we want to attach hooks to every layer regardless
         for i in range(len(model.net)):
             if bool(
                 model.net[i]._modules
-            ):  # empty dict evaluate to false. here we go in the _Skip connection where some conv may be stored
-                for j in range(len(model.net[i].module)):
-                    if isinstance(model.net[i].module[j], nn.Conv1d):
-                        hook, activations = _get_activation(
-                            f"{name}_{instance}_layer_{num_layer}",
-                            activations,
-                        )
-                        handle = model.net[i].module[j].register_forward_hook(hook)
-                        handles.append(handle)
-                        num_layer += 1
+            ):
+                for submodule in model.net[i].modules():
+                    hook, activations = _get_activation(
+                        f"{name}_{instance}_layer_{num_layer}",
+                        activations,
+                    )
+                    handle = submodule.register_forward_hook(hook)
+                    handles.append(handle)
+                    num_layer += 1
 
             else:
                 hook, activations = _get_activation(
@@ -284,10 +271,7 @@ def _attach_hooks(
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
                 num_layer += 1
-    else:
-        raise NotImplementedError(
-            f"Layer type {layer_type} not implemented. Please use either 'all' or 'conv' "
-        )
+
     return activations, handles
 
 

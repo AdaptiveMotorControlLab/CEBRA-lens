@@ -148,7 +148,7 @@ class RDM(_BaseMetric):
             A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(
-            activations, (npt.NDArray, torch.Tensor)
+            activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
