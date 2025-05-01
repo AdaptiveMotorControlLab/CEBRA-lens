@@ -45,7 +45,7 @@ class Decoding(_BaseMetric):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: Type[nn.Module] = None,
+        layer_type: Optional[Type[nn.Module]] = None,
     ):
 
         self.train_label = train_label
@@ -215,8 +215,6 @@ class DecodeModel(Decoding):
         The session ID for multi-session models. For single-session no need to input it.
     dataset_label : str, optional
         The type of dataset being used for decoding (default is "visual").
-    layer_type : Type[nn.Module]
-        The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     """
 
     def __init__(
@@ -227,7 +225,6 @@ class DecodeModel(Decoding):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: Type[nn.Module] = None,
     ):
 
         super().__init__(
@@ -237,7 +234,6 @@ class DecodeModel(Decoding):
             test_label,
             session_id,
             dataset_label,
-            layer_type,
         )
 
     def compute(self, model: cebra.integrations.sklearn.cebra.CEBRA) -> npt.NDArray:

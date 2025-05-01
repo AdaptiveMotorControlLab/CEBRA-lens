@@ -164,7 +164,6 @@ class CEBRALens(CEBRA):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: Type[nn.Module] = None,
     ) -> Dict[str, npt.NDArray]:
         """
         Computes evaluation scores of decoding CEBRA models.
@@ -185,9 +184,6 @@ class CEBRALens(CEBRA):
             The session ID for multi-session models. For single-session no need to input it.
         dataset_label : str, optional
             The type of dataset being used for decoding (default is "visual").
-        layer_type : Type[nn.Module]
-            The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
-
         Returns:
         --------
         Dict[str, npt.NDArray]
@@ -201,7 +197,6 @@ class CEBRALens(CEBRA):
             test_label,
             session_id,
             dataset_label,
-            layer_type,
         )
 
         self.metric_class = decoding_class
