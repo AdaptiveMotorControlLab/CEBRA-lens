@@ -86,7 +86,9 @@ class _GenericPlot(_BasePlot):
             layer_values = np.array(layer_values)
 
             mean_values = (
-                layer_values if layer_values.ndim == 1 else np.mean(layer_values, axis=0)
+                layer_values
+                if layer_values.ndim == 1
+                else np.mean(layer_values, axis=0)
             )
 
             sns.lineplot(

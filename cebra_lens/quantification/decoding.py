@@ -10,6 +10,10 @@ import numpy.typing as npt
 from typing import Dict, Type
 import torch.nn as nn
 
+# TODO: fix decoding to make sense for HPC and allen, think about how the data can look
+# so someone can have, also make sure that in the decoding you can check the metric used in training
+# to adjust to cosine or euclidean
+
 
 class Decoding(_BaseMetric):
     """
@@ -223,7 +227,7 @@ class DecodeModel(Decoding):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: Type[nn.Module]= None,
+        layer_type: Type[nn.Module] = None,
     ):
 
         super().__init__(

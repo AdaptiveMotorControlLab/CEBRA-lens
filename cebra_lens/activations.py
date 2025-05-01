@@ -35,7 +35,8 @@ def _cut_array(
     else:
         # Otherwise, slice the array
         sliced_array = array[:, start:end]
-    return sliced_array    
+    return sliced_array
+
 
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -110,10 +111,14 @@ def get_activations_model(
     for handle in handles:
         handle.remove()
 
-    #TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
+    # TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
     if model.pad_before_transform:
         if layer_type == nn.Conv1d:
-            if model.model_architecture in ["offset10-model", "offset10-model-mse","offset10-model-adapt"]:
+            if model.model_architecture in [
+                "offset10-model",
+                "offset10-model-mse",
+                "offset10-model-adapt",
+            ]:
                 cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
             elif model.model_architecture in ["offset5-model"]:
                 cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
@@ -122,7 +127,7 @@ def get_activations_model(
                 raise NotImplementedError(
                     f"Padding handling for {model.model_architecture} not implemented yet."
                 )
-        elif layer_type==None:
+        elif layer_type == None:
             raise NotImplementedError("Padding handling not implemented for 'all'.")
         else:
             raise NotImplementedError(
@@ -135,7 +140,7 @@ def get_activations_model(
     return activations
 
 
-def get_activations_models(
+def process_activations(
     models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
     data: torch.Tensor,
     session_id: int,
@@ -235,9 +240,7 @@ def _attach_hooks(
                 handles.append(handle)
                 num_layer += 1
 
-            elif bool(
-                model.net[i]._modules
-            ):
+            elif bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():
                     if isinstance(submodule, layer_type):
                         hook, activations = _get_activation(
@@ -249,11 +252,9 @@ def _attach_hooks(
                         num_layer += 1
 
     else:
-        #layer_type is None meaning we want to attach hooks to every layer regardless
+        # layer_type is None meaning we want to attach hooks to every layer regardless
         for i in range(len(model.net)):
-            if bool(
-                model.net[i]._modules
-            ):
+            if bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():
                     hook, activations = _get_activation(
                         f"{name}_{instance}_layer_{num_layer}",
@@ -275,7 +276,7 @@ def _attach_hooks(
     return activations, handles
 
 
-def _aggregate_activations(
+def aggregate_activations(
     activations: Dict[str, npt.NDArray],
 ) -> Dict[str, npt.NDArray]:
     """
@@ -317,34 +318,3 @@ def _aggregate_activations(
 
         aggregated_activations[model_identifier].append(value)
     return aggregated_activations
-
-
-def process_activations(activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
-    """
-    Processes the activations and formats them into a structured dictionary.
-
-    Parameters:
-    -----------
-    activations : Dict[str, npt.NDArray]
-        A dictionary where the keys are in the format 'MODEL_LABEL_INSTANCE_layer_LAYER'
-        (e.g., 'single_UT_1_layer_2') and the values contain the activations for that model instance and that layer.
-
-    Returns:
-    --------
-    activations_dict : Dict[str, npt.NDArray]
-        A dictionary where the keys are the model category names, and the values are arrays of activation values for each instance:
-        e.g.{'single_UT': [[instance1_activations], [instance2_activations], ...], 'single_TR': [[instance1_activations], [instance2_activations], ...]}'
-    """
-
-    # first aggregate all the layers of the activations into models
-    aggregated_activations = _aggregate_activations(activations=activations)
-
-    activations_dict = {}
-
-    for key, value in aggregated_activations.items():
-        prefix = "_".join(key.split("_")[:-1])
-        if prefix not in activations_dict.keys():
-            activations_dict[prefix] = []
-        activations_dict[prefix].append(value)
-
-    return activations_dict
