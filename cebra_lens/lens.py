@@ -16,7 +16,6 @@ class CEBRALens:
     """
 
     def compute(
-        self,
         model_data: Dict[str, List[npt.NDArray]],
         metric_class: object,
     ) -> Dict[str, npt.NDArray]:
