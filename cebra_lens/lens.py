@@ -6,9 +6,9 @@ import torch
 from typing import Dict, List, Union
 from cebra import CEBRA
 import numpy.typing as npt
-from activations import *
+from .activations import *
 from tqdm import tqdm
-from decoding import DecodeModel, Decoding
+from quantification.decoding import DecodeModel, Decoding
 
 
 class CEBRALens(CEBRA):
