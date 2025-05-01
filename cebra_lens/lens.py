@@ -8,7 +8,7 @@ from cebra import CEBRA
 import numpy.typing as npt
 from .activations import *
 from tqdm import tqdm
-from quantification.decoding import DecodeModel, Decoding
+from .quantification.decoding import DecodeModel, Decoding
 
 
 class CEBRALens(CEBRA):
