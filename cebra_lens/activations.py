@@ -112,6 +112,7 @@ def get_activations_model(
     #model.model_.get_offset() = left, right, length
     cut_indices = []
     if model.pad_before_transform:
+        print("HERE")
         if layer_type == nn.Conv1d:
             #I need the information about the convolutional layers which I found, conv_layer_info = [k=2,k=1,k=3,..]
             reduction = model.model_.get_offset().length-1
