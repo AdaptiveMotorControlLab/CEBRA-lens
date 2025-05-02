@@ -213,7 +213,6 @@ class CEBRALens:
         """
         activations = activations or {}
 
-        print("HALO PA DI SI")
 
         aggregated_activations = aggregate_activations(
             process_activations(models, data, session_id, activations, layer_type)

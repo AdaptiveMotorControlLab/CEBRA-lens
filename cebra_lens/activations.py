@@ -109,13 +109,11 @@ def get_activations_model(
     for handle in handles:
         handle.remove()
 
-    #model.model_.get_offset() = left, right, length
     cut_indices = []
     if model.pad_before_transform:
         print("HERE")
         if layer_type == nn.Conv1d:
-            #I need the information about the convolutional layers which I found, conv_layer_info = [k=2,k=1,k=3,..]
-            reduction = model.model_.get_offset().length-1
+            reduction = model.time_offsets -1
             for k in conv_layer_info:
                 reduction = reduction - (k-1)
                 left = reduction//2 #lower
@@ -172,7 +170,6 @@ def process_activations(
         A dictionary containing the activations from all the models passed as input. A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
     """
 
-    print("HALOPPP")
     for model_name, models in models.items():
         for i, model in enumerate(models):
             activations.update(
@@ -314,7 +311,6 @@ def aggregate_activations(
     }
     """
 
-    print("HALOOOOOOOOOOO")
     aggregated_activations = {}
 
     for key, value in activations.items():
