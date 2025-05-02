@@ -111,7 +111,7 @@ def get_activations_model(
 
     cut_indices = []
     if model.pad_before_transform:
-        print("HERE")
+        print(model)
         if layer_type == nn.Conv1d:
             reduction = model.time_offsets -1
             for k in conv_layer_info:
@@ -121,7 +121,7 @@ def get_activations_model(
                 if model.model_.get_offset().left > model.model_.get_offset().right:
                     right = left
                     left = reduction-right
-                cut_indices.append((left,right))
+                cut_indices.append((left,-right))
             #add for output layer
             cut_indices.append((0,0))
         elif layer_type == None:
