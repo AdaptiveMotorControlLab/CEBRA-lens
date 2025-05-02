@@ -111,7 +111,7 @@ def get_activations_model(
 
     cut_indices = []
     if model.pad_before_transform:
-        print(model)
+        #Padding logic: calculate the total reduction which happens based on the kernel size per layer, divide the reduction per layer into 2 parts
         if layer_type == nn.Conv1d:
             reduction = model.time_offsets -1
             for k in conv_layer_info:
