@@ -172,6 +172,7 @@ def process_activations(
         A dictionary containing the activations from all the models passed as input. A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
     """
 
+    print("HALOPPP")
     for model_name, models in models.items():
         for i, model in enumerate(models):
             activations.update(
@@ -313,6 +314,7 @@ def aggregate_activations(
     }
     """
 
+    print("HALOOOOOOOOOOO")
     aggregated_activations = {}
 
     for key, value in activations.items():
