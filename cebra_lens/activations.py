@@ -118,7 +118,12 @@ def get_activations_model(
                 reduction = reduction - (k-1)
                 left = reduction//2 #lower
                 right = reduction-left
-                if model.model_.get_offset().left > model.model_.get_offset().right:
+
+                _model = model.model_
+                if model.solver_name_ == "multi-session":
+                    _model = model.model_[session_id]
+                
+                if _model.get_offset().left > _model.get_offset().right:
                     right = left
                     left = reduction-right
                 cut_indices.append((left,-right))
