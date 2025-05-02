@@ -59,8 +59,6 @@ def get_activations_model(
     session_id : int, optional
         The session identifier used for selecting the appropriate model in multi-session solvers.
         For single-session, no need to input it.
-    name : str
-        A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
     layer_type : Type[nn.Module]
@@ -78,7 +76,7 @@ def get_activations_model(
     activations = {}
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
-        activations, handles = _attach_hooks(
+        activations, handles, conv_layer_info = _attach_hooks(
             activations=activations,
             model=model_,
             name=name,
@@ -91,7 +89,7 @@ def get_activations_model(
 
     elif model.solver_name_ == "single-session":
         model_ = model.model_
-        activations, handles = _attach_hooks(
+        activations, handles, conv_layer_info = _attach_hooks(
             activations=activations,
             model=model_,
             name=name,
@@ -111,29 +109,31 @@ def get_activations_model(
     for handle in handles:
         handle.remove()
 
-    # TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
+    #model.model_.get_offset() = left, right, length
+    cut_indices = []
     if model.pad_before_transform:
         if layer_type == nn.Conv1d:
-            if model.model_architecture in [
-                "offset10-model",
-                "offset10-model-mse",
-                "offset10-model-adapt",
-            ]:
-                cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
-            elif model.model_architecture in ["offset5-model"]:
-                cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
-
-            else:
-                raise NotImplementedError(
-                    f"Padding handling for {model.model_architecture} not implemented yet."
-                )
+            #I need the information about the convolutional layers which I found, conv_layer_info = [k=2,k=1,k=3,..]
+            reduction = model.model_.get_offset().length-1
+            for k in conv_layer_info:
+                reduction = reduction - (k-1)
+                left = reduction//2 #lower
+                right = reduction-left
+                if model.model_.get_offset().left > model.model_.get_offset().right:
+                    right = left
+                    left = reduction-right
+                cut_indices.append((left,right))
+            #add for output layer
+            cut_indices.append((0,0))
         elif layer_type == None:
             raise NotImplementedError("Padding handling not implemented for 'all'.")
         else:
+            #need to analyze the padding from the last output of Conv1 and apply the same cut
             raise NotImplementedError(
                 f"Padding handling not implemented for {layer_type}."
             )
 
+        print(cut_indices)
         for i, (key, value) in enumerate(activations.items()):
             activations[key] = _cut_array(value, cut_indices[i])
 
@@ -227,15 +227,17 @@ def _attach_hooks(
 
     num_layer = 1
 
-    handles = []
+    handles, conv_layer_info = [], []
 
     if layer_type:
         for i in range(len(model.net)):
+            #attach hook to the layer_type and to the output layer
             if isinstance(model.net[i], layer_type) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
                     f"{name}_{instance}_layer_{num_layer}", activations
                 )
-
+                if isinstance(model.net[i], layer_type):
+                    conv_layer_info.append(model.net[i].kernel_size[0])
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
                 num_layer += 1
@@ -247,12 +249,14 @@ def _attach_hooks(
                             f"{name}_{instance}_layer_{num_layer}",
                             activations,
                         )
+                        conv_layer_info.append(submodule.kernel_size[0])
                         handle = submodule.register_forward_hook(hook)
                         handles.append(handle)
                         num_layer += 1
 
     else:
         # layer_type is None meaning we want to attach hooks to every layer regardless
+        #TODO(eloise): Layer type general, does it make sense?, Padding cutting, then for these other layers...
         for i in range(len(model.net)):
             if bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():
@@ -273,7 +277,7 @@ def _attach_hooks(
                 handles.append(handle)
                 num_layer += 1
 
-    return activations, handles
+    return activations, handles, conv_layer_info
 
 
 def aggregate_activations(
