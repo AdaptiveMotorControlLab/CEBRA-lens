@@ -5,7 +5,7 @@ import types
 from typing import List, Union, Dict
 from abc import *
 from pathlib import Path
-from numpy.typing import npt
+import numpy.typing as npt
 
 
 class _BaseMetric:

@@ -371,7 +371,7 @@ class ModelDecodingPlot(_BasePlot):
 
     def __init__(
         self,
-        results_dict: Dict[str, npt.NDArrays],
+        results_dict: Dict[str, npt.NDArray],
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
@@ -433,7 +433,7 @@ class ModelDecodingPlot(_BasePlot):
 
 
 def plot_decoding(
-    results_dict: Dict[str, npt.NDArrays],
+    results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
     dataset_label="visual",
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -891,7 +891,7 @@ class _HeatMapsPlot:
 
     def __init__(
         self,
-        cka_matrices: Dict[str, npt.NDArrays],
+        cka_matrices: Dict[str, npt.NDArray],
         annot: bool,
         axis: Optional[matplotlib.axes.Axes],
         show_cbar: bool = True,
@@ -970,7 +970,7 @@ class _HeatMapsPlot:
 
 
 def plot_cka_heatmaps(
-    cka_matrices: Dict[str, npt.NDArrays],
+    cka_matrices: Dict[str, npt.NDArray],
     annot: bool,
     show_cbar: bool = True,
     cbar_label: str = "CKA score",

@@ -349,7 +349,7 @@ class Distance(_BaseMetric):
 
     def plot(
         self,
-        distance_dict: Dict[str, np.NDArray],
+        distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
     ):
