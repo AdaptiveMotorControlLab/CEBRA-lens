@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Dict, List, Type
+from typing import Tuple, Dict, List, Type, Optional
 
 
 def _cut_array(
@@ -34,8 +34,52 @@ def _cut_array(
         sliced_array = array
     else:
         # Otherwise, slice the array
-        sliced_array = array[:, start:end]
+        sliced_array = array[:, start:end if end!=0 else start:]
     return sliced_array
+
+def get_cut_indices(model_: cebra.integrations.sklearn.cebra.CEBRA, layer_type: Type[nn.Module], conv_layer_info: Optional[List[int]]=[])-> List[Tuple[int,int]]:
+    """
+    Function which computes indices for removing padding from activation layers.
+
+    Parameters:
+    -----------
+    model_ : cebra.integrations.sklearn.cebra.CEBRA
+        CEBRA model instance.
+    layer_type : Type[nn.Module]
+        The type of layer whose activations were extracted.
+    conv_layer_info : Optional[List[int]]
+        A list of the kernel sizes for the convolutional layers extracted, needed for receptive field calculation.
+
+    Returns:
+    --------
+    cut_indices: List[Tuple[int,int]]
+        A list of tuples, a tuple for each activation layer, where the first element is the amount of elements which need to be removed from the beginning and the abs(last element) the amount needed to be remove from the end.
+        Example:
+        cut_indices = [(4,-4), (3,-3), (2,-2), (1,-1), (0,0), (0,0)]
+    """
+    cut_indices = []
+    offset = model_.get_offset()
+    if layer_type == nn.Conv1d:
+        #fix it so it's using only model_
+        reduction = len(offset) -1
+        for k in conv_layer_info:
+            reduction = max(0,reduction - (k-1))
+            left = reduction//2 #lower
+            right = reduction-left
+            if offset.left > offset.right:
+                right = left
+                left = reduction-right
+            cut_indices.append((left,-right))
+        #add for output layer
+        cut_indices.append((0,0))
+    elif layer_type == None:
+        raise NotImplementedError("Padding handling not implemented for 'all'.")
+    else:
+        #need to analyze the padding from the last output of Conv1 and apply the same cut
+        raise NotImplementedError(
+            f"Padding handling not implemented for {layer_type}."
+        )
+    return cut_indices
 
 
 def get_activations_model(
@@ -52,7 +96,7 @@ def get_activations_model(
 
     Parameters:
     -----------
-    model : cebra.model
+    model : cebra.integrations.sklearn.cebra.CEBRA
         The cebra model from which to extract activations.
     data : torch.Tensor
         The input data to be passed through the model. Shape of samples X channels (neurons).
@@ -74,70 +118,39 @@ def get_activations_model(
     """
 
     activations = {}
+    transform_kwargs = {}
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
-        activations, handles, conv_layer_info = _attach_hooks(
-            activations=activations,
-            model=model_,
-            name=name,
-            instance=instance,
-            layer_type=layer_type,
-        )
-        _ = model.transform(
-            data, session_id=session_id
-        )  # no need to store the output embedding. we already add a hook on it
+        transform_kwargs.update({'session_id':session_id})
 
     elif model.solver_name_ == "single-session":
+        # no need to store the output embedding. we already add a hook on it
         model_ = model.model_
-        activations, handles, conv_layer_info = _attach_hooks(
-            activations=activations,
-            model=model_,
-            name=name,
-            instance=instance,
-            layer_type=layer_type,
-        )
-        _ = model.transform(
-            data
-        )  # no need to store the output embedding. we already add a hook on it
-
     else:
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
+       
+    activations, handles, conv_layer_info = _attach_hooks(
+            activations=activations,
+            model=model_,
+            name=name,
+            instance=instance,
+            layer_type=layer_type,
+        )
+    _ = model.transform(
+            data,
+            **transform_kwargs
+        ) 
 
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
 
-    cut_indices = []
+
     if model.pad_before_transform:
         #Padding logic: calculate the total reduction which happens based on the kernel size per layer, divide the reduction per layer into 2 parts
-        if layer_type == nn.Conv1d:
-            reduction = model.time_offsets -1
-            for k in conv_layer_info:
-                reduction = reduction - (k-1)
-                left = reduction//2 #lower
-                right = reduction-left
-
-                _model = model.model_
-                if model.solver_name_ == "multi-session":
-                    _model = model.model_[session_id]
-                
-                if _model.get_offset().left > _model.get_offset().right:
-                    right = left
-                    left = reduction-right
-                cut_indices.append((left,-right))
-            #add for output layer
-            cut_indices.append((0,0))
-        elif layer_type == None:
-            raise NotImplementedError("Padding handling not implemented for 'all'.")
-        else:
-            #need to analyze the padding from the last output of Conv1 and apply the same cut
-            raise NotImplementedError(
-                f"Padding handling not implemented for {layer_type}."
-            )
-
-        print(cut_indices)
+        cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
         for i, (key, value) in enumerate(activations.items()):
             activations[key] = _cut_array(value, cut_indices[i])
 
