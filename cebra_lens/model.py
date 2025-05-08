@@ -1,6 +1,6 @@
 "Model handling. For now only loading is used."
 
-import pathlib
+from pathlib import Path
 import cebra
 import torch
 from typing import Dict, List
@@ -30,13 +30,13 @@ def model_loader(
 
     # LOAD MODELS
 
-    models_folder_path = pathlib.Path(model_dir)
-    if not pathlib.Path.exists(models_folder_path):
+    models_folder_path = Path(model_dir)
+    if not Path.exists(models_folder_path):
         raise FileNotFoundError(f"Folder {models_folder_path} not found.")
     models = {}
-    for file in pathlib.Path.iterdir(models_folder_path):
-        if str(file).endswith((".pt", ".pth")):
-            model_path = models_folder_path / file
+    for file in models_folder_path.iterdir():
+        if file.suffix in (".pt", ".pth"):
+            model_path = file.resolve(strict=True)
             loaded_model = cebra.CEBRA.load(
                 model_path,
                 backend="torch",
