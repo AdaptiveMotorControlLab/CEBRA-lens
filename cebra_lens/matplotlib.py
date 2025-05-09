@@ -209,12 +209,12 @@ class DistancePlot(_GenericPlot):
 
 
 class DecodingPlot(_GenericPlot):
-    """Plot the decoding accuracy across layers for models in ``results_dict``.
+    """Plot the decoding scores across layers for models in ``results_dict``.
 
     Attributes:
     ----------
     results_dict : Dict[str, npt.NDArray]
-        Dictionary containing the decoding accuracies to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+        Dictionary containing the decoding scores to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title: str
         Title of the plot.
     figsize: Tuple[np.float64, np.float64]
@@ -226,32 +226,43 @@ class DecodingPlot(_GenericPlot):
     def __init__(
         self,
         results_dict: Dict[str, npt.NDArray],
-        title: str = "Decoding accuracy across layers",
+        dataset_label: str = None,
+        title: str = None,
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
+        
+        if dataset_label=="visual":
+            title = "Decoding accuracies across layers (%)"
+        elif dataset_label =="HPC":
+            title = "Decoding position errors across layers (cm)"
+            
         super().__init__(axis, figsize, title)
 
+        self.dataset_label = dataset_label
         self.results_dict = results_dict
         self.plot_data = self._transform()
         self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
     def _transform(self) -> Dict[str, List[List[np.float64]]]:
-        """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values are now corresponding to the decoding accuracies across layers for model label.
+        """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values are now corresponding to the decoding scores across layers for model label.
 
         Returns:
         --------
         Dict[str,List[List[np.float64]]]
-            Dictionary where the keys correspond to the model labels, and the value to the decoding accuracies for each layer for each model inside a model label category.
+            Dictionary where the keys correspond to the model labels, and the value to the decoding scores for each layer for each model inside a model label category.
         """
         data = {}
         for idx, (key, data_list) in enumerate(self.results_dict.items()):
             layer_values = []
 
             for i, inner_list in enumerate(data_list):
-
-                values = [arr[2] for arr in inner_list]  # Extract second column
+                if self.dataset_label=="visual":
+                    ind = 2
+                elif self.dataset_label =="HPC":
+                    ind = 2
+                values = [arr[ind] for arr in inner_list]  # Extract second column
                 layer_values.append(values)
             data[key] = layer_values
         return data
@@ -330,7 +341,7 @@ def plot_layer_decoding(
     **kwargs,
 ) -> plt.Figure:
     """
-    Plots the decoding accuracy across layer for models in results_dict.
+    Plots the decoding score across layer for models in results_dict.
 
     Parameters:
     -----------
@@ -344,7 +355,7 @@ def plot_layer_decoding(
     Returns:
     --------
     fig : matplotlib.figure.Figure
-        The generated figure containing the RDM comparison plot.
+        The generated figure containing the decoding scored per layer per model.
     """
 
     return DecodingPlot(
@@ -355,7 +366,7 @@ def plot_layer_decoding(
 
 
 class ModelDecodingPlot(_BasePlot):
-    """Plotting decoding accuracy across models.
+    """Plotting decoding scores across models.
 
     Attributes:
     ----------
@@ -391,23 +402,22 @@ class ModelDecodingPlot(_BasePlot):
         self.dataset_label = dataset_label  # Define dataset label
 
     def plot(self, **kwargs) -> None:
-        """Plotting logic to plot the decoding accuracies across models where the x-axis are the model labels, and the y-axis are the decoding accuracy values in (%)."""
+        """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
         x_positions = list(
             range(1, len(self.results_dict) + 1)
         )  # X positions for scatter points
 
-        if self.dataset_label == "visual":  # Only handle 'visual' dataset label for now
-            for i, (key, results) in enumerate(self.results_dict.items()):
-                acc = results[
+        for i, (key, results) in enumerate(self.results_dict.items()):
+            if self.dataset_label =="visual":
+                #for visual dataset get accuracy
+                score = results[
                     :, 2
-                ]  # Extract accuracy data from the 3rd column (index 2)
-                mean_error = np.mean(acc)  # Calculate the mean accuracy
-                color = self.palette[i]  # Get the color from the palette
+                ] 
+                mean_error = np.mean(score)
+                color = self.palette[i] 
                 self.ax.scatter(
-                    np.ones_like(acc) * x_positions[i], acc, color=color, alpha=0.3
+                    np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
                 )
-
-                # Plot the mean accuracy
                 self.ax.scatter(
                     x_positions[i],
                     mean_error,
@@ -416,21 +426,37 @@ class ModelDecodingPlot(_BasePlot):
                     label=f"Mean {key}",
                     zorder=5,  # Bring mean point to the top
                 )
-
-            self.ax.set_xlabel("Model")
-            self.ax.set_ylabel("Accuracy (%)")
-            self.ax.set_title("Comparison of Accuracy Across Models")
-            self.ax.set_xticks(x_positions)
-            self.ax.set_xticklabels(
-                self.results_dict.keys()
-            )  # Set model names as x-tick labels
-            self.ax.legend()  # Show legend for model labels
-            sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
-        else:
-            raise NotImplementedError(
-                f"Plotting of {self.dataset_label} is not handled yet. Only 'visual' is for now. "
-            )
-
+                label = "Accuracy"
+                measure = "(%)"
+            elif self.dataset_label=="HPC":
+                #for HPC dataset get position error
+                score = results[
+                    :, 1
+                ] 
+                mean_error = np.mean(score)
+                color = self.palette[i] 
+                self.ax.scatter(
+                    np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
+                )
+                self.ax.scatter(
+                    x_positions[i],
+                    mean_error,
+                    color=color,
+                    s=50,
+                    label=f"Mean {key}",
+                    zorder=5,  # Bring mean point to the top
+                )
+                label = "Position Error"
+                measure = "(cm)"
+        self.ax.set_xlabel("Model")
+        self.ax.set_ylabel(f"{label} {measure}")
+        self.ax.set_title(f"Comparison of {label} Across Models")
+        self.ax.set_xticks(x_positions)
+        self.ax.set_xticklabels(
+            self.results_dict.keys()
+        )  # Set model names as x-tick labels
+        self.ax.legend()  # Show legend for model labels
+        sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
 
 def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
@@ -440,7 +466,7 @@ def plot_decoding(
     **kwargs,
 ) -> plt.Figure:
     """
-    Plots the decoding accuracy across multiple models.
+    Plots the decoding scores across multiple models.
 
     Parameters:
     -----------
@@ -452,7 +478,7 @@ def plot_decoding(
     Returns:
     --------
     fig : matplotlib.figure.Figure
-        The generated figure displaying the comparison of decoding accuracy across models.
+        The generated figure displaying the comparison of decoding scores across models.
     """
     return ModelDecodingPlot(
         results_dict=results_dict,
