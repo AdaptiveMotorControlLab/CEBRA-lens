@@ -236,7 +236,7 @@ class DecodingPlot(_GenericPlot):
             title = "Decoding accuracies across layers (%)"
         elif dataset_label =="HPC":
             title = "Decoding position errors across layers (cm)"
-            
+
         super().__init__(axis, figsize, title)
 
         self.dataset_label = dataset_label
@@ -1097,8 +1097,9 @@ class _RDMPlots:
             self.tick_labels = [str(i) for i in range(0, 930, 30)]
 
         elif self.dataset_label == "HPC":
-            # TODO
-            raise NotImplementedError
+            self.tick_positions =  np.arange(0, 34, 2)/10 # Ticks at 0, 0.2, 0.4,..., 1.6
+            self.tick_labels = ['0.0','0.2','0.4' ,'0.6' ,'0.8' ,'1.0', '1.2', '1.4', '0.0', '0.2', '0.4','0.6' ,'0.8', '1.0', '1.2' ,'1.4' ,'1.6']
+
         else:
             raise NotImplementedError(
                 f"RDM Plotting for dataset {self.dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
@@ -1129,11 +1130,27 @@ class _RDMPlots:
 
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
             self.ax[i].set_title(self.titles[i])
-            num_ticks = len(self.tick_labels)
-            self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-            self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-            self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
-            self.ax[i].set_yticklabels(self.tick_labels)
+            
+            if self.dataset_label =="visual":
+                num_ticks = len(self.tick_labels)
+                self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
+                self.ax[i].set_yticklabels(self.tick_labels)
+            elif self.dataset_label == "HPC":
+                 # Set the x and y ticks
+                self.ax[i].set_xticks(self.tick_positions * len(rdm) // 1.6/2)  # Scale ticks to the range of data
+                self.ax[i].set_yticks(self.tick_positions * len(rdm) // 1.6/2)  # Same for y-axis
+
+                # Set the tick labels to show 0, 0.2, ..., 1.6
+                self.ax[i].set_xticklabels(self.tick_labels)
+                self.ax[i].set_yticklabels(self.tick_labels)
+                if i == 0:
+                    self.ax[i].text(-0.15, 0.6, 'Direction 1', color='black', fontsize=14, transform=self.ax[i].transAxes, rotation = 90)
+                    self.ax[i].text(-0.15, 0.1, 'Direction 2', color='black', fontsize=14, transform=self.ax[i].transAxes, rotation = 90)
+                self.ax[i].text(0.1, -0.15, 'Direction 1', color='black', fontsize=14, transform=self.ax[i].transAxes)
+                self.ax[i].text(0.6, -0.15, 'Direction 2', color='black', fontsize=14, transform=self.ax[i].transAxes)
+
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
