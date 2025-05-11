@@ -262,6 +262,7 @@ class DecodeModel(Decoding):
             embedding_test = model.transform(self.test_data)
 
         else:
+            #TODO(eloise): discuss for unified cebra and xCebra
             raise NotImplementedError(
                 f"Solver {model.solver_name_} is not yet implemented."
             )
