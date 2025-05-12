@@ -236,6 +236,8 @@ class DecodingPlot(_GenericPlot):
             title = "Decoding accuracies across layers (%)"
         elif dataset_label =="HPC":
             title = "Decoding position errors across layers (cm)"
+        else:
+            title = "Decoding errors across layers"
 
         super().__init__(axis, figsize, title)
 
@@ -262,6 +264,9 @@ class DecodingPlot(_GenericPlot):
                     ind = 2
                 elif self.dataset_label =="HPC":
                     ind = 2
+                else:
+                    ind = 0
+                    #we will plot the general error?
                 values = [arr[ind] for arr in inner_list]  # Extract second column
                 layer_values.append(values)
             data[key] = layer_values
@@ -413,41 +418,34 @@ class ModelDecodingPlot(_BasePlot):
                 score = results[
                     :, 2
                 ] 
-                mean_error = np.mean(score)
-                color = self.palette[i] 
-                self.ax.scatter(
-                    np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
-                )
-                self.ax.scatter(
-                    x_positions[i],
-                    mean_error,
-                    color=color,
-                    s=50,
-                    label=f"Mean {key}",
-                    zorder=5,  # Bring mean point to the top
-                )
                 label = "Accuracy"
                 measure = "(%)"
             elif self.dataset_label=="HPC":
                 #for HPC dataset get position error
                 score = results[
                     :, 1
-                ] 
-                mean_error = np.mean(score)
-                color = self.palette[i] 
-                self.ax.scatter(
-                    np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
-                )
-                self.ax.scatter(
-                    x_positions[i],
-                    mean_error,
-                    color=color,
-                    s=50,
-                    label=f"Mean {key}",
-                    zorder=5,  # Bring mean point to the top
-                )
+                ]
                 label = "Position Error"
                 measure = "(cm)"
+            else:
+                score = results[:,0]
+                #choose what you want
+                label = "Overall Error"
+                measure = ""
+                
+            mean_error = np.mean(score)
+            color = self.palette[i] 
+            self.ax.scatter(
+                np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
+            )
+            self.ax.scatter(
+                x_positions[i],
+                mean_error,
+                color=color,
+                s=50,
+                label=f"Mean {key}",
+                zorder=5,  # Bring mean point to the top
+            )
         self.ax.set_xlabel("Model")
         self.ax.set_ylabel(f"{label} {measure}")
         self.ax.set_title(f"Comparison of {label} Across Models")
@@ -1101,6 +1099,8 @@ class _RDMPlots:
             self.tick_labels = ['0.0','0.2','0.4' ,'0.6' ,'0.8' ,'1.0', '1.2', '1.4', '0.0', '0.2', '0.4','0.6' ,'0.8', '1.0', '1.2' ,'1.4' ,'1.6']
 
         else:
+
+            #TODO(eloise): think about this
             raise NotImplementedError(
                 f"RDM Plotting for dataset {self.dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
             )

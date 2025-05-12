@@ -49,7 +49,7 @@ def decoding_general(embedding_train, embedding_test, label_train, label_test):
 
     #transform it into an appropriate shape
     predictions = np.stack(np.array(predictions), axis = 1)
-    #difference between classification error and regression error
+    #difference between classification error and regression error -> here we are only taking into account regression style labels
 
     test_score = sklearn.metrics.r2_score(label_test, predictions)
 
