@@ -9,7 +9,54 @@ from ..matplotlib import *
 import numpy.typing as npt
 from typing import Dict, Type
 import torch.nn as nn
+import sklearn.metrics
 
+def decoding_general(embedding_train, embedding_test, label_train, label_test):
+    try:
+        num_labels = label_train.shape[1]
+    except:
+        num_labels = 1
+
+    #resampling, subsampling and supervised model architecture is still not supported
+    #checked via '''supported_model_architectures()''' function
+
+    #for each label find another K
+    predictions, labels_test_err, labels_test_score = [], [], []
+    for i in range(num_labels):
+        params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
+        errs = []
+        for n in params:
+            train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
+            train_valid_idx = int(len(embedding_train) / 9 * 8)
+            train_decoder.fit(
+                embedding_train[:train_valid_idx], label_train[:train_valid_idx]
+            )
+            pred = train_decoder.predict(embedding_train[train_valid_idx:])
+            err = label_train[train_valid_idx:] - pred
+            errs.append(abs(err).sum())
+
+        test_decoder = cebra.KNNDecoder(
+            n_neighbors=params[np.argmin(errs)], metric="cosine"
+        )
+
+        test_decoder.fit(embedding_train, label_train)
+        label_pred = test_decoder.predict(embedding_test)
+        predictions.append(label_pred)
+        label_test_err = np.median(abs(label_pred - label_test[:,i]))
+        labels_test_err.append(labels_test_err)
+        label_test_score = sklearn.metrics.r2_score(label_test[:,i], label_pred)
+        labels_test_score.append(label_test_score)
+
+    #transform it into an appropriate shape
+    predictions = np.stack(np.array(predictions), axis = 1)
+    #difference between classification error and regression error
+
+    test_score = sklearn.metrics.r2_score(label_test, predictions)
+
+    #always plot the test_score in R2 for overall labels, if wanted you can choose a label and plot its error, but I need to add a parameter
+
+    return test_score, labels_test_err, labels_test_score
+    
 
 class Decoding(_BaseMetric):
     """
@@ -110,8 +157,11 @@ class Decoding(_BaseMetric):
                 label_test=label_test,
             )
         else:
-            raise NotImplementedError(
-                f"Decoding not implemented for {dataset_label}. Please use 'visual' or 'HPC'."
+            results = decoding_general(
+                embedding_train=embedding_train,
+                label_train=label_train,
+                embedding_test=embedding_test,
+                label_test=label_test,
             )
         return results
 
@@ -151,12 +201,8 @@ class Decoding(_BaseMetric):
 
         num_layers = len(activations_train)
 
-        if self.dataset_label in ["HPC", "visual"]:
-            results = np.zeros((num_layers + 1, 3))
-        else:
-            raise NotImplementedError(
-                f"Decoding not implemented for {self.dataset_label}. Please use 'visual' or 'HPC'."
-            )
+        results = np.zeros((num_layers + 1, 3))
+
         keys = list(activations_train.keys())
         for i in range(num_layers + 1):
 
