@@ -11,7 +11,7 @@ from typing import Dict, Type
 import torch.nn as nn
 import sklearn.metrics
 
-def decoding_general(embedding_train, embedding_test, label_train, label_test):
+def decoding(embedding_train, embedding_test, label_train, label_test):
     try:
         num_labels = label_train.shape[1]
     except:
