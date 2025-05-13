@@ -156,8 +156,6 @@ class Decoding(_BaseMetric):
                 )
         else:
 
-            num_layers = len(activations_train)
-
             activations_train = get_activations_model(
                 model=model,
                 data=self.train_data,
@@ -173,6 +171,7 @@ class Decoding(_BaseMetric):
                 session_id=self.session_id,
                 layer_type=self.layer_type,
             )
+            num_layers = len(activations_train)
             keys = list(activations_train.keys())
 
         if self.dataset_label in ["HPC", "visual"]:
@@ -189,7 +188,7 @@ class Decoding(_BaseMetric):
                 if self.output_only:
                     train_embedding = self.train_data
                     test_embedding = self.test_data
-                    
+
                 results[i, :] = self._decode(
                     train_embedding,
                     self.train_label,
