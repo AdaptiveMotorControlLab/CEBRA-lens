@@ -35,10 +35,6 @@ def compute(
             metric_class.compute(sample)
             for sample in tqdm(samples, desc=f"Processing {model_label}")
         ]
-
-        if getattr(metric_class, "output_only", False):
-            computed_values = np.array(computed_values)
-
         result_dict[model_label] = computed_values
 
     return result_dict
