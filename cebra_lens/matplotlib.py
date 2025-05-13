@@ -237,7 +237,7 @@ class DecodingPlot(_GenericPlot):
         elif dataset_label =="HPC":
             title = "Decoding position errors across layers (cm)"
         else:
-            title = "Decoding errors across layers"
+            title = "Decoding average R^2 scores across layers"
 
         super().__init__(axis, figsize, title)
 
@@ -266,7 +266,6 @@ class DecodingPlot(_GenericPlot):
                     ind = 2
                 else:
                     ind = 0
-                    #we will plot the general error?
                 values = [arr[ind] for arr in inner_list]  # Extract second column
                 layer_values.append(values)
             data[key] = layer_values
@@ -391,6 +390,8 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
+        label: str="Averaged R^2 score",
+        metric: int=0,
     ):
 
         self.figsize = (
@@ -405,6 +406,8 @@ class ModelDecodingPlot(_BasePlot):
             palette, len(results_dict)
         )  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
+        self.metric = metric
+        self.label = label
 
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
@@ -418,19 +421,17 @@ class ModelDecodingPlot(_BasePlot):
                 score = results[
                     :, 2
                 ] 
-                label = "Accuracy"
+                self.label = "Accuracy"
                 measure = "(%)"
             elif self.dataset_label=="HPC":
                 #for HPC dataset get position error
                 score = results[
                     :, 1
                 ]
-                label = "Position Error"
+                self.label = "Position Error"
                 measure = "(cm)"
             else:
-                score = results[:,0]
-                #choose what you want
-                label = "Overall Error"
+                score = results[:,self.metric]
                 measure = ""
                 
             mean_error = np.mean(score)
@@ -447,8 +448,8 @@ class ModelDecodingPlot(_BasePlot):
                 zorder=5,  # Bring mean point to the top
             )
         self.ax.set_xlabel("Model")
-        self.ax.set_ylabel(f"{label} {measure}")
-        self.ax.set_title(f"Comparison of {label} Across Models")
+        self.ax.set_ylabel(f"{self.label} {measure}")
+        self.ax.set_title(f"Comparison of {self.label} Across Models")
         self.ax.set_xticks(x_positions)
         self.ax.set_xticklabels(
             self.results_dict.keys()
@@ -459,8 +460,10 @@ class ModelDecodingPlot(_BasePlot):
 def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
-    dataset_label="visual",
+    dataset_label: str=None,
+    metric: int=0,
     ax: Optional[matplotlib.axes.Axes] = None,
+    label: str = "Averaged R^2 score",
     **kwargs,
 ) -> plt.Figure:
     """
@@ -483,6 +486,8 @@ def plot_decoding(
         axis=ax,
         palette=palette,
         dataset_label=dataset_label,
+        metric=metric,
+        label=label,
     ).plot(**kwargs)
 
 
