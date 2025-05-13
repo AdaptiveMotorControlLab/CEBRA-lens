@@ -185,7 +185,7 @@ class Decoding(_BaseMetric):
 
             # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
             if i == 0:
-                if self.output_only:
+                if not self.output_only:
                     train_embedding = self.train_data
                     test_embedding = self.test_data
 
