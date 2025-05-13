@@ -11,7 +11,6 @@ from typing import Dict, Type
 import torch.nn as nn
 
 
-
 class Decoding(_BaseMetric):
     """
     Decoding class for decoding neural data by layer using a given CEBRA model.
@@ -152,7 +151,7 @@ class Decoding(_BaseMetric):
             else:
                 raise NotImplementedError(
                     f"Solver {model.solver_name_} is not yet implemented."
-            )
+                )
         else:
 
             num_layers = len(activations_train)
@@ -180,11 +179,10 @@ class Decoding(_BaseMetric):
             raise NotImplementedError(
                 f"Decoding not implemented for {self.dataset_label}. Please use 'visual' or 'HPC'."
             )
-        
 
         for i in range(num_layers + 1):
 
-            #if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
+            # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
             if i == 0:
                 results[i, :] = self._decode(
                     self.train_data,
@@ -215,14 +213,11 @@ class Decoding(_BaseMetric):
         results_dict: Dict[str, npt.NDArray],
         title: str = "Decoding by layer",
         figsize: tuple = (15, 5),
-    ):
-        return plot_layer_decoding(results_dict, title, figsize)
-    
-    def plot(
-        self,
-        results_dict: Dict[str, npt.NDArray],
         palette: str = "hls",
         dataset_label="visual",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        return plot_decoding(results_dict, palette, dataset_label, ax)
+        if self.output_only:
+            return plot_decoding(results_dict, palette, dataset_label, ax)
+        else:
+            return plot_layer_decoding(results_dict, title, figsize)

@@ -8,7 +8,6 @@ from tqdm import tqdm
 from torch import nn
 
 
-
 def compute(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
