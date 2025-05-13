@@ -339,3 +339,49 @@ def aggregate_activations(
 
         aggregated_activations[model_identifier].append(value)
     return aggregated_activations
+
+def get_activations(
+        models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
+        data: torch.Tensor,
+        session_id: int,
+        activations: Optional[Dict[str, npt.NDArray]] = None,
+        layer_type: Optional[Type[nn.Module]] = None,
+    ) -> Dict[str, npt.NDArray]:
+        """
+        Extracts and organizes activations from models.
+
+        Parameters:
+        -----------
+        models : Dict[str, List[CEBRA]]
+            Dictionary of models categorized by label.
+
+        data : torch.Tensor
+            Input tensor for the models, shape (samples, features).
+
+        session_id : int
+            Session identifier used for selecting the appropriate model.
+
+        activations : Dict[str, npt.NDArray], optional
+            Optional dictionary to store activations.
+
+        layer_type : Type[nn.Module], optional
+            Optional layer type (e.g., nn.Conv1d) to extract specific activations.
+
+        Returns:
+        --------
+        Dict[str, npt.NDArray]
+            Dictionary with model label prefixes as keys and lists of activation arrays as values.
+        """
+        activations = activations or {}
+
+
+        aggregated_activations = aggregate_activations(
+            process_activations(models, data, session_id, activations, layer_type)
+        )
+
+        activations_dict = {}
+        for key, value in aggregated_activations.items():
+            prefix = "_".join(key.split("_")[:-1])
+            activations_dict.setdefault(prefix, []).append(value)
+
+        return activations_dict
