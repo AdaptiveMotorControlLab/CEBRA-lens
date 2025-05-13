@@ -28,13 +28,13 @@ def compute(
     Dict[str, npt.NDArray]
         Dictionary mapping model labels to arrays of computed metric values.
     """
-    result_dict: Dict[str, npt.NDArray[Any]] = {}
+    result_dict = {}
 
     for model_label, samples in model_data.items():
-        computed_values = [
+        computed_values = np.array([
             metric_class.compute(sample)
             for sample in tqdm(samples, desc=f"Processing {model_label}")
-        ]
+        ])
         result_dict[model_label] = computed_values
 
     return result_dict

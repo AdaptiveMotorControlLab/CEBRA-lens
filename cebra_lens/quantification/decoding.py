@@ -206,7 +206,8 @@ class Decoding(_BaseMetric):
                     self.test_label,
                     self.dataset_label,
                 )
-
+        if self.output_only:
+            results = results[0]
         return results
 
     @property
