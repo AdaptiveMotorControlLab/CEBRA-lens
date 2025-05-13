@@ -134,19 +134,21 @@ class Decoding(_BaseMetric):
         npt.NDArray
             A numpy array containing the decoding results for each layer and the neural input baseline.
         """
+
+
         if self.output_only:
 
             num_layers = 0
 
             if model.solver_name_ == "multi-session":
 
-                self.train_data = model.transform(self.train_data, self.session_id)
-                self.test_data = model.transform(self.test_data, self.session_id)
+                train_embedding = model.transform(self.train_data, self.session_id)
+                test_embedding = model.transform(self.test_data, self.session_id)
 
             elif model.solver_name_ == "single-session":
 
-                self.train_data = model.transform(self.train_data)
-                self.test_data = model.transform(self.test_data)
+                train_embedding = model.transform(self.train_data)
+                test_embedding = model.transform(self.test_data)
 
             else:
                 raise NotImplementedError(
@@ -184,10 +186,14 @@ class Decoding(_BaseMetric):
 
             # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
             if i == 0:
+                if self.output_only:
+                    train_embedding = self.train_data
+                    test_embedding = self.test_data
+                    
                 results[i, :] = self._decode(
-                    self.train_data,
+                    train_embedding,
                     self.train_label,
-                    self.test_data,
+                    test_embedding,
                     self.test_label,
                     self.dataset_label,
                 )
