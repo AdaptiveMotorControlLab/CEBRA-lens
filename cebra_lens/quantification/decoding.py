@@ -11,16 +11,17 @@ from typing import Dict, Type
 import torch.nn as nn
 import sklearn.metrics
 
+
 def decoding(embedding_train, embedding_test, label_train, label_test):
     try:
         num_labels = label_train.shape[1]
     except:
         num_labels = 1
 
-    #resampling, subsampling and supervised model architecture is still not supported
-    #checked via '''supported_model_architectures()''' function
+    # resampling, subsampling and supervised model architecture is still not supported
+    # checked via '''supported_model_architectures()''' function
 
-    #for each label find another K
+    # for each label find another K
     predictions, labels_test_err, labels_test_score = [], [], []
     for i in range(num_labels):
         params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
@@ -42,21 +43,21 @@ def decoding(embedding_train, embedding_test, label_train, label_test):
         test_decoder.fit(embedding_train, label_train)
         label_pred = test_decoder.predict(embedding_test)
         predictions.append(label_pred)
-        label_test_err = np.median(abs(label_pred - label_test[:,i]))
+        label_test_err = np.median(abs(label_pred - label_test[:, i]))
         labels_test_err.append(labels_test_err)
-        label_test_score = sklearn.metrics.r2_score(label_test[:,i], label_pred)
+        label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
         labels_test_score.append(label_test_score)
 
-    #transform it into an appropriate shape
-    predictions = np.stack(np.array(predictions), axis = 1)
-    #difference between classification error and regression error -> here we are only taking into account regression style labels
+    # transform it into an appropriate shape
+    predictions = np.stack(np.array(predictions), axis=1)
+    # difference between classification error and regression error -> here we are only taking into account regression style labels
 
     test_score = sklearn.metrics.r2_score(label_test, predictions)
 
-    #always plot the test_score in R2 for overall labels, if wanted you can choose a label and plot its error, but I need to add a parameter
+    # always plot the test_score in R2 for overall labels, if wanted you can choose a label and plot its error, but I need to add a parameter
 
     return test_score, labels_test_err, labels_test_score
-    
+
 
 class Decoding(_BaseMetric):
     """
@@ -185,7 +186,6 @@ class Decoding(_BaseMetric):
             A numpy array containing the decoding results for each layer and the neural input baseline.
         """
 
-
         if self.output_only:
 
             num_layers = 0
@@ -259,10 +259,9 @@ class Decoding(_BaseMetric):
     @property
     def __name__(self):
         return "decode_by_layer"
-    
+
     def set_output_only(self, output_only):
         self.output_only = output_only
-
 
     def plot(
         self,

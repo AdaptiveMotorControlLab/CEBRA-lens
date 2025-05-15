@@ -36,6 +36,8 @@ class RDM(_BaseMetric):
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
+        num_samples: int = None,
+        num_bins: int = None,
     ):
         super().__init__()
         self.data = data
@@ -43,6 +45,8 @@ class RDM(_BaseMetric):
         self.dataset_label = dataset_label
         self.metric = metric
         self.bool_oracle = bool_oracle
+        self.num_samples = num_samples
+        self.num_bins = num_bins
 
         self.idxs = discrete_binning(
             data=self.data, label=self.label, dataset_label=self.dataset_label
@@ -64,6 +68,7 @@ class RDM(_BaseMetric):
             all_classes = [one_class for _ in range(30)]
             block_rdm_sqform = 1 - block_diag(*all_classes)
             oracle_rdm = squareform(block_rdm_sqform)
+
         elif self.dataset_label == "HPC":
             one_class = np.ones((200, 200))
             all_classes = [one_class for _ in range(16)]
@@ -71,9 +76,12 @@ class RDM(_BaseMetric):
             oracle_rdm = squareform(block_rdm_sqform)
 
         else:
-            raise NotImplementedError(
-                f"Oracle RDM not defined for {self.dataset_label}. Please use 'visual'"
-            )
+            num_sample = self.idxs.shape[1]
+            num_bins = self.idxs.shape[0]
+            one_class = np.ones((num_sample, num_sample))
+            all_classes = [one_class for _ in range(num_bins)]
+            block_rdm_sqform = 1 - block_diag(*all_classes)
+            oracle_rdm = squareform(block_rdm_sqform)
 
         return oracle_rdm
 
@@ -133,7 +141,8 @@ class RDM(_BaseMetric):
         return squareform(rdm), correlation
 
     def compute(
-        self, activations: List[Union[float, npt.NDArray]]
+        self,
+        activations: List[Union[float, npt.NDArray]],
     ) -> List[Tuple[npt.NDArray, float]]:
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
@@ -153,11 +162,26 @@ class RDM(_BaseMetric):
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
+        if self.dataset_label != "visual" or self.dataset_label != "HPC":
+            self.idxs = discrete_binning(
+                self.data,
+                self.label,
+                self.dataset_label,
+                num_bins=self.num_bins,
+                num_samples=self.num_samples,
+            )
+
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
     @property
     def __name__(self):
         return "rdm"
+
+    def set_num_bins(self, num_bins):
+        self.num_bins = num_bins
+
+    def set_num_samples(self, num_samples):
+        self.num_samples = num_samples
 
     def plot(
         self,

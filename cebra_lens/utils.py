@@ -7,11 +7,15 @@ import numpy.typing as npt
 from tqdm import tqdm
 from torch import nn
 from .quantification.decoding import Decoding
+from .quantification.rdm_metric import RDM
+
 
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
-    output_only: bool=False,
+    output_only: bool = False,
+    num_samples: int = None,
+    num_bins: int = None,
 ) -> Dict[str, npt.NDArray[Any]]:
     """
     Computes metrics for each model using a provided metric class.
@@ -34,11 +38,15 @@ def compute_metric(
     for model_label, samples in model_data.items():
         if isinstance(metric_class, Decoding):
             metric_class.set_output_only(output_only)
-        
-        computed_values = np.array([
-            metric_class.compute(sample)
-            for sample in tqdm(samples, desc=f"Processing {model_label}")
-        ])
+        elif isinstance(metric_class, RDM):
+            metric_class.set_num_bins(num_bins)
+            metric_class.set_num_samples(num_samples)
+        computed_values = np.array(
+            [
+                metric_class.compute(sample)
+                for sample in tqdm(samples, desc=f"Processing {model_label}")
+            ]
+        )
         result_dict[model_label] = computed_values
 
     return result_dict

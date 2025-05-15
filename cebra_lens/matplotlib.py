@@ -233,10 +233,10 @@ class DecodingPlot(_GenericPlot):
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
-        
-        if dataset_label=="visual":
+
+        if dataset_label == "visual":
             title = "Decoding accuracies across layers (%)"
-        elif dataset_label =="HPC":
+        elif dataset_label == "HPC":
             title = "Decoding position errors across layers (cm)"
         else:
             title = "Decoding average R^2 scores across layers"
@@ -262,9 +262,9 @@ class DecodingPlot(_GenericPlot):
             layer_values = []
 
             for i, inner_list in enumerate(data_list):
-                if self.dataset_label=="visual":
+                if self.dataset_label == "visual":
                     ind = 2
-                elif self.dataset_label =="HPC":
+                elif self.dataset_label == "HPC":
                     ind = 2
                 else:
                     ind = 0
@@ -392,8 +392,8 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
-        label: str="Averaged R^2 score",
-        metric: int=0,
+        label: str = "Averaged R^2 score",
+        metric: int = 0,
     ):
 
         self.figsize = (
@@ -418,26 +418,22 @@ class ModelDecodingPlot(_BasePlot):
         )  # X positions for scatter points
 
         for i, (key, results) in enumerate(self.results_dict.items()):
-            if self.dataset_label =="visual":
-                #for visual dataset get accuracy
-                score = results[
-                    :, 2
-                ] 
+            if self.dataset_label == "visual":
+                # for visual dataset get accuracy
+                score = results[:, 2]
                 self.label = "Accuracy"
                 measure = "(%)"
-            elif self.dataset_label=="HPC":
-                #for HPC dataset get position error
-                score = results[
-                    :, 1
-                ]
+            elif self.dataset_label == "HPC":
+                # for HPC dataset get position error
+                score = results[:, 1]
                 self.label = "Position Error"
                 measure = "(cm)"
             else:
-                score = results[:,self.metric]
+                score = results[:, self.metric]
                 measure = ""
-                
+
             mean_error = np.mean(score)
-            color = self.palette[i] 
+            color = self.palette[i]
             self.ax.scatter(
                 np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
             )
@@ -459,11 +455,12 @@ class ModelDecodingPlot(_BasePlot):
         self.ax.legend()  # Show legend for model labels
         sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
 
+
 def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
-    dataset_label: str=None,
-    metric: int=0,
+    dataset_label: str = None,
+    metric: int = 0,
     ax: Optional[matplotlib.axes.Axes] = None,
     label: str = "Averaged R^2 score",
     **kwargs,
@@ -1102,12 +1099,32 @@ class _RDMPlots:
             self.tick_labels = [str(i) for i in range(0, 930, 30)]
 
         elif self.dataset_label == "HPC":
-            self.tick_positions =  np.arange(0, 34, 2)/10 # Ticks at 0, 0.2, 0.4,..., 1.6
-            self.tick_labels = ['0.0','0.2','0.4' ,'0.6' ,'0.8' ,'1.0', '1.2', '1.4', '0.0', '0.2', '0.4','0.6' ,'0.8', '1.0', '1.2' ,'1.4' ,'1.6']
+            self.tick_positions = (
+                np.arange(0, 34, 2) / 10
+            )  # Ticks at 0, 0.2, 0.4,..., 1.6
+            self.tick_labels = [
+                "0.0",
+                "0.2",
+                "0.4",
+                "0.6",
+                "0.8",
+                "1.0",
+                "1.2",
+                "1.4",
+                "0.0",
+                "0.2",
+                "0.4",
+                "0.6",
+                "0.8",
+                "1.0",
+                "1.2",
+                "1.4",
+                "1.6",
+            ]
 
         else:
 
-            #TODO(eloise): think about this
+            # TODO(eloise): think about this
             raise NotImplementedError(
                 f"RDM Plotting for dataset {self.dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
             )
@@ -1137,27 +1154,60 @@ class _RDMPlots:
 
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
             self.ax[i].set_title(self.titles[i])
-            
-            if self.dataset_label =="visual":
+
+            if self.dataset_label == "visual":
                 num_ticks = len(self.tick_labels)
                 self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
                 self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
                 self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
                 self.ax[i].set_yticklabels(self.tick_labels)
             elif self.dataset_label == "HPC":
-                 # Set the x and y ticks
-                self.ax[i].set_xticks(self.tick_positions * len(rdm) // 1.6/2)  # Scale ticks to the range of data
-                self.ax[i].set_yticks(self.tick_positions * len(rdm) // 1.6/2)  # Same for y-axis
+                # Set the x and y ticks
+                self.ax[i].set_xticks(
+                    self.tick_positions * len(rdm) // 1.6 / 2
+                )  # Scale ticks to the range of data
+                self.ax[i].set_yticks(
+                    self.tick_positions * len(rdm) // 1.6 / 2
+                )  # Same for y-axis
 
                 # Set the tick labels to show 0, 0.2, ..., 1.6
                 self.ax[i].set_xticklabels(self.tick_labels)
                 self.ax[i].set_yticklabels(self.tick_labels)
                 if i == 0:
-                    self.ax[i].text(-0.15, 0.6, 'Direction 1', color='black', fontsize=14, transform=self.ax[i].transAxes, rotation = 90)
-                    self.ax[i].text(-0.15, 0.1, 'Direction 2', color='black', fontsize=14, transform=self.ax[i].transAxes, rotation = 90)
-                self.ax[i].text(0.1, -0.15, 'Direction 1', color='black', fontsize=14, transform=self.ax[i].transAxes)
-                self.ax[i].text(0.6, -0.15, 'Direction 2', color='black', fontsize=14, transform=self.ax[i].transAxes)
-
+                    self.ax[i].text(
+                        -0.15,
+                        0.6,
+                        "Direction 1",
+                        color="black",
+                        fontsize=14,
+                        transform=self.ax[i].transAxes,
+                        rotation=90,
+                    )
+                    self.ax[i].text(
+                        -0.15,
+                        0.1,
+                        "Direction 2",
+                        color="black",
+                        fontsize=14,
+                        transform=self.ax[i].transAxes,
+                        rotation=90,
+                    )
+                self.ax[i].text(
+                    0.1,
+                    -0.15,
+                    "Direction 1",
+                    color="black",
+                    fontsize=14,
+                    transform=self.ax[i].transAxes,
+                )
+                self.ax[i].text(
+                    0.6,
+                    -0.15,
+                    "Direction 2",
+                    color="black",
+                    fontsize=14,
+                    transform=self.ax[i].transAxes,
+                )
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()

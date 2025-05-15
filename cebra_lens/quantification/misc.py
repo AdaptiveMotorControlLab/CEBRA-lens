@@ -33,6 +33,9 @@ def discrete_binning(
     label: torch.Tensor,
     dataset_label: str = "visual",
     sample_mode: str = "sub_sample",
+    num_bins: int = 30,
+    max_num_samples: int = 200,
+    max_label: int = 900,
 ) -> npt.NDArray:
     """
     Bins the training data based on the provided labels, creating indices for sampling. Used to discretize a continuous input for RDM.
@@ -47,6 +50,12 @@ def discrete_binning(
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     sample_mode : str, optional
         If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
+    num_bins : int
+        Number of bins to put the labels in.
+    max_num_samples : int
+        The maximum number of samples per bin allowed if the number of labels divided by the num_bins is bigger than 200
+    max_label : int
+        What is the maximum values of label. Example: For the Allen visual dataset that is 900.
     Returns:
     --------
     npt.NDArray
@@ -58,7 +67,9 @@ def discrete_binning(
         num_bins = 30
 
         if sample_mode == "sub_sample":
-            num_samples = 200 if len(data) / 30 >= 200 else int(len(data) / 30)
+            num_samples = (
+                max_num_samples if len(data) / 30 >= 200 else int(len(data) / 30)
+            )
         elif sample_mode == "all":
             num_samples = int(len(data) / 30)
         else:
@@ -86,6 +97,7 @@ def discrete_binning(
                 )
 
             j = j + 1
+
     elif dataset_label == "HPC":
 
         num_samples = 200
@@ -120,9 +132,38 @@ def discrete_binning(
             j = j + 1
 
     else:
-        raise NotImplementedError(
-            f"Binning not implemented for {dataset_label}. Use 'visual' or 'HPC'."
-        )
+
+        if sample_mode == "sub_sample":
+            num_samples = (
+                max_num_samples if len(data) / 30 >= 200 else int(len(data) / 30)
+            )
+        elif sample_mode == "all":
+            num_samples = int(len(data) / 30)
+        else:
+            raise NotImplementedError(
+                f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
+            )
+
+        step_distance = max_label / num_bins
+        idxs = np.zeros((num_bins, num_samples))
+
+        j = 0
+        for i in range(num_bins):
+
+            full_idxs = np.where(
+                (label[:] >= j * step_distance) & (label[:] < (j + 1) * step_distance)
+            )[0]
+
+            if sample_mode == "sub_sample":
+                idxs[i, :] = sample(list(full_idxs), num_samples)
+            elif sample_mode == "all":
+                idxs[i, :] = list(full_idxs)
+            else:
+                raise NotImplementedError(
+                    f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
+                )
+
+            j = j + 1
 
     return idxs.astype(int)
 
