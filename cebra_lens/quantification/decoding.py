@@ -213,6 +213,11 @@ class Decoding(_BaseMetric):
     @property
     def __name__(self):
         return "decode_by_layer"
+    
+    @property
+    def set_output_only(self, output_only):
+        self.output_only = output_only
+        
 
     def plot(
         self,
