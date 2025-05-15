@@ -5,3 +5,4 @@ from .distance import *
 from .decoding import *
 from .base import *
 from .tsne import *
+from .multibase import *

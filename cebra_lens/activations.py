@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Dict, List, Type, Optional
+from typing import Tuple, Dict, List, Type
 
 
 def _cut_array(
@@ -34,56 +34,8 @@ def _cut_array(
         sliced_array = array
     else:
         # Otherwise, slice the array
-        sliced_array = array[:, start : end if end != 0 else start :]
-    return sliced_array
-
-
-def get_cut_indices(
-    model_: cebra.integrations.sklearn.cebra.CEBRA,
-    layer_type: Type[nn.Module],
-    conv_layer_info: Optional[List[int]] = [],
-) -> List[Tuple[int, int]]:
-    """
-    Function which computes indices for removing padding from activation layers.
-
-    Parameters:
-    -----------
-    model_ : cebra.integrations.sklearn.cebra.CEBRA
-        CEBRA model instance.
-    layer_type : Type[nn.Module]
-        The type of layer whose activations were extracted.
-    conv_layer_info : Optional[List[int]]
-        A list of the kernel sizes for the convolutional layers extracted, needed for receptive field calculation.
-
-    Returns:
-    --------
-    cut_indices: List[Tuple[int,int]]
-        A list of tuples, a tuple for each activation layer, where the first element is the amount of elements which need to be removed from the beginning and the abs(last element) the amount needed to be remove from the end.
-        Example:
-        cut_indices = [(4,-4), (3,-3), (2,-2), (1,-1), (0,0), (0,0)]
-    """
-    cut_indices = []
-    offset = model_.get_offset()
-    if layer_type == nn.Conv1d:
-        # fix it so it's using only model_
-        reduction = len(offset) - 1
-        for k in conv_layer_info:
-            reduction = max(0, reduction - (k - 1))
-            left = reduction // 2  # lower
-            right = reduction - left
-            if offset.left > offset.right:
-                right = left
-                left = reduction - right
-            cut_indices.append((left, -right))
-        # add for output layer
-        cut_indices.append((0, 0))
-    elif layer_type == None:
-        raise NotImplementedError("Padding handling not implemented for 'all'.")
-    else:
-        # need to analyze the padding from the last output of Conv1 and apply the same cut
-        raise NotImplementedError(f"Padding handling not implemented for {layer_type}.")
-    return cut_indices
-
+        sliced_array = array[:, start:end]
+    return sliced_array    
 
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -99,13 +51,15 @@ def get_activations_model(
 
     Parameters:
     -----------
-    model : cebra.integrations.sklearn.cebra.CEBRA
+    model : cebra.model
         The cebra model from which to extract activations.
     data : torch.Tensor
         The input data to be passed through the model. Shape of samples X channels (neurons).
     session_id : int, optional
         The session identifier used for selecting the appropriate model in multi-session solvers.
         For single-session, no need to input it.
+    name : str
+        A base name for the activation keys (e.g., "single", "multi").
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
     layer_type : Type[nn.Module]
@@ -121,42 +75,67 @@ def get_activations_model(
     """
 
     activations = {}
-    transform_kwargs = {}
     if model.solver_name_ == "multi-session":
         model_ = model.model_[session_id]
-        transform_kwargs.update({"session_id": session_id})
+        activations, handles = _attach_hooks(
+            activations=activations,
+            model=model_,
+            name=name,
+            instance=instance,
+            layer_type=layer_type,
+        )
+        _ = model.transform(
+            data, session_id=session_id
+        )  # no need to store the output embedding. we already add a hook on it
 
     elif model.solver_name_ == "single-session":
-        # no need to store the output embedding. we already add a hook on it
         model_ = model.model_
+        activations, handles = _attach_hooks(
+            activations=activations,
+            model=model_,
+            name=name,
+            instance=instance,
+            layer_type=layer_type,
+        )
+        _ = model.transform(
+            data
+        )  # no need to store the output embedding. we already add a hook on it
+
     else:
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
         )
 
-    activations, handles, conv_layer_info = _attach_hooks(
-        activations=activations,
-        model=model_,
-        name=name,
-        instance=instance,
-        layer_type=layer_type,
-    )
-    _ = model.transform(data, **transform_kwargs)
-
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
 
+    #TODO(eloise): implement general padding, depending on model type offset5, offset10?, based on layer_type?
     if model.pad_before_transform:
-        # Padding logic: calculate the total reduction which happens based on the kernel size per layer, divide the reduction per layer into 2 parts
-        cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
+        if layer_type == nn.Conv1d:
+            if model.model_architecture in ["offset10-model", "offset10-model-mse","offset10-model-adapt"]:
+                cut_indices = [(4, -4), (3, -3), (2, -2), (1, -1), (0, 0), (0, 0)]
+            elif model.model_architecture in ["offset5-model"]:
+                cut_indices = [(1, -2), (0, -1), (0, 0), (0, 0)]
+
+            else:
+                raise NotImplementedError(
+                    f"Padding handling for {model.model_architecture} not implemented yet."
+                )
+        elif layer_type==None:
+            raise NotImplementedError("Padding handling not implemented for 'all'.")
+        else:
+            raise NotImplementedError(
+                f"Padding handling not implemented for {layer_type}."
+            )
+
         for i, (key, value) in enumerate(activations.items()):
             activations[key] = _cut_array(value, cut_indices[i])
 
     return activations
 
 
-def process_activations(
+def get_activations_models(
     models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
     data: torch.Tensor,
     session_id: int,
@@ -243,38 +222,38 @@ def _attach_hooks(
 
     num_layer = 1
 
-    handles, conv_layer_info = [], []
+    handles = []
 
     if layer_type:
         for i in range(len(model.net)):
-            # attach hook to the layer_type and to the output layer
             if isinstance(model.net[i], layer_type) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
                     f"{name}_{instance}_layer_{num_layer}", activations
                 )
-                if isinstance(model.net[i], layer_type):
-                    conv_layer_info.append(model.net[i].kernel_size[0])
+
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
                 num_layer += 1
 
-            elif bool(model.net[i]._modules):
+            elif bool(
+                model.net[i]._modules
+            ):
                 for submodule in model.net[i].modules():
                     if isinstance(submodule, layer_type):
                         hook, activations = _get_activation(
                             f"{name}_{instance}_layer_{num_layer}",
                             activations,
                         )
-                        conv_layer_info.append(submodule.kernel_size[0])
                         handle = submodule.register_forward_hook(hook)
                         handles.append(handle)
                         num_layer += 1
 
     else:
-        # layer_type is None meaning we want to attach hooks to every layer regardless
-        # TODO(eloise): Layer type general, does it make sense?, Padding cutting, then for these other layers...
+        #layer_type is None meaning we want to attach hooks to every layer regardless
         for i in range(len(model.net)):
-            if bool(model.net[i]._modules):
+            if bool(
+                model.net[i]._modules
+            ):
                 for submodule in model.net[i].modules():
                     hook, activations = _get_activation(
                         f"{name}_{instance}_layer_{num_layer}",
@@ -293,10 +272,10 @@ def _attach_hooks(
                 handles.append(handle)
                 num_layer += 1
 
-    return activations, handles, conv_layer_info
+    return activations, handles
 
 
-def aggregate_activations(
+def _aggregate_activations(
     activations: Dict[str, npt.NDArray],
 ) -> Dict[str, npt.NDArray]:
     """
@@ -340,47 +319,32 @@ def aggregate_activations(
     return aggregated_activations
 
 
-def get_activations(
-    models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
-    data: torch.Tensor,
-    session_id: int,
-    activations: Optional[Dict[str, npt.NDArray]] = None,
-    layer_type: Optional[Type[nn.Module]] = None,
-) -> Dict[str, npt.NDArray]:
+def process_activations(activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
     """
-    Extracts and organizes activations from models.
+    Processes the activations and formats them into a structured dictionary.
 
     Parameters:
     -----------
-    models : Dict[str, List[CEBRA]]
-        Dictionary of models categorized by label.
-
-    data : torch.Tensor
-        Input tensor for the models, shape (samples, features).
-
-    session_id : int
-        Session identifier used for selecting the appropriate model.
-
-    activations : Dict[str, npt.NDArray], optional
-        Optional dictionary to store activations.
-
-    layer_type : Type[nn.Module], optional
-        Optional layer type (e.g., nn.Conv1d) to extract specific activations.
+    activations : Dict[str, npt.NDArray]
+        A dictionary where the keys are in the format 'MODEL_LABEL_INSTANCE_layer_LAYER'
+        (e.g., 'single_UT_1_layer_2') and the values contain the activations for that model instance and that layer.
 
     Returns:
     --------
-    Dict[str, npt.NDArray]
-        Dictionary with model label prefixes as keys and lists of activation arrays as values.
+    activations_dict : Dict[str, npt.NDArray]
+        A dictionary where the keys are the model category names, and the values are arrays of activation values for each instance:
+        e.g.{'single_UT': [[instance1_activations], [instance2_activations], ...], 'single_TR': [[instance1_activations], [instance2_activations], ...]}'
     """
-    activations = activations or {}
 
-    aggregated_activations = aggregate_activations(
-        process_activations(models, data, session_id, activations, layer_type)
-    )
+    # first aggregate all the layers of the activations into models
+    aggregated_activations = _aggregate_activations(activations=activations)
 
     activations_dict = {}
+
     for key, value in aggregated_activations.items():
         prefix = "_".join(key.split("_")[:-1])
-        activations_dict.setdefault(prefix, []).append(value)
+        if prefix not in activations_dict.keys():
+            activations_dict[prefix] = []
+        activations_dict[prefix].append(value)
 
     return activations_dict

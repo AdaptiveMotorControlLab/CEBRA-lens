@@ -86,9 +86,7 @@ class _GenericPlot(_BasePlot):
             layer_values = np.array(layer_values)
 
             mean_values = (
-                layer_values
-                if layer_values.ndim == 1
-                else np.mean(layer_values, axis=0)
+                layer_values if layer_values.ndim == 1 else np.mean(layer_values, axis=0)
             )
 
             sns.lineplot(
@@ -147,7 +145,7 @@ class RDMPlot(_GenericPlot):
         for key, data_list in self.results_dict.items():
             layer_values = []
             for inner_list in data_list:
-                values = [arr[1] for arr in inner_list]
+                values = [arr[1] for arr in inner_list]  # Extract second column
                 layer_values.append(values)
             data[key] = layer_values
         return data
@@ -200,7 +198,7 @@ class DistancePlot(_GenericPlot):
 
             for i, inner_list in enumerate(data_list):
 
-                values = [arr for arr in inner_list]
+                values = [arr for arr in inner_list]  # Extract second column
                 layer_values.append(values)
             data[key] = layer_values
         return data
