@@ -38,7 +38,7 @@ def compute_metric(
     result_dict = {}
 
     if isinstance(metric_class, CKA):
-        for comparison in metric_class.comparisons:
+        for comparison in tqdm(metric_class.comparisons):
             cka_matrix = metric_class.compute(model_data, comparison)
             result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
 
