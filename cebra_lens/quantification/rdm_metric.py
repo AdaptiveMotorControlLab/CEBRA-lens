@@ -65,10 +65,10 @@ class RDM(_BaseMetric):
             block_rdm_sqform = 1 - block_diag(*all_classes)
             oracle_rdm = squareform(block_rdm_sqform)
         elif self.dataset_label == "HPC":
-            # TODO: complete this
-            raise NotImplementedError(
-                f"Oracle RDM not defined for {self.dataset_label}. Please use 'visual'"
-            )
+            one_class = np.ones((200, 200))
+            all_classes = [one_class for _ in range(16)]
+            block_rdm_sqform = 1 - block_diag(*all_classes)
+            oracle_rdm = squareform(block_rdm_sqform)
 
         else:
             raise NotImplementedError(
