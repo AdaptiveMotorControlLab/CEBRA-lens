@@ -38,10 +38,22 @@ class RDM(_BaseMetric):
         bool_oracle: bool = True,
         num_samples: int = None,
         num_bins: int = None,
+        max_label: np.float64 = None,
+        label_ind: int = None
     ):
         super().__init__()
         self.data = data
         self.label = label
+        self.label_ind = label_ind
+        self.max_label = max_label
+        #check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
+        if isinstance(self.label, np.ndarray) and self.label.ndim != 1:
+            #if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
+            if self.dataset_label != "HPC" and self.label_ind!=None:
+                self.label = self.label[:, self.label_ind]
+            else:
+                raise KeyError("If dataset not HPC or visual and there are multiple possible labels, parameter label_ind must be provided to indicate which label will be used for the RDM calculation")
+
         self.dataset_label = dataset_label
         self.metric = metric
         self.bool_oracle = bool_oracle
@@ -168,7 +180,8 @@ class RDM(_BaseMetric):
                 self.label,
                 self.dataset_label,
                 num_bins=self.num_bins,
-                num_samples=self.num_samples,
+                max_num_samples=self.num_samples,
+                max_label = self.max_label
             )
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
@@ -183,12 +196,15 @@ class RDM(_BaseMetric):
     def set_num_samples(self, num_samples):
         self.num_samples = num_samples
 
+    def set_max_label(self, max_label):
+        self.max_label = max_label
+
     def plot(
         self,
         rdms: List[npt.NDArray],
         titles: List[Tuple[npt.NDArray, float]],
         metric: str = "Normalized Euclidean distance",
-        dataset_label: str = "visual",
+        dataset_label: str = None,
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,

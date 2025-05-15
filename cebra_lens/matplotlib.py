@@ -1064,7 +1064,7 @@ class _RDMPlots:
         titles: List[str],
         axis: Optional[matplotlib.axes.Axes],
         metric: str = "Normalized Euclidean distance",
-        dataset_label: str = "visual",
+        dataset_label: str = None,
         cmap: str = "viridis",
         figsize: Tuple[np.float64, np.float64] = None,
     ):
@@ -1155,13 +1155,7 @@ class _RDMPlots:
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
             self.ax[i].set_title(self.titles[i])
 
-            if self.dataset_label == "visual":
-                num_ticks = len(self.tick_labels)
-                self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-                self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
-                self.ax[i].set_yticklabels(self.tick_labels)
-            elif self.dataset_label == "HPC":
+            if self.dataset_label == "HPC":
                 # Set the x and y ticks
                 self.ax[i].set_xticks(
                     self.tick_positions * len(rdm) // 1.6 / 2
@@ -1208,6 +1202,12 @@ class _RDMPlots:
                     fontsize=14,
                     transform=self.ax[i].transAxes,
                 )
+            else:
+                num_ticks = len(self.tick_labels)
+                self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
+                self.ax[i].set_yticklabels(self.tick_labels)
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
