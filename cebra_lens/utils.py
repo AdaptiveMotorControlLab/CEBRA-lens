@@ -8,7 +8,7 @@ from tqdm import tqdm
 from torch import nn
 
 
-def compute(
+def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
 ) -> Dict[str, npt.NDArray[Any]]:
@@ -40,7 +40,7 @@ def compute(
     return result_dict
 
 
-def load(
+def model_loader(
     model_dir: str, labels: Dict[str, str] = {}
 ) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
