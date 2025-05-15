@@ -78,6 +78,8 @@ class Decoding(_BaseMetric):
         The type of dataset being used for decoding (default is "visual").
     layer_type : Type[nn.Module]
         The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
+    output_only: bool
+        A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
     """
 
     def __init__(
@@ -88,7 +90,8 @@ class Decoding(_BaseMetric):
         test_label: npt.NDArray,
         session_id: int = -1,
         dataset_label: str = "visual",
-        layer_type: Type[nn.Module] = None,
+        layer_type: Optional[Type[nn.Module]] = None,
+        output_only: bool = True,
     ):
 
         self.train_label = train_label
@@ -98,6 +101,7 @@ class Decoding(_BaseMetric):
         self.session_id = session_id
         self.dataset_label = dataset_label
         self.layer_type = layer_type
+        self.output_only = output_only
 
     def _decode(
         self,
@@ -128,8 +132,6 @@ class Decoding(_BaseMetric):
         --------
         npt.NDArray
             Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
-
-        TODO(eloise): implement decoding for unified data.
 
         """
         if (
@@ -167,7 +169,7 @@ class Decoding(_BaseMetric):
 
     def compute(
         self,
-        model,
+        model: cebra.integrations.sklearn.cebra.CEBRA,
     ) -> npt.NDArray:
         """
         Decode neural data by layer using a given CEBRA model.
@@ -183,154 +185,95 @@ class Decoding(_BaseMetric):
             A numpy array containing the decoding results for each layer and the neural input baseline.
         """
 
-        activations_train = get_activations_model(
-            model=model,
-            data=self.train_data,
-            name=model.solver_name_,
-            session_id=self.session_id,
-            layer_type=self.layer_type,
-        )
 
-        activations_test = get_activations_model(
-            model=model,
-            data=self.test_data,
-            name=model.solver_name_,
-            session_id=self.session_id,
-            layer_type=self.layer_type,
-        )
+        if self.output_only:
 
-        num_layers = len(activations_train)
+            num_layers = 0
+
+            if model.solver_name_ == "multi-session":
+
+                train_embedding = model.transform(self.train_data, self.session_id)
+                test_embedding = model.transform(self.test_data, self.session_id)
+
+            elif model.solver_name_ == "single-session":
+
+                train_embedding = model.transform(self.train_data)
+                test_embedding = model.transform(self.test_data)
+
+            else:
+                raise NotImplementedError(
+                    f"Solver {model.solver_name_} is not yet implemented."
+                )
+        else:
+
+            activations_train = get_activations_model(
+                model=model,
+                data=self.train_data,
+                name=model.solver_name_,
+                session_id=self.session_id,
+                layer_type=self.layer_type,
+            )
+
+            activations_test = get_activations_model(
+                model=model,
+                data=self.test_data,
+                name=model.solver_name_,
+                session_id=self.session_id,
+                layer_type=self.layer_type,
+            )
+            num_layers = len(activations_train)
+            keys = list(activations_train.keys())
 
         results = np.zeros((num_layers + 1, 3))
 
         keys = list(activations_train.keys())
         for i in range(num_layers + 1):
 
+            # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
             if i == 0:
+                if not self.output_only:
+                    train_embedding = self.train_data
+                    test_embedding = self.test_data
+
                 results[i, :] = self._decode(
-                    self.train_data,
+                    train_embedding,
                     self.train_label,
-                    self.test_data,
+                    test_embedding,
                     self.test_label,
                     self.dataset_label,
-                )  # neural input baseline
+                )
+
             else:
+
                 results[i, :] = self._decode(
                     activations_train[keys[i - 1]],
                     self.train_label,
                     activations_test[keys[i - 1]],
                     self.test_label,
                     self.dataset_label,
-                )  # layer decoding
-
+                )
+        if self.output_only:
+            results = results[0]
         return results
 
     @property
     def __name__(self):
         return "decode_by_layer"
+    
+    def set_output_only(self, output_only):
+        self.output_only = output_only
+
 
     def plot(
         self,
         results_dict: Dict[str, npt.NDArray],
         title: str = "Decoding by layer",
         figsize: tuple = (15, 5),
-    ):
-        return plot_layer_decoding(results_dict, title, figsize)
-
-
-class DecodeModel(Decoding):
-    """
-    Decoding class for decoding neural data using a given CEBRA model.
-
-    Parameters:
-    ----------
-
-    train_data : torch.Tensor
-        The training data used for model transformation.
-    train_label : npt.NDArray
-        The true labels corresponding to the training data.
-    test_data : torch.Tensor
-        The validation data used for testing the model.
-    test_label : npt.NDArray
-        The true labels corresponding to the validation data.
-    session_id : int, optional
-        The session ID for multi-session models. For single-session no need to input it.
-    dataset_label : str, optional
-        The type of dataset being used for decoding (default is "visual").
-    layer_type : Type[nn.Module]
-        The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
-    """
-
-    def __init__(
-        self,
-        train_data: torch.Tensor,
-        train_label: npt.NDArray,
-        test_data: torch.Tensor,
-        test_label: npt.NDArray,
-        session_id: int = -1,
-        dataset_label: str = "visual",
-        layer_type: Type[nn.Module]= None,
-    ):
-
-        super().__init__(
-            train_data,
-            train_label,
-            test_data,
-            test_label,
-            session_id,
-            dataset_label,
-            layer_type,
-        )
-
-    def compute(self, model: cebra.integrations.sklearn.cebra.CEBRA) -> npt.NDArray:
-        """
-        Decodes a single model.
-
-        Parameters:
-        -----------
-        model : cebra.integrations.sklearn.cebra.CEBRA
-            The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-
-        Returns:
-        --------
-        npt.NDArray
-            Numpy array containing the results. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset.
-        """
-
-        if model.solver_name_ == "multi-session":
-
-            embedding_train = model.transform(self.train_data, self.session_id)
-            embedding_test = model.transform(self.test_data, self.session_id)
-
-        elif model.solver_name_ == "single-session":
-
-            embedding_train = model.transform(self.train_data)
-            embedding_test = model.transform(self.test_data)
-
-        else:
-            #TODO(eloise): discuss for unified cebra and xCebra
-            raise NotImplementedError(
-                f"Solver {model.solver_name_} is not yet implemented."
-            )
-
-        results = self._decode(
-            embedding_train,
-            self.train_label,
-            embedding_test,
-            self.test_label,
-            self.dataset_label,
-        )
-        return np.array(results)
-
-    @property
-    def __name__(self):
-        return "decode_model"
-
-    def plot(
-        self,
-        results_dict: Dict[str, npt.NDArray],
         palette: str = "hls",
         dataset_label="visual",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        return plot_decoding(results_dict, palette, dataset_label, ax)
+        if self.output_only:
+            return plot_decoding(results_dict, palette, dataset_label, ax)
+        else:
+            return plot_layer_decoding(results_dict, title, figsize)
