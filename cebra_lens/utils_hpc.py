@@ -78,7 +78,7 @@ def decoding_pos_dir(
     return test_score, pos_test_err, pos_test_score
 
 
-def split_data_HPC(data: object, test_ratio: float = 0.3):
+def split_data_HPC(data: object, test_ratio: float = 0.2):
     """
     Splits the given data into training and testing sets based on the specified test ratio.
     Args:
