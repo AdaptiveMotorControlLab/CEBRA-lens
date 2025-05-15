@@ -157,7 +157,7 @@ class Decoding(_BaseMetric):
                 label_test=label_test,
             )
         else:
-            results = decoding_general(
+            results = decoding(
                 embedding_train=embedding_train,
                 label_train=label_train,
                 embedding_test=embedding_test,
