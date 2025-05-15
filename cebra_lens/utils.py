@@ -8,6 +8,7 @@ from tqdm import tqdm
 from torch import nn
 from .quantification.decoding import Decoding
 from .quantification.rdm_metric import RDM
+from .quantification.cka_metric import CKA
 
 
 def compute_metric(
@@ -36,21 +37,27 @@ def compute_metric(
     """
     result_dict = {}
 
-    for model_label, samples in model_data.items():
-        if isinstance(metric_class, Decoding):
-            metric_class.set_output_only(output_only)
-        elif isinstance(metric_class, RDM):
-            metric_class.set_num_bins(num_bins)
-            metric_class.set_num_samples(num_samples)
-            metric_class.set_max_label(max_label)
-            
-        computed_values = np.array(
-            [
-                metric_class.compute(sample)
-                for sample in tqdm(samples, desc=f"Processing {model_label}")
-            ]
-        )
-        result_dict[model_label] = computed_values
+    if isinstance(metric_class, CKA):
+        for comparison in metric_class.comparisons:
+            cka_matrix = metric_class.compute(model_data, comparison)
+            result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
+
+    else:
+        for model_label, samples in model_data.items():
+            if isinstance(metric_class, Decoding):
+                metric_class.set_output_only(output_only)
+            elif isinstance(metric_class, RDM):
+                metric_class.set_num_bins(num_bins)
+                metric_class.set_num_samples(num_samples)
+                metric_class.set_max_label(max_label)
+
+            computed_values = np.array(
+                [
+                    metric_class.compute(sample)
+                    for sample in tqdm(samples, desc=f"Processing {model_label}")
+                ]
+            )
+            result_dict[model_label] = computed_values
 
     return result_dict
 

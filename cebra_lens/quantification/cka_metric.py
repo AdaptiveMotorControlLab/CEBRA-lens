@@ -19,20 +19,19 @@ class CKA(_BaseMetric):
 
     Parameters:
     -----------
-    comparison : Tuple[str,str]
-        A tuple containing two strings representing the models and training type to be compared.
+    comparisons : List[Tuple[str,str]]
+        A List of tuple containing two strings representing the model labels to be compared.
         For example, ('single_UT', 'single_TR').
     """
 
-    def __init__(self, comparison: Tuple[str, str]):
+    def __init__(self, comparisons: List[Tuple[str, str]]):
 
-        if not isinstance(comparison, tuple):
-            raise ValueError(
-                f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
-            )
-        self.comparisonX = comparison[0]
-        self.comparisonY = comparison[1]
-        self.cka_matrix = None
+        for comparison in comparisons:
+            if not isinstance(comparison, tuple):
+                raise ValueError(
+                    f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
+                )
+        self.comparisons = comparisons
 
     def center_gram(self, gram: npt.NDArray, unbiased: bool = False) -> npt.NDArray:
         """Center a symmetric Gram matrix.
@@ -178,7 +177,9 @@ class CKA(_BaseMetric):
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations: Dict[str, npt.NDArray]) -> npt.NDArray:
+    def compute(
+        self, activations: Dict[str, npt.NDArray], comparison: Tuple[str, str]
+    ) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -189,11 +190,18 @@ class CKA(_BaseMetric):
         activations : Dict[str, npt.NDArray]
             A dictionary where keys are strings which represent the model label and values are 2d lists with the corresponding activations per layer.
 
+        comparison : Tuple[str, str]
+            A tuple containing the model labels to compare.
+
         Returns:
         --------
         cka_matrix : npt.NDArray
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
+
+        self.comparisonX = comparison[0]
+        self.comparisonY = comparison[1]
+        self.cka_matrix = None
 
         activations_1 = activations[self.comparisonX]
         activations_2 = activations[self.comparisonY]

@@ -135,10 +135,12 @@ def discrete_binning(
 
         if sample_mode == "sub_sample":
             num_samples = (
-                max_num_samples if len(data) / 30 >= 200 else int(len(data) / 30)
+                max_num_samples
+                if len(data) / num_bins >= 200
+                else int(len(data) / num_bins)
             )
         elif sample_mode == "all":
-            num_samples = int(len(data) / 30)
+            num_samples = int(len(data) / num_bins)
         else:
             raise NotImplementedError(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
