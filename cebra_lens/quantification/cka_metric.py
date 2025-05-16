@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
 from ..matplotlib import *
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple
 import numpy.typing as npt
 
 
