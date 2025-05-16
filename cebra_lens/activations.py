@@ -122,18 +122,17 @@ def get_activations_model(
 
     activations = {}
     transform_kwargs = {}
-    if model.solver_name_ == "multi-session":
+    if model.solver_name_ in ["multi-session", "multi-session-aux", "multiobjective-solver"]:
+
         model_ = model.model_[session_id]
         transform_kwargs.update({"session_id": session_id})
 
-    elif model.solver_name_ == "single-session":
-        # no need to store the output embedding. we already add a hook on it
+    elif model.solver_name_ in ["single-session", "single-session-aux", "single-session-hybrid", "single-session-full"]:
         model_ = model.model_
-    else:
-        raise NotImplementedError(
-            f"Solver {model.solver_name_} is not yet implemented."
-        )
 
+    else:
+        raise NotImplementedError(f"Solver {model.solver_name_} is not yet implemented.")
+    
     activations, handles, conv_layer_info = _attach_hooks(
         activations=activations,
         model=model_,
