@@ -15,9 +15,8 @@ def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
     output_only: bool = False,
-    num_samples: int = None,
+    max_num_samples: int = None,
     num_bins: int = None,
-    max_label: np.float64 = None,
 ) -> Dict[str, npt.NDArray[Any]]:
     """
     Computes metrics for each model using a provided metric class.
@@ -48,8 +47,7 @@ def compute_metric(
                 metric_class.set_output_only(output_only)
             elif isinstance(metric_class, RDM):
                 metric_class.set_num_bins(num_bins)
-                metric_class.set_num_samples(num_samples)
-                metric_class.set_max_label(max_label)
+                metric_class.set_num_samples(max_num_samples)
 
             computed_values = np.array(
                 [

@@ -195,6 +195,7 @@ def repetition_binning(
     num_repetitions = data.shape[0] // samples_per_rep
 
     repetition_idxs = []
+    #indices.shape = (num_bins, num_samples)
     for i in range(indices.shape[0]):
         repetition_bin_idxs = []
 

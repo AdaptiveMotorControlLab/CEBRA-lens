@@ -38,14 +38,12 @@ class RDM(_BaseMetric):
         bool_oracle: bool = True,
         num_samples: int = None,
         num_bins: int = None,
-        max_label: np.float64 = None,
         label_ind: int = None,
     ):
         super().__init__()
         self.data = data
         self.label = label
         self.label_ind = label_ind
-        self.max_label = max_label
         # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
         if isinstance(self.label, np.ndarray) and self.label.ndim != 1:
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
@@ -197,9 +195,6 @@ class RDM(_BaseMetric):
 
     def set_num_samples(self, num_samples):
         self.num_samples = num_samples
-
-    def set_max_label(self, max_label):
-        self.max_label = max_label
 
     def plot(
         self,
