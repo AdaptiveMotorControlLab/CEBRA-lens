@@ -190,12 +190,12 @@ class Decoding(_BaseMetric):
 
             num_layers = 0
 
-            if model.solver_name_ == "multi-session":
+            if model.solver_name_ in ["multi-session", "multi-session-aux", "multiobjective-solver"]:
 
                 train_embedding = model.transform(self.train_data, self.session_id)
                 test_embedding = model.transform(self.test_data, self.session_id)
 
-            elif model.solver_name_ == "single-session":
+            elif model.solver_name_ in ["single-session", "single-session-aux", "single-session-hybrid", "single-session-full"]:
 
                 train_embedding = model.transform(self.train_data)
                 test_embedding = model.transform(self.test_data)
@@ -226,7 +226,6 @@ class Decoding(_BaseMetric):
 
         results = np.zeros((num_layers + 1, 3))
 
-        keys = list(activations_train.keys())
         for i in range(num_layers + 1):
 
             # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
