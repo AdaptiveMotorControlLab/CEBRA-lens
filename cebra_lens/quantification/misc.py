@@ -35,7 +35,6 @@ def discrete_binning(
     sample_mode: str = "sub_sample",
     num_bins: int = 30,
     max_num_samples: int = 200,
-    max_label: int = 900,
 ) -> npt.NDArray:
     """
     Bins the training data based on the provided labels, creating indices for sampling. Used to discretize a continuous input for RDM.
@@ -136,7 +135,7 @@ def discrete_binning(
         if sample_mode == "sub_sample":
             num_samples = (
                 max_num_samples
-                if len(data) / num_bins >= 200
+                if len(data) / num_bins >= max_num_samples
                 else int(len(data) / num_bins)
             )
         elif sample_mode == "all":
@@ -146,7 +145,18 @@ def discrete_binning(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
 
-        step_distance = max_label / num_bins
+        # calculate the max_label and then check if it is classification or regression issue
+        max_label = torch.max(label).item()
+        if max_label == 0:
+            raise ValueError("Label is zero, please check the data.")
+        unique_labels = torch.unique(label)
+        if len(unique_labels) > 2 and torch.any(label % 1 != 0):
+            # continuous
+            step_distance = max_label / num_bins
+        else:
+            # discrete
+            step_distance = max_label // num_bins
+        
         idxs = np.zeros((num_bins, num_samples))
 
         j = 0
