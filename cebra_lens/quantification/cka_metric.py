@@ -14,7 +14,7 @@ import numpy.typing as npt
 
 
 class CKA(_BaseMetric):
-    """ "
+    """
     Compute the Centered Kernel Alignment (CKA) between two sets of model types.
 
     Parameters:
