@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import numpy.typing as npt
-
+import random
 
 class _BasePlot:
     """Base plotting class.
@@ -570,7 +570,50 @@ class _EmbeddingComparisonPlot:
         else:
             self.ax = axis
         return self.ax
+    
+    def _plot_dataset(
+        self,
+        ax: matplotlib.axes.Axes,
+        embedding: npt.NDArray,
+        label: str,
+        gray: bool = False,
+        idx_order: Tuple[int, int, int] = (0, 1, 2),
+    ):
+        """
+        Plot the dataset embedding, for generic dataset.
+        Will plot all labels.
+        """
+        idx1, idx2, idx3 = idx_order
+        available_palettes = list(sns.palettes.SEABORN_PALETTES.keys())
+        label = np.atleast_2d(label)
+        if label.shape[0] == 1 and label.shape[1] != 1:
+            label = label.T
 
+        for num_labels in range(len(label)):
+            l_ind = label[:, num_labels]
+            l_c = label[l_ind, 0]
+            l_cmap = available_palettes[num_labels]
+
+            l = ax.scatter(
+                embedding[l_ind, idx1],
+                embedding[l_ind, idx2],
+                embedding[l_ind, idx3],
+                c=l_c,
+                cmap=l_cmap,
+                s=0.05,
+                alpha=0.75,
+            )
+
+        ax.grid(False)
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        ax.xaxis.pane.set_edgecolor("w")
+        ax.yaxis.pane.set_edgecolor("w")
+        ax.zaxis.pane.set_edgecolor("w")
+
+        return ax
+        
     def _plot_hippocampus(
         self,
         ax: matplotlib.axes.Axes,
@@ -694,9 +737,7 @@ class _EmbeddingComparisonPlot:
             elif self.dataset_label == "visual":
                 ax = self._plot_allen(ax, embedding, label)
             else:
-                raise NotImplementedError(
-                    f"label {self.dataset_label} not yet implemented. Use either visual or HPC"
-                )
+                ax = self._plot_dataset(ax, embedding, label)
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")

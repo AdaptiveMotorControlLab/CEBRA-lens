@@ -6,6 +6,8 @@ import torch.nn as nn
 import numpy as np
 import numpy.typing as npt
 from typing import Tuple, Dict, List, Type, Optional
+from .matplotlib import plot_activations
+import matplotlib.pyplot as plt
 
 
 def _cut_array(
@@ -271,7 +273,7 @@ def _attach_hooks(
 
     else:
         # layer_type is None meaning we want to attach hooks to every layer regardless
-        # TODO(eloise): Layer type general, does it make sense?, Padding cutting, then for these other layers...
+
         for i in range(len(model.net)):
             if bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():
