@@ -174,14 +174,13 @@ class RDM(_BaseMetric):
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
-        if self.dataset_label != "visual" or self.dataset_label != "HPC":
+        if self.dataset_label != "visual" and self.dataset_label != "HPC":
             self.idxs = discrete_binning(
                 self.data,
                 self.label,
                 self.dataset_label,
                 num_bins=self.num_bins,
                 max_num_samples=self.num_samples,
-                max_label=self.max_label,
             )
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
@@ -201,7 +200,6 @@ class RDM(_BaseMetric):
         rdms: List[npt.NDArray],
         titles: List[Tuple[npt.NDArray, float]],
         metric: str = "Normalized Euclidean distance",
-        dataset_label: str = None,
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
@@ -210,7 +208,7 @@ class RDM(_BaseMetric):
             rdms,
             titles,
             metric,
-            dataset_label,
+            self.dataset_label,
             cmap,
             figsize,
             ax,
