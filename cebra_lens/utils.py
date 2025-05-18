@@ -60,39 +60,23 @@ def compute_metric(
     return result_dict
 
 def plot_metric(
-    metric_dict: Dict[str, npt.NDArray[Any]],
+    data_dict: Dict[str, npt.NDArray[Any]],
     metric_class: Any,
-    model_labels: List[str],
-    output_dir: str,
-    plot_type: str = "heatmap",
+    **kwargs
 ) -> None:
     """
     Plots metrics for each model using a provided metric class.
 
     Parameters:
     -----------
-    metric_dict : Dict[str, npt.NDArray]
+    data_dict : Dict[str, npt.NDArray]
         Dictionary mapping model labels to arrays of computed metric values.
 
     metric_class : object
         Object with a `plot` method that takes a single data sample and returns a plot.
 
-    model_labels : List[str]
-        List of model labels to be plotted.
-
-    output_dir : str
-        Directory where the plots will be saved.
-
-    plot_type : str, optional
-        Type of plot to generate. Default is "heatmap".
     """
-    for label in model_labels:
-        if label in metric_dict:
-            metric_class.plot(
-                metric_dict[label], output_dir, label, plot_type=plot_type
-            )
-        else:
-            print(f"Label {label} not found in the metric dictionary.")
+    return metric_class.plot(data_dict, **kwargs)
 
 
 def model_loader(

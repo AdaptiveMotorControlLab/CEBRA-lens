@@ -203,13 +203,17 @@ class RDM(_BaseMetric):
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
+        correlation: bool = False
     ):
-        return plot_rdm(
-            rdms,
-            titles,
-            metric,
-            self.dataset_label,
-            cmap,
-            figsize,
-            ax,
-        )
+        if correlation:
+            return plot_rdm_correlation(rdms)
+        else:
+            return plot_rdm(
+                rdms,
+                titles,
+                metric,
+                self.dataset_label,
+                cmap,
+                figsize,
+                ax,
+            )

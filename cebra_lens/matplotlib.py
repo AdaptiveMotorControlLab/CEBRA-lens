@@ -490,15 +490,13 @@ def plot_decoding(
     ).plot(**kwargs)
 
 
-class _EmbeddingComparisonPlot:
-    """Plot the embedding visualization for comparison across layers.
+class _EmbeddingPlot:
+    """Plot the embedding visualization across layers.
 
     Attributes:
     ----------
-    embeddings_1 : List[npt.NDArray]
-        A list of embeddings for the first set of data.
-    embeddings_2 : List[npt.NDArray]
-        A list of embeddings for the second set of data.
+    embeddings : List[npt.NDArray]
+        A list of embeddings. If it contains only one list inside then it is to plot embeddings, but if it contains two sets of data inside then it is for embedding comparison across layers
     labels : npt.NDArray
         An array of labels corresponding to the data labels.
     sample_plot : int
@@ -513,22 +511,32 @@ class _EmbeddingComparisonPlot:
 
     def __init__(
         self,
-        embeddings_1: List[npt.NDArray],
-        embeddings_2: List[npt.NDArray],
+        embeddings: List[npt.NDArray],
         labels: npt.NDArray,
-        sample_plot: int,
-        comparison_labels: Tuple,
         dataset_label: str,
+        comparison_labels: Tuple,
         axis: Optional[matplotlib.axes.Axes],
     ):
-
         self.figsize = (15, 10)
-        self.embeddings_1 = embeddings_1
-        self.embeddings_2 = embeddings_2
+        self.embeddings_list = embeddings
         self.labels = labels
-        self.sample_plot = sample_plot
-        self.comparison_labels = comparison_labels
         self.dataset_label = dataset_label
+        self.ax = self._define_ax(axis)
+        if len(embeddings)==1:
+            self.embeddings =  embeddings[0]
+            self.sample_plot = self.embeddings[0].shape[1]
+            self.axs = self._define_ax(axis)
+        else:
+            self.embeddings_1 = embeddings[0]
+            self.embeddings_2 = embeddings[1]
+            self.sample_plot = self.embeddings_1[0].shape[1]
+            self.comparison_labels = comparison_labels
+
+
+            self.axs_1 = self.ax[0, :]
+            self.axs_2 = self.ax[1, :]
+
+    def _multi_padding_check(self, embeddings_1, embeddings_2):
 
         self.num_layers_1 = len(embeddings_1)
         self.num_layers_2 = len(embeddings_2)
@@ -543,10 +551,6 @@ class _EmbeddingComparisonPlot:
                 self.num_layers_2 - self.num_layers_1
             )
 
-        self.ax = self._define_ax(axis)
-        self.axs_1 = self.ax[0, :]
-        self.axs_2 = self.ax[1, :]
-
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
@@ -560,13 +564,20 @@ class _EmbeddingComparisonPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.fig, self.ax = plt.subplots(
-                2,
-                max(self.num_layers_1, self.num_layers_2),
-                figsize=(15, 10),
-                subplot_kw={"projection": "3d"},
-            )
-
+            if len(self.embeddings_list)==2:
+                self._multi_padding_check(self.embeddings_list[0], self.embeddings_list[1])
+                self.fig, self.ax = plt.subplots(
+                    2,
+                    max(self.num_layers_1, self.num_layers_2),
+                    figsize=(15, 10),
+                    subplot_kw={"projection": "3d"},
+                )
+            else:
+                self.fig, self.ax = plt.subplots(
+                    1,
+                    len(self.embeddings_list[0]),
+                    figsize=(15, 10),
+                    subplot_kw={"projection": "3d"})
         else:
             self.ax = axis
         return self.ax
@@ -699,7 +710,7 @@ class _EmbeddingComparisonPlot:
 
         return ax
 
-    def _plot_embedding_layers(
+    def plot_embedding_layers(
         self,
         axs: List[matplotlib.axes.Axes],
         embeddings: List[npt.NDArray],
@@ -742,12 +753,15 @@ class _EmbeddingComparisonPlot:
             ax.set_title(titles[i], y=1)
             ax.axis("off")
 
-    def plot(self):
+    def plot_embedding(self):
+        return self.plot_embedding_layers(self.axs, self.embeddings, self.label)
+
+    def plot_compare(self):
         """Plots embedding layers for models being compared"""
-        self._plot_embedding_layers(
+        self.plot_embedding_layers(
             self.axs_1, self.embeddings_1, self.comparison_labels[1][0]
         )
-        self._plot_embedding_layers(
+        self.plot_embedding_layers(
             self.axs_2, self.embeddings_2, self.comparison_labels[1][1]
         )
         self.fig.suptitle(
@@ -793,16 +807,32 @@ def compare_embeddings_layers(
     fig : matplotlib.figure.Figure
         The generated figure containing the embedding comparison plots.
     """
-    return _EmbeddingComparisonPlot(
-        embeddings_1=embeddings_1,
-        embeddings_2=embeddings_2,
+    return _EmbeddingPlot(
+        embeddings=[embeddings_1, embeddings_2],
         labels=labels,
         sample_plot=sample_plot,
         comparison_labels=comparison_labels,
         dataset_label=dataset_label,
         axis=ax,
-    ).plot(**kwargs)
+    ).plot_compare(**kwargs)
 
+def plot_embeddings(
+    embeddings: List[npt.NDArray],
+    labels: npt.NDArray,
+    sample_plot: int = 200,
+    comparison_labels: Tuple = ("tSNE", ["Untrained", "Trained"]),
+    dataset_label: str = "HPC",
+    ax: Optional[matplotlib.axes.Axes] = None,
+    **kwargs,
+) -> plt.Figure:
+    return _EmbeddingPlot(
+        embeddings=[embeddings],
+        labels=labels,
+        sample_plot=sample_plot,
+        comparison_labels=comparison_labels,
+        dataset_label=dataset_label,
+        axis=ax,
+    ).plot_embedding(**kwargs)
 
 class _ActivationPlot:
     """Class for plotting activations of a neural network model.
