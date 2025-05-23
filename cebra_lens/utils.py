@@ -59,10 +59,9 @@ def compute_metric(
 
     return result_dict
 
+
 def plot_metric(
-    data_dict: Dict[str, npt.NDArray[Any]],
-    metric_class: Any,
-    **kwargs
+    data_dict: Dict[str, npt.NDArray[Any]], metric_class: Any, **kwargs
 ) -> None:
     """
     Plots metrics for each model using a provided metric class.

@@ -80,23 +80,19 @@ class Tsne(_BaseMetric):
 
     def plot(
         self,
-        embeddings_1: List[npt.NDArray],
-        embeddings_2: List[npt.NDArray],
+        embeddings: List[npt.NDArray],
         labels: npt.NDArray,
         sample_plot: int = 200,
-        comparison_labels: tuple = ("tSNE", ["Untrained", "Trained"]),
         dataset_label: str = "HPC",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         """
-        Plots the t-SNE embeddings of two sets of data for comparison.
+        Plots the t-SNE embeddings for the first 3 dimensions.
         """
-        return compare_embeddings_layers(
-            embeddings_1,
-            embeddings_2,
+        return plot_embeddings(
+            embeddings,
             labels,
             sample_plot,
-            comparison_labels,
             dataset_label,
             ax,
         )

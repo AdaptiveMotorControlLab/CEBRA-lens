@@ -156,7 +156,7 @@ def discrete_binning(
         else:
             # discrete
             step_distance = max_label // num_bins
-        
+
         idxs = np.zeros((num_bins, num_samples))
 
         j = 0
@@ -195,7 +195,7 @@ def repetition_binning(
     num_repetitions = data.shape[0] // samples_per_rep
 
     repetition_idxs = []
-    #indices.shape = (num_bins, num_samples)
+    # indices.shape = (num_bins, num_samples)
     for i in range(indices.shape[0]):
         repetition_bin_idxs = []
 

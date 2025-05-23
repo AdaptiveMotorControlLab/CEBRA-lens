@@ -143,14 +143,14 @@ class Intrabin(DistanceMetric):
             distances.append(mean_intra_distance)
 
         return np.mean(distances)
-    
+
     def plot(
-            self,
-            distance_dict: Dict[str, npt.NDArray],
-            title: str = "Intra-bin distance",
-            figsize: tuple = (15, 5),
-        ):
-            return super().plot(distance_dict, title)
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Intra-bin distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
 
 
 class Interrep(DistanceMetric):
@@ -219,14 +219,14 @@ class Interrep(DistanceMetric):
             distances.append(mean_distance)
 
         return np.mean(distances)
-    
+
     def plot(
-            self,
-            distance_dict: Dict[str, npt.NDArray],
-            title: str = "Inter-repetition distance",
-            figsize: tuple = (15, 5),
-        ):
-            return super().plot(distance_dict, title)
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Inter-repetition distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
 
 
 class Interbin(DistanceMetric):
@@ -272,15 +272,14 @@ class Interbin(DistanceMetric):
         mean_distance = np.mean(non_diagonal_distances)
 
         return mean_distance
-    
-    def plot(
-            self,
-            distance_dict: Dict[str, npt.NDArray],
-            title: str = "Inter-bin distance",
-            figsize: tuple = (15, 5),
-        ):
-            return super().plot(distance_dict, title)
 
+    def plot(
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Inter-bin distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
 
 
 class Distance(_BaseMetric):

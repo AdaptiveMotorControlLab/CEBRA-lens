@@ -10,6 +10,7 @@ import torch
 import numpy.typing as npt
 import random
 
+
 class _BasePlot:
     """Base plotting class.
 
@@ -106,7 +107,7 @@ class _GenericPlot(_BasePlot):
         sns.despine(ax=self.ax)
 
 
-class RDMPlot(_GenericPlot):
+class RDMPlotOracle(_GenericPlot):
     """Plot the correlation of Representational Dissimilarity Matrices (RDMs) with Oracle data.
 
     Attributes:
@@ -147,6 +148,7 @@ class RDMPlot(_GenericPlot):
         for key, data_list in self.results_dict.items():
             layer_values = []
             for inner_list in data_list:
+                # getting the oracle data
                 values = [arr[1] for arr in inner_list]
                 layer_values.append(values)
             data[key] = layer_values
@@ -304,9 +306,9 @@ def plot_rdm_correlation(
         The generated figure containing the RDM comparison plot.
     """
 
-    return RDMPlot(results_dict=rdm_dict, title=title, figsize=figsize, axis=ax).plot(
-        **kwargs
-    )
+    return RDMPlotOracle(
+        results_dict=rdm_dict, title=title, figsize=figsize, axis=ax
+    ).plot(**kwargs)
 
 
 def plot_distance(
@@ -501,7 +503,7 @@ class _EmbeddingPlot:
         An array of labels corresponding to the data labels.
     sample_plot : int
         The number of samples to plot from the embeddings.
-    comparison_labels : Tuple
+    comparison_groups : Tuple
         A Tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings.
     dataset_label : str
         A string representing the label for the data being plotted.
@@ -514,24 +516,23 @@ class _EmbeddingPlot:
         embeddings: List[npt.NDArray],
         labels: npt.NDArray,
         dataset_label: str,
-        comparison_labels: Tuple,
         axis: Optional[matplotlib.axes.Axes],
+        comparison_groups: Tuple = None,
     ):
         self.figsize = (15, 10)
         self.embeddings_list = embeddings
         self.labels = labels
         self.dataset_label = dataset_label
         self.ax = self._define_ax(axis)
-        if len(embeddings)==1:
-            self.embeddings =  embeddings[0]
+        if len(embeddings) == 1:
+            self.embeddings = embeddings[0]
             self.sample_plot = self.embeddings[0].shape[1]
             self.axs = self._define_ax(axis)
         else:
             self.embeddings_1 = embeddings[0]
             self.embeddings_2 = embeddings[1]
             self.sample_plot = self.embeddings_1[0].shape[1]
-            self.comparison_labels = comparison_labels
-
+            self.comparison_groups = comparison_groups
 
             self.axs_1 = self.ax[0, :]
             self.axs_2 = self.ax[1, :]
@@ -564,8 +565,10 @@ class _EmbeddingPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            if len(self.embeddings_list)==2:
-                self._multi_padding_check(self.embeddings_list[0], self.embeddings_list[1])
+            if len(self.embeddings_list) == 2:
+                self._multi_padding_check(
+                    self.embeddings_list[0], self.embeddings_list[1]
+                )
                 self.fig, self.ax = plt.subplots(
                     2,
                     max(self.num_layers_1, self.num_layers_2),
@@ -577,11 +580,12 @@ class _EmbeddingPlot:
                     1,
                     len(self.embeddings_list[0]),
                     figsize=(15, 10),
-                    subplot_kw={"projection": "3d"})
+                    subplot_kw={"projection": "3d"},
+                )
         else:
             self.ax = axis
         return self.ax
-    
+
     def _plot_dataset(
         self,
         ax: matplotlib.axes.Axes,
@@ -624,7 +628,7 @@ class _EmbeddingPlot:
         ax.zaxis.pane.set_edgecolor("w")
 
         return ax
-        
+
     def _plot_hippocampus(
         self,
         ax: matplotlib.axes.Axes,
@@ -759,13 +763,13 @@ class _EmbeddingPlot:
     def plot_compare(self):
         """Plots embedding layers for models being compared"""
         self.plot_embedding_layers(
-            self.axs_1, self.embeddings_1, self.comparison_labels[1][0]
+            self.axs_1, self.embeddings_1, self.comparison_groups[1][0]
         )
         self.plot_embedding_layers(
-            self.axs_2, self.embeddings_2, self.comparison_labels[1][1]
+            self.axs_2, self.embeddings_2, self.comparison_groups[1][1]
         )
         self.fig.suptitle(
-            f"{self.comparison_labels[0]} across layers({self.comparison_labels[1][0]} - {self.comparison_labels[1][1]})",
+            f"{self.comparison_groups[0]} across layers({self.comparison_groups[1][0]} - {self.comparison_groups[1][1]})",
             fontsize=20,
         )
         plt.subplots_adjust(wspace=0, hspace=0)
@@ -777,7 +781,7 @@ def compare_embeddings_layers(
     embeddings_2: List[npt.NDArray],
     labels: npt.NDArray,
     sample_plot: int = 200,
-    comparison_labels: Tuple = ("tSNE", ["Untrained", "Trained"]),
+    comparison_groups: Tuple = ("tSNE", ["Untrained", "Trained"]),
     dataset_label: str = "HPC",
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -795,7 +799,7 @@ def compare_embeddings_layers(
         Array of labels for the data points.
     sample_plot : int, optional
         Number of samples to plot (default is 200).
-    comparison_labels : Tuple, optional
+    comparison_groups : Tuple, optional
         Labels describing the embeddings (default is ("tSNE", ["Untrained", "Trained"]) ).
     dataset_label : str, optional
         Dataset identifier (default is "HPC").
@@ -811,16 +815,16 @@ def compare_embeddings_layers(
         embeddings=[embeddings_1, embeddings_2],
         labels=labels,
         sample_plot=sample_plot,
-        comparison_labels=comparison_labels,
+        comparison_groups=comparison_groups,
         dataset_label=dataset_label,
         axis=ax,
     ).plot_compare(**kwargs)
+
 
 def plot_embeddings(
     embeddings: List[npt.NDArray],
     labels: npt.NDArray,
     sample_plot: int = 200,
-    comparison_labels: Tuple = ("tSNE", ["Untrained", "Trained"]),
     dataset_label: str = "HPC",
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -829,10 +833,10 @@ def plot_embeddings(
         embeddings=[embeddings],
         labels=labels,
         sample_plot=sample_plot,
-        comparison_labels=comparison_labels,
         dataset_label=dataset_label,
         axis=ax,
     ).plot_embedding(**kwargs)
+
 
 class _ActivationPlot:
     """Class for plotting activations of a neural network model.

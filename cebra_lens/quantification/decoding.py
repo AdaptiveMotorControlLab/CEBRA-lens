@@ -190,12 +190,21 @@ class Decoding(_BaseMetric):
 
             num_layers = 0
 
-            if model.solver_name_ in ["multi-session", "multi-session-aux", "multiobjective-solver"]:
+            if model.solver_name_ in [
+                "multi-session",
+                "multi-session-aux",
+                "multiobjective-solver",
+            ]:
 
                 train_embedding = model.transform(self.train_data, self.session_id)
                 test_embedding = model.transform(self.test_data, self.session_id)
 
-            elif model.solver_name_ in ["single-session", "single-session-aux", "single-session-hybrid", "single-session-full"]:
+            elif model.solver_name_ in [
+                "single-session",
+                "single-session-aux",
+                "single-session-hybrid",
+                "single-session-full",
+            ]:
 
                 train_embedding = model.transform(self.train_data)
                 test_embedding = model.transform(self.test_data)
