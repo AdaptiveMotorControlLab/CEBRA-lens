@@ -203,9 +203,8 @@ class RDM(_BaseMetric):
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
-        correlation: bool = False
     ):
-        if correlation:
+        if self.bool_oracle:
             return plot_rdm_correlation(rdms)
         else:
             return plot_rdm(
