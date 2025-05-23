@@ -7,12 +7,42 @@ from ..activations import get_activations_model
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
-from typing import Dict, Type
+from typing import Dict, Type, Tuple
 import torch.nn as nn
 import sklearn.metrics
 
 
-def decoding(embedding_train, embedding_test, label_train, label_test):
+def decoding(
+    embedding_train: npt.NDArray,
+    embedding_test: npt.NDArray,
+    label_train: npt.NDArray,
+    label_test: npt.NDArray,
+) -> Tuple[np.float64, npt.NDArray, npt.NDArray]:
+    """
+    Decoding function for the CEBRA model trained on a non-specific dataset.
+
+    Parameters:
+    ----------
+    embedding_train : npt.NDArray
+        The part of the output embedding to use as training for the decoding.
+    embedding_test : npt.NDArray
+        The part of the output embedding to use as testing for the decoding.
+    label_train : npt.NDArray
+        The true labels corresponding to the training data.
+    label_test : npt.NDArray
+        The true labels corresponding to the validation data.
+
+    Returns:
+    --------
+    test_score : np.float64
+        The test score of the decoding averaged across labels.
+    labels_test_err : npt.NDArray
+        A list of the errors for each label.
+    labels_test_score : npt.NDArray
+        A list of the R^2 scores for each label.
+
+    """
+
     try:
         num_labels = label_train.shape[1]
     except:
@@ -190,12 +220,21 @@ class Decoding(_BaseMetric):
 
             num_layers = 0
 
-            if model.solver_name_ in ["multi-session", "multi-session-aux", "multiobjective-solver"]:
+            if model.solver_name_ in [
+                "multi-session",
+                "multi-session-aux",
+                "multiobjective-solver",
+            ]:
 
                 train_embedding = model.transform(self.train_data, self.session_id)
                 test_embedding = model.transform(self.test_data, self.session_id)
 
-            elif model.solver_name_ in ["single-session", "single-session-aux", "single-session-hybrid", "single-session-full"]:
+            elif model.solver_name_ in [
+                "single-session",
+                "single-session-aux",
+                "single-session-hybrid",
+                "single-session-full",
+            ]:
 
                 train_embedding = model.transform(self.train_data)
                 test_embedding = model.transform(self.test_data)

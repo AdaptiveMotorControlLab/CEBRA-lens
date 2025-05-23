@@ -172,7 +172,7 @@ class CKA(_BaseMetric):
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
-                #the situation when there multiple models inside model labels and the same number of models inside each label
+                # the situation when there multiple models inside model labels and the same number of models inside each label
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2[j])
             else:
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
@@ -208,8 +208,8 @@ class CKA(_BaseMetric):
         activations_2 = activations[self.comparisonY]
 
         if len(activations_1) != len(activations_2):
-            #if the number of models in a label is different from the other model label
-            #choose embeddings_1 for the one with more models, and then embeddings_2 just compare with the first model
+            # if the number of models in a label is different from the other model label
+            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with the first model
             if len(activations_1) > len(activations_2):
                 embeddings_1 = activations_1
                 embeddings_2 = activations_2[0]
@@ -227,7 +227,7 @@ class CKA(_BaseMetric):
             self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
 
         else:
-            #when the model labels have the same number of models, but are different labels
+            # when the model labels have the same number of models, but are different labels
             embeddings_1 = activations_1
             embeddings_2 = activations_2
             self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2, True)
