@@ -45,7 +45,7 @@ def compute_metric(
 
 
 def model_loader(
-    model_dir: str, labels: Dict[str, str] = {}
+    model_dir: str, groups: Dict[str, str] = {}
 ) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
     Loads and categorizes CEBRA models from a given directory.
@@ -55,7 +55,7 @@ def model_loader(
     model_dir : str
         Path to the directory containing model `.pt` or `.pth` files.
 
-    labels : Dict[str, str], optional
+    groups : Dict[str, str], optional
         Dictionary mapping model file names (without extensions) to category labels.
         If not provided, the model's own filename will be used as its label.
 
@@ -74,7 +74,7 @@ def model_loader(
             loaded_model = cebra.CEBRA.load(
                 file, backend="torch", map_location=torch.device("cpu")
             ).to("cpu")
-            key = labels.get(file.stem, file.stem)
+            key = groups.get(file.stem, file.stem)
             models.setdefault(key, []).append(loaded_model)
             print(f"Model {file.stem} loaded successfully.")
 
