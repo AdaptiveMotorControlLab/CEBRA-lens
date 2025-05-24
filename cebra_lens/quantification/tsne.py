@@ -84,6 +84,7 @@ class Tsne(_BaseMetric):
         labels: npt.NDArray,
         sample_plot: int = 200,
         dataset_label: str = "HPC",
+        group_name: str = "t-SNE",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         """
@@ -92,7 +93,8 @@ class Tsne(_BaseMetric):
         return plot_embeddings(
             embeddings,
             labels,
-            sample_plot,
+            group_name,
             dataset_label,
+            sample_plot,
             ax,
         )

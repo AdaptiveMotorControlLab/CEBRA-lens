@@ -394,8 +394,8 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
-        label: str = "Averaged R^2 score",
         metric: int = 0,
+        plot_error: bool = False,
     ):
 
         self.figsize = (
@@ -411,7 +411,7 @@ class ModelDecodingPlot(_BasePlot):
         )  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
         self.metric = metric
-        self.label = label
+        self.plot_error = plot_error
 
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
@@ -431,7 +431,18 @@ class ModelDecodingPlot(_BasePlot):
                 self.label = "Position Error"
                 measure = "(cm)"
             else:
+                results = results[:, 2]
+                if self.plot_error:
+                    # betwen error and R^2 score, you want to plot the error
+                    results = results[:, 1]
+                # choice of label to plot, self.metric
+
                 score = results[:, self.metric]
+                if self.metric == 0:
+                    self.label = "Averaged R^2 score"
+                    measure = ""
+                else:
+                    self.label = "Averaged R^2 score"
                 measure = ""
 
             mean_error = np.mean(score)
@@ -517,21 +528,29 @@ class _EmbeddingPlot:
         labels: npt.NDArray,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
+        sample_plot: int = None,
         comparison_groups: Tuple = None,
     ):
         self.figsize = (15, 10)
         self.embeddings_list = embeddings
         self.labels = labels
         self.dataset_label = dataset_label
-        self.ax = self._define_ax(axis)
+        self.axs = self._define_ax(axis)
         if len(embeddings) == 1:
             self.embeddings = embeddings[0]
-            self.sample_plot = self.embeddings[0].shape[1]
-            self.axs = self._define_ax(axis)
+            if sample_plot is None:
+                self.sample_plot = self.embeddings[0].shape[1]
+            else:
+                self.sample_plot = sample_plot
+
         else:
             self.embeddings_1 = embeddings[0]
             self.embeddings_2 = embeddings[1]
-            self.sample_plot = self.embeddings_1[0].shape[1]
+            if sample_plot is None:
+                self.sample_plot = self.embeddings_1[0].shape[1]
+            else:
+                self.sample_plot = sample_plot
+
             self.comparison_groups = comparison_groups
 
             self.axs_1 = self.ax[0, :]
@@ -718,7 +737,7 @@ class _EmbeddingPlot:
         self,
         axs: List[matplotlib.axes.Axes],
         embeddings: List[npt.NDArray],
-        title_prefix: str,
+        group_name: str,
     ):
         """
         Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
@@ -729,14 +748,14 @@ class _EmbeddingPlot:
             List of matplotlib axes objects where the embeddings will be plotted.
         embeddings : List[npt.NDArray]
             List of numpy arrays containing the embeddings for each layer. Each array is shape Samples X num Neurons.
-        title_prefix : str
+        group_name : str
             Title of the plot (e.g., 'single' or 'multi').
         """
         num_layers = len(embeddings)
 
         labels_list = [self.labels[: self.sample_plot]] * num_layers
-        titles = [f"{title_prefix} Layer {layer}" for layer in range(1, num_layers)]
-        titles.append(f"{title_prefix} Output")
+        titles = [f"{group_name} Layer {layer}" for layer in range(1, num_layers)]
+        titles.append(f"{group_name} Output")
 
         for i, (label, ax) in enumerate(zip(labels_list, axs)):
             if (
@@ -756,9 +775,11 @@ class _EmbeddingPlot:
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")
+            plt.subplots_adjust(wspace=0, hspace=0)
+            plt.tight_layout()
 
-    def plot_embedding(self):
-        return self.plot_embedding_layers(self.axs, self.embeddings, self.label)
+    def plot_embedding(self, group_name):
+        return self.plot_embedding_layers(self.axs, self.embeddings, group_name)
 
     def plot_compare(self):
         """Plots embedding layers for models being compared"""
@@ -780,9 +801,9 @@ def compare_embeddings_layers(
     embeddings_1: List[npt.NDArray],
     embeddings_2: List[npt.NDArray],
     labels: npt.NDArray,
-    sample_plot: int = 200,
     comparison_groups: Tuple = ("tSNE", ["Untrained", "Trained"]),
     dataset_label: str = "HPC",
+    sample_plot: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -797,8 +818,6 @@ def compare_embeddings_layers(
         List of embeddings for the second dataset.
     labels : npt.NDArray
         Array of labels for the data points.
-    sample_plot : int, optional
-        Number of samples to plot (default is 200).
     comparison_groups : Tuple, optional
         Labels describing the embeddings (default is ("tSNE", ["Untrained", "Trained"]) ).
     dataset_label : str, optional
@@ -814,9 +833,9 @@ def compare_embeddings_layers(
     return _EmbeddingPlot(
         embeddings=[embeddings_1, embeddings_2],
         labels=labels,
-        sample_plot=sample_plot,
         comparison_groups=comparison_groups,
         dataset_label=dataset_label,
+        sample_plot=sample_plot,
         axis=ax,
     ).plot_compare(**kwargs)
 
@@ -824,18 +843,19 @@ def compare_embeddings_layers(
 def plot_embeddings(
     embeddings: List[npt.NDArray],
     labels: npt.NDArray,
-    sample_plot: int = 200,
+    group_name: str = "",
     dataset_label: str = "HPC",
+    sample_plot: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
     return _EmbeddingPlot(
         embeddings=[embeddings],
         labels=labels,
-        sample_plot=sample_plot,
         dataset_label=dataset_label,
+        sample_plot=sample_plot,
         axis=ax,
-    ).plot_embedding(**kwargs)
+    ).plot_embedding(group_name=group_name, **kwargs)
 
 
 class _ActivationPlot:
@@ -1226,7 +1246,7 @@ class _RDMPlots:
     def plot(self):
         """Handles plotting logic."""
         for i, rdm in enumerate(self.rdms):
-
+            rdm = rdm[0]
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
             self.ax[i].set_title(self.titles[i])
 

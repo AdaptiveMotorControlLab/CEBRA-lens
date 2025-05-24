@@ -44,7 +44,7 @@ def decoding(embedding_train, embedding_test, label_train, label_test):
         label_pred = test_decoder.predict(embedding_test)
         predictions.append(label_pred)
         label_test_err = np.median(abs(label_pred - label_test[:, i]))
-        labels_test_err.append(labels_test_err)
+        labels_test_err.append(label_test_err)
         label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
         labels_test_score.append(label_test_score)
 

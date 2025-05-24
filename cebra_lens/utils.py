@@ -49,12 +49,13 @@ def compute_metric(
                 metric_class.set_num_bins(num_bins)
                 metric_class.set_num_samples(max_num_samples)
 
-            computed_values = np.array(
-                [
-                    metric_class.compute(sample)
-                    for sample in tqdm(samples, desc=f"Processing {model_label}")
-                ]
-            )
+            computed_values = [
+                metric_class.compute(sample)
+                for sample in tqdm(samples, desc=f"Processing {model_label}")
+            ]
+            if not isinstance(metric_class, RDM):
+                computed_values = np.array(computed_values)
+
             result_dict[model_label] = computed_values
 
     return result_dict
