@@ -64,7 +64,7 @@ def compute_metric(
 
 def plot_metric(
     data_dict: Union[Dict[str, npt.NDArray[Any]], npt.NDArray],
-    metric_class: Any[object],
+    metric_class: object,
     group_name: str = "Model group",
     **kwargs,
 ) -> None:

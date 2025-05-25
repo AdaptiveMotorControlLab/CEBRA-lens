@@ -1,7 +1,7 @@
 """Matplotlib interface to CEBRA-Lens."""
 
 from abc import *
-from typing import Optional, Tuple, List, Dict
+from typing import Optional, Tuple, List, Dict, Union
 import seaborn as sns
 import matplotlib.axes
 import matplotlib.pyplot as plt
@@ -841,7 +841,7 @@ def compare_embeddings_layers(
 
 
 def plot_embeddings(
-    embeddings: Dict[List[npt.NDArray]],
+    embeddings: Dict[str, List[npt.NDArray]],
     labels: npt.NDArray,
     dataset_label: str = "HPC",
     sample_plot: int = None,
@@ -896,6 +896,7 @@ class _ActivationPlot:
         self.embeddings = embeddings
         self.sample_plot = sample_plot
         self.cmap = cmap
+        self.title = title
         self.num_layers = len(embeddings)
         self._define_ax(axis)
         self.fig.suptitle(title, fontsize=20)
@@ -950,10 +951,10 @@ class _ActivationPlot:
 
 def plot_activations(
     input_data: torch.Tensor,
-    embeddings: List[npt.NDArray],
+    data: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
     sample_plot: int = 100,
     cmap: str = "magma",
-    group_name: str = "Trained activations per layer",
+    plot_title: str = "Trained activations per layer",
     figsize: Tuple = (10, 20),
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -965,13 +966,13 @@ def plot_activations(
     -----------
     input_data : torch.Tensor
         The input data tensor to be plotted.
-    embeddings : Union[Dict[str, npt.NDArray[Any]], npt.NDArray]
+    data : Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]]
         A list of npt.NDArray representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons or a dictionary where the keys are group names and the values are lists of embeddings.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
     cmap : str, optional
         The colormap to use for the embeddings (default is "magma").
-    group_name : str, optional
+    plot_title : str, optional
         The title of the plot (default is "Trained activations").
     figsize : Tuple, optional
         The size of the figure (default is (10, 20)).
@@ -983,17 +984,19 @@ def plot_activations(
     fig : matplotlib.figure.Figure
         The matplotlib figure object containing the plots.
     """
-    if not isinstance(embeddings, Dict):
-        data_dict = {group_name: embeddings}
 
-    for group_name, embeddings in data_dict.items():
-        for i, emb in enumerate(embeddings):
-            _ActivationPlot(
+    data_dict = data
+    if not isinstance(data, Dict):
+        data_dict = {plot_title: [data]}
+
+    for group_name, models in data_dict.items():
+        for i, embs in enumerate(models):
+            fig = _ActivationPlot(
                 input_data=input_data,
-                embeddings=emb,
+                embeddings=embs,
                 sample_plot=sample_plot,
                 cmap=cmap,
-                title=f"{group_name} trained activations per layer",
+                title=f"{group_name} instance {i} activations across layers",
                 figsize=figsize,
                 axis=ax,
             ).plot(**kwargs)
