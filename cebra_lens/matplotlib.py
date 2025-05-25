@@ -752,9 +752,12 @@ class _EmbeddingPlot:
             Title of the plot (e.g., 'single' or 'multi').
         """
         num_layers = len(embeddings)
-
+        self.fig.suptitle(
+            f"{group_name}",
+            fontsize=20,
+        )
         labels_list = [self.labels[: self.sample_plot]] * num_layers
-        titles = [f"{group_name} Layer {layer}" for layer in range(1, num_layers)]
+        titles = [f"Layer {layer}" for layer in range(1, num_layers)]
         titles.append(f"{group_name} Output")
 
         for i, (label, ax) in enumerate(zip(labels_list, axs)):
@@ -790,7 +793,7 @@ class _EmbeddingPlot:
             self.axs_2, self.embeddings_2, self.comparison_groups[1][1]
         )
         self.fig.suptitle(
-            f"{self.comparison_groups[0]} across layers({self.comparison_groups[1][0]} - {self.comparison_groups[1][1]})",
+            f"CEBRA across layers comparison",
             fontsize=20,
         )
         plt.subplots_adjust(wspace=0, hspace=0)
@@ -841,24 +844,30 @@ def compare_embeddings_layers(
 
 
 def plot_embeddings(
-    embeddings: Dict[str, List[npt.NDArray]],
+    data: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
     labels: npt.NDArray,
+    group_name: str = None,
     dataset_label: str = "HPC",
     sample_plot: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
 
-    for group_name, embeddings in embeddings.items():
-        for i, emb in enumerate(embeddings):
-            _EmbeddingPlot(
-                embeddings=[emb],
+    data_dict = data
+    if not isinstance(data, Dict):
+        if group_name is None:
+            raise ValueError("If data is not a dictionary, group_name must be provided.")
+        data_dict = {group_name: [data]}
+
+    for group_name, models in data_dict.items():
+        for i, embs in enumerate(models):
+            fig = _EmbeddingPlot(
+                embeddings=[embs],
                 labels=labels,
                 dataset_label=dataset_label,
                 sample_plot=sample_plot,
                 axis=ax,
-            ).plot_embedding(group_name=f"{group_name} i", **kwargs)
-
+            ).plot_embedding(group_name=f"{group_name} instance {i}", **kwargs)
 
 class _ActivationPlot:
     """Class for plotting activations of a neural network model.
