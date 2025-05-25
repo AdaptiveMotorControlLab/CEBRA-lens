@@ -841,21 +841,23 @@ def compare_embeddings_layers(
 
 
 def plot_embeddings(
-    embeddings: List[npt.NDArray],
+    embeddings: Dict[List[npt.NDArray]],
     labels: npt.NDArray,
-    group_name: str = "",
     dataset_label: str = "HPC",
     sample_plot: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
-    return _EmbeddingPlot(
-        embeddings=[embeddings],
-        labels=labels,
-        dataset_label=dataset_label,
-        sample_plot=sample_plot,
-        axis=ax,
-    ).plot_embedding(group_name=group_name, **kwargs)
+    
+    for group_name, embeddings in embeddings.items():
+        for i, emb in enumerate(embeddings):
+            _EmbeddingPlot(
+                embeddings=[emb],
+                labels=labels,
+                dataset_label=dataset_label,
+                sample_plot=sample_plot,
+                axis=ax,
+            ).plot_embedding(group_name=f"{group_name} i", **kwargs)
 
 
 class _ActivationPlot:
@@ -951,7 +953,7 @@ def plot_activations(
     embeddings: List[npt.NDArray],
     sample_plot: int = 100,
     cmap: str = "magma",
-    title: str = "Trained activations",
+    group_name: str = "Trained activations per layer",
     figsize: Tuple = (10, 20),
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -963,13 +965,13 @@ def plot_activations(
     -----------
     input_data : torch.Tensor
         The input data tensor to be plotted.
-    embeddings : List[npt.NDArray]
-        A list of npt.NDArray representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons.
+    embeddings : Union[Dict[str, npt.NDArray[Any]], npt.NDArray]
+        A list of npt.NDArray representing the embeddings/activations of each layer. Each array is shape Samples X num Neurons or a dictionary where the keys are group names and the values are lists of embeddings.
     sample_plot : int, optional
         The number of samples to plot along the time axis (default is 100).
     cmap : str, optional
         The colormap to use for the embeddings (default is "magma").
-    title : str, optional
+    group_name : str, optional
         The title of the plot (default is "Trained activations").
     figsize : Tuple, optional
         The size of the figure (default is (10, 20)).
@@ -981,15 +983,20 @@ def plot_activations(
     fig : matplotlib.figure.Figure
         The matplotlib figure object containing the plots.
     """
-    return _ActivationPlot(
-        input_data=input_data,
-        embeddings=embeddings,
-        sample_plot=sample_plot,
-        cmap=cmap,
-        title=title,
-        figsize=figsize,
-        axis=ax,
-    ).plot(**kwargs)
+    if not isinstance(embeddings, Dict):
+        data_dict = {group_name: embeddings}
+    
+    for group_name, embeddings in data_dict.items():
+        for i, emb in enumerate(embeddings):
+            _ActivationPlot(
+                    input_data=input_data,
+                    embeddings=emb,
+                    sample_plot=sample_plot,
+                    cmap=cmap,
+                    title=f"{group_name} trained activations per layer",
+                    figsize=figsize,
+                    axis=ax,
+                ).plot(**kwargs)
 
 
 class _HeatMapsPlot:
@@ -1312,9 +1319,8 @@ class _RDMPlots:
             cax, ax=self.ax, orientation="horizontal", fraction=0.05, label=self.metric
         )
 
-
 def plot_rdm(
-    rdms: list,
+    rdms:  List[Tuple[npt.NDArray, np.float64]],
     titles: List[str],
     metric: Optional[str] = "Normalized Euclidean distance",
     dataset_label: Optional[str] = "visual",
@@ -1357,3 +1363,25 @@ def plot_rdm(
         figsize=figsize,
         axis=ax,
     ).plot()
+
+def plot_rdms(
+    rdms: Dict[str, npt.NDArray],
+    titles: List[str],
+    metric: Optional[str] = "Normalized Euclidean distance",
+    dataset_label: Optional[str] = "visual",
+    cmap: Optional[str] = "viridis",
+    figsize: Optional[Tuple[np.float64, np.float64]] = None,
+    ax: Optional[matplotlib.axes.Axes] = None,
+) -> plt.Figure:
+    """
+    Alias for plot_rdm to maintain consistency with the original function name.
+    """
+    return plot_rdm(
+        rdms=rdms,
+        titles=titles,
+        metric=metric,
+        dataset_label=dataset_label,
+        cmap=cmap,
+        figsize=figsize,
+        ax=ax,
+    )

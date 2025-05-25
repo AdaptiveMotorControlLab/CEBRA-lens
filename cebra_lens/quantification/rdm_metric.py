@@ -197,9 +197,9 @@ class RDM(_BaseMetric):
 
     def plot(
         self,
-        rdms: List[npt.NDArray],
+        rdms: Dict[str, npt.NDArray],
         titles: List[Tuple[npt.NDArray, float]] = None,
-        metric: str = "Normalized Euclidean distance",
+        metric: str = "Correlation",
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
