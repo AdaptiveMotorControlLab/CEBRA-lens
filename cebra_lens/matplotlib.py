@@ -281,7 +281,7 @@ class DecodingPlot(_GenericPlot):
 
 
 def plot_rdm_correlation(
-    rdm_dict: Dict[str, npt.NDArray],
+    rdm_dict: Dict[str, List[npt.NDArray]],
     title: str = "RDM comparison to Oracle",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -292,8 +292,8 @@ def plot_rdm_correlation(
 
     Parameters:
     -----------
-    rdm_dict : Dict[str, npt.NDArray]
-        Dictionary containing the RDMs to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+    rdm_dict : Dict[str, List[npt.NDArray]]
+        Dictionary containing the RDMs to be plotted.
     title : str, optional
         The title for the plot (default is "RDM comparison to Oracle").
     figsize : Tuple, optional
@@ -848,7 +848,7 @@ def plot_embeddings(
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
-    
+
     for group_name, embeddings in embeddings.items():
         for i, emb in enumerate(embeddings):
             _EmbeddingPlot(
@@ -985,18 +985,18 @@ def plot_activations(
     """
     if not isinstance(embeddings, Dict):
         data_dict = {group_name: embeddings}
-    
+
     for group_name, embeddings in data_dict.items():
         for i, emb in enumerate(embeddings):
             _ActivationPlot(
-                    input_data=input_data,
-                    embeddings=emb,
-                    sample_plot=sample_plot,
-                    cmap=cmap,
-                    title=f"{group_name} trained activations per layer",
-                    figsize=figsize,
-                    axis=ax,
-                ).plot(**kwargs)
+                input_data=input_data,
+                embeddings=emb,
+                sample_plot=sample_plot,
+                cmap=cmap,
+                title=f"{group_name} trained activations per layer",
+                figsize=figsize,
+                axis=ax,
+            ).plot(**kwargs)
 
 
 class _HeatMapsPlot:
@@ -1162,16 +1162,19 @@ class _RDMPlots:
 
     def __init__(
         self,
-        rdms: List[Tuple[npt.NDArray, np.float64]],
-        titles: List[str],
+        rdms: List[npt.NDArray],
         axis: Optional[matplotlib.axes.Axes],
-        metric: str = "Normalized Euclidean distance",
+        titles: List[str] = None,
+        metric: str = "Correlation",
         dataset_label: str = None,
         cmap: str = "viridis",
         figsize: Tuple[np.float64, np.float64] = None,
     ):
 
         self.rdms = rdms
+        if titles is None:
+            titles = [f"Layer {i+1}" for i in range(len(rdms))]
+            titles[-1] = "Output Layer"
         self.titles = titles
         self.metric = metric
         self.dataset_label = dataset_label
@@ -1252,10 +1255,10 @@ class _RDMPlots:
 
     def plot(self):
         """Handles plotting logic."""
+
         for i, rdm in enumerate(self.rdms):
-            rdm = rdm[0]
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
-            self.ax[i].set_title(self.titles[i])
+            self.ax[i].set_title(self.titles[i], fontsize=14)
 
             if self.dataset_label == "HPC":
                 # Set the x and y ticks
@@ -1319,10 +1322,11 @@ class _RDMPlots:
             cax, ax=self.ax, orientation="horizontal", fraction=0.05, label=self.metric
         )
 
+
 def plot_rdm(
-    rdms:  List[Tuple[npt.NDArray, np.float64]],
-    titles: List[str],
-    metric: Optional[str] = "Normalized Euclidean distance",
+    rdms: Dict[str, List[npt.NDArray]],
+    titles: Optional[List[str]] = None,
+    metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
     cmap: Optional[str] = "viridis",
     figsize: Optional[Tuple[np.float64, np.float64]] = None,
@@ -1333,8 +1337,8 @@ def plot_rdm(
 
     Parameters:
     -----------
-    rdms : List[Tuple[npt.NDArray,np.float64]]
-        A list of RDMs to be plotted. Each RDM should be a 2D array-like structure.
+    rdms : Dict[str, List[npt.NDArray]]
+        A dictionary containing for key a group name, a for values a list of models and for each layer their respective rdms and correlation to Oracle rdm matrix.
     titles : List[str]
         A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
     metric : str, optional
@@ -1354,6 +1358,7 @@ def plot_rdm(
     fig : matplotlib.figure.Figure
         The figure object containing the plotted RDMs.
     """
+
     return _RDMPlots(
         rdms=rdms,
         titles=titles,
@@ -1364,24 +1369,29 @@ def plot_rdm(
         axis=ax,
     ).plot()
 
-def plot_rdms(
+
+def plot_rdm_all(
     rdms: Dict[str, npt.NDArray],
-    titles: List[str],
-    metric: Optional[str] = "Normalized Euclidean distance",
+    titles: Optional[List[str]] = None,
+    metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
     cmap: Optional[str] = "viridis",
     figsize: Optional[Tuple[np.float64, np.float64]] = None,
     ax: Optional[matplotlib.axes.Axes] = None,
 ) -> plt.Figure:
     """
-    Alias for plot_rdm to maintain consistency with the original function name.
+    The input to plot_rdm needs to be a list of rdms nothing more
     """
-    return plot_rdm(
-        rdms=rdms,
-        titles=titles,
-        metric=metric,
-        dataset_label=dataset_label,
-        cmap=cmap,
-        figsize=figsize,
-        ax=ax,
-    )
+    for key, data_list in rdms.items():
+        for inner_list in data_list:
+            # getting the rdm matrices for each layer per model in group
+            values = [arr[0] for arr in inner_list]
+            plot_rdm(
+                rdms=values,
+                metric=metric,
+                titles=titles,
+                dataset_label=dataset_label,
+                cmap=cmap,
+                figsize=figsize,
+                ax=ax,
+            )

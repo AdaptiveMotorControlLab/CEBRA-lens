@@ -197,7 +197,7 @@ class RDM(_BaseMetric):
 
     def plot(
         self,
-        rdms: Dict[str, npt.NDArray],
+        rdms: Dict[str, List[npt.NDArray]],
         titles: List[Tuple[npt.NDArray, float]] = None,
         metric: str = "Correlation",
         cmap: str = "viridis",
@@ -207,7 +207,7 @@ class RDM(_BaseMetric):
         if self.bool_oracle:
             return plot_rdm_correlation(rdms)
         else:
-            return plot_rdm(
+            return plot_rdm_all(
                 rdms,
                 titles,
                 metric,

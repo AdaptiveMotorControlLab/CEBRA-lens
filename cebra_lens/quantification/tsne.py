@@ -80,7 +80,7 @@ class Tsne(_BaseMetric):
 
     def plot(
         self,
-        embeddings: Union[Dict[str, List[npt.NDArray]],List[npt.NDArray]],
+        embeddings: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
         labels: npt.NDArray,
         sample_plot: int = 200,
         dataset_label: str = "HPC",

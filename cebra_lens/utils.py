@@ -11,6 +11,7 @@ from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
 from .quantification.tsne import Tsne
 
+
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
@@ -64,8 +65,8 @@ def compute_metric(
 def plot_metric(
     data_dict: Union[Dict[str, npt.NDArray[Any]], npt.NDArray],
     metric_class: Any[object],
-    group_name : str = "Model group",
-    **kwargs
+    group_name: str = "Model group",
+    **kwargs,
 ) -> None:
     """
     Plots metrics for each model using a provided metric class.
@@ -79,7 +80,9 @@ def plot_metric(
         Object with a `plot` method that takes a single data sample and returns a plot.
     """
 
-    if not isinstance(data_dict, Dict) and isinstance(metric_class, Tsne):
+    if not isinstance(data_dict, Dict) and (
+        isinstance(metric_class, Tsne) or isinstance(metric_class, RDM)
+    ):
         data_dict = {group_name: data_dict}
     return metric_class.plot(data_dict, **kwargs)
 
