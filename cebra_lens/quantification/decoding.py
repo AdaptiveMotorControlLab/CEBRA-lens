@@ -7,16 +7,24 @@ from ..activations import get_activations_model
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
-from typing import Dict, Type
+from typing import Dict, Type, Tuple
 import torch.nn as nn
 import sklearn.metrics
+import torch as pt
 
 
-def decoding(embedding_train, embedding_test, label_train, label_test):
+def decoding(
+    embedding_train: pt.tensor,
+    embedding_test: pt.tensor,
+    label_train: npt.NDArray,
+    label_test: npt.NDArray,
+) -> Tuple[np.float64, list, list]:
     try:
         num_labels = label_train.shape[1]
     except:
         num_labels = 1
+        label_train = label_train.reshape(-1, 1)
+        label_test = label_test.reshape(-1, 1)
 
     # resampling, subsampling and supervised model architecture is still not supported
     # checked via '''supported_model_architectures()''' function
@@ -30,18 +38,19 @@ def decoding(embedding_train, embedding_test, label_train, label_test):
             train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
             train_valid_idx = int(len(embedding_train) / 9 * 8)
             train_decoder.fit(
-                embedding_train[:train_valid_idx], label_train[:train_valid_idx]
+                embedding_train[:train_valid_idx], label_train[:train_valid_idx, i]
             )
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
-            err = label_train[train_valid_idx:] - pred
+            err = label_train[train_valid_idx:, i] - pred
             errs.append(abs(err).sum())
 
         test_decoder = cebra.KNNDecoder(
             n_neighbors=params[np.argmin(errs)], metric="cosine"
         )
 
-        test_decoder.fit(embedding_train, label_train)
+        test_decoder.fit(embedding_train, label_train[:, i])
         label_pred = test_decoder.predict(embedding_test)
+
         predictions.append(label_pred)
         label_test_err = np.median(abs(label_pred - label_test[:, i]))
         labels_test_err.append(label_test_err)
@@ -76,7 +85,7 @@ class Decoding(_BaseMetric):
     session_id : int, optional
         The session ID for multi-session models. For single-session no need to input it.
     dataset_label : str, optional
-        The type of dataset being used for decoding (default is "visual").
+        The type of dataset being used for decoding.
     layer_type : Type[nn.Module]
         The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     output_only: bool
@@ -90,7 +99,7 @@ class Decoding(_BaseMetric):
         test_data: torch.Tensor,
         test_label: npt.NDArray,
         session_id: int = -1,
-        dataset_label: str = "visual",
+        dataset_label: str = None,
         layer_type: Optional[Type[nn.Module]] = None,
         output_only: bool = True,
     ):
@@ -110,7 +119,7 @@ class Decoding(_BaseMetric):
         label_train: npt.NDArray,
         embedding_test: npt.NDArray,
         label_test: npt.NDArray,
-        dataset_label: str = "visual",
+        dataset_label: str = None,
     ) -> npt.NDArray:
         """
         Decodes a model by choosing the appropriate function base on the dataset.
@@ -127,7 +136,7 @@ class Decoding(_BaseMetric):
         test_label : npt.NDArray
             The true labels corresponding to the validation data.
         dataset_label : str, optional
-            The type of dataset being used for decoding (default is "visual").
+            The type of dataset being used for decoding.
 
         Returns:
         --------
@@ -233,8 +242,7 @@ class Decoding(_BaseMetric):
             num_layers = len(activations_train)
             keys = list(activations_train.keys())
 
-        results = np.zeros((num_layers + 1, 3))
-
+        results = {}
         for i in range(num_layers + 1):
 
             # if output_only == True, then it will only do this loop and for train_data it will take in the embeddings
@@ -243,25 +251,32 @@ class Decoding(_BaseMetric):
                     train_embedding = self.train_data
                     test_embedding = self.test_data
 
-                results[i, :] = self._decode(
-                    train_embedding,
-                    self.train_label,
-                    test_embedding,
-                    self.test_label,
-                    self.dataset_label,
+                results.update(
+                    {
+                        i: self._decode(
+                            train_embedding,
+                            self.train_label,
+                            test_embedding,
+                            self.test_label,
+                            self.dataset_label,
+                        )
+                    }
                 )
 
             else:
 
-                results[i, :] = self._decode(
-                    activations_train[keys[i - 1]],
-                    self.train_label,
-                    activations_test[keys[i - 1]],
-                    self.test_label,
-                    self.dataset_label,
+                results.update(
+                    {
+                        i: self._decode(
+                            activations_train[keys[i - 1]],
+                            self.train_label,
+                            activations_test[keys[i - 1]],
+                            self.test_label,
+                            self.dataset_label,
+                        )
+                    }
                 )
-        if self.output_only:
-            results = results[0]
+
         return results
 
     @property
@@ -273,14 +288,17 @@ class Decoding(_BaseMetric):
 
     def plot(
         self,
-        results_dict: Dict[str, npt.NDArray],
+        results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
         title: str = "Decoding by layer",
+        label: int = None,
         figsize: tuple = (15, 5),
         palette: str = "hls",
         dataset_label="visual",
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         if self.output_only:
-            return plot_decoding(results_dict, palette, dataset_label, ax)
+            return plot_decoding(results_dict, palette, dataset_label, label, ax)
         else:
-            return plot_layer_decoding(results_dict, title, figsize)
+            return plot_layer_decoding(
+                results_dict, dataset_label, title, label, figsize
+            )

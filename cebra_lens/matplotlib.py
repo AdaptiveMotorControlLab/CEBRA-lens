@@ -229,22 +229,28 @@ class DecodingPlot(_GenericPlot):
 
     def __init__(
         self,
-        results_dict: Dict[str, npt.NDArray],
+        results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
         dataset_label: str = None,
         title: str = None,
+        label: int = None,
+        plot_error: bool = False,
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
 
-        if dataset_label == "visual":
-            title = "Decoding accuracies across layers (%)"
-        elif dataset_label == "HPC":
-            title = "Decoding position errors across layers (cm)"
-        else:
-            title = "Decoding average R^2 scores across layers"
+        if title is not None:
+            if dataset_label == "visual":
+                title = "Decoding accuracies across layers (%)"
+            elif dataset_label == "HPC":
+                title = "Decoding position errors across layers (cm)"
+            else:
+                title = "Decoding average R^2 scores across layers"
+                if plot_error:
+                    title = "Decoding error scores across layers"
 
         super().__init__(axis, figsize, title)
-
+        self.label = label
+        self.plot_error = plot_error
         self.dataset_label = dataset_label
         self.results_dict = results_dict
         self.plot_data = self._transform()
@@ -260,19 +266,28 @@ class DecodingPlot(_GenericPlot):
             Dictionary where the keys correspond to the model labels, and the value to the decoding scores for each layer for each model inside a model label category.
         """
         data = {}
-        for idx, (key, data_list) in enumerate(self.results_dict.items()):
+        for idx, (group_name, models) in enumerate(self.results_dict.items()):
             layer_values = []
 
-            for i, inner_list in enumerate(data_list):
+            for i, model in enumerate(models):
+
                 if self.dataset_label == "visual":
                     ind = 2
                 elif self.dataset_label == "HPC":
                     ind = 2
                 else:
-                    ind = 0
-                values = [arr[ind] for arr in inner_list]  # Extract second column
-                layer_values.append(values)
-            data[key] = layer_values
+                    ind = self.label
+                layer_scores = []
+                for layer, scores in model.items():
+                    if self.dataset_label is None:
+                        if self.plot_error:
+                            layer_scores.append(scores[1][ind])
+                        else:
+                            layer_scores.append(scores[2][ind])
+                    else:
+                        layer_scores.append(scores[ind])
+                layer_values.append(layer_scores)
+            data[group_name] = layer_values
         return data
 
     def plot(self):
@@ -345,6 +360,9 @@ def plot_distance(
 def plot_layer_decoding(
     results_dict: Dict[str, npt.NDArray],
     title: str = "Decoding by layer",
+    dataset_label: str = None,
+    label: int = None,
+    plot_error: bool = False,
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
 ) -> plt.Figure:
@@ -369,6 +387,9 @@ def plot_layer_decoding(
     return DecodingPlot(
         results_dict=results_dict,
         title=title,
+        dataset_label=dataset_label,
+        label=label,
+        plot_error=plot_error,
         figsize=figsize,
     ).plot(**kwargs)
 
@@ -394,7 +415,7 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
-        metric: int = 0,
+        label: int = None,
         plot_error: bool = False,
     ):
 
@@ -410,8 +431,10 @@ class ModelDecodingPlot(_BasePlot):
             palette, len(results_dict)
         )  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
-        self.metric = metric
         self.plot_error = plot_error
+        self.label = label
+        if self.dataset_label is None and self.label:
+            raise ValueError("Please define the label score you want to plot.")
 
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
@@ -422,28 +445,24 @@ class ModelDecodingPlot(_BasePlot):
         for i, (key, results) in enumerate(self.results_dict.items()):
             if self.dataset_label == "visual":
                 # for visual dataset get accuracy
-                score = results[:, 2]
-                self.label = "Accuracy"
+                score = [dict_el[0][2] for dict_el in results]
+                self.plot_label = "Accuracy"
                 measure = "(%)"
             elif self.dataset_label == "HPC":
                 # for HPC dataset get position error
-                score = results[:, 1]
-                self.label = "Position Error"
+                score = [dict_el[0][1] for dict_el in results]
+                self.plot_label = "Position Error"
                 measure = "(cm)"
             else:
-                results = results[:, 2]
                 if self.plot_error:
                     # betwen error and R^2 score, you want to plot the error
-                    results = results[:, 1]
+                    score = [dict_el[0][1][i] for dict_el in results]
+                    self.plot_label = "Error score"
                 # choice of label to plot, self.metric
-
-                score = results[:, self.metric]
-                if self.metric == 0:
-                    self.label = "Averaged R^2 score"
-                    measure = ""
                 else:
-                    self.label = "Averaged R^2 score"
-                measure = ""
+                    score = [dict_el[0][2][i] for dict_el in results]
+                    self.plot_label = "R^2 score"
+                    measure = ""
 
             mean_error = np.mean(score)
             color = self.palette[i]
@@ -459,8 +478,8 @@ class ModelDecodingPlot(_BasePlot):
                 zorder=5,  # Bring mean point to the top
             )
         self.ax.set_xlabel("Model")
-        self.ax.set_ylabel(f"{self.label} {measure}")
-        self.ax.set_title(f"Comparison of {self.label} Across Models")
+        self.ax.set_ylabel(f"{self.plot_label} {measure}")
+        self.ax.set_title(f"Comparison of {self.plot_label} Across Models")
         self.ax.set_xticks(x_positions)
         self.ax.set_xticklabels(
             self.results_dict.keys()
@@ -473,13 +492,13 @@ def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
     dataset_label: str = None,
+    label: int = None,
     metric: int = 0,
     ax: Optional[matplotlib.axes.Axes] = None,
-    label: str = "Averaged R^2 score",
     **kwargs,
 ) -> plt.Figure:
     """
-    Plots the decoding scores across multiple models.
+    Plots the decoding scores across multiple models for a label.
 
     Parameters:
     -----------
@@ -758,7 +777,7 @@ class _EmbeddingPlot:
         )
         labels_list = [self.labels[: self.sample_plot]] * num_layers
         titles = [f"Layer {layer}" for layer in range(1, num_layers)]
-        titles.append(f"{group_name} Output")
+        titles.append("Output layer")
 
         for i, (label, ax) in enumerate(zip(labels_list, axs)):
             if (
@@ -856,7 +875,9 @@ def plot_embeddings(
     data_dict = data
     if not isinstance(data, Dict):
         if group_name is None:
-            raise ValueError("If data is not a dictionary, group_name must be provided.")
+            raise ValueError(
+                "If data is not a dictionary, group_name must be provided."
+            )
         data_dict = {group_name: [data]}
 
     for group_name, models in data_dict.items():
@@ -868,6 +889,7 @@ def plot_embeddings(
                 sample_plot=sample_plot,
                 axis=ax,
             ).plot_embedding(group_name=f"{group_name} instance {i}", **kwargs)
+
 
 class _ActivationPlot:
     """Class for plotting activations of a neural network model.

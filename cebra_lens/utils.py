@@ -43,7 +43,7 @@ def compute_metric(
             result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
 
     else:
-        for model_label, samples in model_data.items():
+        for group_name, samples in model_data.items():
             if isinstance(metric_class, Decoding):
                 metric_class.set_output_only(output_only)
             elif isinstance(metric_class, RDM):
@@ -52,12 +52,12 @@ def compute_metric(
 
             computed_values = [
                 metric_class.compute(sample)
-                for sample in tqdm(samples, desc=f"Processing {model_label}")
+                for sample in tqdm(samples, desc=f"Processing {group_name}")
             ]
             if not isinstance(metric_class, RDM):
                 computed_values = np.array(computed_values)
 
-            result_dict[model_label] = computed_values
+            result_dict[group_name] = computed_values
 
     return result_dict
 
@@ -80,9 +80,7 @@ def plot_metric(
         Object with a `plot` method that takes a single data sample and returns a plot.
     """
 
-    if not isinstance(data_dict, Dict) and (
-        isinstance(metric_class, Tsne) or isinstance(metric_class, RDM)
-    ):
+    if not isinstance(data_dict, Dict) and isinstance(metric_class, RDM):
         data_dict = {group_name: data_dict}
     return metric_class.plot(data_dict, **kwargs)
 
