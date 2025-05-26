@@ -293,12 +293,14 @@ class Decoding(_BaseMetric):
         label: int = None,
         figsize: tuple = (15, 5),
         palette: str = "hls",
-        dataset_label="visual",
+        plot_error: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
         if self.output_only:
-            return plot_decoding(results_dict, palette, dataset_label, label, ax)
+            return plot_decoding(
+                results_dict, palette, self.dataset_label, label, plot_error, ax
+            )
         else:
             return plot_layer_decoding(
-                results_dict, dataset_label, title, label, figsize
+                results_dict, title, self.dataset_label, label, plot_error, figsize
             )

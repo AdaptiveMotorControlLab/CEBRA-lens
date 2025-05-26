@@ -249,6 +249,10 @@ class DecodingPlot(_GenericPlot):
                     title = "Decoding error scores across layers"
 
         super().__init__(axis, figsize, title)
+        if self.dataset_label is None and label is None:
+            raise ValueError(
+                "Please define the label score you want to plot. This is the index value corresponding to the label you want to plot in the decoding results."
+            )
         self.label = label
         self.plot_error = plot_error
         self.dataset_label = dataset_label
@@ -433,8 +437,10 @@ class ModelDecodingPlot(_BasePlot):
         self.dataset_label = dataset_label  # Define dataset label
         self.plot_error = plot_error
         self.label = label
-        if self.dataset_label is None and self.label:
-            raise ValueError("Please define the label score you want to plot.")
+        if self.dataset_label is None and self.label is None:
+            raise ValueError(
+                "Please define the label score you want to plot. This is the index value corresponding to the label you want to plot in the decoding results."
+            )
 
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
@@ -456,13 +462,13 @@ class ModelDecodingPlot(_BasePlot):
             else:
                 if self.plot_error:
                     # betwen error and R^2 score, you want to plot the error
-                    score = [dict_el[0][1][i] for dict_el in results]
+                    score = [dict_el[0][1][self.label] for dict_el in results]
                     self.plot_label = "Error score"
                 # choice of label to plot, self.metric
                 else:
-                    score = [dict_el[0][2][i] for dict_el in results]
+                    score = [dict_el[0][2][self.label] for dict_el in results]
                     self.plot_label = "R^2 score"
-                    measure = ""
+                measure = ""
 
             mean_error = np.mean(score)
             color = self.palette[i]
@@ -493,7 +499,7 @@ def plot_decoding(
     palette: str = "hls",
     dataset_label: str = None,
     label: int = None,
-    metric: int = 0,
+    plot_error: bool = False,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -517,8 +523,8 @@ def plot_decoding(
         axis=ax,
         palette=palette,
         dataset_label=dataset_label,
-        metric=metric,
         label=label,
+        plot_error=plot_error,
     ).plot(**kwargs)
 
 
