@@ -12,6 +12,31 @@ from .quantification.cka_metric import CKA
 from .quantification.tsne import Tsne
 
 
+def extract_label(labels: npt.NDArray, label_ind:int)->List:
+    """
+    Extracts unique labels from a NumPy array of labels.
+    Parameters:
+    -----------
+    labels : npt.NDArray
+        A NumPy array containing labels, which can be of any numeric type.
+    label_ind : int
+        The index of the label to extract from the array.
+    Returns:
+    --------
+    List
+        A list of unique labels extracted from the input array.
+    """
+    try:
+        num_labels = labels.shape[1]
+    except:
+        num_labels = 1
+        labels = labels.reshape(-1, 1)
+    if label_ind > num_labels-1:
+        raise ValueError(f"label_ind {label_ind} is out of range for labels with shape {labels.shape}")
+    labels = labels[:, label_ind]
+
+    return labels
+
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
