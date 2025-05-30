@@ -44,6 +44,7 @@ class RDM(_BaseMetric):
         self.data = data
         self.label = label
         self.label_ind = label_ind
+        self.dataset_label = dataset_label
         # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
         if isinstance(self.label, np.ndarray) and self.label.ndim != 1:
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
@@ -55,7 +56,6 @@ class RDM(_BaseMetric):
                     "If dataset not HPC or visual and there are multiple possible labels, parameter label_ind must be provided to indicate which label will be used for the RDM calculation"
                 )
 
-        self.dataset_label = dataset_label
         self.metric = metric
         self.bool_oracle = bool_oracle
         self.num_samples = num_samples
