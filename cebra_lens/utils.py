@@ -9,10 +9,9 @@ from torch import nn
 from .quantification.decoding import Decoding
 from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
-from .quantification.tsne import Tsne
 
 
-def extract_label(labels: npt.NDArray, label_ind:int)->List:
+def extract_label(labels: npt.NDArray, label_ind: int) -> List:
     """
     Extracts unique labels from a NumPy array of labels.
     Parameters:
@@ -31,11 +30,14 @@ def extract_label(labels: npt.NDArray, label_ind:int)->List:
     except:
         num_labels = 1
         labels = labels.reshape(-1, 1)
-    if label_ind > num_labels-1:
-        raise ValueError(f"label_ind {label_ind} is out of range for labels with shape {labels.shape}")
+    if label_ind > num_labels - 1:
+        raise ValueError(
+            f"label_ind {label_ind} is out of range for labels with shape {labels.shape}"
+        )
     labels = labels[:, label_ind]
 
     return labels
+
 
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],

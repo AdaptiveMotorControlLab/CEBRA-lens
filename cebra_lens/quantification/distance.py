@@ -10,6 +10,7 @@ from ..matplotlib import *
 import numpy.typing as npt
 from ..utils import extract_label
 
+
 class DistanceMetric:
     """
     Base class for distance metrics.
@@ -304,16 +305,16 @@ class Distance(_BaseMetric):
         self,
         data,
         label,
-        label_ind: int=0,
+        label_ind: int = 0,
         discrete: bool = None,
-        dataset_label:str = None,
+        dataset_label: str = None,
         metric: str = "cosine",
         distance_label: str = "interbin",
     ):
 
         super().__init__()
         self.data = data
-        #now the labels are in the correct format for binning
+        # now the labels are in the correct format for binning
         self.label = extract_label(label, label_ind)
         self.dataset_label = dataset_label
         self.metric = metric
@@ -321,15 +322,19 @@ class Distance(_BaseMetric):
 
         self.indices, self.repetition_indices = self._define_indices(discrete)
 
-    def _define_indices(self, discrete: bool = None) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+    def _define_indices(
+        self, discrete: bool = None
+    ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
         if discrete is None:
-            raise ValueError("The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous.")
-        
+            raise ValueError(
+                "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+            )
+
         if discrete:
-            #just detect the unique values and find the indices of the bins (each bin is a unique value)
+            # just detect the unique values and find the indices of the bins (each bin is a unique value)
             idxs = discrete_binning(
                 label=self.label,
             )
@@ -342,7 +347,7 @@ class Distance(_BaseMetric):
             )
 
         if self.distance_label == "interrep":
-            #only relevant for visual dataset
+            # only relevant for visual dataset
             repetition_indices = repetition_binning(
                 indices=idxs, data=self.data, dataset_label=self.dataset_label
             )

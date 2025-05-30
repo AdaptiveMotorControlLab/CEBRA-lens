@@ -249,7 +249,7 @@ class DecodingPlot(_GenericPlot):
                     title = "Decoding error scores across layers"
 
         super().__init__(axis, figsize, title)
-        if self.dataset_label is None and label is None:
+        if dataset_label is None and label is None:
             raise ValueError(
                 "Please define the label score you want to plot. This is the index value corresponding to the label you want to plot in the decoding results."
             )

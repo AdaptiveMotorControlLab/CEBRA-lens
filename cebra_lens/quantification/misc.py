@@ -27,17 +27,21 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     rdm_max = np.max(rdm)
     return (rdm - rdm_min) / (rdm_max - rdm_min)
 
+
 def discrete_binning(label):
     unique_labels, inverse_indices = np.unique(label, return_inverse=True)
 
-    idxs = np.array([np.where(inverse_indices == i)[0] for i in range(len(unique_labels))])
+    idxs = np.array(
+        [np.where(inverse_indices == i)[0] for i in range(len(unique_labels))]
+    )
 
     return idxs
+
 
 def continuous_binning(
     data: torch.Tensor,
     label: torch.Tensor,
-    dataset_label: str = "visual",
+    dataset_label: str = None,
     sample_mode: str = "sub_sample",
     max_num_samples: int = 200,
 ) -> npt.NDArray:
@@ -68,7 +72,9 @@ def continuous_binning(
 
         if sample_mode == "sub_sample":
             num_samples = (
-                max_num_samples if len(data) / num_bins >= max_num_samples else int(len(data) / num_bins)
+                max_num_samples
+                if len(data) / num_bins >= max_num_samples
+                else int(len(data) / num_bins)
             )
         elif sample_mode == "all":
             num_samples = int(len(data) / num_bins)
@@ -132,7 +138,9 @@ def continuous_binning(
             j = j + 1
 
     else:
-        num_bins = int(0.005*len(data))  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
+        num_bins = int(
+            0.005 * len(data)
+        )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
         if sample_mode == "sub_sample":
             num_samples = (
                 max_num_samples
@@ -145,10 +153,10 @@ def continuous_binning(
             raise NotImplementedError(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
-        
+
         max_label = torch.max(label).item()
         step_distance = max_label / num_bins
- 
+
         idxs = np.zeros((num_bins, num_samples))
 
         j = 0
