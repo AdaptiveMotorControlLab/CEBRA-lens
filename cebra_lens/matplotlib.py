@@ -1449,7 +1449,7 @@ def plot_rdm_all(
             plot_rdm(
                 rdms=values,
                 labels=labels,
-                dsicrete=discrete,
+                discrete=discrete,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,
