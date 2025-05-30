@@ -46,9 +46,9 @@ class RDM(_BaseMetric):
         self.label_ind = label_ind
         self.dataset_label = dataset_label
         # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
-        if isinstance(self.label, np.ndarray) and self.label.ndim != 1:
+        if isinstance(self.label, np.ndarray) and self.label.ndim != 1 and self.dataset_label not in ["HPC", "visual"]:
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
-            if self.dataset_label != "HPC" and self.label_ind != None:
+            if self.label_ind != None:
                 self.label = label[:, label_ind]
 
             else:
@@ -61,30 +61,48 @@ class RDM(_BaseMetric):
         self.num_samples = num_samples
 
         self.idxs = self._define_indices(discrete=discrete)
-
+    
     def _define_indices(
         self, discrete: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
-        if discrete is None:
-            raise ValueError(
-                "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
-            )
 
-        if discrete:
-            # just detect the unique values and find the indices of the bins (each bin is a unique value)
-            idxs = discrete_binning(
-                label=self.label,
-            )
+        if self.dataset_label is not None:
+            if self.dataset_label not in ["visual", "HPC"]:
+                raise ValueError(
+                    f"Dataset label {self.dataset_label} is not supported. Please use 'visual' or 'HPC' or None for general binning."
+                )
+            else:
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="sub_sample",
+                )
         else:
-            idxs = continuous_binning(
-                data=self.data,
-                label=self.label,
-                dataset_label=self.dataset_label,
-                max_num_samples=self.num_samples,
-            )
+
+            if discrete is None:
+                raise ValueError(
+                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                )
+
+            if discrete:
+                # just detect the unique values and find the indices of the bins (each bin is a unique value)
+                # dataset_label is None and discrete is True
+                idxs = discrete_binning(
+                    label=self.label,
+                )
+            else:
+                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="sub_sample",
+                )
+
         return idxs
 
     def _create_oracle_rdm(self):
