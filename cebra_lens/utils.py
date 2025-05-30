@@ -87,8 +87,6 @@ def compute_metric(
         for group_name, samples in model_data.items():
             if isinstance(metric_class, Decoding):
                 metric_class.set_output_only(output_only)
-            elif isinstance(metric_class, RDM):
-                metric_class.set_num_samples(max_num_samples)
 
             computed_values = [
                 metric_class.compute(sample)

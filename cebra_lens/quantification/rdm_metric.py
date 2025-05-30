@@ -46,7 +46,11 @@ class RDM(_BaseMetric):
         self.label_ind = label_ind
         self.dataset_label = dataset_label
         # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
-        if isinstance(self.label, np.ndarray) and self.label.ndim != 1 and self.dataset_label not in ["HPC", "visual"]:
+        if (
+            isinstance(self.label, np.ndarray)
+            and self.label.ndim != 1
+            and self.dataset_label not in ["HPC", "visual"]
+        ):
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
             if self.label_ind != None:
                 self.label = label[:, label_ind]
@@ -59,12 +63,10 @@ class RDM(_BaseMetric):
         self.metric = metric
         self.bool_oracle = bool_oracle
         self.num_samples = num_samples
+        self.discrete = discrete
+        self.idxs = self._define_indices()
 
-        self.idxs = self._define_indices(discrete=discrete)
-    
-    def _define_indices(
-        self, discrete: bool = None
-    ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+    def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
@@ -83,12 +85,12 @@ class RDM(_BaseMetric):
                 )
         else:
 
-            if discrete is None:
+            if self.discrete is None:
                 raise ValueError(
                     "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
                 )
 
-            if discrete:
+            if self.discrete:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and discrete is True
                 idxs = discrete_binning(
@@ -214,14 +216,6 @@ class RDM(_BaseMetric):
             activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
-        # is this necessary? compute stuff
-        if self.dataset_label != "visual" and self.dataset_label != "HPC":
-            self.idxs = discrete_binning(
-                data=self.data,
-                label=self.label,
-                dataset_label=self.dataset_label,
-                max_num_samples=self.num_samples,
-            )
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
@@ -238,6 +232,7 @@ class RDM(_BaseMetric):
     def plot(
         self,
         rdms: Dict[str, List[npt.NDArray]],
+        labels: npt.NDArray = None,
         titles: List[Tuple[npt.NDArray, float]] = None,
         metric: str = "Correlation",
         cmap: str = "viridis",
@@ -248,11 +243,13 @@ class RDM(_BaseMetric):
             return plot_rdm_correlation(rdms)
         else:
             return plot_rdm_all(
-                rdms = rdms,
-                titles = titles,
-                metric = metric,
+                rdms=rdms,
+                labels=labels,
+                discrete=self.discrete,
+                titles=titles,
+                metric=metric,
                 dataset_label=self.dataset_label,
-                cmap = cmap,
+                cmap=cmap,
                 figsize=figsize,
-                ax = ax,
+                ax=ax,
             )

@@ -159,27 +159,29 @@ def continuous_binning(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
 
-        max_value = torch.max(label).item()
-        min_value = torch.min(label).item()
+        max_value = max(label).item()
+        min_value = min(label).item()
         step_distance = (max_value - min_value) / num_bins
 
-        idxs = np.zeros((num_bins, num_samples))
-
+        print(f"Number of bins: {num_bins}")
+        print(f"Step size between bins: {round(step_distance,2)}")
+        print("-----------------------------")
+        indices = []
         for i in range(num_bins):
             lower_bin_border = round(min_value + i * step_distance, 2)
             higher_bin_border = round(min_value + (i + 1) * step_distance, 2)
             full_idxs = np.where(
                 (label[:] >= lower_bin_border) & (label[:] < higher_bin_border)
             )[0]
+            indices.append(full_idxs)
 
-            if sample_mode == "sub_sample":
-                idxs[i, :] = sample(list(full_idxs), num_samples)
-            elif sample_mode == "all":
-                idxs[i, :] = list(full_idxs)
-            else:
-                raise NotImplementedError(
-                    f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
-                )
+        # Due do uneven number of samples in each bin, we will take the minimum number of samples from each bin, maybe need to discuss this further
+        min_ind = np.argmin([len(i) for i in indices])
+        num_samples = len(indices[min_ind])
+        print("Number of samples per bin:", num_samples)
+        idxs = np.zeros((num_bins, num_samples))
+        for i in range(num_bins):
+            idxs[i, :] = np.random.choice(indices[i], num_samples, replace=False)
 
     return idxs.astype(int)
 

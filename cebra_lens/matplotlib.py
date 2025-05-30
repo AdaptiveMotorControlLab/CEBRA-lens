@@ -1203,8 +1203,9 @@ class _RDMPlots:
     def __init__(
         self,
         rdms: List[npt.NDArray],
-        labels: npt.NDArray,
         axis: Optional[matplotlib.axes.Axes],
+        discrete: bool = None,
+        labels: npt.NDArray = None,
         titles: List[str] = None,
         metric: str = "Correlation",
         dataset_label: str = None,
@@ -1270,9 +1271,13 @@ class _RDMPlots:
             ]
 
         else:
-            if self.discrete == False:
-                max_value = torch.max(labels).item()
-                min_value = torch.min(labels).item()
+            if discrete is None:
+                raise ValueError(
+                    "If dataset_label is not 'visual' or 'HPC', discrete must be specified."
+                )
+            if discrete == False:
+                max_value = max(labels).item()
+                min_value = min(labels).item()
                 num_bins = self.rdms[0].shape[0]
                 step_distance = (max_value - min_value) / num_bins
                 self.tick_labels = []
@@ -1375,6 +1380,7 @@ class _RDMPlots:
 def plot_rdm(
     rdms: Dict[str, List[npt.NDArray]],
     labels: npt.NDArray,
+    discrete: bool = None,
     titles: Optional[List[str]] = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
@@ -1412,6 +1418,7 @@ def plot_rdm(
     return _RDMPlots(
         rdms=rdms,
         labels=labels,
+        discrete=discrete,
         titles=titles,
         metric=metric,
         dataset_label=dataset_label,
@@ -1423,7 +1430,8 @@ def plot_rdm(
 
 def plot_rdm_all(
     rdms: Dict[str, npt.NDArray],
-    labels: npt.NDArray,
+    labels: npt.NDArray = None,
+    discrete: bool = None,
     titles: Optional[List[str]] = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
@@ -1441,6 +1449,7 @@ def plot_rdm_all(
             plot_rdm(
                 rdms=values,
                 labels=labels,
+                dsicrete=discrete,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,
