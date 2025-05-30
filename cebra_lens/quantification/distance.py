@@ -342,7 +342,7 @@ class Distance(_BaseMetric):
             )
 
         if self.distance_label == "interrep":
-
+            #only relevant for visual dataset
             repetition_indices = repetition_binning(
                 indices=idxs, data=self.data, dataset_label=self.dataset_label
             )

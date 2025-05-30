@@ -4,11 +4,12 @@ import numpy as np
 from scipy.linalg import block_diag
 from typing import List, Optional, Tuple, Union
 from scipy.spatial.distance import correlation, pdist, squareform
-from .misc import discrete_binning
+from .misc import discrete_binning, continuous_binning
 import torch
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
+from ..utils import extract_label
 
 
 class RDM(_BaseMetric):
@@ -33,6 +34,7 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
+        discrete: bool = None,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
@@ -48,7 +50,8 @@ class RDM(_BaseMetric):
         if isinstance(self.label, np.ndarray) and self.label.ndim != 1:
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
             if self.dataset_label != "HPC" and self.label_ind != None:
-                self.label = self.label[:, self.label_ind]
+                self.label = extract_label(label, label_ind)
+
             else:
                 raise KeyError(
                     "If dataset not HPC or visual and there are multiple possible labels, parameter label_ind must be provided to indicate which label will be used for the RDM calculation"
@@ -58,11 +61,31 @@ class RDM(_BaseMetric):
         self.metric = metric
         self.bool_oracle = bool_oracle
         self.num_samples = num_samples
-        self.num_bins = num_bins
 
-        self.idxs = discrete_binning(
-            data=self.data, label=self.label, dataset_label=self.dataset_label
+        self.idxs = self._define_indices(
+        discrete=discrete
         )
+        
+    def _define_indices(self, discrete: bool = None) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+        """
+        Defines the indices for the bins and repetitions based on the specified distance label.
+        """
+        if discrete is None:
+            raise ValueError("The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous.")
+        
+        if discrete:
+            #just detect the unique values and find the indices of the bins (each bin is a unique value)
+            idxs = discrete_binning(
+                label=self.label,
+            )
+        else:
+            idxs = continuous_binning(
+                data=self.data,
+                label=self.label,
+                dataset_label=self.dataset_label,
+                max_num_samples=self.num_samples,
+            )
+        return idxs
 
     def _create_oracle_rdm(self):
         """
@@ -173,13 +196,12 @@ class RDM(_BaseMetric):
             activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
-
+        #is this necessary? compute stuff
         if self.dataset_label != "visual" and self.dataset_label != "HPC":
             self.idxs = discrete_binning(
-                self.data,
-                self.label,
-                self.dataset_label,
-                num_bins=self.num_bins,
+                data = self.data,
+                label = self.label,
+                dataset_label = self.dataset_label,
                 max_num_samples=self.num_samples,
             )
 

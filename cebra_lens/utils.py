@@ -42,7 +42,6 @@ def compute_metric(
     metric_class: Any,
     output_only: bool = False,
     max_num_samples: int = None,
-    num_bins: int = None,
 ) -> Dict[str, npt.NDArray[Any]]:
     """
     Computes metrics for each model using a provided metric class.
@@ -72,7 +71,6 @@ def compute_metric(
             if isinstance(metric_class, Decoding):
                 metric_class.set_output_only(output_only)
             elif isinstance(metric_class, RDM):
-                metric_class.set_num_bins(num_bins)
                 metric_class.set_num_samples(max_num_samples)
 
             computed_values = [
