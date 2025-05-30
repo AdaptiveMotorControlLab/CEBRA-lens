@@ -1203,6 +1203,7 @@ class _RDMPlots:
     def __init__(
         self,
         rdms: List[npt.NDArray],
+        labels: npt.NDArray,
         axis: Optional[matplotlib.axes.Axes],
         titles: List[str] = None,
         metric: str = "Correlation",
@@ -1268,11 +1269,18 @@ class _RDMPlots:
             ]
 
         else:
+            if self.discrete == False:
+                max_value = torch.max(labels).item()
+                min_value = torch.min(labels).item()
+                num_bins = self.rdms[0].shape[0]
+                step_distance = (max_value - min_value) / num_bins
+                self.tick_labels = []
+                for i in range(num_bins+1):
+                    lower_bin_border = round(min_value + i * step_distance, 2)
+                    self.tick_labels.append(str(lower_bin_border))
 
-            # TODO(eloise): think about this
-            raise NotImplementedError(
-                f"RDM Plotting for dataset {self.dataset_label} not yet implemented. Please use 'visual' or 'HPC'."
-            )
+            else:
+                self.tick_labels, _ = np.unique(labels, return_inverse=True)
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
@@ -1365,6 +1373,7 @@ class _RDMPlots:
 
 def plot_rdm(
     rdms: Dict[str, List[npt.NDArray]],
+    labels: npt.NDArray,
     titles: Optional[List[str]] = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
@@ -1401,6 +1410,7 @@ def plot_rdm(
 
     return _RDMPlots(
         rdms=rdms,
+        labels=labels,
         titles=titles,
         metric=metric,
         dataset_label=dataset_label,
@@ -1412,6 +1422,7 @@ def plot_rdm(
 
 def plot_rdm_all(
     rdms: Dict[str, npt.NDArray],
+    labels: npt.NDArray,
     titles: Optional[List[str]] = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
@@ -1428,6 +1439,7 @@ def plot_rdm_all(
             values = [arr[0] for arr in inner_list]
             plot_rdm(
                 rdms=values,
+                labels = labels,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,

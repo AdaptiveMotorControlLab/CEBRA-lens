@@ -328,23 +328,40 @@ class Distance(_BaseMetric):
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
-        if discrete is None:
-            raise ValueError(
-                "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
-            )
 
-        if discrete:
-            # just detect the unique values and find the indices of the bins (each bin is a unique value)
-            idxs = discrete_binning(
-                label=self.label,
-            )
-        else:
-            idxs = continuous_binning(
+        if self.dataset_label is not None:
+            if self.dataset_label not in ["visual", "HPC"]:
+                raise ValueError(
+                    f"Dataset label {self.dataset_label} is not supported. Please use 'visual' or 'HPC' or None for general binning."
+                )
+            else:
+                idxs = continuous_binning(
                 data=self.data,
                 label=self.label,
                 dataset_label=self.dataset_label,
                 sample_mode="all",
             )
+        else:
+
+            if discrete is None:
+                raise ValueError(
+                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                )
+
+            if discrete:
+                # just detect the unique values and find the indices of the bins (each bin is a unique value)
+                #dataset_label is None and discrete is True
+                idxs = discrete_binning(
+                    label=self.label,
+                )
+            else:
+                #dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="all",
+                )
 
         if self.distance_label == "interrep":
             # only relevant for visual dataset

@@ -30,12 +30,14 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
 
 def discrete_binning(label):
     unique_labels, inverse_indices = np.unique(label, return_inverse=True)
+    idxs_dict = {unique_labels[i]: np.where(inverse_indices == i)[0] for i in range(len(unique_labels))}
 
-    idxs = np.array(
-        [np.where(inverse_indices == i)[0] for i in range(len(unique_labels))]
-    )
+    min_count = min(len(idxs) for idxs in idxs_dict.values())
+    idxs = []
+    for label, ind in idxs_dict.items():
+        idxs.append(np.random.choice(ind, min_count, replace=False))
 
-    return idxs
+    return np.array(idxs)
 
 
 def continuous_binning(
@@ -154,16 +156,19 @@ def continuous_binning(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
 
-        max_label = torch.max(label).item()
-        step_distance = max_label / num_bins
+        max_value = torch.max(label).item()
+        min_value = torch.min(label).item()
+        step_distance = (max_value - min_value) / num_bins
 
         idxs = np.zeros((num_bins, num_samples))
 
-        j = 0
         for i in range(num_bins):
-
+            lower_bin_border = round(min_value + i * step_distance, 2)
+            higher_bin_border = round(
+                min_value + (i + 1) * step_distance, 2
+            )
             full_idxs = np.where(
-                (label[:] >= j * step_distance) & (label[:] < (j + 1) * step_distance)
+                (label[:] >= lower_bin_border) & (label[:] < higher_bin_border)
             )[0]
 
             if sample_mode == "sub_sample":
@@ -174,8 +179,6 @@ def continuous_binning(
                 raise NotImplementedError(
                     f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
                 )
-
-            j = j + 1
 
     return idxs.astype(int)
 
