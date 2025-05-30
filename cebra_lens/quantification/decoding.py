@@ -194,34 +194,32 @@ class Decoding(_BaseMetric):
         npt.NDArray
             A numpy array containing the decoding results for each layer and the neural input baseline.
         """
-
+        transform_kwargs = {}
         if self.output_only:
 
             num_layers = 0
 
-            if model.solver_name_ in [
-                "multi-session",
-                "multi-session-aux",
-                "multiobjective-solver",
-            ]:
-
-                train_embedding = model.transform(self.train_data, self.session_id)
-                test_embedding = model.transform(self.test_data, self.session_id)
-
-            elif model.solver_name_ in [
+            if model.solver_name_ not in [
                 "single-session",
                 "single-session-aux",
                 "single-session-hybrid",
                 "single-session-full",
+                "multi-session",
+                "multi-session-aux",
+                "multiobjective-solver",
             ]:
-
-                train_embedding = model.transform(self.train_data)
-                test_embedding = model.transform(self.test_data)
-
-            else:
                 raise NotImplementedError(
                     f"Solver {model.solver_name_} is not yet implemented."
                 )
+            elif model.solver_name_ in [
+                "multi-session",
+                "multi-session-aux",
+                "multiobjective-solver",
+            ]:
+                transform_kwargs.update({"session_id": self.session_id})
+
+            train_embedding = model.transform(self.train_data, **transform_kwargs)
+            test_embedding = model.transform(self.test_data, **transform_kwargs)
         else:
 
             activations_train = get_activations_model(
