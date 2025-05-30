@@ -1275,7 +1275,7 @@ class _RDMPlots:
                 num_bins = self.rdms[0].shape[0]
                 step_distance = (max_value - min_value) / num_bins
                 self.tick_labels = []
-                for i in range(num_bins+1):
+                for i in range(num_bins + 1):
                     lower_bin_border = round(min_value + i * step_distance, 2)
                     self.tick_labels.append(str(lower_bin_border))
 
@@ -1439,7 +1439,7 @@ def plot_rdm_all(
             values = [arr[0] for arr in inner_list]
             plot_rdm(
                 rdms=values,
-                labels = labels,
+                labels=labels,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,

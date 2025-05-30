@@ -9,6 +9,21 @@ from torch import nn
 from .quantification.decoding import Decoding
 from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
+from .utils_hpc import get_datasets as get_datasets_hpc
+from .utils_allen import get_datasets as get_datasets_visual
+
+
+def get_data(
+    dataset_label: str = None, session_id: int = None
+) -> list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
+    if dataset_label == "visual":
+        return get_datasets_visual(session_id=session_id)
+    elif dataset_label == "HPC":
+        return get_datasets_hpc(session_id=session_id)
+    else:
+        raise ValueError(
+            f"Dataset label {dataset_label} is not recognized. Please use 'visual' or 'HPC', or add data loading function here."
+        )
 
 
 def extract_label(labels: npt.NDArray, label_ind: int) -> List:

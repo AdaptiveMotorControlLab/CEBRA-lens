@@ -15,13 +15,14 @@ import sklearn.metrics
 ########################################################################################################################
 
 
-def get_single_session_datasets(
+def get_datasets(
     test_session=9,
     corrupted=False,
     pseudomice=False,
     mice=4,
     shot_noise: float = None,
     gaussian_noise: float = None,
+    session_id: int = None,
 ):
     """
     Args:
@@ -94,6 +95,12 @@ def get_single_session_datasets(
     # discrete_labels = [np.tile(np.arange(900), 10) for i in range(len(mice))]
     discrete_labels_train = [np.tile(np.arange(900), 9) for i in range(mice)]
     discrete_labels_val = [np.tile(np.arange(900), 1) for i in range(mice)]
+
+    if session_id is not None:
+        train_datas = train_datas[session_id].neural
+        valid_datas = valid_datas[session_id].neural
+        discrete_labels_train = discrete_labels_train[session_id]
+        discrete_labels_val = discrete_labels_val[session_id]
 
     return train_datas, valid_datas, discrete_labels_train, discrete_labels_val
 

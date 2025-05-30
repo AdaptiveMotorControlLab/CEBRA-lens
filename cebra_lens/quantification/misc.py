@@ -30,7 +30,10 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
 
 def discrete_binning(label):
     unique_labels, inverse_indices = np.unique(label, return_inverse=True)
-    idxs_dict = {unique_labels[i]: np.where(inverse_indices == i)[0] for i in range(len(unique_labels))}
+    idxs_dict = {
+        unique_labels[i]: np.where(inverse_indices == i)[0]
+        for i in range(len(unique_labels))
+    }
 
     min_count = min(len(idxs) for idxs in idxs_dict.values())
     idxs = []
@@ -164,9 +167,7 @@ def continuous_binning(
 
         for i in range(num_bins):
             lower_bin_border = round(min_value + i * step_distance, 2)
-            higher_bin_border = round(
-                min_value + (i + 1) * step_distance, 2
-            )
+            higher_bin_border = round(min_value + (i + 1) * step_distance, 2)
             full_idxs = np.where(
                 (label[:] >= lower_bin_border) & (label[:] < higher_bin_border)
             )[0]

@@ -336,11 +336,11 @@ class Distance(_BaseMetric):
                 )
             else:
                 idxs = continuous_binning(
-                data=self.data,
-                label=self.label,
-                dataset_label=self.dataset_label,
-                sample_mode="all",
-            )
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="all",
+                )
         else:
 
             if discrete is None:
@@ -350,12 +350,12 @@ class Distance(_BaseMetric):
 
             if discrete:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
-                #dataset_label is None and discrete is True
+                # dataset_label is None and discrete is True
                 idxs = discrete_binning(
                     label=self.label,
                 )
             else:
-                #dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
                 idxs = continuous_binning(
                     data=self.data,
                     label=self.label,
