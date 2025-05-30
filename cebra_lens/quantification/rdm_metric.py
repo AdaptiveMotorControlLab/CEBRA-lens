@@ -64,13 +64,13 @@ class RDM(_BaseMetric):
         self.bool_oracle = bool_oracle
         self.num_samples = num_samples
         self.discrete = discrete
-        self.idxs = self._define_indices()
+        self.idxs, self.num_bins = self._define_indices()
 
     def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
-
+        num_bins = None
         if self.dataset_label is not None:
             if self.dataset_label not in ["visual", "HPC"]:
                 raise ValueError(
@@ -98,14 +98,14 @@ class RDM(_BaseMetric):
                 )
             else:
                 # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
-                idxs = continuous_binning(
+                idxs, num_bins = continuous_binning(
                     data=self.data,
                     label=self.label,
                     dataset_label=self.dataset_label,
                     sample_mode="sub_sample",
                 )
 
-        return idxs
+        return idxs, num_bins
 
     def _create_oracle_rdm(self):
         """
@@ -232,7 +232,6 @@ class RDM(_BaseMetric):
     def plot(
         self,
         rdms: Dict[str, List[npt.NDArray]],
-        labels: npt.NDArray = None,
         titles: List[Tuple[npt.NDArray, float]] = None,
         metric: str = "Correlation",
         cmap: str = "viridis",
@@ -244,7 +243,8 @@ class RDM(_BaseMetric):
         else:
             return plot_rdm_all(
                 rdms=rdms,
-                labels=labels,
+                labels=self.label,
+                num_bins = self.num_bins,
                 discrete=self.discrete,
                 titles=titles,
                 metric=metric,

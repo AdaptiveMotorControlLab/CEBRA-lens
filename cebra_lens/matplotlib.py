@@ -1205,6 +1205,7 @@ class _RDMPlots:
         rdms: List[npt.NDArray],
         axis: Optional[matplotlib.axes.Axes],
         discrete: bool = None,
+        num_bins: int = None,
         labels: npt.NDArray = None,
         titles: List[str] = None,
         metric: str = "Correlation",
@@ -1224,7 +1225,7 @@ class _RDMPlots:
         self.cmap = cmap
         self.figsize = figsize
         self.ax = self._define_ax(axis)
-
+        self.num_bins = num_bins
         if len(self.rdms) == 1:
             self.ax = [self.ax]
 
@@ -1278,8 +1279,7 @@ class _RDMPlots:
             if discrete == False:
                 max_value = max(labels).item()
                 min_value = min(labels).item()
-                num_bins = self.rdms[0].shape[0]
-                step_distance = (max_value - min_value) / num_bins
+                step_distance = (max_value - min_value) / self.num_bins
                 self.tick_labels = []
                 for i in range(num_bins + 1):
                     lower_bin_border = round(min_value + i * step_distance, 2)
@@ -1381,6 +1381,7 @@ def plot_rdm(
     rdms: Dict[str, List[npt.NDArray]],
     labels: npt.NDArray,
     discrete: bool = None,
+    num_bins: int = None,
     titles: Optional[List[str]] = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
@@ -1419,6 +1420,7 @@ def plot_rdm(
         rdms=rdms,
         labels=labels,
         discrete=discrete,
+        num_bins = num_bins,
         titles=titles,
         metric=metric,
         dataset_label=dataset_label,
@@ -1433,6 +1435,7 @@ def plot_rdm_all(
     labels: npt.NDArray = None,
     discrete: bool = None,
     titles: Optional[List[str]] = None,
+    num_bins: int = None,
     metric: Optional[str] = "Correlation",
     dataset_label: Optional[str] = "visual",
     cmap: Optional[str] = "viridis",
@@ -1450,6 +1453,7 @@ def plot_rdm_all(
                 rdms=values,
                 labels=labels,
                 discrete=discrete,
+                num_bins = num_bins,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,

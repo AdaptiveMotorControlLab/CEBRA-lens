@@ -183,7 +183,7 @@ def continuous_binning(
         for i in range(num_bins):
             idxs[i, :] = np.random.choice(indices[i], num_samples, replace=False)
 
-    return idxs.astype(int)
+    return idxs.astype(int), num_bins
 
 
 def repetition_binning(
