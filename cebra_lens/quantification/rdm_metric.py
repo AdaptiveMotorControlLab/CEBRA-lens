@@ -248,11 +248,11 @@ class RDM(_BaseMetric):
             return plot_rdm_correlation(rdms)
         else:
             return plot_rdm_all(
-                rdms,
-                titles,
-                metric,
-                self.dataset_label,
-                cmap,
-                figsize,
-                ax,
+                rdms = rdms,
+                titles = titles,
+                metric = metric,
+                dataset_label=self.dataset_label,
+                cmap = cmap,
+                figsize=figsize,
+                ax = ax,
             )

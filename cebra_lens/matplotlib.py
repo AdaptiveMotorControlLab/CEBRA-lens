@@ -1216,6 +1216,7 @@ class _RDMPlots:
         if titles is None:
             titles = [f"Layer {i+1}" for i in range(len(rdms))]
             titles[-1] = "Output Layer"
+
         self.titles = titles
         self.metric = metric
         self.dataset_label = dataset_label
