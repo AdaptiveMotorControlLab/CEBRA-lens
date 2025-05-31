@@ -41,6 +41,3 @@ The `src` folder contains two main folders:
 
 Note: The notebooks that reproduce exactly the results of the report have been deleted because cleaning them would have been too time consuming and the results can be now reproduced using the package. Analysis such as GLMs were not pushed far enough to be kept in this final version of the repository and have thus been deleted. 
 All these notebooks can still be found travelling back to the commit [f89dd1b](https://github.com/AdaptiveMotorControlLab/riccardo_workspace/tree/f89dd1b801144912348e414c53dc21e9b5c6c937).
-
-
-
