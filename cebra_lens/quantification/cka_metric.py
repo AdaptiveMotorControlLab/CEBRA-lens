@@ -19,20 +19,19 @@ class CKA(_BaseMetric):
 
     Parameters:
     -----------
-    comparison : Tuple[str,str]
-        A tuple containing two strings representing the models and training type to be compared.
+    comparisons : List[Tuple[str,str]]
+        A List of tuple containing two strings representing the model labels to be compared.
         For example, ('single_UT', 'single_TR').
     """
 
-    def __init__(self, comparison: Tuple[str, str]):
+    def __init__(self, comparisons: List[Tuple[str, str]]):
 
-        if not isinstance(comparison, tuple):
-            raise ValueError(
-                f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
-            )
-        self.comparisonX = comparison[0]
-        self.comparisonY = comparison[1]
-        self.cka_matrix = None
+        for comparison in comparisons:
+            if not isinstance(comparison, tuple):
+                raise ValueError(
+                    f"A comparison must be a tuple. Comparison is of type: {type(comparison)}."
+                )
+        self.comparisons = comparisons
 
     def center_gram(self, gram: npt.NDArray, unbiased: bool = False) -> npt.NDArray:
         """Center a symmetric Gram matrix.
@@ -131,12 +130,12 @@ class CKA(_BaseMetric):
 
         if len(embeddings_1) != len(embeddings_2):
             raise ValueError(
-                "The number of layers in embeddings_1 and embeddings_2 must be the same."
+                "CKA similarity comparison is done between smae or similar model architectures. The number of layers in embeddings_1 and embeddings_2 must be the same."
             )
         for i in range(len(embeddings_1)):
             if embeddings_1[i].shape != embeddings_2[i].shape:
                 raise ValueError(
-                    f"The shape of layer {i} in embeddings_1 and embeddings_2 must be the same."
+                    f"CKA similarity comparison is done between smae or similar model architectures. The shape of layer {i} in embeddings_1 and embeddings_2 must be the same."
                 )
 
         cka_matrix = np.zeros((1, len(embeddings_1)))
@@ -173,12 +172,15 @@ class CKA(_BaseMetric):
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
+                # the situation when there multiple models inside model labels and the same number of models inside each label
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2[j])
             else:
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
         return cka_matrix
 
-    def compute(self, activations: Dict[str, npt.NDArray]) -> npt.NDArray:
+    def compute(
+        self, activations: Dict[str, npt.NDArray], comparison: Tuple[str, str]
+    ) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
         This function calculates the CKA score between activations from different models and layers,
@@ -189,15 +191,25 @@ class CKA(_BaseMetric):
         activations : Dict[str, npt.NDArray]
             A dictionary where keys are strings which represent the model label and values are 2d lists with the corresponding activations per layer.
 
+        comparison : Tuple[str, str]
+            A tuple containing the model labels to compare.
+
         Returns:
         --------
         cka_matrix : npt.NDArray
             A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
 
+        self.comparisonX = comparison[0]
+        self.comparisonY = comparison[1]
+        self.cka_matrix = None
+
         activations_1 = activations[self.comparisonX]
         activations_2 = activations[self.comparisonY]
+
         if len(activations_1) != len(activations_2):
+            # if the number of models in a label is different from the other model label
+            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with the first model
             if len(activations_1) > len(activations_2):
                 embeddings_1 = activations_1
                 embeddings_2 = activations_2[0]
@@ -215,6 +227,7 @@ class CKA(_BaseMetric):
             self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
 
         else:
+            # when the model labels have the same number of models, but are different labels
             embeddings_1 = activations_1
             embeddings_2 = activations_2
             self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2, True)
