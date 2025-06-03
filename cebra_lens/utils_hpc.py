@@ -6,8 +6,9 @@ import numpy.typing as npt
 from typing import List
 
 
-def get_single_session_datasets(
-    rats: List[str] = ["achilles", "buddy", "cicero", "gatsby"]
+def get_datasets(
+    rats: List[str] = ["achilles", "buddy", "cicero", "gatsby"],
+    session_id: int = None,
 ):
     """
     Args:
@@ -30,6 +31,12 @@ def get_single_session_datasets(
         valid_datas.append(neural_valid)
         continuous_labels_train.append(label_train)
         continuous_labels_val.append(label_valid)
+
+    if session_id is not None:
+        train_datas = train_datas[session_id]
+        valid_datas = valid_datas[session_id]
+        continuous_labels_train = continuous_labels_train[session_id]
+        continuous_labels_val = continuous_labels_val[session_id]
 
     return train_datas, valid_datas, continuous_labels_train, continuous_labels_val
 

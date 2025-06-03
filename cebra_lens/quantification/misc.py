@@ -28,12 +28,26 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     return (rdm - rdm_min) / (rdm_max - rdm_min)
 
 
-def discrete_binning(
+def discrete_binning(label):
+    unique_labels, inverse_indices = np.unique(label, return_inverse=True)
+    idxs_dict = {
+        unique_labels[i]: np.where(inverse_indices == i)[0]
+        for i in range(len(unique_labels))
+    }
+
+    min_count = min(len(idxs) for idxs in idxs_dict.values())
+    idxs = []
+    for label, ind in idxs_dict.items():
+        idxs.append(np.random.choice(ind, min_count, replace=False))
+
+    return np.array(idxs)
+
+
+def continuous_binning(
     data: torch.Tensor,
     label: torch.Tensor,
-    dataset_label: str = "visual",
+    dataset_label: str = None,
     sample_mode: str = "sub_sample",
-    num_bins: int = 30,
     max_num_samples: int = 200,
 ) -> npt.NDArray:
     """
@@ -49,12 +63,8 @@ def discrete_binning(
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     sample_mode : str, optional
         If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
-    num_bins : int
-        Number of bins to put the labels in.
     max_num_samples : int
         The maximum number of samples per bin allowed if the number of labels divided by the num_bins is bigger than 200
-    max_label : int
-        What is the maximum values of label. Example: For the Allen visual dataset that is 900.
     Returns:
     --------
     npt.NDArray
@@ -67,10 +77,12 @@ def discrete_binning(
 
         if sample_mode == "sub_sample":
             num_samples = (
-                max_num_samples if len(data) / 30 >= 200 else int(len(data) / 30)
+                max_num_samples
+                if len(data) / num_bins >= max_num_samples
+                else int(len(data) / num_bins)
             )
         elif sample_mode == "all":
-            num_samples = int(len(data) / 30)
+            num_samples = int(len(data) / num_bins)
         else:
             raise NotImplementedError(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
@@ -131,7 +143,9 @@ def discrete_binning(
             j = j + 1
 
     else:
-
+        num_bins = int(
+            0.005 * len(data)
+        )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
         if sample_mode == "sub_sample":
             num_samples = (
                 max_num_samples
@@ -145,39 +159,31 @@ def discrete_binning(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
 
-        # calculate the max_label and then check if it is classification or regression issue
-        max_label = torch.max(label).item()
-        if max_label == 0:
-            raise ValueError("Label is zero, please check the data.")
-        unique_labels = torch.unique(label)
-        if len(unique_labels) > 2 and torch.any(label % 1 != 0):
-            # continuous
-            step_distance = max_label / num_bins
-        else:
-            # discrete
-            step_distance = max_label // num_bins
+        max_value = max(label).item()
+        min_value = min(label).item()
+        step_distance = (max_value - min_value) / num_bins
 
-        idxs = np.zeros((num_bins, num_samples))
-
-        j = 0
+        print(f"Number of bins: {num_bins}")
+        print(f"Step size between bins: {round(step_distance,2)}")
+        print("-----------------------------")
+        indices = []
         for i in range(num_bins):
-
+            lower_bin_border = round(min_value + i * step_distance, 2)
+            higher_bin_border = round(min_value + (i + 1) * step_distance, 2)
             full_idxs = np.where(
-                (label[:] >= j * step_distance) & (label[:] < (j + 1) * step_distance)
+                (label[:] >= lower_bin_border) & (label[:] < higher_bin_border)
             )[0]
+            indices.append(full_idxs)
 
-            if sample_mode == "sub_sample":
-                idxs[i, :] = sample(list(full_idxs), num_samples)
-            elif sample_mode == "all":
-                idxs[i, :] = list(full_idxs)
-            else:
-                raise NotImplementedError(
-                    f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
-                )
+        # Due do uneven number of samples in each bin, we will take the minimum number of samples from each bin, maybe need to discuss this further
+        min_ind = np.argmin([len(i) for i in indices])
+        num_samples = len(indices[min_ind])
+        print("Number of samples per bin:", num_samples)
+        idxs = np.zeros((num_bins, num_samples))
+        for i in range(num_bins):
+            idxs[i, :] = np.random.choice(indices[i], num_samples, replace=False)
 
-            j = j + 1
-
-    return idxs.astype(int)
+    return idxs.astype(int), num_bins
 
 
 def repetition_binning(

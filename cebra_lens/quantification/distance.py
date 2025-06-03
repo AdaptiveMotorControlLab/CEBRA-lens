@@ -4,10 +4,11 @@ import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 from typing import List, Optional, Tuple, Union, Dict
-from .misc import discrete_binning, repetition_binning
+from .misc import discrete_binning, repetition_binning, continuous_binning
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
+from ..utils import extract_label
 
 
 class DistanceMetric:
@@ -144,6 +145,14 @@ class Intrabin(DistanceMetric):
 
         return np.mean(distances)
 
+    def plot(
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Intra-bin distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
+
 
 class Interrep(DistanceMetric):
     """
@@ -212,6 +221,14 @@ class Interrep(DistanceMetric):
 
         return np.mean(distances)
 
+    def plot(
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Inter-repetition distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
+
 
 class Interbin(DistanceMetric):
     """
@@ -257,6 +274,14 @@ class Interbin(DistanceMetric):
 
         return mean_distance
 
+    def plot(
+        self,
+        distance_dict: Dict[str, npt.NDArray],
+        title: str = "Inter-bin distance",
+        figsize: tuple = (15, 5),
+    ):
+        return super().plot(distance_dict, title)
+
 
 class Distance(_BaseMetric):
     """
@@ -280,32 +305,66 @@ class Distance(_BaseMetric):
         self,
         data,
         label,
-        dataset_label,
+        label_ind: int = 0,
+        discrete: bool = None,
+        dataset_label: str = None,
         metric: str = "cosine",
         distance_label: str = "interbin",
     ):
 
         super().__init__()
         self.data = data
-        self.label = label
+        # now the labels are in the correct format for binning
+        self.label = extract_label(label, label_ind)
         self.dataset_label = dataset_label
         self.metric = metric
         self.distance_label = distance_label
 
-        self.indices, self.repetition_indices = self._define_indices()
+        self.indices, self.repetition_indices = self._define_indices(discrete)
 
-    def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+    def _define_indices(
+        self, discrete: bool = None
+    ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
-        idxs = discrete_binning(
-            data=self.data,
-            label=self.label,
-            dataset_label=self.dataset_label,
-            sample_mode="all",
-        )
-        if self.distance_label == "interrep":
 
+        if self.dataset_label is not None:
+            if self.dataset_label not in ["visual", "HPC"]:
+                raise ValueError(
+                    f"Dataset label {self.dataset_label} is not supported. Please use 'visual' or 'HPC' or None for general binning."
+                )
+            else:
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="all",
+                )
+        else:
+
+            if discrete is None:
+                raise ValueError(
+                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                )
+
+            if discrete:
+                # just detect the unique values and find the indices of the bins (each bin is a unique value)
+                # dataset_label is None and discrete is True
+                idxs = discrete_binning(
+                    label=self.label,
+                )
+            else:
+                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="all",
+                )
+
+        if self.distance_label == "interrep":
+            # only relevant for visual dataset
             repetition_indices = repetition_binning(
                 indices=idxs, data=self.data, dataset_label=self.dataset_label
             )
@@ -350,7 +409,7 @@ class Distance(_BaseMetric):
     def plot(
         self,
         distance_dict: Dict[str, npt.NDArray],
-        title: str = "Inter-repetition distance",
+        title: str = None,
         figsize: tuple = (15, 5),
     ):
         return plot_distance(distance_dict, title, figsize)
