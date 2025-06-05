@@ -205,7 +205,7 @@ def continuous_binning(
 
 def repetition_binning(
     indices: npt.NDArray, data, dataset_label: str = "visual"
-) -> List[np.NDArray]:
+) -> List[npt.NDArray]:
     """
     Creates a list of indices for each repetition based on the provided indices and dataset label.
     This is relevant for datasets where the labels are repeated over multiple samples, such as in the Allen visual dataset.

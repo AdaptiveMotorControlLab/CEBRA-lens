@@ -113,14 +113,16 @@ def compute_metric(
             result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
 
     else:
-        for group_name, samples in model_data.items():
-            if isinstance(metric_class, Decoding):
-                metric_class.set_output_only(output_only)
-                metric_class.output_information()
+        if isinstance(metric_class, Decoding):
+            metric_class.set_output_only(output_only)
+            metric_class.output_information()
+            print("\n")
 
-            if isinstance(metric_class, RDM):
-                metric_class.set_bool_oracle(bool_oracle)
-                metric_class.output_information()
+        if isinstance(metric_class, RDM):
+            metric_class.set_bool_oracle(bool_oracle)
+            metric_class.output_information()
+            print("\n")
+        for group_name, samples in model_data.items():
 
             computed_values = [
                 metric_class.compute(sample)
