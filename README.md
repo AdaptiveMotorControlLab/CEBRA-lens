@@ -1,6 +1,3 @@
-<!-- Please see *insert github jupyte-book link* for documentation on how to use this software.
-
-This directory contains the source code for the docs. -->
 # CEBRA-Lens: a helper package for interpretable latent spaces
 <img src="zebra.png" alt="zebra" width="200" height="194">
 

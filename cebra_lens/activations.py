@@ -6,6 +6,8 @@ import torch.nn as nn
 import numpy as np
 import numpy.typing as npt
 from typing import Tuple, Dict, List, Type, Optional
+from .matplotlib import plot_activations
+import matplotlib.pyplot as plt
 
 
 def _cut_array(
@@ -122,13 +124,23 @@ def get_activations_model(
 
     activations = {}
     transform_kwargs = {}
-    if model.solver_name_ == "multi-session":
+    if model.solver_name_ in [
+        "multi-session",
+        "multi-session-aux",
+        "multiobjective-solver",
+    ]:
+
         model_ = model.model_[session_id]
         transform_kwargs.update({"session_id": session_id})
 
-    elif model.solver_name_ == "single-session":
-        # no need to store the output embedding. we already add a hook on it
+    elif model.solver_name_ in [
+        "single-session",
+        "single-session-aux",
+        "single-session-hybrid",
+        "single-session-full",
+    ]:
         model_ = model.model_
+
     else:
         raise NotImplementedError(
             f"Solver {model.solver_name_} is not yet implemented."
@@ -272,7 +284,7 @@ def _attach_hooks(
 
     else:
         # layer_type is None meaning we want to attach hooks to every layer regardless
-        # TODO(eloise): Layer type general, does it make sense?, Padding cutting, then for these other layers...
+
         for i in range(len(model.net)):
             if bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():

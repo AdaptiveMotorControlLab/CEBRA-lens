@@ -4,7 +4,7 @@ import numpy as np
 from scipy.linalg import block_diag
 from typing import List, Optional, Tuple, Union
 from scipy.spatial.distance import correlation, pdist, squareform
-from .misc import discrete_binning
+from .misc import discrete_binning, continuous_binning
 import torch
 from .base import _BaseMetric
 from ..matplotlib import *
@@ -33,20 +33,79 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
+        discrete: bool = None,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
+        num_samples: int = 200,
+        label_ind: int = None,
     ):
         super().__init__()
         self.data = data
         self.label = label
+        self.label_ind = label_ind
         self.dataset_label = dataset_label
+        # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
+        if (
+            isinstance(self.label, np.ndarray)
+            and self.label.ndim != 1
+            and self.dataset_label not in ["HPC", "visual"]
+        ):
+            # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
+            if self.label_ind != None:
+                self.label = label[:, label_ind]
+
+            else:
+                raise KeyError(
+                    "If dataset not HPC or visual and there are multiple possible labels, parameter label_ind must be provided to indicate which label will be used for the RDM calculation"
+                )
+
         self.metric = metric
         self.bool_oracle = bool_oracle
+        self.num_samples = num_samples
+        self.discrete = discrete
+        self.idxs, self.num_bins = self._define_indices()
 
-        self.idxs = discrete_binning(
-            data=self.data, label=self.label, dataset_label=self.dataset_label
-        )
+    def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+        """
+        Defines the indices for the bins and repetitions based on the specified distance label.
+        """
+        num_bins = None
+        if self.dataset_label is not None:
+            if self.dataset_label not in ["visual", "HPC"]:
+                raise ValueError(
+                    f"Dataset label {self.dataset_label} is not supported. Please use 'visual' or 'HPC' or None for general binning."
+                )
+            else:
+                idxs = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="sub_sample",
+                )
+        else:
+
+            if self.discrete is None:
+                raise ValueError(
+                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                )
+
+            if self.discrete:
+                # just detect the unique values and find the indices of the bins (each bin is a unique value)
+                # dataset_label is None and discrete is True
+                idxs = discrete_binning(
+                    label=self.label,
+                )
+            else:
+                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                idxs, num_bins = continuous_binning(
+                    data=self.data,
+                    label=self.label,
+                    dataset_label=self.dataset_label,
+                    sample_mode="sub_sample",
+                )
+
+        return idxs, num_bins
 
     def _create_oracle_rdm(self):
         """
@@ -64,6 +123,7 @@ class RDM(_BaseMetric):
             all_classes = [one_class for _ in range(30)]
             block_rdm_sqform = 1 - block_diag(*all_classes)
             oracle_rdm = squareform(block_rdm_sqform)
+
         elif self.dataset_label == "HPC":
             one_class = np.ones((200, 200))
             all_classes = [one_class for _ in range(16)]
@@ -71,9 +131,12 @@ class RDM(_BaseMetric):
             oracle_rdm = squareform(block_rdm_sqform)
 
         else:
-            raise NotImplementedError(
-                f"Oracle RDM not defined for {self.dataset_label}. Please use 'visual'"
-            )
+            num_sample = self.idxs.shape[1]
+            num_bins = self.idxs.shape[0]
+            one_class = np.ones((num_sample, num_sample))
+            all_classes = [one_class for _ in range(num_bins)]
+            block_rdm_sqform = 1 - block_diag(*all_classes)
+            oracle_rdm = squareform(block_rdm_sqform)
 
         return oracle_rdm
 
@@ -133,7 +196,8 @@ class RDM(_BaseMetric):
         return squareform(rdm), correlation
 
     def compute(
-        self, activations: List[Union[float, npt.NDArray]]
+        self,
+        activations: List[Union[float, npt.NDArray]],
     ) -> List[Tuple[npt.NDArray, float]]:
         """
         Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
@@ -159,22 +223,33 @@ class RDM(_BaseMetric):
     def __name__(self):
         return "rdm"
 
+    def set_num_bins(self, num_bins):
+        self.num_bins = num_bins
+
+    def set_num_samples(self, num_samples):
+        self.num_samples = num_samples
+
     def plot(
         self,
-        rdms: List[npt.NDArray],
-        titles: List[Tuple[npt.NDArray, float]],
-        metric: str = "Normalized Euclidean distance",
-        dataset_label: str = "visual",
+        rdms: Dict[str, List[npt.NDArray]],
+        titles: List[Tuple[npt.NDArray, float]] = None,
+        metric: str = "Correlation",
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        return plot_rdm(
-            rdms,
-            titles,
-            metric,
-            dataset_label,
-            cmap,
-            figsize,
-            ax,
-        )
+        if self.bool_oracle:
+            return plot_rdm_correlation(rdms)
+        else:
+            return plot_rdm_all(
+                rdms=rdms,
+                labels=self.label,
+                num_bins = self.num_bins,
+                discrete=self.discrete,
+                titles=titles,
+                metric=metric,
+                dataset_label=self.dataset_label,
+                cmap=cmap,
+                figsize=figsize,
+                ax=ax,
+            )
