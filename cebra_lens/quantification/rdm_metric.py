@@ -21,12 +21,16 @@ class RDM(_BaseMetric):
         The data array of shape (num_samples, num_features).
     label : torch.Tensor
         The array of labels corresponding to the data.
+    discrete : bool, optional
+        Whether the labels are discrete or continuous. If None, it will be determined based on the dataset_label.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
-        The distance metric to use for computing the RDMs. Default is 'correlation'.
+        The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
     bool_oracle : bool, optional
         Whether to compute and compare with the Oracle RDM. Default is True.
+    label_ind : int, optional
+        The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
     """
 
     def __init__(
@@ -37,7 +41,6 @@ class RDM(_BaseMetric):
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
-        num_samples: int = 200,
         label_ind: int = None,
     ):
         super().__init__()
@@ -62,13 +65,42 @@ class RDM(_BaseMetric):
 
         self.metric = metric
         self.bool_oracle = bool_oracle
-        self.num_samples = num_samples
         self.discrete = discrete
         self.idxs, self.num_bins = self._define_indices()
+
+        self.output_information()
+
+    def output_information(self):
+        """
+        Outputs information about the RDM class initialization parameters.
+        """
+        print("RDM class initialized with the following parameters:")
+        if self.bool_oracle:
+            print(
+                "The chosen analyis will plot the correlation of the RDMs with the Oracle RDM."
+            )
+        else:
+            print("The chosen analysis will plot the RDMs, no Oracle RDM comparison.")
+        if self.dataset_label is None:
+            print(
+                f"The dataset label is not specified, the RDMs will be computed based on the label index {self.label_ind},\n this label has been noted DISCRETE = {self.discrete}."
+            )
+        else:
+            print(f"The dataset label is specified as: {self.dataset_label}")
+        print(
+            "If this is not the desired behavior, please check the parameters passed to the RDM class."
+        )
 
     def _define_indices(self) -> Tuple[npt.NDArray, Optional[int]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
+
+        Returns:
+        --------
+        Tuple[npt.NDArray, Optional[int]]
+            A tuple containing:
+            - idxs: A 2D numpy array of shape (num_bins, num_samples) representing the indices of samples in each bin.
+            - num_bins: The number of bins if applicable, otherwise None.
         """
         num_bins = None
         if self.dataset_label is not None:
@@ -198,10 +230,15 @@ class RDM(_BaseMetric):
         return "rdm"
 
     def set_num_bins(self, num_bins):
-        self.num_bins = num_bins
+        """
+        Sets the number of bins for the RDM computation.
 
-    def set_num_samples(self, num_samples):
-        self.num_samples = num_samples
+        Parameters:
+        ----------
+        num_bins : int
+            The number of bins to be used in the RDM computation.
+        """
+        self.num_bins = num_bins
 
     def plot(
         self,
@@ -211,14 +248,36 @@ class RDM(_BaseMetric):
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
-    ):
+    ) -> matplotlib.figure.Figure:
+        """
+        Plots the RDM analysis results. If `bool_oracle` is True, it plots the correlation of the RDMs with the Oracle RDM, else it plots the RDMs in the rdms dictionary.
+
+        Parameters:
+        ----------
+        rdms : Dict[str, List[npt.NDArray]]
+            Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
+        titles : List[Tuple[npt.NDArray, float]], optional
+            List of tuples containing the RDM and the correlation score with the Oracle RDM for each layer of a model. Default is None.
+        metric : str, optional
+            The metric to be used for the plot. Default is "Correlation".
+        cmap : str, optional
+            The colormap to be used for the plot. Default is "viridis".
+        figsize : tuple, optional
+            The size of the figure for the plot. Default is None, which uses the default size.
+        ax : Optional[matplotlib.axes.Axes], optional
+            The axes on which to plot the RDMs. If None, a new figure and axes will be created. Default is None.
+        Returns:
+        -------
+        matplotlib.figure.Figure
+            The figure containing the plotted RDMs.
+        """
         if self.bool_oracle:
             return plot_rdm_correlation(rdms)
         else:
             return plot_rdm_all(
                 rdms=rdms,
                 labels=self.label,
-                num_bins = self.num_bins,
+                num_bins=self.num_bins,
                 discrete=self.discrete,
                 titles=titles,
                 metric=metric,

@@ -150,10 +150,10 @@ class Intrabin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Intra-bin distance",
         figsize: tuple = (15, 5),
-    )-> matplotlib.figure.Figure:
+    ) -> matplotlib.figure.Figure:
         """
         Plots the intra-bin distances.
-        
+
         Parameters:
         -----------
         distance_dict : Dict[str, npt.NDArray]
@@ -244,10 +244,10 @@ class Interrep(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
-    )-> matplotlib.figure.Figure:
+    ) -> matplotlib.figure.Figure:
         """
         Plots the inter-repetition distances.
-        
+
         Parameters:
         -----------
         distance_dict : Dict[str, npt.NDArray]
@@ -256,7 +256,7 @@ class Interrep(DistanceMetric):
             The title of the plot (default is "Inter-repetition distance").
         figsize : tuple, optional
             The size of the figure for the plot (default is (15, 5)).
-        
+
         Returns:
         --------
         matplotlib.figure.Figure
@@ -314,10 +314,10 @@ class Interbin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-bin distance",
         figsize: tuple = (15, 5),
-    )-> matplotlib.figure.Figure:
+    ) -> matplotlib.figure.Figure:
         """
         Plots the inter-bin distances.
-        
+
         Parameters:
         -----------
         distance_dict : Dict[str, npt.NDArray]
@@ -326,7 +326,7 @@ class Interbin(DistanceMetric):
             The title of the plot (default is "Inter-bin distance").
         figsize : tuple, optional
             The size of the figure for the plot (default is (15, 5)).
-        
+
         Returns:
         --------
         matplotlib.figure.Figure
@@ -486,10 +486,10 @@ class Distance(_BaseMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = None,
         figsize: tuple = (15, 5),
-    )-> matplotlib.figure.Figure:
+    ) -> matplotlib.figure.Figure:
         """
         Plots the computed distances.
-        
+
         Parameters:
         -----------
         distance_dict : Dict[str, npt.NDArray]
@@ -498,7 +498,7 @@ class Distance(_BaseMetric):
             The title of the plot (default is None, which will use the distance type).
         figsize : tuple, optional
             The size of the figure for the plot (default is (15, 5)).
-            
+
         Returns:
         --------
         matplotlib.figure.Figure

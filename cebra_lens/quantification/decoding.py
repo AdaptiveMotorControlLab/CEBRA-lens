@@ -312,7 +312,7 @@ class Decoding(_BaseMetric):
         palette: str = "hls",
         plot_error: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
-    )-> matplotlib.axes.Axes:
+    ) -> matplotlib.axes.Axes:
         """
         Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
 
@@ -344,7 +344,7 @@ class Decoding(_BaseMetric):
                 raise ValueError(
                     "If dataset_label is not specified, label must be provided to plot the decoding scores for specified label."
                 )
-   
+
         if self.output_only:
             return plot_decoding(
                 results_dict, palette, self.dataset_label, label, plot_error, ax

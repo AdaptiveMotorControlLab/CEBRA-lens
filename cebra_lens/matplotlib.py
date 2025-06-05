@@ -375,7 +375,7 @@ def plot_distance(
         results_dict=distance_dict,
         title=title,
         figsize=figsize,
-    ).plot(y_axis = y_axis,**kwargs)
+    ).plot(y_axis=y_axis, **kwargs)
 
 
 def plot_layer_decoding(
@@ -1383,11 +1383,13 @@ class _RDMPlots:
                 )
             else:
                 num_ticks = len(self.tick_labels)
-                if self.dataset_label=="visual" or self.discrete is False:
-             
+                if self.dataset_label == "visual" or self.discrete is False:
+
                     self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
                     self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                    self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right", fontsize=6)
+                    self.ax[i].set_xticklabels(
+                        self.tick_labels, rotation=90, ha="right", fontsize=6
+                    )
                     self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
                 else:
                     size = rdm.shape[0]
@@ -1397,9 +1399,10 @@ class _RDMPlots:
 
                     self.ax[i].set_xticks(tick_positions)
                     self.ax[i].set_yticks(tick_positions)
-                    self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
+                    self.ax[i].set_xticklabels(
+                        self.tick_labels, rotation=90, ha="right"
+                    )
                     self.ax[i].set_yticklabels(self.tick_labels)
-                
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
@@ -1453,7 +1456,7 @@ def plot_rdm(
         rdms=rdms,
         labels=labels,
         discrete=discrete,
-        num_bins = num_bins,
+        num_bins=num_bins,
         titles=titles,
         metric=metric,
         dataset_label=dataset_label,
@@ -1486,7 +1489,7 @@ def plot_rdm_all(
                 rdms=values,
                 labels=labels,
                 discrete=discrete,
-                num_bins = num_bins,
+                num_bins=num_bins,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,

@@ -82,11 +82,11 @@ class CKA(_BaseMetric):
 
         Parameters:
         -----------
-        gram_x : npt.NDArray 
+        gram_x : npt.NDArray
             A num_examples x num_examples Gram matrix.
         gram_y : npt.NDArray
             A num_examples x num_examples Gram matrix.
-        debiased : bool 
+        debiased : bool
             Use unbiased estimator of HSIC. CKA may still be biased.
 
         Returns:
@@ -113,7 +113,7 @@ class CKA(_BaseMetric):
             A num_examples x num_features matrix of features.
 
         Returns:
-        --------   
+        --------
         A num_examples x num_examples Gram matrix of examples.
         """
 
@@ -262,7 +262,7 @@ class CKA(_BaseMetric):
     ):
         """
         Plot the CKA matrices as heatmaps.
-        
+
         Parameters:
         -----------
         cka_matrices : Dict[str, npt.NDArray]

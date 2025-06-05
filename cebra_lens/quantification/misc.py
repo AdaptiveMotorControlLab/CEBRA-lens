@@ -28,16 +28,16 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     return (rdm - rdm_min) / (rdm_max - rdm_min)
 
 
-def discrete_binning(labels : npt.NDArray) -> npt.NDArray:
+def discrete_binning(labels: npt.NDArray) -> npt.NDArray:
     """
     Defines bins for discrete labels and the indices of the samples in each bin.
     This function is used to create bins for discrete labels in RDM analysis and distance analysis.
-    
+
     Parameters:
     -----------
     labels : npt.NDArray
         A NumPy array containing discrete labels, which can be of any numeric type.
-    
+
     Returns:
     --------
     npt.NDArray
