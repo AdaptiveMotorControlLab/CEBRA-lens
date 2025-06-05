@@ -316,9 +316,9 @@ class Distance(_BaseMetric):
         self.data = data
         # now the labels are in the correct format for binning
         self.label = label
+        self.dataset_label = dataset_label
         if self.dataset_label is None:
             self.label = extract_label(label, label_ind)
-        self.dataset_label = dataset_label
         self.metric = metric
         self.distance_label = distance_label
 
