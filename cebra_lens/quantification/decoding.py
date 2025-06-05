@@ -19,6 +19,25 @@ def decoding(
     label_train: npt.NDArray,
     label_test: npt.NDArray,
 ) -> Tuple[np.float64, list, list]:
+    """
+    Function to decode the embeddings using KNNDecoder from CEBRA. The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
+
+    Parameters:
+    ----------
+    embedding_train : pt.tensor
+        The part of the output embedding to use as training for the decoding.
+    embedding_test : pt.tensor
+        The part of the output embedding to use as testing for the decoding.
+    label_train : npt.NDArray
+        The true labels corresponding to the training data.
+    label_test : npt.NDArray
+        The true labels corresponding to the validation data.
+
+    Returns:
+    -------
+    Tuple[np.float64, list, list]
+        A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
+    """
     try:
         num_labels = label_train.shape[1]
     except:
@@ -293,7 +312,39 @@ class Decoding(_BaseMetric):
         palette: str = "hls",
         plot_error: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
-    ):
+    )-> matplotlib.axes.Axes:
+        """
+        Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
+
+        Parameters:
+        ----------
+        results_dict : Dict[str, Dict[int, Tuple[np.float64, list, list]]]
+            Dictionary containing the decoding results for each model and layer.
+        title : str, optional
+            The title of the plot. Default is "Decoding by layer".
+        label : int, optional
+            The label to plot. This is relevant only if the dataset label is not specified.
+        figsize : tuple, optional
+            The size of the figure to plot. Default is (15, 5).
+        palette : str, optional
+            The color palette to use for the plot. Default is "hls".
+        plot_error : bool, optional
+            Whether to plot the error score. Default is False, meaning the R^2 score will be plotted. This is relevant only if the dataset label is not specified.
+        ax : Optional[matplotlib.axes.Axes], optional
+            The axes to plot on. If None, a new figure and axes will be created. Default is None.
+
+        Returns:
+        -------
+        matplotlib.axes.Axes
+            The axes containing the plot. If ax is provided, it will return the same ax with the plot, otherwise it will create a new figure and return the ax.
+        """
+
+        if self.dataset_label is None:
+            if label is None:
+                raise ValueError(
+                    "If dataset_label is not specified, label must be provided to plot the decoding scores for specified label."
+                )
+   
         if self.output_only:
             return plot_decoding(
                 results_dict, palette, self.dataset_label, label, plot_error, ax

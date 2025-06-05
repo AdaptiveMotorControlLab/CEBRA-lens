@@ -163,11 +163,11 @@ class RDM(_BaseMetric):
         rdm = pdist(layer_activation[self.idxs.flatten(), :], metric=self.metric)
         if self.bool_oracle:
             oracle_rdm = self._create_oracle_rdm()
-            correlation = 1 - correlation(oracle_rdm, rdm)
+            comparison = 1 - correlation(oracle_rdm, rdm)
         else:
-            correlation = None
+            comparison = None
 
-        return squareform(rdm), correlation
+        return squareform(rdm), comparison
 
     def compute(
         self,

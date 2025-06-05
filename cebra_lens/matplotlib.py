@@ -428,6 +428,8 @@ class ModelDecodingPlot(_BasePlot):
         The dataset type. Currently only "visual" is supported.
     axis : matplotlib.axes.Axes, optional
         The axis on which to plot. If None, a new axis will be created.
+    label_ind : int, optional
+        The index of the label to plot.
     """
 
     def __init__(
@@ -1238,6 +1240,7 @@ class _RDMPlots:
 
         self.titles = titles
         self.metric = metric
+        self.discrete = discrete
         self.dataset_label = dataset_label
         self.cmap = cmap
         self.figsize = figsize
@@ -1329,7 +1332,7 @@ class _RDMPlots:
 
         for i, rdm in enumerate(self.rdms):
             cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="equal")
-            self.ax[i].set_title(self.titles[i], fontsize=14)
+            self.ax[i].set_title(self.titles[i], fontsize=10)
 
             if self.dataset_label == "HPC":
                 # Set the x and y ticks
@@ -1380,10 +1383,23 @@ class _RDMPlots:
                 )
             else:
                 num_ticks = len(self.tick_labels)
-                self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-                self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
-                self.ax[i].set_yticklabels(self.tick_labels)
+                if self.dataset_label=="visual" or self.discrete is False:
+             
+                    self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                    self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                    self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right", fontsize=6)
+                    self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
+                else:
+                    size = rdm.shape[0]
+                    num_categories = len(self.tick_labels)
+                    block_size = size / num_categories
+                    tick_positions = np.arange(block_size / 2, size, block_size)
+
+                    self.ax[i].set_xticks(tick_positions)
+                    self.ax[i].set_yticks(tick_positions)
+                    self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
+                    self.ax[i].set_yticklabels(self.tick_labels)
+                
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
