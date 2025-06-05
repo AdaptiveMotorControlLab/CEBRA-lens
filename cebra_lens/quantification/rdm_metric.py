@@ -140,32 +140,6 @@ class RDM(_BaseMetric):
 
         return oracle_rdm
 
-    def _compare_RDM(self, rdm_1: npt.NDArray, rdm_2: npt.NDArray) -> float:
-        """
-        Compares two RDMs using the specified metric.
-
-        Parameters:
-        -----------
-        rdm_1 : npt.NDArray
-            The first RDM to compare.
-        rdm_2 : npt.NDArray
-            The second RDM to compare.
-
-        Returns:
-        --------
-        float
-            The similarity score between the two RDMs, based on the specified metric.
-        """
-
-        if self.metric == "correlation":
-            comparison = 1 - correlation(rdm_1, rdm_2)
-        else:
-            raise NotImplementedError(
-                f"The metric {self.metric} is not yet implemented. Please use 'correlation'."
-            )
-
-        return comparison
-
     def _compute_per_layer(
         self, layer_activation: npt.NDArray
     ) -> Tuple[npt.NDArray, float]:
@@ -189,7 +163,7 @@ class RDM(_BaseMetric):
         rdm = pdist(layer_activation[self.idxs.flatten(), :], metric=self.metric)
         if self.bool_oracle:
             oracle_rdm = self._create_oracle_rdm()
-            correlation = self._compare_RDM(rdm_1=oracle_rdm, rdm_2=rdm)
+            correlation = 1 - correlation(oracle_rdm, rdm)
         else:
             correlation = None
 
