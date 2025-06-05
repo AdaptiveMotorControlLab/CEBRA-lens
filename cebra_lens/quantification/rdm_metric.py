@@ -66,7 +66,7 @@ class RDM(_BaseMetric):
         self.discrete = discrete
         self.idxs, self.num_bins = self._define_indices()
 
-    def _define_indices(self) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
+    def _define_indices(self) -> Tuple[npt.NDArray, Optional[int]]:
         """
         Defines the indices for the bins and repetitions based on the specified distance label.
         """
@@ -77,7 +77,7 @@ class RDM(_BaseMetric):
                     f"Dataset label {self.dataset_label} is not supported. Please use 'visual' or 'HPC' or None for general binning."
                 )
             else:
-                idxs = continuous_binning(
+                idxs, num_bins = continuous_binning(
                     data=self.data,
                     label=self.label,
                     dataset_label=self.dataset_label,
