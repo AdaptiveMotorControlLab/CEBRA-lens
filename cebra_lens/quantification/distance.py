@@ -412,4 +412,5 @@ class Distance(_BaseMetric):
         title: str = None,
         figsize: tuple = (15, 5),
     ):
-        return plot_distance(distance_dict, title, figsize)
+        y_axis = f"{self.metric} distance"
+        return plot_distance(distance_dict, title, figsize, y_axis)

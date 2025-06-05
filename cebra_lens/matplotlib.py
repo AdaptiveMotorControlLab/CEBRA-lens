@@ -212,9 +212,9 @@ class DistancePlot(_GenericPlot):
             data[key] = layer_values
         return data
 
-    def plot(self):
+    def plot(self, y_axis: str):
         """Plots distance metric across layers"""
-        return super().plot(self.plot_data, "Distance metric across layers")
+        return super().plot(self.plot_data, y_axis)
 
 
 class DecodingPlot(_GenericPlot):
@@ -348,6 +348,7 @@ def plot_distance(
     distance_dict: Dict[str, npt.NDArray],
     title: str = "Inter-repetition distance",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
+    y_axis: str = None,
     **kwargs,
 ) -> plt.Figure:
     """
@@ -361,6 +362,8 @@ def plot_distance(
         The title for the plot (default is "Inter-repetition distance").
     figsize : Tuple, optional
         A Tuple representing the figure size (default is (15, 5)).
+    y_axis: str, optional
+        The label for the y-axis of the plot, e.g. "Euclidean distance".
 
     Returns:
     --------
@@ -372,7 +375,7 @@ def plot_distance(
         results_dict=distance_dict,
         title=title,
         figsize=figsize,
-    ).plot(**kwargs)
+    ).plot(y_axis = y_axis,**kwargs)
 
 
 def plot_layer_decoding(
