@@ -117,7 +117,7 @@ class Decoding(_BaseMetric):
         train_label: npt.NDArray,
         test_data: torch.Tensor,
         test_label: npt.NDArray,
-        session_id: int = -1,
+        session_id: int = 0,
         dataset_label: str = None,
         layer_type: Optional[Type[nn.Module]] = None,
         output_only: bool = True,

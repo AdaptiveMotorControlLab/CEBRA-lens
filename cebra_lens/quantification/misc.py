@@ -159,6 +159,11 @@ def continuous_binning(
             j = j + 1
 
     else:
+        if len(data) < 1000:
+            print(
+                "Warning: Continuous binning is not recommended for datasets with less than 1000 samples. "
+                "Consider using discrete binning instead."
+            )
         num_bins = int(
             0.005 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data

@@ -124,7 +124,7 @@ class RDM(_BaseMetric):
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and discrete is True
                 idxs = discrete_binning(
-                    label=self.label,
+                    labels=self.label,
                 )
             else:
                 # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
