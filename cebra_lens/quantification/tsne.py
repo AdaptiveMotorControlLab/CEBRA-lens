@@ -86,7 +86,7 @@ class Tsne(_BaseMetric):
         dataset_label: str = "HPC",
         group_name: str = "t-SNE",
         ax: Optional[matplotlib.axes.Axes] = None,
-    )-> matplotlib.figure.Figure:
+    ) -> matplotlib.figure.Figure:
         """
         Plots the t-SNE embeddings for the first 3 dimensions.
 

@@ -16,6 +16,22 @@ from .utils_allen import get_datasets as get_datasets_visual
 def get_data(
     dataset_label: str = None, session_id: int = None
 ) -> list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
+    """
+    Returns datasets based on the specified dataset label. If you are using a non standard dataset, you can add a new data loading function add it here.
+
+    Parameters:
+    -----------
+    dataset_label : str
+        The label of the dataset to load. Options are "visual" or "HPC".
+    session_id : int, optional
+        The session ID for the multisession datasets. This is used to load specific sessions of the dataset.
+
+    Returns:
+    --------
+    list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]
+        A list containing the datasets: train_data, test_data, label_train, label_test.
+    """
+
     if dataset_label == "visual":
         return get_datasets_visual(session_id=session_id)
     elif dataset_label == "HPC":
@@ -35,6 +51,7 @@ def extract_label(labels: npt.NDArray, label_ind: int) -> List:
         A NumPy array containing labels, which can be of any numeric type.
     label_ind : int
         The index of the label to extract from the array.
+
     Returns:
     --------
     List
@@ -85,6 +102,11 @@ def compute_metric(
     """
     result_dict = {}
 
+    if not isinstance(model_data, Dict):
+        raise ValueError(
+            "model_data should be a dictionary mapping model grouns to lists of model data."
+        )
+
     if isinstance(metric_class, CKA):
         for comparison in tqdm(metric_class.comparisons):
             cka_matrix = metric_class.compute(model_data, comparison)
@@ -128,6 +150,9 @@ def plot_metric(
 
     metric_class : object
         Object with a `plot` method that takes a single data sample and returns a plot.
+
+    group_name : str, optional
+        This is relevant is the user wants to plot data from a single model, so we can transform it into a dictionary form which is acceptable. Here the group_name will be a placeholder group label values for the single model. Default is "Model group".
     """
 
     if not isinstance(data_dict, Dict) and isinstance(metric_class, RDM):
@@ -149,6 +174,21 @@ def model_loader(
     groups : Dict[str, str], optional
         Dictionary mapping model file names (without extensions) to category labels.
         If not provided, the model's own filename will be used as its label.
+        The keys should be the file names without extensions, and the values should be the desired group labels.
+
+        Example:
+        groups = {'allen_single_session_mouse4_0k_UT_torch':'single_UT',
+          'allen_multi_session_10k_3_torch':'multi_TR',
+          'allen_multi_session_10k_2_torch':'multi_TR',
+          'allen_single_session_mouse4_10k_0_torch':'single_TR',
+          'allen_single_session_mouse4_10k_1_torch':'single_TR',
+          'allen_multi_session_10k_4_torch':'multi_TR',
+          'allen_multi_session_10k_0_torch':'multi_TR',
+          'allen_multi_session_10k_1_torch':'multi_TR',
+          'allen_single_session_mouse4_10k_3_torch':'single_TR',
+          'allen_single_session_mouse4_10k_2_torch':'single_TR',
+          'allen_multi_session_0k_UT_torch':'multi_UT',
+          'allen_single_session_mouse4_10k_4_torch':'single_TR'}
 
     Returns:
     --------
