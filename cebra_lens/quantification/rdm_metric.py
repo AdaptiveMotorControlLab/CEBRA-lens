@@ -68,8 +68,6 @@ class RDM(_BaseMetric):
         self.discrete = discrete
         self.idxs, self.num_bins = self._define_indices()
 
-        self.output_information()
-
     def output_information(self):
         """
         Outputs information about the RDM class initialization parameters.
@@ -239,6 +237,17 @@ class RDM(_BaseMetric):
             The number of bins to be used in the RDM computation.
         """
         self.num_bins = num_bins
+
+    def set_bool_oracle(self, bool_oracle: bool):
+        """
+        Sets whether to compute and compare with the Oracle RDM.
+
+        Parameters:
+        ----------
+        bool_oracle : bool
+            If True, the Oracle RDM will be computed and compared with the computed RDMs.
+        """
+        self.bool_oracle = bool_oracle
 
     def plot(
         self,

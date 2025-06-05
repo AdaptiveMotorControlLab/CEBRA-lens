@@ -58,6 +58,7 @@ def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
     output_only: bool = False,
+    bool_oracle: bool = False,
 ) -> Dict[str, npt.NDArray[Any]]:
     """
     Computes metrics for each model using a provided metric class.
@@ -69,6 +70,13 @@ def compute_metric(
 
     metric_class : object
         Object with a `compute` method that takes a single data sample and returns a computed metric.
+
+    output_only : bool, optional
+        This is relevant for class Decoding, which can compute the metric only for the output layer.
+        If True, the metric class will compute the metric only for the output layer.
+
+    bool_oracle : bool, optional
+        This is relevant for class RDM, which can compute along side the RDMs also the correlation between the RDMs and the Oracle RDM.
 
     Returns:
     --------
@@ -86,6 +94,11 @@ def compute_metric(
         for group_name, samples in model_data.items():
             if isinstance(metric_class, Decoding):
                 metric_class.set_output_only(output_only)
+                metric_class.output_information()
+
+            if isinstance(metric_class, RDM):
+                metric_class.set_bool_oracle(bool_oracle)
+                metric_class.output_information()
 
             computed_values = [
                 metric_class.compute(sample)

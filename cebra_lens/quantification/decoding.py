@@ -132,6 +132,24 @@ class Decoding(_BaseMetric):
         self.layer_type = layer_type
         self.output_only = output_only
 
+    def output_information(self):
+        print("The decoding analysis initialized with the following parameters:")
+        print(f"Session ID: {self.session_id}")
+        print(f"Dataset label: {self.dataset_label}")
+        print(f"Layer type: {self.layer_type}")
+        print(f"Output only: {self.output_only}")
+        if self.output_only:
+            print(
+                "The decoding analysis will only compute the decoding scores for the output embeddings of the model and plot them."
+            )
+        else:
+            print(
+                "The decoding analysis will compute the decoding scores for the activations of the model and plot them across layers."
+            )
+        print(
+            "If you want to change the parameters, please re-initialize the class with the new parameters or if you want to change the output_only parameter, call the compute_metric function with the output_only parameter set to True or False."
+        )
+
     def _decode(
         self,
         embedding_train: npt.NDArray,
@@ -301,6 +319,14 @@ class Decoding(_BaseMetric):
         return "decode_by_layer"
 
     def set_output_only(self, output_only):
+        """
+        Set the output_only parameter to True or False. If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
+
+        Parameters:
+        ----------
+        output_only : bool
+            If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
+        """
         self.output_only = output_only
 
     def plot(
