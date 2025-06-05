@@ -1328,7 +1328,7 @@ class _RDMPlots:
         """Handles plotting logic."""
 
         for i, rdm in enumerate(self.rdms):
-            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
+            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="equal")
             self.ax[i].set_title(self.titles[i], fontsize=14)
 
             if self.dataset_label == "HPC":
