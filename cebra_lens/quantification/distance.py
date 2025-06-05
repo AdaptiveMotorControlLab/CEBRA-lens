@@ -104,10 +104,10 @@ class Intrabin(DistanceMetric):
 
     Parameters:
     -----------
-        indices : List[np.int64]
-            A list of indices specifying the bins.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
+    indices : List[np.int64]
+        A list of indices specifying the bins.
+    metric : str, optional
+        The distance metric to use for computing distances (default is "cosine").
     """
 
     def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
@@ -150,7 +150,24 @@ class Intrabin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Intra-bin distance",
         figsize: tuple = (15, 5),
-    ):
+    )-> matplotlib.figure.Figure:
+        """
+        Plots the intra-bin distances.
+        
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Intra-bin distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -159,12 +176,13 @@ class Interrep(DistanceMetric):
     Class to compute inter-repetition distances for a given embedding data, indices, and repetition indices.
 
     Parameters:
-        indices : List[np.int64]
-            A list of indices specifying the bins.
-        repetition_indices : List[np.int64]
-            A list of lists specifying the repetition indices.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
+    -----------
+    indices : List[np.int64]
+        A list of indices specifying the bins.
+    repetition_indices : List[np.int64]
+        A list of lists specifying the repetition indices.
+    metric : str, optional
+        The distance metric to use for computing distances (default is "cosine").
 
     """
 
@@ -226,7 +244,24 @@ class Interrep(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
-    ):
+    )-> matplotlib.figure.Figure:
+        """
+        Plots the inter-repetition distances.
+        
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Inter-repetition distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+        
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -279,7 +314,24 @@ class Interbin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-bin distance",
         figsize: tuple = (15, 5),
-    ):
+    )-> matplotlib.figure.Figure:
+        """
+        Plots the inter-bin distances.
+        
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Inter-bin distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+        
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -293,6 +345,10 @@ class Distance(_BaseMetric):
             The data array of shape (num_samples, num_features).
         label : torch.Tensor
             The array of labels corresponding to the data.
+        label_ind : int, optional
+            The index of the label to extract from the array (default is 0). This is relevant when dataset_label is None.
+        discrete : bool, optional
+            Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
         dataset_label : str, optional
             The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
         metric : str, optional
@@ -314,10 +370,17 @@ class Distance(_BaseMetric):
 
         super().__init__()
         self.data = data
-        # now the labels are in the correct format for binning
         self.label = label
         self.dataset_label = dataset_label
         if self.dataset_label is None:
+            if label_ind is None:
+                raise ValueError(
+                    "If dataset_label is None, label_ind must be provided to indicate which label will be used for the distance calculation."
+                )
+            if discrete is None:
+                raise ValueError(
+                    "If dataset_label is None, discrete must be specified to indicate whether the label is discrete or continuous."
+                )
             self.label = extract_label(label, label_ind)
         self.metric = metric
         self.distance_label = distance_label
@@ -328,7 +391,17 @@ class Distance(_BaseMetric):
         self, discrete: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
-        Defines the indices for the bins and repetitions based on the specified distance label.
+        Defines the how the labels are binned and the indices for each bin.
+
+        Parameters:
+        -----------
+        discrete : bool, optional
+            Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
+
+        Returns:
+        --------
+        Tuple[npt.NDArray, Optional[npt.NDArray]]
+            A tuple containing the indices for each bin and the repetition indices if applicable.
         """
 
         if self.dataset_label is not None:
@@ -413,6 +486,23 @@ class Distance(_BaseMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = None,
         figsize: tuple = (15, 5),
-    ):
+    )-> matplotlib.figure.Figure:
+        """
+        Plots the computed distances.
+        
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is None, which will use the distance type).
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+            
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         y_axis = f"{self.metric} distance"
         return plot_distance(distance_dict, title, figsize, y_axis)
