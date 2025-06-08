@@ -9,7 +9,7 @@ from torch import nn
 from .quantification.decoding import Decoding
 from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
-from .quantification.tsne import tSNE
+from .quantification.tsne import Tsne
 from .utils_hpc import get_datasets as get_datasets_hpc
 from .utils_allen import get_datasets as get_datasets_visual
 
@@ -160,7 +160,7 @@ def plot_metric(
     """
 
     if not isinstance(data_dict, Dict):
-        if isinstance(metric_class, RDM) or isinstance(metric_class, tSNE):
+        if isinstance(metric_class, RDM) or isinstance(metric_class, Tsne):
             data_dict = {group_name: data_dict}
         else:
             raise ValueError(
