@@ -83,7 +83,7 @@ class Tsne(_BaseMetric):
         embeddings: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
         labels: npt.NDArray,
         sample_plot: int = 200,
-        dataset_label: str = "HPC",
+        dataset_label: str = None,
         group_name: str = "t-SNE",
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.figure.Figure:
