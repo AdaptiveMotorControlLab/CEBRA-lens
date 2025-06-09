@@ -158,7 +158,6 @@ def plot_metric(
     group_name : str, optional
         This is relevant is the user wants to plot data from a single model, so we can transform it into a dictionary form which is acceptable. Here the group_name will be a placeholder group label values for the single model. Default is "Model group".
     """
-
     if not isinstance(data_dict, Dict) and not isinstance(metric_class, Tsne):
         if isinstance(metric_class, RDM):
             data_dict = {group_name: data_dict}

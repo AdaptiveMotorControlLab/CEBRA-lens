@@ -719,7 +719,11 @@ class _EmbeddingPlot:
         if label.shape[0] == 1 and label.shape[1] != 1:
             label = label.T
 
-        if 0 in np.unique(label[:,label_ind]) and 1 in np.unique(label[:,label_ind]) and len(np.unique(label[:,label_ind])) == 2:
+        if (
+            0 in np.unique(label[:, label_ind])
+            and 1 in np.unique(label[:, label_ind])
+            and len(np.unique(label[:, label_ind])) == 2
+        ):
             l_ind = label[:, label_ind] == 1
             l_c = label[l_ind, label_ind]
             l = ax.scatter(
@@ -745,7 +749,6 @@ class _EmbeddingPlot:
                 s=0.05,
                 alpha=0.75,
             )
-
 
         ax.grid(False)
         ax.xaxis.pane.fill = False
@@ -924,14 +927,14 @@ class _EmbeddingPlot:
             elif self.dataset_label == "visual":
                 ax = self._plot_allen(ax, embedding, label)
             else:
-                ax = self._plot_dataset(ax, embedding, label, label_ind = label_ind)
+                ax = self._plot_dataset(ax, embedding, label, label_ind=label_ind)
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")
             plt.subplots_adjust(wspace=0, hspace=0)
             plt.tight_layout()
 
-    def plot_embedding(self, group_name:str, label_ind:int =None):
+    def plot_embedding(self, group_name: str, label_ind: int = None):
         """Plots embedding layers for a single model.
 
         Parameters:
@@ -942,21 +945,29 @@ class _EmbeddingPlot:
             The index of the label to be used for coloring the points in the embedding plot.
         """
 
-        return self.plot_embedding_layers(self.axs, self.embeddings, group_name, label_ind=label_ind)
+        return self.plot_embedding_layers(
+            self.axs, self.embeddings, group_name, label_ind=label_ind
+        )
 
     def plot_compare(self, label_ind: int = None):
         """Plots embedding layers for models being compared
-        
+
         Parameters:
         -----------
         label_ind : int
             The index of the label to be used for coloring the points in the embedding plot.
         """
         self.plot_embedding_layers(
-            self.axs_1, self.embeddings_1, self.comparison_groups[1][0], label_ind=label_ind
+            self.axs_1,
+            self.embeddings_1,
+            self.comparison_groups[1][0],
+            label_ind=label_ind,
         )
         self.plot_embedding_layers(
-            self.axs_2, self.embeddings_2, self.comparison_groups[1][1], label_ind=label_ind
+            self.axs_2,
+            self.embeddings_2,
+            self.comparison_groups[1][1],
+            label_ind=label_ind,
         )
         self.fig.suptitle(
             f"CEBRA across layers comparison",
@@ -1011,7 +1022,7 @@ def compare_embeddings_layers(
         dataset_label=dataset_label,
         sample_plot=sample_plot,
         axis=ax,
-    ).plot_compare(label_ind,**kwargs)
+    ).plot_compare(label_ind, **kwargs)
 
 
 def plot_embeddings(
@@ -1066,7 +1077,9 @@ def plot_embeddings(
                 dataset_label=dataset_label,
                 sample_plot=sample_plot,
                 axis=ax,
-            ).plot_embedding(group_name=f"{group_name} instance {i}", label_ind=label_ind,**kwargs)
+            ).plot_embedding(
+                group_name=f"{group_name} instance {i}", label_ind=label_ind, **kwargs
+            )
 
 
 class _ActivationPlot:

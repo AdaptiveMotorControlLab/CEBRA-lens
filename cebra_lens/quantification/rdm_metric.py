@@ -252,7 +252,7 @@ class RDM(_BaseMetric):
     def plot(
         self,
         rdms: Dict[str, List[npt.NDArray]],
-        titles: List[Tuple[npt.NDArray, float]] = None,
+        titles: List[str] = None,
         metric: str = "Correlation",
         cmap: str = "viridis",
         figsize: tuple = None,
@@ -265,8 +265,8 @@ class RDM(_BaseMetric):
         ----------
         rdms : Dict[str, List[npt.NDArray]]
             Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
-        titles : List[Tuple[npt.NDArray, float]], optional
-            List of tuples containing the RDM and the correlation score with the Oracle RDM for each layer of a model. Default is None.
+        titles : List[str], optional
+            List of title for the RDM plots, if it is different from ordered layers.
         metric : str, optional
             The metric to be used for the plot. Default is "Correlation".
         cmap : str, optional
