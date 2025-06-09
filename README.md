@@ -1,5 +1,5 @@
 # CEBRA-Lens: a helper package for interpretable latent spaces
-<img src="zebra.png" alt="zebra" width="200" height="194">
+<img src="figures/zebra.png" alt="zebra" width="200" height="194">
 
 What is CEBRA-Lens?
 
@@ -27,7 +27,7 @@ The implemented "neuroscientist methods" for neural representation analysis are
     - inter-bin
     - inter-repetition
 
-<img src="analysis.png" alt="analysis">
+<img src="figures/analysis.png" alt="analysis">
 
 ## 📚 Codebase folder structure
 
