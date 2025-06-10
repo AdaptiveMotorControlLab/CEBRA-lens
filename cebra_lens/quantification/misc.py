@@ -71,7 +71,7 @@ def continuous_binning(
         An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
     """
 
-    # BINNING
+    num_bins = None
     if dataset_label == "visual":
         num_bins = 30
 

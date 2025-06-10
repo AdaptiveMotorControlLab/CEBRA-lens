@@ -265,7 +265,7 @@ class Interbin(DistanceMetric):
             embedding=embedding, indices=self.indices, metric=self.metric
         )
 
-        # Compute pairwise distances between centroids using cosine distance
+        # Compute pairwise distances between centroids using metric
         distances = cdist(centroids, centroids, metric=self.metric)
 
         # Compute the mean inter-bin distance for each layer, excluding self-distances
@@ -315,8 +315,10 @@ class Distance(_BaseMetric):
         super().__init__()
         self.data = data
         # now the labels are in the correct format for binning
-        self.label = extract_label(label, label_ind)
+        self.label = label
         self.dataset_label = dataset_label
+        if self.dataset_label is None:
+            self.label = extract_label(label, label_ind)
         self.metric = metric
         self.distance_label = distance_label
 
@@ -340,7 +342,7 @@ class Distance(_BaseMetric):
                     label=self.label,
                     dataset_label=self.dataset_label,
                     sample_mode="all",
-                )
+                )[0]
         else:
 
             if discrete is None:
@@ -361,7 +363,7 @@ class Distance(_BaseMetric):
                     label=self.label,
                     dataset_label=self.dataset_label,
                     sample_mode="all",
-                )
+                )[0]
 
         if self.distance_label == "interrep":
             # only relevant for visual dataset
@@ -412,4 +414,5 @@ class Distance(_BaseMetric):
         title: str = None,
         figsize: tuple = (15, 5),
     ):
-        return plot_distance(distance_dict, title, figsize)
+        y_axis = f"{self.metric} distance"
+        return plot_distance(distance_dict, title, figsize, y_axis)

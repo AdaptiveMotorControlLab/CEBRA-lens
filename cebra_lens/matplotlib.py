@@ -60,13 +60,16 @@ class _GenericPlot(_BasePlot):
         self.unique_keys = []
         self.colors = []
 
-    def plot(self, plot_data: Dict[str, npt.NDArray]) -> None:
+    def plot(self, plot_data: Dict[str, npt.NDArray], y_axis: str) -> None:
         """Create a plot where the x-axis corresponds to layer and the y-axis to the calculated metric per layer.
 
         Parameters:
         -----------
         plot_data: Dict[str, npt.NDArray]
             Dictionary containing the data to be plotted. Where the keys represent the model label, and the values are the metric values per layer for each model inside a model label category.
+
+        y_axis: str
+            The label for the y-axis of the plot, e.g. "Distance", "Decoding accuracy", etc.
         """
         for idx, (key, data_list) in enumerate(plot_data.items()):
             color = self.colors[idx]
@@ -104,6 +107,8 @@ class _GenericPlot(_BasePlot):
             )
 
         self.ax.set_title(self.title, fontsize=15)
+        self.ax.set_xlabel("Layer #", fontsize=12)
+        self.ax.set_ylabel(f"{y_axis}", fontsize=12)
         sns.despine(ax=self.ax)
 
 
@@ -156,7 +161,7 @@ class RDMPlotOracle(_GenericPlot):
 
     def plot(self):
         """Plots correlation of RDM with Oracle data across layers"""
-        return super().plot(self.plot_data)
+        return super().plot(self.plot_data, "Correlation with Oracle RDM")
 
 
 class DistancePlot(_GenericPlot):
@@ -207,9 +212,9 @@ class DistancePlot(_GenericPlot):
             data[key] = layer_values
         return data
 
-    def plot(self):
+    def plot(self, y_axis: str):
         """Plots distance metric across layers"""
-        return super().plot(self.plot_data)
+        return super().plot(self.plot_data, y_axis)
 
 
 class DecodingPlot(_GenericPlot):
@@ -302,7 +307,16 @@ class DecodingPlot(_GenericPlot):
 
     def plot(self):
         """Plots decoding accuracy across layers"""
-        return super().plot(self.plot_data)
+        if self.dataset_label == "visual":
+            y_axis = "Decoding accuracy (%)"
+        elif self.dataset_label == "HPC":
+            y_axis = "Decoding position error (cm)"
+        else:
+            if self.plot_error:
+                y_axis = "Decoding error score"
+            else:
+                y_axis = "Decoding R^2 score"
+        return super().plot(self.plot_data, y_axis)
 
 
 def plot_rdm_correlation(
@@ -340,6 +354,7 @@ def plot_distance(
     distance_dict: Dict[str, npt.NDArray],
     title: str = "Inter-repetition distance",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
+    y_axis: str = None,
     **kwargs,
 ) -> plt.Figure:
     """
@@ -353,6 +368,8 @@ def plot_distance(
         The title for the plot (default is "Inter-repetition distance").
     figsize : Tuple, optional
         A Tuple representing the figure size (default is (15, 5)).
+    y_axis: str, optional
+        The label for the y-axis of the plot, e.g. "Euclidean distance".
 
     Returns:
     --------
@@ -364,7 +381,7 @@ def plot_distance(
         results_dict=distance_dict,
         title=title,
         figsize=figsize,
-    ).plot(**kwargs)
+    ).plot(y_axis = y_axis,**kwargs)
 
 
 def plot_layer_decoding(
@@ -1302,8 +1319,8 @@ class _RDMPlots:
         """Handles plotting logic."""
 
         for i, rdm in enumerate(self.rdms):
-            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
-            self.ax[i].set_title(self.titles[i])
+            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="equal")
+            self.ax[i].set_title(self.titles[i], fontsize=14)
 
             if self.dataset_label == "HPC":
                 # Set the x and y ticks
