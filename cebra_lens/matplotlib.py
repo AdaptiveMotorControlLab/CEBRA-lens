@@ -1563,15 +1563,7 @@ class _RDMPlots:
                 )
             else:
                 num_ticks = len(self.tick_labels)
-                if self.dataset_label == "visual" or self.discrete is False:
-
-                    self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-                    self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                    self.ax[i].set_xticklabels(
-                        self.tick_labels, rotation=90, ha="right", fontsize=6
-                    )
-                    self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
-                else:
+                if self.discrete == True:
                     size = rdm.shape[0]
                     num_categories = len(self.tick_labels)
                     block_size = size / num_categories
@@ -1583,6 +1575,13 @@ class _RDMPlots:
                         self.tick_labels, rotation=90, ha="right"
                     )
                     self.ax[i].set_yticklabels(self.tick_labels)
+                else:
+                    self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                    self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                    self.ax[i].set_xticklabels(
+                        self.tick_labels, rotation=90, ha="right", fontsize=6
+                    )
+                    self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
