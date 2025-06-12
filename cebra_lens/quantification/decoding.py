@@ -14,21 +14,19 @@ import torch as pt
 
 
 def decoding(
-    embedding_train: pt.tensor,
-    embedding_test: pt.tensor,
+    embedding_train: npt.NDArray,
+    embedding_test: npt.NDArray,
     label_train: npt.NDArray,
     label_test: npt.NDArray,
-) -> Tuple[np.float64, list, list]:
+) -> Tuple[np.float64, npt.NDArray, npt.NDArray]:
     """
-    Function to decode the embeddings using KNNDecoder from CEBRA. 
-    
-    The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
+    Decoding function for the CEBRA model trained on a non-specific dataset.
 
     Parameters:
     ----------
-    embedding_train : pt.tensor
+    embedding_train : npt.NDArray
         The part of the output embedding to use as training for the decoding.
-    embedding_test : pt.tensor
+    embedding_test : npt.NDArray
         The part of the output embedding to use as testing for the decoding.
     label_train : npt.NDArray
         The true labels corresponding to the training data.
@@ -36,9 +34,14 @@ def decoding(
         The true labels corresponding to the validation data.
 
     Returns:
-    -------
-    Tuple[np.float64, list, list]
-        A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
+    --------
+    test_score : np.float64
+        The test score of the decoding averaged across labels.
+    labels_test_err : npt.NDArray
+        A list of the errors for each label.
+    labels_test_score : npt.NDArray
+        A list of the R^2 scores for each label.
+
     """
     try:
         num_labels = label_train.shape[1]
@@ -74,7 +77,7 @@ def decoding(
 
         predictions.append(label_pred)
         label_test_err = np.median(abs(label_pred - label_test[:, i]))
-        labels_test_err.append(label_test_err)
+        labels_test_err.append(labels_test_err)
         label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
         labels_test_score.append(label_test_score)
 

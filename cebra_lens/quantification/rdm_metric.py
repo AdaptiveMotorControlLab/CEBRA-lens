@@ -221,6 +221,15 @@ class RDM(_BaseMetric):
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
+        if self.dataset_label != "visual" and self.dataset_label != "HPC":
+            self.idxs = discrete_binning(
+                self.data,
+                self.label,
+                self.dataset_label,
+                num_bins=self.num_bins,
+                max_num_samples=self.num_samples,
+            )
+
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
     @property
