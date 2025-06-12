@@ -363,7 +363,7 @@ class Distance(_BaseMetric):
         data,
         label,
         label_ind: int = 0,
-        is_discrete_labels: bool = None,
+        is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "cosine",
         distance_label: str = "interbin",

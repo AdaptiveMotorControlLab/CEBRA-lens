@@ -37,7 +37,7 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
-        is_discrete_labels: bool = None,
+        is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
