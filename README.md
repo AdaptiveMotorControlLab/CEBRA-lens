@@ -24,15 +24,15 @@ Additionally, there is the possibility to analyze the decoding performance of ea
 
 - single unit activation - plotting the activation value for each neural network unit
 - high-dimensional embedding of population activity - 3D scatter plot using the first 3 dimensions
-- low-dimensional embedding of population activity with a 3 component tSNE ([Cai & Ma, arXiv (2022)](https://arxiv.org/abs/2201.00005))
+- low-dimensional embedding of population activity with a 3 component tSNE ([Cai & Ma, arXiv, 2022](https://arxiv.org/abs/2201.00005))
 
 #### Population level comparison
 
-- Central Kernal Alignment (CKA) ([Kim et al., arXiv (2022)](https://arxiv.org/abs/2210.16156))
+- Central Kernal Alignment (CKA) ([Kim et al., arXiv, 2022](https://arxiv.org/abs/2210.16156))
 
     This method allows for the comparison of corresponding layers for different models.
 
-- Representational Dissmilarity Matrix (RDM) ([Kriegeskorte et al., Frontiers in Systems Neuroscience (2008)](https://www.frontiersin.org/journals/systems-neuroscience/articles/10.3389/neuro.06.004.2008/full))
+- Representational Dissmilarity Matrix (RDM) ([Kriegeskorte et al., Frontiers in Systems Neuroscience, 2008](https://www.frontiersin.org/journals/systems-neuroscience/articles/10.3389/neuro.06.004.2008/full))
 
     This method investigates population-level representations in competing models. This is done by calculating the correlation or cosine distance for each stimuli between the embeddings of a particular layer of a model.
     Possible plots for this analysis:
