@@ -34,7 +34,8 @@ class CKA(_BaseMetric):
         self.comparisons = comparisons
 
     def center_gram(self, gram: npt.NDArray, unbiased: bool = False) -> npt.NDArray:
-        """Center a symmetric Gram matrix.
+        """
+        Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
         induced by the kernel before computing the Gram matrix.
@@ -124,6 +125,7 @@ class CKA(_BaseMetric):
     ) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
+
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
         assuming both sets have the same number of layers and that each corresponding layer has the same shape.
 
@@ -195,6 +197,7 @@ class CKA(_BaseMetric):
     ) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
+
         This function calculates the CKA score between activations from different models and layers,
         comparing them based on the specified models and layers.
 
