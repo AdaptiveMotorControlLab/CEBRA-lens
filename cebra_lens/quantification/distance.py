@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 from typing import List, Optional, Tuple, Union, Dict
-from .misc import is_discrete_labels_binning, repetition_binning, continuous_binning
+from .misc import discrete_binning, repetition_binning, continuous_binning
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
@@ -429,7 +429,7 @@ class Distance(_BaseMetric):
             if is_discrete_labels:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and is_discrete_labels is True
-                idxs = is_discrete_labels_binning(
+                idxs = discrete_binning(
                     label=self.label,
                 )
             else:

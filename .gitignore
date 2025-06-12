@@ -162,6 +162,8 @@ cython_debug/
 #.idea/
 docs/_build
 docs/.github
+docs/_build
+docs/.github
 .DS_Store
 src/preprocessing/.DS_Store
 src/.DS_Store
