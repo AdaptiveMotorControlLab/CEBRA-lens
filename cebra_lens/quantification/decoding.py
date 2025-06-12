@@ -14,19 +14,19 @@ import torch as pt
 
 
 def decoding(
-    embedding_train: npt.NDArray,
-    embedding_test: npt.NDArray,
+    embedding_train: pt.tensor,
+    embedding_test: pt.tensor,
     label_train: npt.NDArray,
     label_test: npt.NDArray,
-) -> Tuple[np.float64, npt.NDArray, npt.NDArray]:
+) -> Tuple[np.float64, list, list]:
     """
-    Decoding function for the CEBRA model trained on a non-specific dataset.
+    Function to decode the embeddings using KNNDecoder from CEBRA. The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
 
     Parameters:
     ----------
-    embedding_train : npt.NDArray
+    embedding_train : pt.tensor
         The part of the output embedding to use as training for the decoding.
-    embedding_test : npt.NDArray
+    embedding_test : pt.tensor
         The part of the output embedding to use as testing for the decoding.
     label_train : npt.NDArray
         The true labels corresponding to the training data.
@@ -34,14 +34,9 @@ def decoding(
         The true labels corresponding to the validation data.
 
     Returns:
-    --------
-    test_score : np.float64
-        The test score of the decoding averaged across labels.
-    labels_test_err : npt.NDArray
-        A list of the errors for each label.
-    labels_test_score : npt.NDArray
-        A list of the R^2 scores for each label.
-
+    -------
+    Tuple[np.float64, list, list]
+        A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
     """
     try:
         num_labels = label_train.shape[1]
@@ -77,7 +72,7 @@ def decoding(
 
         predictions.append(label_pred)
         label_test_err = np.median(abs(label_pred - label_test[:, i]))
-        labels_test_err.append(labels_test_err)
+        labels_test_err.append(label_test_err)
         label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
         labels_test_score.append(label_test_score)
 
@@ -113,7 +108,7 @@ class Decoding(_BaseMetric):
     layer_type : Type[nn.Module]
         The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     output_only: bool
-        A bool which defines whether to calculate decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
+        A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
     """
 
     def __init__(
@@ -165,7 +160,6 @@ class Decoding(_BaseMetric):
     ) -> npt.NDArray:
         """
         Decodes a model by choosing the appropriate function base on the dataset.
-
         Currently compatible with multi-session and single-session data only.
 
         Parameters:
@@ -324,6 +318,17 @@ class Decoding(_BaseMetric):
     def __name__(self):
         return "decode_by_layer"
 
+    def set_output_only(self, output_only):
+        """
+        Set the output_only parameter to True or False. If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
+
+        Parameters:
+        ----------
+        output_only : bool
+            If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
+        """
+        self.output_only = output_only
+
     def plot(
         self,
         results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
@@ -335,9 +340,7 @@ class Decoding(_BaseMetric):
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.axes.Axes:
         """
-        Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.
-        
-        If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
+        Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
 
         Parameters:
         ----------
