@@ -83,18 +83,42 @@ class Tsne(_BaseMetric):
         embeddings: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
         labels: npt.NDArray,
         sample_plot: int = 200,
-        dataset_label: str = "HPC",
+        dataset_label: str = None,
         group_name: str = "t-SNE",
+        label_ind: int = None,
         ax: Optional[matplotlib.axes.Axes] = None,
-    ):
+    ) -> matplotlib.figure.Figure:
         """
         Plots the t-SNE embeddings for the first 3 dimensions.
+
+        Parameters:
+        -----------
+        embeddings : Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]]
+            The t-SNE embeddings to plot. Can be a dictionary with group names or a list of embeddings.
+        labels : npt.NDArray
+            The labels corresponding to the embeddings, used for coloring the points in the plot.
+        sample_plot : int, optional
+            The number of samples to plot. Default is 200.
+        dataset_label : str, optional
+            The label of the dataset, used for determining the number of bins in the plot. Default is "HPC".
+        group_name : str, optional
+            The name of the group for which the embeddings are plotted. Default is "t-SNE".
+        label_ind : int, optional
+            In case dataset in non-defined and we are plotting embeddings, we need to define the label index for the coloring of the embeddings.
+        ax : Optional[matplotlib.axes.Axes], optional
+            The axes on which to plot the embeddings. If None, a new figure and axes will be created. Default is None.
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure containing the t-SNE plot.
         """
         return plot_embeddings(
-            embeddings,
-            labels,
-            group_name,
-            dataset_label,
-            sample_plot,
-            ax,
+            data=embeddings,
+            labels=labels,
+            group_name=group_name,
+            dataset_label=dataset_label,
+            label_ind=label_ind,
+            sample_plot=sample_plot,
+            ax=ax,
         )

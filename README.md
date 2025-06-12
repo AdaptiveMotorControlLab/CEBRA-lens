@@ -1,43 +1,129 @@
 # CEBRA-Lens: a helper package for interpretable latent spaces
-<img src="zebra.png" alt="zebra" width="200" height="194">
+<img src="figures/zebra.png" alt="zebra" width="200" height="194">
 
-## Fall 2024: Riccardo's space - Exploring nonlinear encoders for robust vision decoding
+What is CEBRA-Lens?
 
-This repository contains the code for Riccardo's semester's project (FALL 2024) on robustness in vision encoders. 
+This Python codebase allows for neural representation analysis of CEBRA models. It contains tools to help answer the question: **What representations is my model learning?**  We can get a glimpse of what the models learn by looking at the NN units themselves after the model is trained, using “neuroscientist methods” such as CKA, PCA/tSNE (See Sandbrink et al 2023). Precisely these "neuroscientist methods" are implemented in this codebase.
 
-[Initial pitch](initial_pitch.pdf) | [Final report](final_report.pdf) | [CEBRA Lens](https://github.com/AdaptiveMotorControlLab/riccardo_workspace/tree/riccardo-packaging/src/cebra_lens)
+The current version of CEBRA-Lens supports specific analysis on the Allen Institute visual coding dataset ([DeVries et al, Nature Neuro., 2020](https://www.nature.com/articles/s41593-019-0550-9)) and Hippocampus dataset ([Grosmark & Buzáki, Science, 2016](https://www.science.org/doi/full/10.1126/science.aad1935)), and for general analysis on other datasets.
 
-## :dizzy:  Initial pitch
+## 🔍 Analysis
 
-Measuring the robustness of a model is critical in vision decoding. We can thus wonder **what representations is the model learning?** By looking at the NN units themselves after the model is trained, using “neuroscientist methods” such as CKA, PCA/tSNE (See Sandbrink et al 2023), we can get a glimpse of what the models learn. A more detailed description can be found in this [initial pitch](initial_pitch.pdf). The final report resuming all the analysis and detailing the methods is [here](final_report.pdf).
+Implemented "neuroscientist methods" for neural representation analysis are presented below.
 
-## :mag: cebra_lens package
-The final aim of this Github folder is to mimic a python package that allows the user to analyze the layers of the CEBRA models. This package is called cebra_lens and allows to replicate the analysis pursued during the project with commented and detailed functions that can take multiple types of models with different architectures. Work has to be done to adapt some code for different models, for now it works for offset5, 10 and 10-mse. This is due to small differences in padding that could not be solved in a flexible way. Most functions work with hippocampus and Allen visual dataset, however, the focus being on the visual allen dataset, most effort has been put into making that part work.
+### Model performance analysis
 
+- Model decoding metrics:
+    - average $R^2$ score across labels
+    - $R^2$ score per label
+    - error score per label
 
+Additionally, there is the possibility to analyze the decoding performance of each layer embeddings.
 
+### Layer visualizations
 
+- single unit activation - plotting the activation value for each neural network unit
+- high-dimensional embedding of population activity - 3D scatter plot using the first 3 dimensions
+- low-dimensional embedding of population activity with a 3 component tSNE ([Cai & Ma, arXiv, 2022](https://arxiv.org/abs/2201.00005))
 
-## :books: Repository organization
-This Github repository contains scripts, notebooks and package code without the Models and the Data. The data can be found [here](https://figshare.com/s/60adb075234c2cc51fa3?file=36869049) and an example usage of the data can be found in this [demo](https://cebra.ai/docs/demo_notebooks/Demo_Allen.html). 
+### Population level comparison
 
-The `Notebooks` folder contains two notebooks:
-- `ModelGeneratorVISUAL.ipynb` which was used to generate the models for the demo analysis notebook. It is meant to be run on Colab and was thus not scripted.
-- `Demo-Notebook-Allen.ipynb` contains the demo that goes over the whole package. It is more descriptive than the scripts and more flexible. This is the reference for understanding how the functions work.
+- Central Kernal Alignment (CKA) ([Kim et al., arXiv, 2022](https://arxiv.org/abs/2210.16156))
 
-The `src` folder contains two main folders:
+    This method allows for the comparison of corresponding layers for different models.
 
-1. The `scripts` folder contains the scripted versions of the analysis with the exception of the decoding by layer:
-- tSNE 
-- CKA 
-- RDM
-- Layer activation retrieval
-- Model decoding
-- Distance calculation
+- Representational Dissmilarity Matrix (RDM) ([Kriegeskorte et al., Frontiers in Systems Neuroscience, 2008](https://www.frontiersin.org/journals/systems-neuroscience/articles/10.3389/neuro.06.004.2008/full))
 
-2. The `cebra_lens folder contains the package build to replicate the analysis on the same or different models.
+    This method investigates population-level representations in competing models. This is done by calculating the correlation or cosine distance for each stimuli between the embeddings of a particular layer of a model.
+    Possible plots for this analysis:
+    - plot model layer RDM
+    - plot correlation with Oracle RDM across layers
 
-![Abstract figure](abstractfig.png)
+### Distance metrics
+These analyses quantify the change in the distance calculated per layer in a model. The distances which are implemented in this codebase are:
+- intra-class distance
+- inter-class distance
+- inter-repetition distance (only relevant if the model was trained on a dataset where there is repeating stimuli)
 
-Note: The notebooks that reproduce exactly the results of the report have been deleted because cleaning them would have been too time consuming and the results can be now reproduced using the package. Analysis such as GLMs were not pushed far enough to be kept in this final version of the repository and have thus been deleted. 
-All these notebooks can still be found travelling back to the commit [f89dd1b](https://github.com/AdaptiveMotorControlLab/riccardo_workspace/tree/f89dd1b801144912348e414c53dc21e9b5c6c937).
+<img src="figures/analysis.png" alt="analysis">
+
+## 📚 Codebase folder structure
+
+Below is the folder structure of the repository with the main folder and files. The `cebra_lens` folder contains all the code for the analysis with the metric class definitions in the `quantification` folder, the `demos` folder contains the usage jupyter notebooks and finally there is a `tests` folder which contains some pytest for the repo.
+
+    CEBRA_lens/
+    ├── README.md
+    ├── cebra_lens/
+    │   ├── quantification/
+    │   │   ├── base.py
+    │   │   ├── cka_metric.py
+    │   │   ├── decoding.py
+    │   │   ├── distance.py
+    │   │   ├── misc.py
+    │   │   ├── rdm_metric.py
+    │   │   └── tsne.py
+    │   ├── activations.py
+    │   ├── matplotlib.py
+    │   ├── utils_allen.py
+    │   ├── utils_hpc.py
+    │   └── utils.py
+    │
+    ├── demos/
+    │   ├── UsageDemoVISUAL.ipynb
+    │   └── UsageDemoGENERAL.ipynb
+    └── tests/
+
+## 📊Usage
+
+The CEBRA-Lens package allows for analyzing the embeddings of CEBRA models, but also offers the functionality of comparing embeddings and behavior through layers between models. For this purpose the code logic is centered around "metric classes". Before every analysis you first must initalize the corresponding metric class with the necessary arguments, and then to compute the metric the overhead function `compute_metric(data, metric_class)` needs to be called, this is the same for plotting, `plot_metric(data, metric_class)`.
+For example:
+
+```
+interbin_class = lens.Distance(
+data=train_data,
+label=train_label,
+dataset_label=dataset_label,
+metric=metric,
+distance_label="interbin",
+)
+interbin_dict = lens.compute_metric(
+    activations_dict,
+    interbin_class
+)
+fig = lens.plot_metric(
+    interbin_dict, 
+    interbin_class, 
+    title="Inter-bin distance"
+)
+```
+
+The full demonstration of the usage is in the form of 2 jupyter notebooks:
+- UsageDemoVISUAL: analysis on the Allen visual dataset, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/eloise/tests/demos/UsageDemoVISUAL.ipynb)
+- UsageDemoGENERAL: analysis on the Hippocampus dataset, but without specific dataset functions, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/eloise/tests/demos/UsageDemoGENERAL.ipynb)
+
+These two notebooks showcase the different approach when analyzing a pre-defined dataset and a non-defined dataset.
+
+## 📥 Download dataset
+
+The `utils.py` file contains a overarching `get_data` function which checks for a pre-defined dataset label and accordingly loads the data based on specific functions for the dataset. If you want to load data from a non-defined dataset, you need to first import the loading function inside the `utils.py` file as so:
+```
+from .utils_new import get_datasets as get_datasets_new
+```
+then add an if clause for your new dataset:
+```
+elif dataset_label == "new_dataset":
+        return get_datasets_new(session_id=session_id)
+```
+This is briefly repeated in the usage demo notebooks.
+
+## 🛠️ Environment set-up
+
+Make sure that the environment in which you trained the CEBRA models in has the same torch version as the environmnet used for CEBRA-Lens.
+
+```
+!pip install --pre 'cebra[datasets,demos]'
+```
+
+**Adaptation for use on CEBRA-Unified and xCEBRA models is needed for now.**
+
+Have fun!
