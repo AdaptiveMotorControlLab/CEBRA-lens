@@ -115,12 +115,12 @@ def compute_metric(
 
     else:
         if isinstance(metric_class, Decoding):
-            metric_class.output_only(output_only)
+            metric_class.output_only = output_only
             metric_class.output_information()
             print("\n")
 
         if isinstance(metric_class, RDM):
-            metric_class.bool_oracle(bool_oracle)
+            metric_class.bool_oracle = bool_oracle
             metric_class.output_information()
             print("\n")
 
