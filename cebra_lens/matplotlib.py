@@ -249,20 +249,13 @@ class DecodingPlot(_GenericPlot):
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
 
-        if dataset_label == "visual":
-            title = "Decoding accuracies across layers (%)"
-        elif dataset_label == "HPC":
-            title = "Decoding position errors across layers (cm)"
-        else:
-            title = "Decoding average R^2 scores across layers"
-
         if title is not None:
             if dataset_label == "visual":
                 title = "Decoding accuracies across layers (%)"
             elif dataset_label == "HPC":
                 title = "Decoding position errors across layers (cm)"
             else:
-                title = "Decoding average $R^2$ scores across layers"
+                title = "Decoding average R^2 scores across layers"
                 if plot_error:
                     title = "Decoding error scores across layers"
 
@@ -291,7 +284,8 @@ class DecodingPlot(_GenericPlot):
         for idx, (group_name, models) in enumerate(self.results_dict.items()):
             layer_values = []
 
-            for i, inner_list in enumerate(data_list):
+            for i, model in enumerate(models):
+
                 if self.dataset_label == "visual":
                     ind = 2
                 elif self.dataset_label == "HPC":
@@ -458,8 +452,8 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
-        label: str = "Averaged R^2 score",
-        metric: int = 0,
+        label: int = None,
+        plot_error: bool = False,
     ):
 
         self.figsize = (
@@ -483,6 +477,7 @@ class ModelDecodingPlot(_BasePlot):
 
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
+
         x_positions = list(
             range(1, len(self.results_dict) + 1)
         )  # X positions for scatter points
@@ -490,16 +485,23 @@ class ModelDecodingPlot(_BasePlot):
         for i, (key, results) in enumerate(self.results_dict.items()):
             if self.dataset_label == "visual":
                 # for visual dataset get accuracy
-                score = results[:, 2]
-                self.label = "Accuracy"
+                score = [dict_el[0][2] for dict_el in results]
+                self.plot_label = "Accuracy"
                 measure = "(%)"
             elif self.dataset_label == "HPC":
                 # for HPC dataset get position error
-                score = results[:, 1]
-                self.label = "Position Error"
+                score = [dict_el[0][1] for dict_el in results]
+                self.plot_label = "Position Error"
                 measure = "(cm)"
             else:
-                score = results[:, self.metric]
+                if self.plot_error:
+                    # betwen error and R^2 score, you want to plot the error
+                    score = [dict_el[0][1][self.label] for dict_el in results]
+                    self.plot_label = "Error score"
+                # choice of label to plot, self.metric
+                else:
+                    score = [dict_el[0][2][self.label] for dict_el in results]
+                    self.plot_label = "$R^2$ score"
                 measure = ""
 
             mean_error = np.mean(score)
@@ -530,7 +532,8 @@ def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
     dataset_label: str = None,
-    metric: int = 0,
+    label: int = None,
+    plot_error: bool = False,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -1397,7 +1400,11 @@ class _RDMPlots:
         self,
         rdms: List[npt.NDArray],
         axis: Optional[matplotlib.axes.Axes],
-        metric: str = "Normalized Euclidean distance",
+        discrete: bool = None,
+        num_bins: int = None,
+        labels: npt.NDArray = None,
+        titles: List[str] = None,
+        metric: str = "Correlation",
         dataset_label: str = None,
         cmap: str = "viridis",
         figsize: Tuple[np.float64, np.float64] = None,
@@ -1474,6 +1481,9 @@ class _RDMPlots:
                 for i in range(num_bins + 1):
                     lower_bin_border = round(min_value + i * step_distance, 2)
                     self.tick_labels.append(str(lower_bin_border))
+
+            else:
+                self.tick_labels, _ = np.unique(labels, return_inverse=True)
 
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
