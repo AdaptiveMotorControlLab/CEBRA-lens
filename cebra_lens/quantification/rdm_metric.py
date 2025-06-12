@@ -253,7 +253,6 @@ class RDM(_BaseMetric):
         self,
         rdms: Dict[str, List[npt.NDArray]],
         titles: List[str] = None,
-        metric: str = "Correlation",
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
@@ -267,8 +266,6 @@ class RDM(_BaseMetric):
             Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
         titles : List[str], optional
             List of title for the RDM plots, if it is different from ordered layers.
-        metric : str, optional
-            The metric to be used for the plot. Default is "Correlation".
         cmap : str, optional
             The colormap to be used for the plot. Default is "viridis".
         figsize : tuple, optional
@@ -289,7 +286,7 @@ class RDM(_BaseMetric):
                 num_bins=self.num_bins,
                 discrete=self.discrete,
                 titles=titles,
-                metric=metric,
+                metric=self.metric,
                 dataset_label=self.dataset_label,
                 cmap=cmap,
                 figsize=figsize,
