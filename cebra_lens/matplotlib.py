@@ -60,13 +60,16 @@ class _GenericPlot(_BasePlot):
         self.unique_keys = []
         self.colors = []
 
-    def plot(self, plot_data: Dict[str, npt.NDArray]) -> None:
+    def plot(self, plot_data: Dict[str, npt.NDArray], y_axis: str) -> None:
         """Create a plot where the x-axis corresponds to layer and the y-axis to the calculated metric per layer.
 
         Parameters:
         -----------
         plot_data: Dict[str, npt.NDArray]
             Dictionary containing the data to be plotted. Where the keys represent the model label, and the values are the metric values per layer for each model inside a model label category.
+
+        y_axis: str
+            The label for the y-axis of the plot, e.g. "Distance", "Decoding accuracy", etc.
         """
         for idx, (key, data_list) in enumerate(plot_data.items()):
             color = self.colors[idx]
@@ -104,6 +107,8 @@ class _GenericPlot(_BasePlot):
             )
 
         self.ax.set_title(self.title, fontsize=15)
+        self.ax.set_xlabel("Layer #", fontsize=12)
+        self.ax.set_ylabel(f"{y_axis}", fontsize=12)
         sns.despine(ax=self.ax)
 
 
@@ -156,7 +161,7 @@ class RDMPlotOracle(_GenericPlot):
 
     def plot(self):
         """Plots correlation of RDM with Oracle data across layers"""
-        return super().plot(self.plot_data)
+        return super().plot(self.plot_data, "Correlation with Oracle RDM")
 
 
 class DistancePlot(_GenericPlot):
@@ -207,9 +212,9 @@ class DistancePlot(_GenericPlot):
             data[key] = layer_values
         return data
 
-    def plot(self):
+    def plot(self, y_axis: str):
         """Plots distance metric across layers"""
-        return super().plot(self.plot_data)
+        return super().plot(self.plot_data, y_axis)
 
 
 class DecodingPlot(_GenericPlot):
@@ -219,8 +224,14 @@ class DecodingPlot(_GenericPlot):
     ----------
     results_dict : Dict[str, npt.NDArray]
         Dictionary containing the decoding scores to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
+    dataset_label: str, optional
+        The dataset type. Currently only "visual" and "HPC" are supported.
     title: str
         Title of the plot.
+    label: int, optional
+        The index of the label to plot. If None, the first label will be used.
+    plot_error: bool, optional
+        If True, will plot the error scores instead of R^2 scores (default is False).
     figsize: Tuple[np.float64, np.float64]
         Figure width and height in inches.
     axis: matplotlib.axes.Axes, optional
@@ -238,13 +249,20 @@ class DecodingPlot(_GenericPlot):
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
 
+        if dataset_label == "visual":
+            title = "Decoding accuracies across layers (%)"
+        elif dataset_label == "HPC":
+            title = "Decoding position errors across layers (cm)"
+        else:
+            title = "Decoding average R^2 scores across layers"
+
         if title is not None:
             if dataset_label == "visual":
                 title = "Decoding accuracies across layers (%)"
             elif dataset_label == "HPC":
                 title = "Decoding position errors across layers (cm)"
             else:
-                title = "Decoding average R^2 scores across layers"
+                title = "Decoding average $R^2$ scores across layers"
                 if plot_error:
                     title = "Decoding error scores across layers"
 
@@ -273,8 +291,7 @@ class DecodingPlot(_GenericPlot):
         for idx, (group_name, models) in enumerate(self.results_dict.items()):
             layer_values = []
 
-            for i, model in enumerate(models):
-
+            for i, inner_list in enumerate(data_list):
                 if self.dataset_label == "visual":
                     ind = 2
                 elif self.dataset_label == "HPC":
@@ -296,7 +313,16 @@ class DecodingPlot(_GenericPlot):
 
     def plot(self):
         """Plots decoding accuracy across layers"""
-        return super().plot(self.plot_data)
+        if self.dataset_label == "visual":
+            y_axis = "Decoding accuracy (%)"
+        elif self.dataset_label == "HPC":
+            y_axis = "Decoding position error (cm)"
+        else:
+            if self.plot_error:
+                y_axis = "Decoding error score"
+            else:
+                y_axis = "Decoding $R^2$ score"
+        return super().plot(self.plot_data, y_axis)
 
 
 def plot_rdm_correlation(
@@ -334,6 +360,7 @@ def plot_distance(
     distance_dict: Dict[str, npt.NDArray],
     title: str = "Inter-repetition distance",
     figsize: Tuple[np.float64, np.float64] = (15, 5),
+    y_axis: str = None,
     **kwargs,
 ) -> plt.Figure:
     """
@@ -347,6 +374,8 @@ def plot_distance(
         The title for the plot (default is "Inter-repetition distance").
     figsize : Tuple, optional
         A Tuple representing the figure size (default is (15, 5)).
+    y_axis: str, optional
+        The label for the y-axis of the plot, e.g. "Euclidean distance".
 
     Returns:
     --------
@@ -358,7 +387,7 @@ def plot_distance(
         results_dict=distance_dict,
         title=title,
         figsize=figsize,
-    ).plot(**kwargs)
+    ).plot(y_axis=y_axis, **kwargs)
 
 
 def plot_layer_decoding(
@@ -379,6 +408,12 @@ def plot_layer_decoding(
         A dictionary containing the decoding results to be plotted. Please refer to the ``plot_data`` argument in the ``plot`` function from the inherited class.
     title : str, optional
         The title for the plot (default is "Decoding by layer").
+    dataset_label : str, optional
+        The dataset type. Currently only "visual" is supported.
+    label : int, optional
+        The index of the label to plot. If None, the first label will be used.
+    plot_error : bool, optional
+        If True, will plot the error scores instead of R^2 scores (default is False).
     figsize : Tuple, optional
         A Tuple representing the figure size (default is (15, 5)).
 
@@ -411,6 +446,10 @@ class ModelDecodingPlot(_BasePlot):
         The dataset type. Currently only "visual" is supported.
     axis : matplotlib.axes.Axes, optional
         The axis on which to plot. If None, a new axis will be created.
+    label : int, optional
+        The index of the label to plot.
+    plot_error : bool, optional
+        If True, will plot the error scores instead of R^2 scores (default is False).
     """
 
     def __init__(
@@ -419,8 +458,8 @@ class ModelDecodingPlot(_BasePlot):
         palette: str,
         dataset_label: str,
         axis: Optional[matplotlib.axes.Axes],
-        label: int = None,
-        plot_error: bool = False,
+        label: str = "Averaged R^2 score",
+        metric: int = 0,
     ):
 
         self.figsize = (
@@ -451,23 +490,16 @@ class ModelDecodingPlot(_BasePlot):
         for i, (key, results) in enumerate(self.results_dict.items()):
             if self.dataset_label == "visual":
                 # for visual dataset get accuracy
-                score = [dict_el[0][2] for dict_el in results]
-                self.plot_label = "Accuracy"
+                score = results[:, 2]
+                self.label = "Accuracy"
                 measure = "(%)"
             elif self.dataset_label == "HPC":
                 # for HPC dataset get position error
-                score = [dict_el[0][1] for dict_el in results]
-                self.plot_label = "Position Error"
+                score = results[:, 1]
+                self.label = "Position Error"
                 measure = "(cm)"
             else:
-                if self.plot_error:
-                    # betwen error and R^2 score, you want to plot the error
-                    score = [dict_el[0][1][self.label] for dict_el in results]
-                    self.plot_label = "Error score"
-                # choice of label to plot, self.metric
-                else:
-                    score = [dict_el[0][2][self.label] for dict_el in results]
-                    self.plot_label = "R^2 score"
+                score = results[:, self.metric]
                 measure = ""
 
             mean_error = np.mean(score)
@@ -498,8 +530,7 @@ def plot_decoding(
     results_dict: Dict[str, npt.NDArray],
     palette: str = "hls",
     dataset_label: str = None,
-    label: int = None,
-    plot_error: bool = False,
+    metric: int = 0,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -512,6 +543,14 @@ def plot_decoding(
         A dictionary where the keys are model category labels or model file names and the values are 2d-arrays containing decoding results.
     palette: str, optional (default is "hls")
         The color palette to use for the plot.
+    dataset_label : str, optional
+        The dataset type. Currently only "visual" is supported.
+    label : int, optional
+        The index of the label to plot. If None, the first label will be used.
+    plot_error : bool, optional
+        If True, will plot the error scores instead of R^2 scores (default is False).
+    ax : matplotlib.axes.Axes, optional
+        The axis on which to plot. If None, a new axis will be created.
 
     Returns:
     --------
@@ -531,20 +570,21 @@ def plot_decoding(
 class _EmbeddingPlot:
     """Plot the embedding visualization across layers.
 
-    Attributes:
-    ----------
-    embeddings : List[npt.NDArray]
-        A list of embeddings. If it contains only one list inside then it is to plot embeddings, but if it contains two sets of data inside then it is for embedding comparison across layers
-    labels : npt.NDArray
-        An array of labels corresponding to the data labels.
-    sample_plot : int
-        The number of samples to plot from the embeddings.
-    comparison_groups : Tuple
-        A Tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings.
-    dataset_label : str
-        A string representing the label for the data being plotted.
-    axis : matplotlib.axes.Axes, optional
-        The axis on which to plot the embeddings.
+        Attributes:
+        ----------
+        embeddings : List[npt.NDArray]
+            A list of embeddings. If it contains only one list inside then it is to plot embeddings, but if it contains two sets of data inside then it is for embedding comparison across layers
+        labels : npt.NDArray
+            An array of labels corresponding to the data labels.
+        dataset_label : str
+            A string representing the label for the data being plotted.
+    .    axis : matplotlib.axes.Axes, optional
+            The axis on which to plot the embeddings.
+        sample_plot : int
+            The number of samples to plot from the embeddings.
+
+        comparison_groups : Tuple
+            A Tuple containing the type of embedding and a list of two strings representing the labels for the two sets of embeddings
     """
 
     def __init__(
@@ -582,6 +622,15 @@ class _EmbeddingPlot:
             self.axs_2 = self.ax[1, :]
 
     def _multi_padding_check(self, embeddings_1, embeddings_2):
+        """Check if the two embeddings have the same number of layers, and if not, pad the shorter one with empty arrays.
+
+        Parameters:
+        -----------
+        embeddings_1 : List[npt.NDArray]
+            The first list of embeddings.
+        embeddings_2 : List[npt.NDArray]
+            The second list of embeddings.
+        """
 
         self.num_layers_1 = len(embeddings_1)
         self.num_layers_2 = len(embeddings_2)
@@ -635,30 +684,66 @@ class _EmbeddingPlot:
         ax: matplotlib.axes.Axes,
         embedding: npt.NDArray,
         label: str,
+        label_ind: int = None,
         gray: bool = False,
         idx_order: Tuple[int, int, int] = (0, 1, 2),
-    ):
+    ) -> matplotlib.axes.Axes:
         """
         Plot the dataset embedding, for generic dataset.
         Will plot all labels.
+
+        Parameters:
+        -----------
+        ax : matplotlib.axes.Axes
+            The axis on which to plot the embedding.
+        embedding : npt.NDArray
+            The embedding data to be plotted, shape Samples X num Neurons.
+        label : str
+            The label data corresponding to the embedding, shape Samples X num Labels.
+        label_ind : int, optional
+            The index of the label to be used for coloring the points in the embedding plot.
+        gray : bool, optional
+            If True, will plot the embedding in gray scale (default is False).
+        idx_order : Tuple[int, int, int], optional
+            The order of indices to use for the x, y, and z axes in the 3D plot (default is (0, 1, 2)).
+
+        Returns:
+        --------
+        ax : matplotlib.axes.Axes
+            The axis with the plotted embedding.
         """
         idx1, idx2, idx3 = idx_order
-        available_palettes = list(sns.palettes.SEABORN_PALETTES.keys())
         label = np.atleast_2d(label)
         if label.shape[0] == 1 and label.shape[1] != 1:
             label = label.T
 
-        for num_labels in range(len(label)):
-            l_ind = label[:, num_labels]
-            l_c = label[l_ind, 0]
-            l_cmap = available_palettes[num_labels]
-
+        if (
+            0 in np.unique(label[:, label_ind])
+            and 1 in np.unique(label[:, label_ind])
+            and len(np.unique(label[:, label_ind])) == 2
+        ):
+            l_ind = label[:, label_ind] == 1
+            l_c = label[l_ind, label_ind]
             l = ax.scatter(
                 embedding[l_ind, idx1],
                 embedding[l_ind, idx2],
                 embedding[l_ind, idx3],
                 c=l_c,
-                cmap=l_cmap,
+                cmap="cool",
+                s=0.05,
+                alpha=0.75,
+            )
+
+        else:
+            c = label[:, label_ind]
+
+            idx1, idx2, idx3 = idx_order
+            ax.scatter(
+                embedding[:, idx1],
+                embedding[:, idx2],
+                embedding[:, idx3],
+                c=c,
+                cmap="magma",
                 s=0.05,
                 alpha=0.75,
             )
@@ -681,7 +766,26 @@ class _EmbeddingPlot:
         gray: bool = False,
         idx_order: Tuple[int, int, int] = (0, 1, 2),
     ) -> matplotlib.axes.Axes:
-        """Plot the hippocampus embedding."""
+        """Plot the hippocampus embedding.
+
+        Parameters:
+        -----------
+        ax : matplotlib.axes.Axes
+            The axis on which to plot the embedding.
+        embedding : npt.NDArray
+            The embedding data to be plotted, shape Samples X num Neurons.
+        label : str
+            The label data corresponding to the embedding, shape Samples X num Labels.
+        gray : bool, optional
+            If True, will plot the embedding in gray scale (default is False).
+        idx_order : Tuple[int, int, int], optional
+            The order of indices to use for the x, y, and z axes in the 3D plot (default is (0, 1, 2)).
+
+        Returns:
+        --------
+        ax : matplotlib.axes.Axes
+            The axis with the plotted embedding.
+        """
         r_ind = label[:, 1] == 1
         l_ind = label[:, 2] == 1
 
@@ -733,8 +837,27 @@ class _EmbeddingPlot:
         label: str,
         gray: bool = False,
         idx_order: Tuple[int, int, int] = (0, 1, 2),
-    ):
-        """Plot the Allen embedding."""
+    ) -> matplotlib.axes.Axes:
+        """Plot the Allen embedding.
+
+        Parameters:
+        -----------
+        ax : matplotlib.axes.Axes
+            The axis on which to plot the embedding.
+        embedding : npt.NDArray
+            The embedding data to be plotted, shape Samples X num Neurons.
+        label : str
+            The label data corresponding to the embedding, shape Samples X num Labels.
+        gray : bool, optional
+            If True, will plot the embedding in gray scale (default is False).
+        idx_order : Tuple[int, int, int], optional
+            The order of indices to use for the x, y, and z axes in the 3D plot (default is (0, 1, 2)).
+
+        Returns:
+        --------
+        ax : matplotlib.axes.Axes
+            The axis with the plotted embedding.
+        """
         c = label
 
         idx1, idx2, idx3 = idx_order
@@ -763,6 +886,7 @@ class _EmbeddingPlot:
         axs: List[matplotlib.axes.Axes],
         embeddings: List[npt.NDArray],
         group_name: str,
+        label_ind: int = None,
     ):
         """
         Plots the embedding layers on the provided axes. Used in tSNE and in normal CEBRA.
@@ -775,6 +899,8 @@ class _EmbeddingPlot:
             List of numpy arrays containing the embeddings for each layer. Each array is shape Samples X num Neurons.
         group_name : str
             Title of the plot (e.g., 'single' or 'multi').
+        label_ind : int, optional
+            The index of the label to be used for coloring the points in the embedding plot. If None, dataset_label needs to be defined as not None.
         """
         num_layers = len(embeddings)
         self.fig.suptitle(
@@ -799,23 +925,47 @@ class _EmbeddingPlot:
             elif self.dataset_label == "visual":
                 ax = self._plot_allen(ax, embedding, label)
             else:
-                ax = self._plot_dataset(ax, embedding, label)
+                ax = self._plot_dataset(ax, embedding, label, label_ind=label_ind)
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")
             plt.subplots_adjust(wspace=0, hspace=0)
             plt.tight_layout()
 
-    def plot_embedding(self, group_name):
-        return self.plot_embedding_layers(self.axs, self.embeddings, group_name)
+    def plot_embedding(self, group_name: str, label_ind: int = None):
+        """Plots embedding layers for a single model.
 
-    def plot_compare(self):
-        """Plots embedding layers for models being compared"""
+        Parameters:
+        -----------
+        group_name : str
+            The name of the group to be used for the plot title.
+        label_ind : int
+            The index of the label to be used for coloring the points in the embedding plot.
+        """
+
+        return self.plot_embedding_layers(
+            self.axs, self.embeddings, group_name, label_ind=label_ind
+        )
+
+    def plot_compare(self, label_ind: int = None):
+        """Plots embedding layers for models being compared
+
+        Parameters:
+        -----------
+        label_ind : int
+            The index of the label to be used for coloring the points in the embedding plot.
+        """
         self.plot_embedding_layers(
-            self.axs_1, self.embeddings_1, self.comparison_groups[1][0]
+            self.axs_1,
+            self.embeddings_1,
+            self.comparison_groups[1][0],
+            label_ind=label_ind,
         )
         self.plot_embedding_layers(
-            self.axs_2, self.embeddings_2, self.comparison_groups[1][1]
+            self.axs_2,
+            self.embeddings_2,
+            self.comparison_groups[1][1],
+            label_ind=label_ind,
         )
         self.fig.suptitle(
             f"CEBRA across layers comparison",
@@ -830,8 +980,9 @@ def compare_embeddings_layers(
     embeddings_2: List[npt.NDArray],
     labels: npt.NDArray,
     comparison_groups: Tuple = ("tSNE", ["Untrained", "Trained"]),
-    dataset_label: str = "HPC",
+    dataset_label: str = None,
     sample_plot: int = None,
+    label_ind: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
@@ -849,7 +1000,11 @@ def compare_embeddings_layers(
     comparison_groups : Tuple, optional
         Labels describing the embeddings (default is ("tSNE", ["Untrained", "Trained"]) ).
     dataset_label : str, optional
-        Dataset identifier (default is "HPC").
+        Dataset identifier.
+    sample_plot : int, optional
+        Number of samples to plot from the embeddings (default is None, which means all samples will be plotted).
+    label_ind : int, optional
+        The index of the label to be used for coloring the points in the embedding plot (default is None).
     ax : matplotlib.axes.Axes, optional
         Matplotlib axes object (default is None).
 
@@ -865,18 +1020,44 @@ def compare_embeddings_layers(
         dataset_label=dataset_label,
         sample_plot=sample_plot,
         axis=ax,
-    ).plot_compare(**kwargs)
+    ).plot_compare(label_ind, **kwargs)
 
 
 def plot_embeddings(
     data: Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]],
     labels: npt.NDArray,
     group_name: str = None,
-    dataset_label: str = "HPC",
+    dataset_label: str = None,
+    label_ind: int = None,
     sample_plot: int = None,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
 ) -> plt.Figure:
+    """
+    Plots embeddings for a input models in data.
+
+    Parameters:
+    -----------
+    data : Union[Dict[str, List[npt.NDArray]], List[npt.NDArray]]
+        A dictionary where the keys are group names and the values are lists of embeddings, or a list of embeddings.
+    labels : npt.NDArray
+        An array of labels corresponding to the data labels.
+    group_name : str, optional
+        The name of the group to be used if data is not a dictionary (default is None).
+    dataset_label : str, optional
+        A string representing the label for the data being plotted (default is "HPC").
+    sample_plot : int, optional
+        The number of samples to plot from the embeddings (default is None, which means all samples will be plotted).
+    ax : matplotlib.axes.Axes, optional
+        The axis on which to plot the embeddings (default is None, which means a new axis will be created).
+    **kwargs : additional keyword arguments
+        Additional keyword arguments to be passed to the plotting function.
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the embedding plots.
+    """
 
     data_dict = data
     if not isinstance(data, Dict):
@@ -894,7 +1075,9 @@ def plot_embeddings(
                 dataset_label=dataset_label,
                 sample_plot=sample_plot,
                 axis=ax,
-            ).plot_embedding(group_name=f"{group_name} instance {i}", **kwargs)
+            ).plot_embedding(
+                group_name=f"{group_name} instance {i}", label_ind=label_ind, **kwargs
+            )
 
 
 class _ActivationPlot:
@@ -1156,6 +1339,8 @@ def plot_cka_heatmaps(
     -----------
     cka_matrices : Dict[str, npt.NDArray]
         Dictionary of CKA matrices where the keys are the comparison names and the values the matrices.
+    annot : bool
+        If True, shows the values in the heatmap cells.
     show_cbar : bool
         If True, shows the color bar.
     cbar_label : str
@@ -1188,6 +1373,14 @@ class _RDMPlots:
     ----------
     rdms : List[Tuple[npt.NDArray,np.float64]]
         A list of RDMs to be plotted. Each RDM should be a 2D array-like structure.
+    axis : matplotlib.axes.Axes
+        The axis on which to plot the RDMs. If None, a new axis will be created.
+    discrete : bool
+        If True, the RDMs are discrete. If False, they are continuous.
+    num_bins : int
+        The number of bins to use for discretizing the RDMs if they are continuous.
+    labels : npt.NDArray
+        An array of labels corresponding to the data labels. This is used for setting tick labels.
     titles : List[str]
         A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
     metric : str
@@ -1204,11 +1397,7 @@ class _RDMPlots:
         self,
         rdms: List[npt.NDArray],
         axis: Optional[matplotlib.axes.Axes],
-        discrete: bool = None,
-        num_bins: int = None,
-        labels: npt.NDArray = None,
-        titles: List[str] = None,
-        metric: str = "Correlation",
+        metric: str = "Normalized Euclidean distance",
         dataset_label: str = None,
         cmap: str = "viridis",
         figsize: Tuple[np.float64, np.float64] = None,
@@ -1221,6 +1410,7 @@ class _RDMPlots:
 
         self.titles = titles
         self.metric = metric
+        self.discrete = discrete
         self.dataset_label = dataset_label
         self.cmap = cmap
         self.figsize = figsize
@@ -1285,9 +1475,6 @@ class _RDMPlots:
                     lower_bin_border = round(min_value + i * step_distance, 2)
                     self.tick_labels.append(str(lower_bin_border))
 
-            else:
-                self.tick_labels, _ = np.unique(labels, return_inverse=True)
-
     def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
@@ -1308,11 +1495,14 @@ class _RDMPlots:
         return self.ax
 
     def plot(self):
-        """Handles plotting logic."""
+        """
+        Handles plotting logic.
+        For different datasets, it sets the ticks and labels accordingly, also depending on whether the RDMs are discrete or continuous.
+        """
 
         for i, rdm in enumerate(self.rdms):
-            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="auto")
-            self.ax[i].set_title(self.titles[i], fontsize=14)
+            cax = self.ax[i].imshow(rdm, cmap=self.cmap, aspect="equal")
+            self.ax[i].set_title(self.titles[i], fontsize=10)
 
             if self.dataset_label == "HPC":
                 # Set the x and y ticks
@@ -1363,10 +1553,26 @@ class _RDMPlots:
                 )
             else:
                 num_ticks = len(self.tick_labels)
-                self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-                self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                self.ax[i].set_xticklabels(self.tick_labels, rotation=90, ha="right")
-                self.ax[i].set_yticklabels(self.tick_labels)
+                if self.dataset_label == "visual" or self.discrete is False:
+
+                    self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                    self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                    self.ax[i].set_xticklabels(
+                        self.tick_labels, rotation=90, ha="right", fontsize=6
+                    )
+                    self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
+                else:
+                    size = rdm.shape[0]
+                    num_categories = len(self.tick_labels)
+                    block_size = size / num_categories
+                    tick_positions = np.arange(block_size / 2, size, block_size)
+
+                    self.ax[i].set_xticks(tick_positions)
+                    self.ax[i].set_yticks(tick_positions)
+                    self.ax[i].set_xticklabels(
+                        self.tick_labels, rotation=90, ha="right"
+                    )
+                    self.ax[i].set_yticklabels(self.tick_labels)
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
@@ -1396,6 +1602,12 @@ def plot_rdm(
     -----------
     rdms : Dict[str, List[npt.NDArray]]
         A dictionary containing for key a group name, a for values a list of models and for each layer their respective rdms and correlation to Oracle rdm matrix.
+    labels : npt.NDArray
+        An array of labels for the data points, used for tick labels. Default is None.
+    discrete : bool, optional
+        If True, the RDMs will be plotted with discrete tick labels. If False, continuous labels will be used. Default is None.
+    num_bins : int, optional
+        The number of bins to use for discrete tick labels if `discrete` is True. Default is None.
     titles : List[str]
         A list of titles for each RDM plot. The length of this list should match the length of `rdms`.
     metric : str, optional
@@ -1420,7 +1632,7 @@ def plot_rdm(
         rdms=rdms,
         labels=labels,
         discrete=discrete,
-        num_bins = num_bins,
+        num_bins=num_bins,
         titles=titles,
         metric=metric,
         dataset_label=dataset_label,
@@ -1437,13 +1649,41 @@ def plot_rdm_all(
     titles: Optional[List[str]] = None,
     num_bins: int = None,
     metric: Optional[str] = "Correlation",
-    dataset_label: Optional[str] = "visual",
+    dataset_label: Optional[str] = None,
     cmap: Optional[str] = "viridis",
     figsize: Optional[Tuple[np.float64, np.float64]] = None,
     ax: Optional[matplotlib.axes.Axes] = None,
 ) -> plt.Figure:
     """
-    The input to plot_rdm needs to be a list of rdms nothing more
+    Plotting function for RDMs inside a dictionary where there are lists of RDMs for models for group labels.
+
+    Parameters:
+    -----------
+    rdms : Dict[str, List[npt.NDArray]]
+        A dictionary where the keys are group names and the values are lists of RDM matrices for each model in the group.
+    labels : npt.NDArray, optional
+        An array of labels for the data points, used for tick labels. Default is None.
+    discrete : bool, optional
+        If True, the RDMs will be plotted with discrete tick labels. If False, continuous labels will be used. Default is None.
+    titles : List[str], optional
+        A list of titles for each RDM plot. The length of this list should match the number of RDMs in `rdms`. Default is None.
+    num_bins : int, optional
+        The number of bins to use for discrete tick labels if `discrete` is True. Default is None.
+    metric : str, optional
+        The metric used for the RDM, which will be displayed as the colorbar label. Default is "Correlation".
+    dataset_label : str, optional
+        The label of the dataset, which determines the tick labels. Default is None.
+    cmap : str, optional
+        The color map to use for the plotting. Default is "viridis".
+    figsize : Tuple[np.float64, np.float64], optional
+        The size of the figure (width, height). Default is None.
+    ax : matplotlib.axes.Axes, optional
+        The axis on which to plot the RDMs. If None, a new axis will be created.
+
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plotted RDMs.
     """
     for key, data_list in rdms.items():
         for inner_list in data_list:
@@ -1453,7 +1693,7 @@ def plot_rdm_all(
                 rdms=values,
                 labels=labels,
                 discrete=discrete,
-                num_bins = num_bins,
+                num_bins=num_bins,
                 metric=metric,
                 titles=titles,
                 dataset_label=dataset_label,

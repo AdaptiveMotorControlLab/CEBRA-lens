@@ -14,6 +14,7 @@ from ..utils import extract_label
 class DistanceMetric:
     """
     Base class for distance metrics.
+
     This class provides methods to compute distances between embeddings and centroids.
     """
 
@@ -104,10 +105,10 @@ class Intrabin(DistanceMetric):
 
     Parameters:
     -----------
-        indices : List[np.int64]
-            A list of indices specifying the bins.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
+    indices : List[np.int64]
+        A list of indices specifying the bins.
+    metric : str, optional
+        The distance metric to use for computing distances (default is "cosine").
     """
 
     def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
@@ -150,7 +151,24 @@ class Intrabin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Intra-bin distance",
         figsize: tuple = (15, 5),
-    ):
+    ) -> matplotlib.figure.Figure:
+        """
+        Plots the intra-bin distances.
+
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Intra-bin distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -159,12 +177,13 @@ class Interrep(DistanceMetric):
     Class to compute inter-repetition distances for a given embedding data, indices, and repetition indices.
 
     Parameters:
-        indices : List[np.int64]
-            A list of indices specifying the bins.
-        repetition_indices : List[np.int64]
-            A list of lists specifying the repetition indices.
-        metric : str, optional
-            The distance metric to use for computing distances (default is "cosine").
+    -----------
+    indices : List[np.int64]
+        A list of indices specifying the bins.
+    repetition_indices : List[np.int64]
+        A list of lists specifying the repetition indices.
+    metric : str, optional
+        The distance metric to use for computing distances (default is "cosine").
 
     """
 
@@ -226,7 +245,24 @@ class Interrep(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-repetition distance",
         figsize: tuple = (15, 5),
-    ):
+    ) -> matplotlib.figure.Figure:
+        """
+        Plots the inter-repetition distances.
+
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Inter-repetition distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -265,7 +301,7 @@ class Interbin(DistanceMetric):
             embedding=embedding, indices=self.indices, metric=self.metric
         )
 
-        # Compute pairwise distances between centroids using cosine distance
+        # Compute pairwise distances between centroids using metric
         distances = cdist(centroids, centroids, metric=self.metric)
 
         # Compute the mean inter-bin distance for each layer, excluding self-distances
@@ -279,7 +315,24 @@ class Interbin(DistanceMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = "Inter-bin distance",
         figsize: tuple = (15, 5),
-    ):
+    ) -> matplotlib.figure.Figure:
+        """
+        Plots the inter-bin distances.
+
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is "Inter-bin distance").
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
         return super().plot(distance_dict, title)
 
 
@@ -293,6 +346,10 @@ class Distance(_BaseMetric):
             The data array of shape (num_samples, num_features).
         label : torch.Tensor
             The array of labels corresponding to the data.
+        label_ind : int, optional
+            The index of the label to extract from the array (default is 0). This is relevant when dataset_label is None.
+        is_discrete_labels : bool, optional
+            Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
         dataset_label : str, optional
             The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
         metric : str, optional
@@ -306,7 +363,7 @@ class Distance(_BaseMetric):
         data,
         label,
         label_ind: int = 0,
-        discrete: bool = None,
+        is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "cosine",
         distance_label: str = "interbin",
@@ -314,19 +371,40 @@ class Distance(_BaseMetric):
 
         super().__init__()
         self.data = data
-        # now the labels are in the correct format for binning
-        self.label = extract_label(label, label_ind)
+        self.label = label
         self.dataset_label = dataset_label
+        if self.dataset_label is None:
+            if label_ind is None:
+                raise ValueError(
+                    "If dataset_label is None, label_ind must be provided to indicate which label will be used for the distance calculation."
+                )
+            if is_discrete_labels is None:
+                raise ValueError(
+                    "If dataset_label is None, is_discrete_labels must be specified to indicate whether the label is is_discrete_labels or continuous."
+                )
+            self.label = extract_label(label, label_ind)
         self.metric = metric
         self.distance_label = distance_label
 
-        self.indices, self.repetition_indices = self._define_indices(discrete)
+        self.indices, self.repetition_indices = self._define_indices(is_discrete_labels)
 
     def _define_indices(
-        self, discrete: bool = None
+        self, is_discrete_labels: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
-        Defines the indices for the bins and repetitions based on the specified distance label.
+        Defines the indices for each bin.
+        
+        Depending on if the labels are continuous or is_discrete_labels, the labels are calculated accordingly using `continuous_binning()` or `is_discrete_labels_binning()`.
+
+        Parameters:
+        -----------
+        is_discrete_labels : bool, optional
+            Specifies whether the given label is is_discrete_labels or continuous. This is relevant when dataset_label is None.
+
+        Returns:
+        --------
+        Tuple[npt.NDArray, Optional[npt.NDArray]]
+            A tuple containing the indices for each bin and the repetition indices if applicable.
         """
 
         if self.dataset_label is not None:
@@ -340,28 +418,28 @@ class Distance(_BaseMetric):
                     label=self.label,
                     dataset_label=self.dataset_label,
                     sample_mode="all",
-                )
+                )[0]
         else:
 
-            if discrete is None:
+            if is_discrete_labels is None:
                 raise ValueError(
-                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                    "The 'is_discrete_labels' parameter must be specified.This parameter specifies whether the given label is is_discrete_labels or continuous."
                 )
 
-            if discrete:
+            if is_discrete_labels:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
-                # dataset_label is None and discrete is True
+                # dataset_label is None and is_discrete_labels is True
                 idxs = discrete_binning(
                     label=self.label,
                 )
             else:
-                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                # dataset_label is HPC or visual/ is_discrete_labels is False (dataset_label is None)
                 idxs = continuous_binning(
                     data=self.data,
                     label=self.label,
                     dataset_label=self.dataset_label,
                     sample_mode="all",
-                )
+                )[0]
 
         if self.distance_label == "interrep":
             # only relevant for visual dataset
@@ -411,5 +489,23 @@ class Distance(_BaseMetric):
         distance_dict: Dict[str, npt.NDArray],
         title: str = None,
         figsize: tuple = (15, 5),
-    ):
-        return plot_distance(distance_dict, title, figsize)
+    ) -> matplotlib.figure.Figure:
+        """
+        Plots the computed distances.
+
+        Parameters:
+        -----------
+        distance_dict : Dict[str, npt.NDArray]
+            A dictionary containing the distances for each layer.
+        title : str, optional
+            The title of the plot (default is None, which will use the distance type).
+        figsize : tuple, optional
+            The size of the figure for the plot (default is (15, 5)).
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The figure object containing the plot.
+        """
+        y_axis = f"{self.metric} distance"
+        return plot_distance(distance_dict, title, figsize, y_axis)
