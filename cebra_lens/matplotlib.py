@@ -255,7 +255,7 @@ class DecodingPlot(_GenericPlot):
             elif dataset_label == "HPC":
                 title = "Decoding position errors across layers (cm)"
             else:
-                title = "Decoding average R^2 scores across layers"
+                title = "Decoding average $R^2$ scores across layers"
                 if plot_error:
                     title = "Decoding error scores across layers"
 
@@ -315,7 +315,7 @@ class DecodingPlot(_GenericPlot):
             if self.plot_error:
                 y_axis = "Decoding error score"
             else:
-                y_axis = "Decoding R^2 score"
+                y_axis = "Decoding $R^2$ score"
         return super().plot(self.plot_data, y_axis)
 
 
