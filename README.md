@@ -39,7 +39,7 @@ Additionally, there is the possibility to analyze the decoding performance of ea
     - plot model layer RDM
     - plot correlation with Oracle RDM across layers
 
-#### Distance metrics:
+#### Distance metrics
 These analyses quantify the change in the distance calculated per layer in a model. The distances which are implemented in this codebase are:
 - intra-class distance
 - inter-class distance
