@@ -19,6 +19,27 @@ def decoding(
     label_train: npt.NDArray,
     label_test: npt.NDArray,
 ) -> Tuple[np.float64, list, list]:
+    """
+    Function to decode the embeddings using KNNDecoder from CEBRA. 
+    
+    The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
+
+    Parameters:
+    ----------
+    embedding_train : pt.tensor
+        The part of the output embedding to use as training for the decoding.
+    embedding_test : pt.tensor
+        The part of the output embedding to use as testing for the decoding.
+    label_train : npt.NDArray
+        The true labels corresponding to the training data.
+    label_test : npt.NDArray
+        The true labels corresponding to the validation data.
+
+    Returns:
+    -------
+    Tuple[np.float64, list, list]
+        A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
+    """
     try:
         num_labels = label_train.shape[1]
     except:
@@ -89,7 +110,7 @@ class Decoding(_BaseMetric):
     layer_type : Type[nn.Module]
         The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
     output_only: bool
-        A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
+        A bool which defines whether to calculate decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
     """
 
     def __init__(
@@ -98,7 +119,7 @@ class Decoding(_BaseMetric):
         train_label: npt.NDArray,
         test_data: torch.Tensor,
         test_label: npt.NDArray,
-        session_id: int = -1,
+        session_id: int = 0,
         dataset_label: str = None,
         layer_type: Optional[Type[nn.Module]] = None,
         output_only: bool = True,
@@ -113,6 +134,24 @@ class Decoding(_BaseMetric):
         self.layer_type = layer_type
         self.output_only = output_only
 
+    def output_information(self):
+        print("The decoding analysis initialized with the following parameters:")
+        print(f"Session ID: {self.session_id}")
+        print(f"Dataset label: {self.dataset_label}")
+        print(f"Layer type: {self.layer_type}")
+        print(f"Output only: {self.output_only}")
+        if self.output_only:
+            print(
+                "The decoding analysis will only compute the decoding scores for the output embeddings of the model and plot them."
+            )
+        else:
+            print(
+                "The decoding analysis will compute the decoding scores for the activations of the model and plot them across layers."
+            )
+        print(
+            "If you want to change the parameters, please re-initialize the class with the new parameters or if you want to change the output_only parameter, call the compute_metric function with the output_only parameter set to True or False."
+        )
+
     def _decode(
         self,
         embedding_train: npt.NDArray,
@@ -123,6 +162,7 @@ class Decoding(_BaseMetric):
     ) -> npt.NDArray:
         """
         Decodes a model by choosing the appropriate function base on the dataset.
+
         Currently compatible with multi-session and single-session data only.
 
         Parameters:
@@ -281,9 +321,6 @@ class Decoding(_BaseMetric):
     def __name__(self):
         return "decode_by_layer"
 
-    def set_output_only(self, output_only):
-        self.output_only = output_only
-
     def plot(
         self,
         results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
@@ -293,7 +330,41 @@ class Decoding(_BaseMetric):
         palette: str = "hls",
         plot_error: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
-    ):
+    ) -> matplotlib.axes.Axes:
+        """
+        Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.
+        
+        If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
+
+        Parameters:
+        ----------
+        results_dict : Dict[str, Dict[int, Tuple[np.float64, list, list]]]
+            Dictionary containing the decoding results for each model and layer.
+        title : str, optional
+            The title of the plot. Default is "Decoding by layer".
+        label : int, optional
+            The label to plot. This is relevant only if the dataset label is not specified.
+        figsize : tuple, optional
+            The size of the figure to plot. Default is (15, 5).
+        palette : str, optional
+            The color palette to use for the plot. Default is "hls".
+        plot_error : bool, optional
+            Whether to plot the error score. Default is False, meaning the R^2 score will be plotted. This is relevant only if the dataset label is not specified.
+        ax : Optional[matplotlib.axes.Axes], optional
+            The axes to plot on. If None, a new figure and axes will be created. Default is None.
+
+        Returns:
+        -------
+        matplotlib.axes.Axes
+            The axes containing the plot. If ax is provided, it will return the same ax with the plot, otherwise it will create a new figure and return the ax.
+        """
+
+        if self.dataset_label is None:
+            if label is None:
+                raise ValueError(
+                    "If dataset_label is not specified, label must be provided to plot the decoding scores for specified label."
+                )
+
         if self.output_only:
             return plot_decoding(
                 results_dict, palette, self.dataset_label, label, plot_error, ax

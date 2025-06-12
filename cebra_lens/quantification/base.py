@@ -22,8 +22,8 @@ class _BaseMetric:
         Parameters:
         -----------
         activations : Dict[str, npt.NDArray]
-            Dictionary where the key is the model category label (str),
-            and the value is a npt.NDArray containing for all the models under that label the activations per layer.
+            Dictionary where the key is the model category group (str),
+            and the value is a npt.NDArray containing for all the models under that group the activations per layer.
 
         """
         raise NotImplementedError
@@ -40,6 +40,8 @@ class _BaseMetric:
         -----------
         activations : List[npt.NDArray]
             List of 2D numpy array representing the activation of neurons per layer.
+        metric_func : types.FunctionType
+            Function that computes the metric for a single layer's activations.
 
         Returns:
         --------
