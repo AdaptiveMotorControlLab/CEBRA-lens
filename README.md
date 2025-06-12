@@ -103,7 +103,7 @@ The full demonstration of the usage is in the form of 2 jupyter notebooks:
 
 These two notebooks showcase the different approach when analyzing a pre-defined dataset and a non-defined dataset.
 
-## 🛠️ Download dataset
+## 📥 Download dataset
 
 The `utils.py` file contains a overarching `get_data` function which checks for a pre-defined dataset label and accordingly loads the data based on specific functions for the dataset. If you want to load data from a non-defined dataset, you need to first import the loading function inside the `utils.py` file as so:
 ```
