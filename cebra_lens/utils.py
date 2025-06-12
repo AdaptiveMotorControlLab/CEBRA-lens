@@ -114,12 +114,12 @@ def compute_metric(
 
     else:
         if isinstance(metric_class, Decoding):
-            metric_class.set_output_only(output_only)
+            metric_class.output_only(output_only)
             metric_class.output_information()
             print("\n")
 
         if isinstance(metric_class, RDM):
-            metric_class.set_bool_oracle(bool_oracle)
+            metric_class.bool_oracle(bool_oracle)
             metric_class.output_information()
             print("\n")
         for group_name, samples in model_data.items():
@@ -178,6 +178,7 @@ def model_loader(
         If not provided, the model's own filename will be used as its label.
         The keys should be the file names without extensions, and the values should be the desired group labels.
 
+        ```
         Example:
         groups = {'allen_single_session_mouse4_0k_UT_torch':'single_UT',
           'allen_multi_session_10k_3_torch':'multi_TR',
@@ -191,6 +192,7 @@ def model_loader(
           'allen_single_session_mouse4_10k_2_torch':'single_TR',
           'allen_multi_session_0k_UT_torch':'multi_UT',
           'allen_single_session_mouse4_10k_4_torch':'single_TR'}
+         ```
 
     Returns:
     --------

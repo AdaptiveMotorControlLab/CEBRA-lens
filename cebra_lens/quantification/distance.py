@@ -14,6 +14,7 @@ from ..utils import extract_label
 class DistanceMetric:
     """
     Base class for distance metrics.
+
     This class provides methods to compute distances between embeddings and centroids.
     """
 
@@ -391,7 +392,9 @@ class Distance(_BaseMetric):
         self, discrete: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
-        Defines the how the labels are binned and the indices for each bin.
+        Defines the indices for each bin.
+        
+        Depending on if the labels are continuous or discrete, the labels are calculated accordingly using `continuous_binning()` or `discrete_binning()`.
 
         Parameters:
         -----------

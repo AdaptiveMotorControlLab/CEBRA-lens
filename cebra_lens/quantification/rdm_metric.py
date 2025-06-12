@@ -28,7 +28,7 @@ class RDM(_BaseMetric):
     metric : str, optional
         The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
     bool_oracle : bool, optional
-        Whether to compute and compare with the Oracle RDM. Default is True.
+        A flag to determine whether to compute and compare the calculated RDM with the Oracle RDM. Default is True.
     label_ind : int, optional
         The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
     """
@@ -226,28 +226,6 @@ class RDM(_BaseMetric):
     @property
     def __name__(self):
         return "rdm"
-
-    def set_num_bins(self, num_bins):
-        """
-        Sets the number of bins for the RDM computation.
-
-        Parameters:
-        ----------
-        num_bins : int
-            The number of bins to be used in the RDM computation.
-        """
-        self.num_bins = num_bins
-
-    def set_bool_oracle(self, bool_oracle: bool):
-        """
-        Sets whether to compute and compare with the Oracle RDM.
-
-        Parameters:
-        ----------
-        bool_oracle : bool
-            If True, the Oracle RDM will be computed and compared with the computed RDMs.
-        """
-        self.bool_oracle = bool_oracle
 
     def plot(
         self,
