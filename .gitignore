@@ -167,8 +167,4 @@ src/preprocessing/.DS_Store
 src/.DS_Store
 .DS_Store
 src/preprocessing/image_processing/.DS_Store
-<<<<<<< HEAD
-/tests
-=======
->>>>>>> 28220bd420780dfe843b3d9b26166d5ec7de7622
-src/scripts/script_tester.ipynb
+

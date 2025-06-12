@@ -9,6 +9,7 @@ from torch import nn
 from .quantification.decoding import Decoding
 from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
+from .quantification.tsne import Tsne
 from .utils_hpc import get_datasets as get_datasets_hpc
 from .utils_allen import get_datasets as get_datasets_visual
 
@@ -122,6 +123,7 @@ def compute_metric(
             metric_class.bool_oracle(bool_oracle)
             metric_class.output_information()
             print("\n")
+
         for group_name, samples in model_data.items():
 
             computed_values = [
@@ -156,9 +158,13 @@ def plot_metric(
     group_name : str, optional
         This is relevant is the user wants to plot data from a single model, so we can transform it into a dictionary form which is acceptable. Here the group_name will be a placeholder group label values for the single model. Default is "Model group".
     """
-
-    if not isinstance(data_dict, Dict) and isinstance(metric_class, RDM):
-        data_dict = {group_name: data_dict}
+    if not isinstance(data_dict, Dict) and not isinstance(metric_class, Tsne):
+        if isinstance(metric_class, RDM):
+            data_dict = {group_name: data_dict}
+        else:
+            raise ValueError(
+                "data_dict should be a dictionary mapping model groups to lists of model data."
+            )
     return metric_class.plot(data_dict, **kwargs)
 
 

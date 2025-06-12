@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import numpy.typing as npt
 from typing import List
-
+import warnings
 
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     """
@@ -162,6 +162,12 @@ def continuous_binning(
             j = j + 1
 
     else:
+        if len(data) < 1000:
+            warnings.warn(
+                "Continuous binning is not recommended for datasets with less than 1000 samples. "
+                "Consider using discrete binning instead.",
+                UserWarning
+                )
         num_bins = int(
             0.005 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data

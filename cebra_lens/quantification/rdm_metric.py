@@ -124,7 +124,7 @@ class RDM(_BaseMetric):
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and discrete is True
                 idxs = discrete_binning(
-                    label=self.label,
+                    labels=self.label,
                 )
             else:
                 # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
@@ -230,8 +230,7 @@ class RDM(_BaseMetric):
     def plot(
         self,
         rdms: Dict[str, List[npt.NDArray]],
-        titles: List[Tuple[npt.NDArray, float]] = None,
-        metric: str = "Correlation",
+        titles: List[str] = None,
         cmap: str = "viridis",
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
@@ -243,10 +242,8 @@ class RDM(_BaseMetric):
         ----------
         rdms : Dict[str, List[npt.NDArray]]
             Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
-        titles : List[Tuple[npt.NDArray, float]], optional
-            List of tuples containing the RDM and the correlation score with the Oracle RDM for each layer of a model. Default is None.
-        metric : str, optional
-            The metric to be used for the plot. Default is "Correlation".
+        titles : List[str], optional
+            List of title for the RDM plots, if it is different from ordered layers.
         cmap : str, optional
             The colormap to be used for the plot. Default is "viridis".
         figsize : tuple, optional
@@ -267,7 +264,7 @@ class RDM(_BaseMetric):
                 num_bins=self.num_bins,
                 discrete=self.discrete,
                 titles=titles,
-                metric=metric,
+                metric=self.metric,
                 dataset_label=self.dataset_label,
                 cmap=cmap,
                 figsize=figsize,
