@@ -11,7 +11,7 @@ The current version of CEBRA-Lens supports specific analysis on the Allen Instit
 
 Implemented "neuroscientist methods" for neural representation analysis are presented below.
 
-#### Model performance analysis
+### Model performance analysis
 
 - Model decoding metrics:
     - average $R^2$ score across labels
@@ -20,13 +20,13 @@ Implemented "neuroscientist methods" for neural representation analysis are pres
 
 Additionally, there is the possibility to analyze the decoding performance of each layer embeddings.
 
-#### Layer visualizations
+### Layer visualizations
 
 - single unit activation - plotting the activation value for each neural network unit
 - high-dimensional embedding of population activity - 3D scatter plot using the first 3 dimensions
 - low-dimensional embedding of population activity with a 3 component tSNE ([Cai & Ma, arXiv, 2022](https://arxiv.org/abs/2201.00005))
 
-#### Population level comparison
+### Population level comparison
 
 - Central Kernal Alignment (CKA) ([Kim et al., arXiv, 2022](https://arxiv.org/abs/2210.16156))
 
@@ -39,7 +39,7 @@ Additionally, there is the possibility to analyze the decoding performance of ea
     - plot model layer RDM
     - plot correlation with Oracle RDM across layers
 
-#### Distance metrics
+### Distance metrics
 These analyses quantify the change in the distance calculated per layer in a model. The distances which are implemented in this codebase are:
 - intra-class distance
 - inter-class distance
