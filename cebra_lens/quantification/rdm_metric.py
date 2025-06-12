@@ -37,7 +37,7 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
-        discrete: bool = None,
+        is_discrete_labels: bool = None,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
@@ -65,7 +65,7 @@ class RDM(_BaseMetric):
 
         self.metric = metric
         self.bool_oracle = bool_oracle
-        self.discrete = discrete
+        self.discrete = is_discrete_labels
         self.idxs, self.num_bins = self._define_indices()
 
     def output_information(self):

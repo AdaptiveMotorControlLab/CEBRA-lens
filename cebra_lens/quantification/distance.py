@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 from typing import List, Optional, Tuple, Union, Dict
-from .misc import discrete_binning, repetition_binning, continuous_binning
+from .misc import is_discrete_labels_binning, repetition_binning, continuous_binning
 from .base import _BaseMetric
 from ..matplotlib import *
 import numpy.typing as npt
@@ -348,7 +348,7 @@ class Distance(_BaseMetric):
             The array of labels corresponding to the data.
         label_ind : int, optional
             The index of the label to extract from the array (default is 0). This is relevant when dataset_label is None.
-        discrete : bool, optional
+        is_discrete_labels : bool, optional
             Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
         dataset_label : str, optional
             The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
@@ -363,7 +363,7 @@ class Distance(_BaseMetric):
         data,
         label,
         label_ind: int = 0,
-        discrete: bool = None,
+        is_discrete_labels: bool = None,
         dataset_label: str = None,
         metric: str = "cosine",
         distance_label: str = "interbin",
@@ -378,28 +378,28 @@ class Distance(_BaseMetric):
                 raise ValueError(
                     "If dataset_label is None, label_ind must be provided to indicate which label will be used for the distance calculation."
                 )
-            if discrete is None:
+            if is_discrete_labels is None:
                 raise ValueError(
-                    "If dataset_label is None, discrete must be specified to indicate whether the label is discrete or continuous."
+                    "If dataset_label is None, is_discrete_labels must be specified to indicate whether the label is is_discrete_labels or continuous."
                 )
             self.label = extract_label(label, label_ind)
         self.metric = metric
         self.distance_label = distance_label
 
-        self.indices, self.repetition_indices = self._define_indices(discrete)
+        self.indices, self.repetition_indices = self._define_indices(is_discrete_labels)
 
     def _define_indices(
-        self, discrete: bool = None
+        self, is_discrete_labels: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for each bin.
         
-        Depending on if the labels are continuous or discrete, the labels are calculated accordingly using `continuous_binning()` or `discrete_binning()`.
+        Depending on if the labels are continuous or is_discrete_labels, the labels are calculated accordingly using `continuous_binning()` or `is_discrete_labels_binning()`.
 
         Parameters:
         -----------
-        discrete : bool, optional
-            Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
+        is_discrete_labels : bool, optional
+            Specifies whether the given label is is_discrete_labels or continuous. This is relevant when dataset_label is None.
 
         Returns:
         --------
@@ -421,19 +421,19 @@ class Distance(_BaseMetric):
                 )[0]
         else:
 
-            if discrete is None:
+            if is_discrete_labels is None:
                 raise ValueError(
-                    "The 'discrete' parameter must be specified.This parameter specifies whether the given label is discrete or continuous."
+                    "The 'is_discrete_labels' parameter must be specified.This parameter specifies whether the given label is is_discrete_labels or continuous."
                 )
 
-            if discrete:
+            if is_discrete_labels:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
-                # dataset_label is None and discrete is True
-                idxs = discrete_binning(
+                # dataset_label is None and is_discrete_labels is True
+                idxs = is_discrete_labels_binning(
                     label=self.label,
                 )
             else:
-                # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
+                # dataset_label is HPC or visual/ is_discrete_labels is False (dataset_label is None)
                 idxs = continuous_binning(
                     data=self.data,
                     label=self.label,
