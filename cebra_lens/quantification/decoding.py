@@ -10,6 +10,9 @@ import numpy.typing as npt
 from typing import Dict, Type, Tuple
 import torch.nn as nn
 import sklearn.metrics
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer, accuracy_score, mean_absolute_error, r2_score
+from sklearn.utils.multiclass import type_of_target
 import torch as pt
 
 
@@ -20,7 +23,9 @@ def decoding(
     label_test: npt.NDArray,
 ) -> Tuple[np.float64, list, list]:
     """
-    Function to decode the embeddings using KNNDecoder from CEBRA. The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
+    Decode embeddings with per-label automated KNNDecoder hyperparameter search.
+
+    Returns overall score (R² or accuracy), per-label error, and per-label score.
 
     Parameters:
     ----------
@@ -47,40 +52,54 @@ def decoding(
 
     # resampling, subsampling and supervised model architecture is still not supported
     # checked via '''supported_model_architectures()''' function
-
+    label_types = [type_of_target(label_train[:, i]) for i in range(num_labels)]
+    is_reg = [t == "continuous" for t in label_types]
     # for each label find another K
+    # Hyperparameter grid for k
+    param_grid = {"n_neighbors": np.arange(1, 11) ** 2}
+
     predictions, labels_test_err, labels_test_score = [], [], []
+
     for i in range(num_labels):
-        params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
-        errs = []
-        for n in params:
-            train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
-            train_valid_idx = int(len(embedding_train) / 9 * 8)
-            train_decoder.fit(
-                embedding_train[:train_valid_idx], label_train[:train_valid_idx, i]
-            )
-            pred = train_decoder.predict(embedding_train[train_valid_idx:])
-            err = label_train[train_valid_idx:, i] - pred
-            errs.append(abs(err).sum())
+        y_train_i = label_train[:, i]
+        y_test_i  = label_test[:, i]
 
-        test_decoder = cebra.KNNDecoder(
-            n_neighbors=params[np.argmin(errs)], metric="cosine"
+        if not is_reg[i]:
+            # force binary → integer so CEBRA picks classifier
+            y_train_i = y_train_i.astype(np.int64)
+            y_test_i  = y_test_i.astype(np.int64)
+        
+        # Choose scorer based on continuous vs. classification
+        scorer = make_scorer(r2_score) if is_reg[i] else make_scorer(accuracy_score)
+        params = np.arange(1,11)**2
+        
+        gs = GridSearchCV(
+            cebra.KNNDecoder(metric="cosine"),
+            param_grid=param_grid,
+            scoring=scorer,
+            cv=2,
         )
-
-        test_decoder.fit(embedding_train, label_train[:, i])
-        label_pred = test_decoder.predict(embedding_test)
+        gs.fit(embedding_train, y_train_i)
+        label_pred = gs.best_estimator_.predict(embedding_test)  
 
         predictions.append(label_pred)
-        label_test_err = np.median(abs(label_pred - label_test[:, i]))
-        labels_test_err.append(label_test_err)
-        label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
-        labels_test_score.append(label_test_score)
+        if is_reg[i]:
+            labels_test_err.append(mean_absolute_error(y_test_i, label_pred))
+            labels_test_score.append(r2_score(y_test_i, label_pred))
+        else:
+            acc = accuracy_score(y_test_i, label_pred)
+            labels_test_err.append(1.0 - acc)
+            labels_test_score.append(acc)    
 
     # transform it into an appropriate shape
     predictions = np.stack(np.array(predictions), axis=1)
-    # difference between classification error and regression error -> here we are only taking into account regression style labels
 
-    test_score = sklearn.metrics.r2_score(label_test, predictions)
+    if all(is_reg):
+        test_score = r2_score(label_test, predictions)
+    elif not any(is_reg):
+        test_score = accuracy_score(label_test.ravel(), predictions.ravel())
+    else:
+        test_score = None # for now, because not useful now
 
     # always plot the test_score in R2 for overall labels, if wanted you can choose a label and plot its error, but I need to add a parameter
 
