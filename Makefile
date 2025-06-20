@@ -44,8 +44,6 @@ serve_page:
 format:
 	yapf -i -p -r cebra_lens
 	yapf -i -p -r tests
-	yapf -i -p -r docs/docs/examples
-	yapf -i -p -r docs/docs/conf.py
 	isort cebra_lens/
 	isort tests/
 
