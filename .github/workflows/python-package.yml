@@ -46,14 +46,17 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run the formatter
+        shell: bash -el {0}
         run: |
           make format
 
       - name: Run the spelling detector
+        shell: bash -el {0}
         run: |
           make codespell
 
       - name: Check the documentation coverage
+        shell: bash -el {0}
         run: |
           make interrogate
 
