@@ -8,9 +8,10 @@ CKA computation was taken from https://github.com/amathislab/DeepDraw
 from tqdm import tqdm
 import numpy as np
 from .base import _BaseMetric
-from ..matplotlib import *
+import cebra_lens.matplotlib as cebra_lens_matplotlib
 from typing import Optional, List, Dict, Tuple
 import numpy.typing as npt
+import matplotlib
 
 
 class CKA(_BaseMetric):
@@ -188,7 +189,8 @@ class CKA(_BaseMetric):
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
-                # the situation when there multiple models inside model labels and the same number of models inside each label
+                # the situation when there multiple models inside model labels and the same number of 
+                # models inside each label
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j],
                                                      embeddings_2[j])
             else:
@@ -207,7 +209,8 @@ class CKA(_BaseMetric):
         Parameters:
         -----------
         activations : Dict[str, npt.NDArray]
-            A dictionary where keys are strings which represent the model label and values are 2d lists with the corresponding activations per layer.
+            A dictionary where keys are strings which represent the model label and values are 2d lists 
+            with the corresponding activations per layer.
 
         comparison : Tuple[str, str]
             A tuple containing the model labels to compare.
@@ -227,7 +230,8 @@ class CKA(_BaseMetric):
 
         if len(activations_1) != len(activations_2):
             # if the number of models in a label is different from the other model label
-            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with the first model
+            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with 
+            # the first model
             if len(activations_1) > len(activations_2):
                 embeddings_1 = activations_1
                 embeddings_2 = activations_2[0]
@@ -293,7 +297,7 @@ class CKA(_BaseMetric):
         matplotlib.axes.Axes
             The axes on which the heatmap is plotted.
         """
-        return plot_cka_heatmaps(
+        return cebra_lens_matplotlib.plot_cka_heatmaps(
             cka_matrices,
             annot,
             show_cbar,

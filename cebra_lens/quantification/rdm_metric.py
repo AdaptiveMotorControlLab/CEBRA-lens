@@ -1,13 +1,15 @@
 """All the functions relative to the Representation Dissimilarity Matrix (RDM) calculation"""
 
+from typing import Dict, List, Optional
 import numpy as np
 from scipy.linalg import block_diag
 from typing import List, Optional, Tuple, Union
 from scipy.spatial.distance import correlation, pdist, squareform
 from .misc import discrete_binning, continuous_binning
 import torch
+import matplotlib
 from .base import _BaseMetric
-from ..matplotlib import *
+import cebra_lens.matplotlib as cebra_lens_matplotlib
 import numpy.typing as npt
 
 
@@ -21,8 +23,8 @@ class RDM(_BaseMetric):
         The data array of shape (num_samples, num_features).
     label : torch.Tensor
         The array of labels corresponding to the data.
-    discrete : bool, optional
-        Whether the labels are discrete or continuous. If None, it will be determined based on the dataset_label.
+    is_discrete_labels : bool, optional
+        Whether the labels are discrete or continuous. By default, it is False, meaning the labels are continuous.
     dataset_label : str, optional
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
@@ -37,7 +39,7 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
-        is_discrete_labels: bool = None,
+        is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
@@ -254,9 +256,9 @@ class RDM(_BaseMetric):
             The figure containing the plotted RDMs.
         """
         if self.bool_oracle:
-            return plot_rdm_correlation(rdms)
+            return cebra_lens_matplotlib.plot_rdm_correlation(rdms)
         else:
-            return plot_rdm_all(
+            return cebra_lens_matplotlib.plot_rdm_all(
                 rdms=rdms,
                 labels=self.label,
                 num_bins=self.num_bins,

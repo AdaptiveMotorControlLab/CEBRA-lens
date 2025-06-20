@@ -6,7 +6,7 @@ import numpy as np
 import numpy.typing as npt
 from tqdm import tqdm
 from torch import nn
-from .quantification.decoding import Decoding
+from .quantification.decoder import Decoding
 from .quantification.rdm_metric import RDM
 from .quantification.cka_metric import CKA
 from .quantification.tsne import Tsne

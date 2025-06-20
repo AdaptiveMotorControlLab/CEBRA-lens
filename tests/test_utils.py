@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from unittest.mock import patch, MagicMock
 from cebra_lens import extract_label, compute_metric, plot_metric, model_loader
-from cebra_lens.quantification.decoding import Decoding
+from cebra_lens.quantification.decoder import Decoding
 from cebra_lens.quantification.rdm_metric import RDM
 from cebra_lens.quantification.cka_metric import CKA
 

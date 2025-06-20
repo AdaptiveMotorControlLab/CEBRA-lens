@@ -80,7 +80,8 @@ def get_cut_indices(
         cut_indices.append((0, 0))
     elif layer_type == None:
         raise NotImplementedError(
-            "Padding handling not implemented for 'all'.")
+            "Padding handling not implemented to handle activations for all layer types.",
+            "Set layer_type to nn.Conv1d to use the default padding handling.")
     else:
         # need to analyze the padding from the last output of Conv1 and apply the same cut
         raise NotImplementedError(
@@ -94,7 +95,7 @@ def get_activations_model(
     session_id: int = -1,
     name: str = "single",
     instance: int = 0,
-    layer_type: Type[nn.Module] = None,
+    layer_type: Type[nn.Module] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
     """
     Extracts activations from a single model layer.
@@ -112,7 +113,8 @@ def get_activations_model(
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
     layer_type : Type[nn.Module]
-        The type of layer to extract activations from. Defaults to None, meaning extracts activations from all layers.
+        The type of layer to extract activations from. None means it extracts activations from all layers.
+        Default is nn.Conv1d, which is the most common layer type used in CEBRA models.
 
     Returns:
     --------

@@ -5,12 +5,13 @@ from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from ..activations import get_activations_model
 from .base import _BaseMetric
-from ..matplotlib import *
+import cebra_lens.matplotlib as cebra_lens_matplotlib
 import numpy.typing as npt
-from typing import Dict, Type, Tuple
+from typing import Dict, Type, Tuple, Optional
 import torch.nn as nn
 import sklearn.metrics
 import torch as pt
+import matplotlib
 
 
 def decoding(
@@ -118,7 +119,7 @@ class Decoding(_BaseMetric):
         test_label: npt.NDArray,
         session_id: int = 0,
         dataset_label: str = None,
-        layer_type: Optional[Type[nn.Module]] = None,
+        layer_type: Optional[Type[nn.Module]] = nn.Conv1d,
         output_only: bool = True,
     ):
 
@@ -315,7 +316,7 @@ class Decoding(_BaseMetric):
     def __name__(self):
         return "decode_by_layer"
 
-    def set_output_only(self, output_only):
+    def set_output_only(self, output_only: bool) -> None:
         """
         Set the output_only parameter to True or False. If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
 
@@ -369,8 +370,8 @@ class Decoding(_BaseMetric):
                 )
 
         if self.output_only:
-            return plot_decoding(results_dict, palette, self.dataset_label,
+            return cebra_lens_matplotlib.plot_decoding(results_dict, palette, self.dataset_label,
                                  label, plot_error, ax)
         else:
-            return plot_layer_decoding(results_dict, title, self.dataset_label,
+            return cebra_lens_matplotlib.plot_layer_decoding(results_dict, title, self.dataset_label,
                                        label, plot_error, figsize)
