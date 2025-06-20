@@ -23,6 +23,7 @@ interrogate:
 		cebra_lens
 
 docs:
+	export PYTHONPATH=$(pwd)
 	jupyter-book build docs
 
 docs-touch:

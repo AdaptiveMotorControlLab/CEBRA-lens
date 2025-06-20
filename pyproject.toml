@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cebra_lens"
+version = "0.1.0"
+description = "Tools for analyzing embeddings from CEBRA"
+authors = [
+    { name = "Your Name", email = "your@email.com" },
+]
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "cebra",
+    "joblib",
+    "numpy<2.0; platform_system=='Windows'",
+    "numpy<2.0; platform_system!='Windows' and python_version<'3.10'",
+    "numpy; platform_system!='Windows' and python_version>='3.10'",
+    "literate-dataclasses",
+    "scikit-learn",
+    "scipy",
+    "torch>=2.4.0",
+    "tqdm",
+    "matplotlib<3.11",
+    "matplotlib-inline",
+    "requests",
+    "pandas",
+    "plotly",
+    "seaborn",
+    "jupyter-book",
+    "ghp-import",
+    "ipykernel",
+    "jupyter",
+    "nbconvert",
+    "nbformat",
+    "pylint",
+    "toml",
+    "yapf",
+    "black",
+    "isort",
+    "coverage",
+    "pytest",
+    "licenseheaders",
+    "interrogate",
+    "codespell",
+    "cffconvert"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "yapf",
+    "isort",
+    "pylint"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*"]
