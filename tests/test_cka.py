@@ -101,7 +101,7 @@ def test_compute_intra_label(dummy_cka, dummy_activations):
     assert isinstance(result, np.ndarray)
 
 
-@patch("cebra_lens.matplotlib.plot_cka_heatmaps")
+@patch("cebra_lens.utils_plot.plot_cka_heatmaps")
 def test_plot_calls_heatmap(mock_plot, dummy_cka):
     cka_matrices = {"A": np.random.rand(2, 2)}
     dummy_cka.plot(cka_matrices, annot=True)

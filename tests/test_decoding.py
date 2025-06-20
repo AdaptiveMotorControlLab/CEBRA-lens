@@ -98,8 +98,8 @@ def test_set_output_only():
     assert decoding_instance.output_only is False
 
 
-@patch("cebra_lens.matplotlib.plot_decoding")
-@patch("cebra_lens.matplotlib.plot_layer_decoding")
+@patch("cebra_lens.utils_plot.plot_decoding")
+@patch("cebra_lens.utils_plot.plot_layer_decoding")
 def test_decoder_plot(mock_layer_plot, mock_decoding_plot):
     dummy_result = {"modelA": {0: (0.9, [0.1], [0.8])}}
     dec = cebra_lens.quantification.decoder.Decoding(

@@ -2,11 +2,12 @@
 
 from typing import List, Optional, Union
 
+import matplotlib
 import numpy as np
 import numpy.typing as npt
 from sklearn.manifold import TSNE
 
-from ..matplotlib import *
+from ..utils_plot import *
 from .base import _BaseMetric
 
 

@@ -1,9 +1,9 @@
 import numpy as np
-from ..cebra_lens.quantification.base import _BaseMetric
-from ..cebra_lens.matplotlib import *
+from cebra_lens.quantification.base import _BaseMetric
+from cebra_lens.utils_plot import *
 from typing import List, Optional, Union
 import numpy.typing as npt
-
+import matplotlib
 
 class NewMetric(_BaseMetric):
     """
@@ -86,7 +86,7 @@ class NewMetric(_BaseMetric):
             The figure containing the NewMetric plot.
         """
 
-        #Need to define the plot_newMetric function in the matplotlib.py
+        #Need to define the plot_newMetric function in the utils_plot.py
         return plot_newMetric(
             embeddings,
             labels,

@@ -90,8 +90,8 @@ def test_compute_single_activation_tensor():
     assert result[0][0].ndim == 2  # RDM squareform
 
 
-@patch("cebra_lens.matplotlib.plot_rdm_correlation")
-@patch("cebra_lens.matplotlib.plot_rdm_all")
+@patch("cebra_lens.utils_plot.plot_rdm_correlation")
+@patch("cebra_lens.utils_plot.plot_rdm_all")
 def test_rdm_plot(mock_all, mock_corr):
     dummy_rdm = cebra_lens.quantification.rdm_metric.RDM(
         data=torch.rand((10000, 5)),

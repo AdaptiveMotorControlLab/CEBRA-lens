@@ -9,7 +9,7 @@ import torch
 import torch as pt
 import torch.nn as nn
 
-import cebra_lens.matplotlib as cebra_lens_matplotlib
+from cebra_lens import utils_plot
 
 from ..activations import get_activations_model
 from ..utils_allen import decoding_frames
@@ -373,10 +373,10 @@ class Decoding(_BaseMetric):
                 )
 
         if self.output_only:
-            return cebra_lens_matplotlib.plot_decoding(results_dict, palette,
-                                                       self.dataset_label,
-                                                       label, plot_error, ax)
+            return utils_plot.plot_decoding(results_dict, palette,
+                                            self.dataset_label, label,
+                                            plot_error, ax)
         else:
-            return cebra_lens_matplotlib.plot_layer_decoding(
-                results_dict, title, self.dataset_label, label, plot_error,
-                figsize)
+            return utils_plot.plot_layer_decoding(results_dict, title,
+                                                  self.dataset_label, label,
+                                                  plot_error, figsize)

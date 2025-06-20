@@ -9,7 +9,7 @@ import torch
 from scipy.linalg import block_diag
 from scipy.spatial.distance import correlation, pdist, squareform
 
-import cebra_lens.matplotlib as cebra_lens_matplotlib
+from cebra_lens import utils_plot
 
 from .base import _BaseMetric
 from .misc import continuous_binning, discrete_binning
@@ -258,9 +258,9 @@ class RDM(_BaseMetric):
             The figure containing the plotted RDMs.
         """
         if self.bool_oracle:
-            return cebra_lens_matplotlib.plot_rdm_correlation(rdms)
+            return utils_plot.plot_rdm_correlation(rdms)
         else:
-            return cebra_lens_matplotlib.plot_rdm_all(
+            return utils_plot.plot_rdm_all(
                 rdms=rdms,
                 labels=self.label,
                 num_bins=self.num_bins,

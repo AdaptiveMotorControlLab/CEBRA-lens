@@ -12,7 +12,7 @@ import numpy as np
 import numpy.typing as npt
 from tqdm import tqdm
 
-import cebra_lens.matplotlib as cebra_lens_matplotlib
+from cebra_lens import utils_plot
 
 from .base import _BaseMetric
 
@@ -300,7 +300,7 @@ class CKA(_BaseMetric):
         matplotlib.axes.Axes
             The axes on which the heatmap is plotted.
         """
-        return cebra_lens_matplotlib.plot_cka_heatmaps(
+        return utils_plot.plot_cka_heatmaps(
             cka_matrices,
             annot,
             show_cbar,

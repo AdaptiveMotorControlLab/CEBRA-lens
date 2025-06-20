@@ -7,8 +7,8 @@ import numpy.typing as npt
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 
-from ..matplotlib import *
 from ..utils import extract_label
+from ..utils_plot import *
 from .base import _BaseMetric
 from .misc import continuous_binning, discrete_binning, repetition_binning
 

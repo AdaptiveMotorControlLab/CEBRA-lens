@@ -9,7 +9,7 @@ import numpy.typing as npt
 import torch
 import torch.nn as nn
 
-from .matplotlib import plot_activations
+from .utils_plot import plot_activations
 
 
 def _cut_array(array: npt.NDArray,
