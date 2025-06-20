@@ -46,49 +46,39 @@ def get_datasets(
             train_datas.append(
                 cebra.datasets.init(
                     f"allen-movie1-ca-single-session-decoding-corrupt-{i}-repeat-{test_session}-train"
-                )
-            )
+                ))
             valid_datas.append(
                 cebra.datasets.init(
                     f"allen-movie1-ca-single-session-decoding-corrupt-{i}-repeat-{test_session}-test"
-                )
-            )
+                ))
     else:
         for i in range(4):
             train_datas.append(
                 cebra.datasets.init(
                     f"allen-movie1-ca-single-session-decoding-{i}-repeat-{test_session}-train"
-                )
-            )
+                ))
             valid_datas.append(
                 cebra.datasets.init(
                     f"allen-movie1-ca-single-session-decoding-{i}-repeat-{test_session}-test"
-                )
-            )
+                ))
     if pseudomice:
         for i in range(len(train_datas)):
             train_datas[i].neural = torch.from_numpy(
                 obtain_pseudomice(
-                    [train_datas[i].neural for i in range(len(train_datas))]
-                )
-            )
+                    [train_datas[i].neural for i in range(len(train_datas))]))
             valid_datas[i].neural = torch.from_numpy(
                 obtain_pseudomice(
-                    [valid_datas[i].neural for i in range(len(train_datas))]
-                )
-            )
+                    [valid_datas[i].neural for i in range(len(train_datas))]))
 
     # Add noise to the 4th mouse only
     if shot_noise is not None:
         # train_datas[0].neural = _add_shot_noise(train_datas[0].neural, scale_factor=shot_noise)
-        valid_datas[3].neural = _add_shot_noise(
-            valid_datas[3].neural, scale_factor=shot_noise
-        )
+        valid_datas[3].neural = _add_shot_noise(valid_datas[3].neural,
+                                                scale_factor=shot_noise)
     elif gaussian_noise is not None:
         # train_datas[0].neural = _add_gaussian_noise(train_datas[0].neural, sigma=gaussian_noise)
-        valid_datas[3].neural = _add_gaussian_noise(
-            valid_datas[3].neural, sigma=gaussian_noise
-        )
+        valid_datas[3].neural = _add_gaussian_noise(valid_datas[3].neural,
+                                                    sigma=gaussian_noise)
 
     # discrete_labels = [np.tile(np.arange(900), 10) for i in range(len(mice))]
     discrete_labels_train = [np.tile(np.arange(900), 9) for i in range(mice)]
@@ -118,16 +108,15 @@ def obtain_pseudomice(mice, num_neurons_per_mouse=80):
     pseudomice_matrix = None
     for i, session in enumerate(mice):
         session_length = session.shape[1]
-        selected_neurons = np.random.choice(
-            session_length, replace=False, size=num_neurons_per_mouse
-        )
+        selected_neurons = np.random.choice(session_length,
+                                            replace=False,
+                                            size=num_neurons_per_mouse)
         neuron_ids.append(selected_neurons)
         if pseudomice_matrix is None:
             pseudomice_matrix = session[:, selected_neurons]
         else:
             pseudomice_matrix = np.concatenate(
-                (pseudomice_matrix, session[:, selected_neurons]), axis=1
-            )
+                (pseudomice_matrix, session[:, selected_neurons]), axis=1)
 
     pseudomouse = copy.deepcopy(mice[0])
     pseudomouse = pseudomice_matrix
@@ -154,7 +143,7 @@ def create_sequences(embedding, labels, seq_len=10):
     sequences = []
     sequence_labels = []
     for i in range(len(embedding) - seq_len):
-        seq = embedding[i : i + seq_len]
+        seq = embedding[i:i + seq_len]
         # Label is the frame number following the sequence
         label = labels[i + seq_len]
         sequences.append(seq)
@@ -162,20 +151,21 @@ def create_sequences(embedding, labels, seq_len=10):
     return np.array(sequences), np.array(sequence_labels)
 
 
-def decoding_frames(
-    embedding_train, embedding_test, label_train, label_test, time_window=1, seq_len=1
-):
+def decoding_frames(embedding_train,
+                    embedding_test,
+                    label_train,
+                    label_test,
+                    time_window=1,
+                    seq_len=1):
     """1-frame decoding.
 
     TODO(celia): Implement n-frames decoding. Started but not functional yet.
     """
     if seq_len > 1:
         embedding_train, label_train = create_sequences(
-            embedding_train, label_train, seq_len
-        )
-        embedding_test, label_test = create_sequences(
-            embedding_test, label_test, seq_len
-        )
+            embedding_train, label_train, seq_len)
+        embedding_test, label_test = create_sequences(embedding_test,
+                                                      label_test, seq_len)
 
     params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
     errs = []
@@ -185,33 +175,27 @@ def decoding_frames(
         if seq_len > 1:
             train_decoder.fit(
                 embedding_train[:train_valid_idx].reshape(
-                    -1, seq_len * embedding_train.shape[2]
-                ),
+                    -1, seq_len * embedding_train.shape[2]),
                 label_train[:train_valid_idx],
             )
             pred = train_decoder.predict(
                 embedding_train[train_valid_idx:].reshape(
-                    -1, seq_len * embedding_train.shape[2]
-                )
-            )
+                    -1, seq_len * embedding_train.shape[2]))
         else:
-            train_decoder.fit(
-                embedding_train[:train_valid_idx], label_train[:train_valid_idx]
-            )
+            train_decoder.fit(embedding_train[:train_valid_idx],
+                              label_train[:train_valid_idx])
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
         err = label_train[train_valid_idx:] - pred
         errs.append(abs(err).sum())
 
-    test_decoder = cebra.KNNDecoder(
-        n_neighbors=params[np.argmin(errs)], metric="cosine"
-    )
+    test_decoder = cebra.KNNDecoder(n_neighbors=params[np.argmin(errs)],
+                                    metric="cosine")
     if seq_len > 1:
         test_decoder.fit(
-            embedding_train.reshape(-1, seq_len * embedding_train.shape[2]), label_train
-        )
+            embedding_train.reshape(-1, seq_len * embedding_train.shape[2]),
+            label_train)
         frame_pred = test_decoder.predict(
-            embedding_test.reshape(-1, seq_len * embedding_test.shape[2])
-        )
+            embedding_test.reshape(-1, seq_len * embedding_test.shape[2]))
     else:
         test_decoder.fit(embedding_train, label_train)
         frame_pred = test_decoder.predict(embedding_test)

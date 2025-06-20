@@ -52,9 +52,8 @@ class _GenericPlot(_BasePlot):
 
     """
 
-    def __init__(
-        self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple, title: str
-    ):
+    def __init__(self, axis: Optional[matplotlib.axes.Axes], figsize: Tuple,
+                 title: str):
         super().__init__(axis, figsize)
         self.title = title
         self.unique_keys = []
@@ -78,7 +77,8 @@ class _GenericPlot(_BasePlot):
             for values in data_list:
                 layer_values.append(values)
                 sns.lineplot(
-                    x=np.arange(1, len(values) + 1),
+                    x=np.arange(1,
+                                len(values) + 1),
                     y=values,
                     linestyle="-",
                     marker="D",
@@ -89,14 +89,12 @@ class _GenericPlot(_BasePlot):
 
             layer_values = np.array(layer_values)
 
-            mean_values = (
-                layer_values
-                if layer_values.ndim == 1
-                else np.mean(layer_values, axis=0)
-            )
+            mean_values = (layer_values if layer_values.ndim == 1 else np.mean(
+                layer_values, axis=0))
 
             sns.lineplot(
-                x=np.arange(1, len(mean_values) + 1),
+                x=np.arange(1,
+                            len(mean_values) + 1),
                 y=mean_values,
                 linestyle="-",
                 marker="D",
@@ -138,7 +136,8 @@ class RDMPlotOracle(_GenericPlot):
 
         self.results_dict = results_dict
         self.plot_data = self._transform()
-        self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
+        self.unique_keys = list(
+            self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
     def _transform(self):
@@ -190,7 +189,8 @@ class DistancePlot(_GenericPlot):
 
         self.results_dict = results_dict
         self.plot_data = self._transform()
-        self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
+        self.unique_keys = list(
+            self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
     def _transform(self) -> Dict[str, List[List[np.float64]]]:
@@ -269,7 +269,8 @@ class DecodingPlot(_GenericPlot):
         self.dataset_label = dataset_label
         self.results_dict = results_dict
         self.plot_data = self._transform()
-        self.unique_keys = list(self.results_dict.keys())  # Define unique keys here
+        self.unique_keys = list(
+            self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
 
     def _transform(self) -> Dict[str, List[List[np.float64]]]:
@@ -345,9 +346,10 @@ def plot_rdm_correlation(
         The generated figure containing the RDM comparison plot.
     """
 
-    return RDMPlotOracle(
-        results_dict=rdm_dict, title=title, figsize=figsize, axis=ax
-    ).plot(**kwargs)
+    return RDMPlotOracle(results_dict=rdm_dict,
+                         title=title,
+                         figsize=figsize,
+                         axis=ax).plot(**kwargs)
 
 
 def plot_distance(
@@ -465,8 +467,7 @@ class ModelDecodingPlot(_BasePlot):
         )  # Call parent constructor to initialize self.fig and self.ax
         self.results_dict = results_dict
         self.palette = sns.color_palette(
-            palette, len(results_dict)
-        )  # Define a color palette
+            palette, len(results_dict))  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
         self.plot_error = plot_error
         self.label = label
@@ -478,9 +479,9 @@ class ModelDecodingPlot(_BasePlot):
     def plot(self, **kwargs) -> None:
         """Plotting logic to plot the decoding scores across models where the x-axis are the model labels, and the y-axis are the decoding scores values."""
 
-        x_positions = list(
-            range(1, len(self.results_dict) + 1)
-        )  # X positions for scatter points
+        x_positions = list(range(1,
+                                 len(self.results_dict) +
+                                 1))  # X positions for scatter points
 
         for i, (key, results) in enumerate(self.results_dict.items()):
             if self.dataset_label == "visual":
@@ -495,7 +496,7 @@ class ModelDecodingPlot(_BasePlot):
                 measure = "(cm)"
             else:
                 if self.plot_error:
-                    # betwen error and R^2 score, you want to plot the error
+                    # between error and R^2 score, you want to plot the error
                     score = [dict_el[0][1][self.label] for dict_el in results]
                     self.plot_label = "Error score"
                 # choice of label to plot, self.metric
@@ -506,9 +507,10 @@ class ModelDecodingPlot(_BasePlot):
 
             mean_error = np.mean(score)
             color = self.palette[i]
-            self.ax.scatter(
-                np.ones_like(score) * x_positions[i], score, color=color, alpha=0.3
-            )
+            self.ax.scatter(np.ones_like(score) * x_positions[i],
+                            score,
+                            color=color,
+                            alpha=0.3)
             self.ax.scatter(
                 x_positions[i],
                 mean_error,
@@ -522,10 +524,10 @@ class ModelDecodingPlot(_BasePlot):
         self.ax.set_title(f"Comparison of {self.plot_label} Across Models")
         self.ax.set_xticks(x_positions)
         self.ax.set_xticklabels(
-            self.results_dict.keys()
-        )  # Set model names as x-tick labels
+            self.results_dict.keys())  # Set model names as x-tick labels
         self.ax.legend()  # Show legend for model labels
-        sns.despine(ax=self.ax)  # Remove top and right spines for aesthetic reasons
+        sns.despine(
+            ax=self.ax)  # Remove top and right spines for aesthetic reasons
 
 
 def plot_decoding(
@@ -640,15 +642,15 @@ class _EmbeddingPlot:
 
         # Padding the shorter embedding to match the number of layers in the longer embedding
         if self.num_layers_1 > self.num_layers_2:
-            embeddings_2 += [np.empty_like(embeddings_2[0])] * (
-                self.num_layers_1 - self.num_layers_2
-            )
+            embeddings_2 += [np.empty_like(embeddings_2[0])
+                             ] * (self.num_layers_1 - self.num_layers_2)
         elif self.num_layers_2 > self.num_layers_1:
-            embeddings_1 += [np.empty_like(embeddings_1[0])] * (
-                self.num_layers_2 - self.num_layers_1
-            )
+            embeddings_1 += [np.empty_like(embeddings_1[0])
+                             ] * (self.num_layers_2 - self.num_layers_1)
 
-    def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
+    def _define_ax(
+            self,
+            axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Parameters:
@@ -662,9 +664,8 @@ class _EmbeddingPlot:
         """
         if axis is None:
             if len(self.embeddings_list) == 2:
-                self._multi_padding_check(
-                    self.embeddings_list[0], self.embeddings_list[1]
-                )
+                self._multi_padding_check(self.embeddings_list[0],
+                                          self.embeddings_list[1])
                 self.fig, self.ax = plt.subplots(
                     2,
                     max(self.num_layers_1, self.num_layers_2),
@@ -683,13 +684,13 @@ class _EmbeddingPlot:
         return self.ax
 
     def _plot_dataset(
-        self,
-        ax: matplotlib.axes.Axes,
-        embedding: npt.NDArray,
-        label: str,
-        label_ind: int = None,
-        gray: bool = False,
-        idx_order: Tuple[int, int, int] = (0, 1, 2),
+            self,
+            ax: matplotlib.axes.Axes,
+            embedding: npt.NDArray,
+            label: str,
+            label_ind: int = None,
+            gray: bool = False,
+            idx_order: Tuple[int, int, int] = (0, 1, 2),
     ) -> matplotlib.axes.Axes:
         """
         Plot the dataset embedding, for generic dataset.
@@ -720,11 +721,9 @@ class _EmbeddingPlot:
         if label.shape[0] == 1 and label.shape[1] != 1:
             label = label.T
 
-        if (
-            0 in np.unique(label[:, label_ind])
-            and 1 in np.unique(label[:, label_ind])
-            and len(np.unique(label[:, label_ind])) == 2
-        ):
+        if (0 in np.unique(label[:, label_ind])
+                and 1 in np.unique(label[:, label_ind])
+                and len(np.unique(label[:, label_ind])) == 2):
             l_ind = label[:, label_ind] == 1
             l_c = label[l_ind, label_ind]
             l = ax.scatter(
@@ -762,12 +761,12 @@ class _EmbeddingPlot:
         return ax
 
     def _plot_hippocampus(
-        self,
-        ax: matplotlib.axes.Axes,
-        embedding: npt.NDArray,
-        label: str,
-        gray: bool = False,
-        idx_order: Tuple[int, int, int] = (0, 1, 2),
+            self,
+            ax: matplotlib.axes.Axes,
+            embedding: npt.NDArray,
+            label: str,
+            gray: bool = False,
+            idx_order: Tuple[int, int, int] = (0, 1, 2),
     ) -> matplotlib.axes.Axes:
         """Plot the hippocampus embedding.
 
@@ -834,12 +833,12 @@ class _EmbeddingPlot:
         return ax
 
     def _plot_allen(
-        self,
-        ax: matplotlib.axes.Axes,
-        embedding: npt.NDArray,
-        label: str,
-        gray: bool = False,
-        idx_order: Tuple[int, int, int] = (0, 1, 2),
+            self,
+            ax: matplotlib.axes.Axes,
+            embedding: npt.NDArray,
+            label: str,
+            gray: bool = False,
+            idx_order: Tuple[int, int, int] = (0, 1, 2),
     ) -> matplotlib.axes.Axes:
         """Plot the Allen embedding.
 
@@ -910,25 +909,27 @@ class _EmbeddingPlot:
             f"{group_name}",
             fontsize=20,
         )
-        labels_list = [self.labels[: self.sample_plot]] * num_layers
+        labels_list = [self.labels[:self.sample_plot]] * num_layers
         titles = [f"Layer {layer}" for layer in range(1, num_layers)]
         titles.append("Output layer")
 
         for i, (label, ax) in enumerate(zip(labels_list, axs)):
-            if (
-                embeddings[i].shape[0] < embeddings[i].shape[1]
-            ):  # should be num Samples X num Neurons
+            if (embeddings[i].shape[0] < embeddings[i].shape[1]
+                ):  # should be num Samples X num Neurons
                 embedding = embeddings[i].T
             else:
                 embedding = embeddings[i]
 
-            embedding = embedding[: self.sample_plot, :]
+            embedding = embedding[:self.sample_plot, :]
             if self.dataset_label == "HPC":
                 ax = self._plot_hippocampus(ax, embedding, label)
             elif self.dataset_label == "visual":
                 ax = self._plot_allen(ax, embedding, label)
             else:
-                ax = self._plot_dataset(ax, embedding, label, label_ind=label_ind)
+                ax = self._plot_dataset(ax,
+                                        embedding,
+                                        label,
+                                        label_ind=label_ind)
 
             ax.set_title(titles[i], y=1)
             ax.axis("off")
@@ -946,9 +947,10 @@ class _EmbeddingPlot:
             The index of the label to be used for coloring the points in the embedding plot.
         """
 
-        return self.plot_embedding_layers(
-            self.axs, self.embeddings, group_name, label_ind=label_ind
-        )
+        return self.plot_embedding_layers(self.axs,
+                                          self.embeddings,
+                                          group_name,
+                                          label_ind=label_ind)
 
     def plot_compare(self, label_ind: int = None):
         """Plots embedding layers for models being compared
@@ -1066,8 +1068,7 @@ def plot_embeddings(
     if not isinstance(data, Dict):
         if group_name is None:
             raise ValueError(
-                "If data is not a dictionary, group_name must be provided."
-            )
+                "If data is not a dictionary, group_name must be provided.")
         data_dict = {group_name: [data]}
 
     for group_name, models in data_dict.items():
@@ -1078,9 +1079,9 @@ def plot_embeddings(
                 dataset_label=dataset_label,
                 sample_plot=sample_plot,
                 axis=ax,
-            ).plot_embedding(
-                group_name=f"{group_name} instance {i}", label_ind=label_ind, **kwargs
-            )
+            ).plot_embedding(group_name=f"{group_name} instance {i}",
+                             label_ind=label_ind,
+                             **kwargs)
 
 
 class _ActivationPlot:
@@ -1124,7 +1125,9 @@ class _ActivationPlot:
         self._define_ax(axis)
         self.fig.suptitle(title, fontsize=20)
 
-    def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
+    def _define_ax(
+            self,
+            axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Args:
@@ -1135,9 +1138,9 @@ class _ActivationPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.fig, self.axes = plt.subplots(
-                self.num_layers + 1, 1, figsize=self.figsize
-            )
+            self.fig, self.axes = plt.subplots(self.num_layers + 1,
+                                               1,
+                                               figsize=self.figsize)
         else:
             self.axes = [axis] + [
                 axis.figure.add_subplot(self.num_layers + 1, 1, i + 2)
@@ -1146,7 +1149,8 @@ class _ActivationPlot:
 
     def plot(self):
         """Handles plotting logic."""
-        self.axes[0].imshow(self.input_data.T[:, 0 : self.sample_plot], aspect="auto")
+        self.axes[0].imshow(self.input_data.T[:, 0:self.sample_plot],
+                            aspect="auto")
         self.axes[0].set_title("Input Data")
         self.axes[0].set_ylabel("Channel #")
         self.axes[0].set_xlabel("Time")
@@ -1155,7 +1159,7 @@ class _ActivationPlot:
         # Plot the embeddings for each layer
         for i in range(self.num_layers):
             self.axes[i + 1].imshow(
-                self.embeddings[i][:, 0 : self.sample_plot],
+                self.embeddings[i][:, 0:self.sample_plot],
                 cmap=self.cmap,
                 aspect="auto",
             )
@@ -1247,14 +1251,14 @@ class _HeatMapsPlot:
     """
 
     def __init__(
-        self,
-        cka_matrices: Dict[str, npt.NDArray],
-        annot: bool,
-        axis: Optional[matplotlib.axes.Axes],
-        show_cbar: bool = True,
-        cbar_label: str = "CKA score",
-        color_map: str = "magma",
-        figsize: Tuple = (15, 5),
+            self,
+            cka_matrices: Dict[str, npt.NDArray],
+            annot: bool,
+            axis: Optional[matplotlib.axes.Axes],
+            show_cbar: bool = True,
+            cbar_label: str = "CKA score",
+            color_map: str = "magma",
+            figsize: Tuple = (15, 5),
     ):
         self.cka_matrices = cka_matrices
         self.annot = annot
@@ -1273,12 +1277,17 @@ class _HeatMapsPlot:
             "vmin": 0,
             "vmax": 1,
             "cmap": color_map,
-            "cbar_kws": {"label": cbar_label, "orientation": "horizontal"},
+            "cbar_kws": {
+                "label": cbar_label,
+                "orientation": "horizontal"
+            },
         }
         if self.num_comparisons == 1:
             self.axs = [self.axs]  # handle the 1 comparison case
 
-    def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
+    def _define_ax(
+            self,
+            axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Parameters:
@@ -1291,9 +1300,9 @@ class _HeatMapsPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            self.fig, self.axs = plt.subplots(
-                1, self.num_comparisons, figsize=self.figsize
-            )
+            self.fig, self.axs = plt.subplots(1,
+                                              self.num_comparisons,
+                                              figsize=self.figsize)
 
         else:
             self.axs = axis
@@ -1303,7 +1312,10 @@ class _HeatMapsPlot:
         """Handles plotting logic."""
         for i, (key, value) in enumerate(self.cka_matrices.items()):
 
-            sns.heatmap(value, ax=self.axs[i], annot=self.annot, **self.heatmap_kwargs)
+            sns.heatmap(value,
+                        ax=self.axs[i],
+                        annot=self.annot,
+                        **self.heatmap_kwargs)
 
             num_layers = value.shape[1]
             num_models = value.shape[0]
@@ -1313,17 +1325,20 @@ class _HeatMapsPlot:
             if i == 0:
                 self.axs[i].set_ylabel("Model Instantiation", fontsize=12)
                 self.axs[i].set_yticks(np.arange(num_models) + 0.5)
-                self.axs[i].set_yticklabels([m for m in range(1, num_models + 1)])
+                self.axs[i].set_yticklabels(
+                    [m for m in range(1, num_models + 1)])
             else:
                 self.axs[i].set_ylabel("")
                 self.axs[i].set_yticks([])
 
             self.axs[i].set_xticks(np.arange(num_layers) + 0.5)
-            self.axs[i].set_xticklabels([f"L{l}" for l in range(1, num_layers + 1)])
+            self.axs[i].set_xticklabels(
+                [f"L{l}" for l in range(1, num_layers + 1)])
 
         # Adjust layout
         plt.subplots_adjust(wspace=0.1, right=0.9)
-        self.fig.suptitle("Similarity between model representations (CKA)", fontsize=16)
+        self.fig.suptitle("Similarity between model representations (CKA)",
+                          fontsize=16)
 
 
 def plot_cka_heatmaps(
@@ -1437,17 +1452,15 @@ class _RDMPlots:
 
         if len(self.rdms) != len(self.titles):
             raise ValueError(
-                "The two lists (rdms and titles) must have the same length."
-            )
+                "The two lists (rdms and titles) must have the same length.")
 
         # Generate tick labels specific to the dataset
         if dataset_label == "visual":
             self.tick_labels = [str(i) for i in range(0, 930, 30)]
 
         elif self.dataset_label == "HPC":
-            self.tick_positions = (
-                np.arange(0, 34, 2) / 10
-            )  # Ticks at 0, 0.2, 0.4,..., 1.6
+            self.tick_positions = (np.arange(0, 34, 2) / 10
+                                   )  # Ticks at 0, 0.2, 0.4,..., 1.6
             self.tick_labels = [
                 "0.0",
                 "0.2",
@@ -1485,7 +1498,9 @@ class _RDMPlots:
             else:
                 self.tick_labels, _ = np.unique(labels, return_inverse=True)
 
-    def _define_ax(self, axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
+    def _define_ax(
+            self,
+            axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Parameters:
@@ -1516,12 +1531,10 @@ class _RDMPlots:
 
             if self.dataset_label == "HPC":
                 # Set the x and y ticks
-                self.ax[i].set_xticks(
-                    self.tick_positions * len(rdm) // 1.6 / 2
-                )  # Scale ticks to the range of data
-                self.ax[i].set_yticks(
-                    self.tick_positions * len(rdm) // 1.6 / 2
-                )  # Same for y-axis
+                self.ax[i].set_xticks(self.tick_positions * len(rdm) // 1.6 /
+                                      2)  # Scale ticks to the range of data
+                self.ax[i].set_yticks(self.tick_positions * len(rdm) // 1.6 /
+                                      2)  # Same for y-axis
 
                 # Set the tick labels to show 0, 0.2, ..., 1.6
                 self.ax[i].set_xticklabels(self.tick_labels)
@@ -1567,29 +1580,35 @@ class _RDMPlots:
                     size = rdm.shape[0]
                     num_categories = len(self.tick_labels)
                     block_size = size / num_categories
-                    tick_positions = np.arange(block_size / 2, size, block_size)
+                    tick_positions = np.arange(block_size / 2, size,
+                                               block_size)
 
                     self.ax[i].set_xticks(tick_positions)
                     self.ax[i].set_yticks(tick_positions)
-                    self.ax[i].set_xticklabels(
-                        self.tick_labels, rotation=90, ha="right"
-                    )
+                    self.ax[i].set_xticklabels(self.tick_labels,
+                                               rotation=90,
+                                               ha="right")
                     self.ax[i].set_yticklabels(self.tick_labels)
                 else:
-                    self.ax[i].set_xticks(np.linspace(0, rdm.shape[1] - 1, num_ticks))
-                    self.ax[i].set_yticks(np.linspace(0, rdm.shape[0] - 1, num_ticks))
-                    self.ax[i].set_xticklabels(
-                        self.tick_labels, rotation=90, ha="right", fontsize=6
-                    )
+                    self.ax[i].set_xticks(
+                        np.linspace(0, rdm.shape[1] - 1, num_ticks))
+                    self.ax[i].set_yticks(
+                        np.linspace(0, rdm.shape[0] - 1, num_ticks))
+                    self.ax[i].set_xticklabels(self.tick_labels,
+                                               rotation=90,
+                                               ha="right",
+                                               fontsize=6)
                     self.ax[i].set_yticklabels(self.tick_labels, fontsize=6)
 
         plt.suptitle("Representational Dissimilarity Matrix (RDM)")
         plt.tight_layout()
         plt.subplots_adjust(bottom=0.2)
 
-        self.fig.colorbar(
-            cax, ax=self.ax, orientation="horizontal", fraction=0.05, label=self.metric
-        )
+        self.fig.colorbar(cax,
+                          ax=self.ax,
+                          orientation="horizontal",
+                          fraction=0.05,
+                          label=self.metric)
 
 
 def plot_rdm(

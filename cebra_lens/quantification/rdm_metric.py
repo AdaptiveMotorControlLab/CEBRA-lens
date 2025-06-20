@@ -49,11 +49,8 @@ class RDM(_BaseMetric):
         self.label_ind = label_ind
         self.dataset_label = dataset_label
         # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
-        if (
-            isinstance(self.label, np.ndarray)
-            and self.label.ndim != 1
-            and self.dataset_label not in ["HPC", "visual"]
-        ):
+        if (isinstance(self.label, np.ndarray) and self.label.ndim != 1
+                and self.dataset_label not in ["HPC", "visual"]):
             # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
             if self.label_ind != None:
                 self.label = label[:, label_ind]
@@ -75,10 +72,12 @@ class RDM(_BaseMetric):
         print("RDM class initialized with the following parameters:")
         if self.bool_oracle:
             print(
-                "The chosen analyis will plot the correlation of the RDMs with the Oracle RDM."
+                "The chosen analysis will plot the correlation of the RDMs with the Oracle RDM."
             )
         else:
-            print("The chosen analysis will plot the RDMs, no Oracle RDM comparison.")
+            print(
+                "The chosen analysis will plot the RDMs, no Oracle RDM comparison."
+            )
         if self.dataset_label is None:
             print(
                 f"The dataset label is not specified, the RDMs will be computed based on the label index {self.label_ind},\n this label has been noted DISCRETE = {self.discrete}."
@@ -123,9 +122,7 @@ class RDM(_BaseMetric):
             if self.discrete:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and discrete is True
-                idxs = discrete_binning(
-                    labels=self.label,
-                )
+                idxs = discrete_binning(labels=self.label, )
             else:
                 # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
                 idxs, num_bins = continuous_binning(
@@ -171,8 +168,7 @@ class RDM(_BaseMetric):
         return oracle_rdm
 
     def _compute_per_layer(
-        self, layer_activation: npt.NDArray
-    ) -> Tuple[npt.NDArray, float]:
+            self, layer_activation: npt.NDArray) -> Tuple[npt.NDArray, float]:
         """
         Computes the RDM for a given layer's activation.
 
@@ -190,7 +186,8 @@ class RDM(_BaseMetric):
         if layer_activation.shape[0] < layer_activation.shape[1]:
             layer_activation = layer_activation.T
 
-        rdm = pdist(layer_activation[self.idxs.flatten(), :], metric=self.metric)
+        rdm = pdist(layer_activation[self.idxs.flatten(), :],
+                    metric=self.metric)
         if self.bool_oracle:
             oracle_rdm = self._create_oracle_rdm()
             comparison = 1 - correlation(oracle_rdm, rdm)
@@ -217,11 +214,12 @@ class RDM(_BaseMetric):
             A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(
-            activations, (np.ndarray, torch.Tensor)
+                activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
 
-        return super().iterate_over_layers(activations, self._compute_per_layer)
+        return super().iterate_over_layers(activations,
+                                           self._compute_per_layer)
 
     @property
     def __name__(self):

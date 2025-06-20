@@ -13,7 +13,8 @@ def test_discrete_binning_shape_and_values():
     idxs = discrete_binning(labels)
     assert isinstance(idxs, np.ndarray)
     assert idxs.shape[0] == 3  # three unique labels
-    assert all(len(set(row)) == len(row) for row in idxs)  # no duplicates in each bin
+    assert all(len(set(row)) == len(row)
+               for row in idxs)  # no duplicates in each bin
 
 
 def test_continuous_binning_general_continuous():
@@ -27,6 +28,6 @@ def test_continuous_binning_general_continuous():
 
 def test_repetition_binning_invalid_dataset():
     with pytest.raises(NotImplementedError):
-        repetition_binning(
-            np.zeros((3, 90), dtype=int), np.random.rand(900, 10), dataset_label="HPC"
-        )
+        repetition_binning(np.zeros((3, 90), dtype=int),
+                           np.random.rand(900, 10),
+                           dataset_label="HPC")

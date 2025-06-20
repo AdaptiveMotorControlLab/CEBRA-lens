@@ -33,7 +33,9 @@ class CKA(_BaseMetric):
                 )
         self.comparisons = comparisons
 
-    def center_gram(self, gram: npt.NDArray, unbiased: bool = False) -> npt.NDArray:
+    def center_gram(self,
+                    gram: npt.NDArray,
+                    unbiased: bool = False) -> npt.NDArray:
         """
         Center a symmetric Gram matrix.
 
@@ -76,9 +78,10 @@ class CKA(_BaseMetric):
 
         return gram
 
-    def cka(
-        self, gram_x: npt.NDArray, gram_y: npt.NDArray, debiased: bool = False
-    ) -> np.float64:
+    def cka(self,
+            gram_x: npt.NDArray,
+            gram_y: npt.NDArray,
+            debiased: bool = False) -> np.float64:
         """Compute CKA.
 
         Parameters:
@@ -120,9 +123,8 @@ class CKA(_BaseMetric):
 
         return x.dot(x.T)
 
-    def _compute_cka(
-        self, embeddings_1: List[npt.NDArray], embeddings_2: List[npt.NDArray]
-    ) -> npt.NDArray:
+    def _compute_cka(self, embeddings_1: List[npt.NDArray],
+                     embeddings_2: List[npt.NDArray]) -> npt.NDArray:
         """
         Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.
 
@@ -144,12 +146,12 @@ class CKA(_BaseMetric):
 
         if len(embeddings_1) != len(embeddings_2):
             raise ValueError(
-                "CKA similarity comparison is done between smae or similar model architectures. The number of layers in embeddings_1 and embeddings_2 must be the same."
+                "CKA similarity comparison is done between same or similar model architectures. The number of layers in embeddings_1 and embeddings_2 must be the same."
             )
         for i in range(len(embeddings_1)):
             if embeddings_1[i].shape != embeddings_2[i].shape:
                 raise ValueError(
-                    f"CKA similarity comparison is done between smae or similar model architectures. The shape of layer {i} in embeddings_1 and embeddings_2 must be the same."
+                    f"CKA similarity comparison is done between same or similar model architectures. The shape of layer {i} in embeddings_1 and embeddings_2 must be the same."
                 )
 
         cka_matrix = np.zeros((1, len(embeddings_1)))
@@ -187,14 +189,15 @@ class CKA(_BaseMetric):
         for j in tqdm(range(len(embeddings_1))):
             if flag:
                 # the situation when there multiple models inside model labels and the same number of models inside each label
-                cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2[j])
+                cka_matrix[j, :] = self._compute_cka(embeddings_1[j],
+                                                     embeddings_2[j])
             else:
-                cka_matrix[j, :] = self._compute_cka(embeddings_1[j], embeddings_2)
+                cka_matrix[j, :] = self._compute_cka(embeddings_1[j],
+                                                     embeddings_2)
         return cka_matrix
 
-    def compute(
-        self, activations: Dict[str, npt.NDArray], comparison: Tuple[str, str]
-    ) -> npt.NDArray:
+    def compute(self, activations: Dict[str, npt.NDArray],
+                comparison: Tuple[str, str]) -> npt.NDArray:
         """
         Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
 
@@ -233,19 +236,22 @@ class CKA(_BaseMetric):
                 embeddings_1 = activations_2
                 embeddings_2 = activations_1[0]
 
-            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_per_layer(embeddings_1,
+                                                      embeddings_2)
 
         # example when compare intra model single_TR v single_TR, only compare to the first instantiation
         elif self.comparisonX == self.comparisonY:
             embeddings_1 = activations_1
             embeddings_2 = activations_2[0]
-            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2)
+            self.cka_matrix = self._compute_per_layer(embeddings_1,
+                                                      embeddings_2)
 
         else:
             # when the model labels have the same number of models, but are different labels
             embeddings_1 = activations_1
             embeddings_2 = activations_2
-            self.cka_matrix = self._compute_per_layer(embeddings_1, embeddings_2, True)
+            self.cka_matrix = self._compute_per_layer(embeddings_1,
+                                                      embeddings_2, True)
 
         return self.cka_matrix
 
@@ -254,14 +260,14 @@ class CKA(_BaseMetric):
         return "cka"
 
     def plot(
-        self,
-        cka_matrices: Dict[str, npt.NDArray],
-        annot: bool,
-        show_cbar: bool = True,
-        cbar_label: str = "CKA score",
-        color_map: str = "magma",
-        figsize: tuple = (15, 5),
-        ax: Optional[matplotlib.axes.Axes] = None,
+            self,
+            cka_matrices: Dict[str, npt.NDArray],
+            annot: bool,
+            show_cbar: bool = True,
+            cbar_label: str = "CKA score",
+            color_map: str = "magma",
+            figsize: tuple = (15, 5),
+            ax: Optional[matplotlib.axes.Axes] = None,
     ):
         """
         Plot the CKA matrices as heatmaps.

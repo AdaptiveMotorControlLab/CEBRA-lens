@@ -56,16 +56,14 @@ def decoding(
         for n in params:
             train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
             train_valid_idx = int(len(embedding_train) / 9 * 8)
-            train_decoder.fit(
-                embedding_train[:train_valid_idx], label_train[:train_valid_idx, i]
-            )
+            train_decoder.fit(embedding_train[:train_valid_idx],
+                              label_train[:train_valid_idx, i])
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
             err = label_train[train_valid_idx:, i] - pred
             errs.append(abs(err).sum())
 
-        test_decoder = cebra.KNNDecoder(
-            n_neighbors=params[np.argmin(errs)], metric="cosine"
-        )
+        test_decoder = cebra.KNNDecoder(n_neighbors=params[np.argmin(errs)],
+                                        metric="cosine")
 
         test_decoder.fit(embedding_train, label_train[:, i])
         label_pred = test_decoder.predict(embedding_test)
@@ -73,7 +71,8 @@ def decoding(
         predictions.append(label_pred)
         label_test_err = np.median(abs(label_pred - label_test[:, i]))
         labels_test_err.append(label_test_err)
-        label_test_score = sklearn.metrics.r2_score(label_test[:, i], label_pred)
+        label_test_score = sklearn.metrics.r2_score(label_test[:, i],
+                                                    label_pred)
         labels_test_score.append(label_test_score)
 
     # transform it into an appropriate shape
@@ -133,7 +132,8 @@ class Decoding(_BaseMetric):
         self.output_only = output_only
 
     def output_information(self):
-        print("The decoding analysis initialized with the following parameters:")
+        print(
+            "The decoding analysis initialized with the following parameters:")
         print(f"Session ID: {self.session_id}")
         print(f"Dataset label: {self.dataset_label}")
         print(f"Layer type: {self.layer_type}")
@@ -181,13 +181,11 @@ class Decoding(_BaseMetric):
             Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
 
         """
-        if (
-            embedding_train.shape[0] < embedding_train.shape[1]
-        ):  # should be samples X neurons
+        if (embedding_train.shape[0]
+                < embedding_train.shape[1]):  # should be samples X neurons
             embedding_train = embedding_train.T
-        if (
-            embedding_test.shape[0] < embedding_test.shape[1]
-        ):  # should be samples X neurons
+        if (embedding_test.shape[0]
+                < embedding_test.shape[1]):  # should be samples X neurons
             embedding_test = embedding_test.T
 
         if dataset_label == "visual":
@@ -237,26 +235,27 @@ class Decoding(_BaseMetric):
             num_layers = 0
 
             if model.solver_name_ not in [
-                "single-session",
-                "single-session-aux",
-                "single-session-hybrid",
-                "single-session-full",
-                "multi-session",
-                "multi-session-aux",
-                "multiobjective-solver",
+                    "single-session",
+                    "single-session-aux",
+                    "single-session-hybrid",
+                    "single-session-full",
+                    "multi-session",
+                    "multi-session-aux",
+                    "multiobjective-solver",
             ]:
                 raise NotImplementedError(
-                    f"Solver {model.solver_name_} is not yet implemented."
-                )
+                    f"Solver {model.solver_name_} is not yet implemented.")
             elif model.solver_name_ in [
-                "multi-session",
-                "multi-session-aux",
-                "multiobjective-solver",
+                    "multi-session",
+                    "multi-session-aux",
+                    "multiobjective-solver",
             ]:
                 transform_kwargs.update({"session_id": self.session_id})
 
-            train_embedding = model.transform(self.train_data, **transform_kwargs)
-            test_embedding = model.transform(self.test_data, **transform_kwargs)
+            train_embedding = model.transform(self.train_data,
+                                              **transform_kwargs)
+            test_embedding = model.transform(self.test_data,
+                                             **transform_kwargs)
         else:
 
             activations_train = get_activations_model(
@@ -286,31 +285,29 @@ class Decoding(_BaseMetric):
                     train_embedding = self.train_data
                     test_embedding = self.test_data
 
-                results.update(
-                    {
-                        i: self._decode(
-                            train_embedding,
-                            self.train_label,
-                            test_embedding,
-                            self.test_label,
-                            self.dataset_label,
-                        )
-                    }
-                )
+                results.update({
+                    i:
+                    self._decode(
+                        train_embedding,
+                        self.train_label,
+                        test_embedding,
+                        self.test_label,
+                        self.dataset_label,
+                    )
+                })
 
             else:
 
-                results.update(
-                    {
-                        i: self._decode(
-                            activations_train[keys[i - 1]],
-                            self.train_label,
-                            activations_test[keys[i - 1]],
-                            self.test_label,
-                            self.dataset_label,
-                        )
-                    }
-                )
+                results.update({
+                    i:
+                    self._decode(
+                        activations_train[keys[i - 1]],
+                        self.train_label,
+                        activations_test[keys[i - 1]],
+                        self.test_label,
+                        self.dataset_label,
+                    )
+                })
 
         return results
 
@@ -372,10 +369,8 @@ class Decoding(_BaseMetric):
                 )
 
         if self.output_only:
-            return plot_decoding(
-                results_dict, palette, self.dataset_label, label, plot_error, ax
-            )
+            return plot_decoding(results_dict, palette, self.dataset_label,
+                                 label, plot_error, ax)
         else:
-            return plot_layer_decoding(
-                results_dict, title, self.dataset_label, label, plot_error, figsize
-            )
+            return plot_layer_decoding(results_dict, title, self.dataset_label,
+                                       label, plot_error, figsize)

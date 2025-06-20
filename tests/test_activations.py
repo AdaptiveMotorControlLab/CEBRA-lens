@@ -55,7 +55,9 @@ def test_get_activations_model_basic(monkeypatch):
     monkeypatch.setattr(
         activations,
         "_attach_hooks",
-        lambda *a, **kw: ({"test_layer": np.ones((5, 3))}, [], [3]),
+        lambda *a, **kw: ({
+            "test_layer": np.ones((5, 3))
+        }, [], [3]),
     )
     result = get_activations_model(model, data, layer_type=torch.nn.Conv1d)
     assert isinstance(result, dict)

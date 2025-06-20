@@ -17,13 +17,15 @@ def embeddings_labels():
 def test_decoding_function(embeddings_labels):
     emb_train, emb_test, label_train, label_test = embeddings_labels
 
-    with patch("cebra_lens.quantification.decoding.cebra.KNNDecoder") as mock_knn:
+    with patch(
+            "cebra_lens.quantification.decoding.cebra.KNNDecoder") as mock_knn:
         mock_model = MagicMock()
         # Return prediction with correct shape each time
         mock_model.predict.side_effect = lambda x: np.random.rand(len(x))
         mock_knn.return_value = mock_model
 
-        score, medians, r2s = decoding(emb_train, emb_test, label_train, label_test)
+        score, medians, r2s = decoding(emb_train, emb_test, label_train,
+                                       label_test)
 
         assert isinstance(score, float)
         assert len(medians) == label_train.shape[1]
