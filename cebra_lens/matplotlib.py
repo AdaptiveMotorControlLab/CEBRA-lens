@@ -1,14 +1,15 @@
 """Matplotlib interface to CEBRA-Lens."""
 
+import random
 from abc import *
-from typing import Optional, Tuple, List, Dict, Union
-import seaborn as sns
+from typing import Dict, List, Optional, Tuple, Union
+
 import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
 import numpy.typing as npt
-import random
+import seaborn as sns
+import torch
 
 
 class _BasePlot:

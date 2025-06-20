@@ -1,7 +1,9 @@
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pytest
 import torch
-from unittest.mock import patch, MagicMock
+
 import cebra_lens
 
 
@@ -17,15 +19,14 @@ def embeddings_labels():
 def test_decoding_function(embeddings_labels):
     emb_train, emb_test, label_train, label_test = embeddings_labels
 
-    with patch(
-            "cebra.KNNDecoder") as mock_knn:
+    with patch("cebra.KNNDecoder") as mock_knn:
         mock_model = MagicMock()
         # Return prediction with correct shape each time
         mock_model.predict.side_effect = lambda x: np.random.rand(len(x))
         mock_knn.return_value = mock_model
 
-        score, medians, r2s = cebra_lens.quantification.decoder.decoding(emb_train, emb_test, label_train,
-                                       label_test)
+        score, medians, r2s = cebra_lens.quantification.decoder.decoding(
+            emb_train, emb_test, label_train, label_test)
 
         assert isinstance(score, float)
         assert len(medians) == label_train.shape[1]
@@ -74,13 +75,15 @@ def test_decoding_class_output_only_false(mock_get_act):
     results = decoding_class.compute(model)
     assert isinstance(results, dict)
     assert len(results) == 1  # only one Conv1d layer in the mock model
-    
+
     decoding_class.layer_type = None
-    with pytest.raises(NotImplementedError, match="Padding handling not implemented*"): 
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
         decoding_class.compute(model)
-        
+
     decoding_class.layer_type = torch.nn.Linear
-    with pytest.raises(NotImplementedError, match="Padding handling not implemented*"):
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
         decoding_class.compute(model)
 
 

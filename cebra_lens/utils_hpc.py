@@ -1,9 +1,10 @@
-import cebra
-import numpy as np
-import sklearn
-import cebra.datasets
-import numpy.typing as npt
 from typing import List
+
+import cebra
+import cebra.datasets
+import numpy as np
+import numpy.typing as npt
+import sklearn
 
 
 def get_datasets(

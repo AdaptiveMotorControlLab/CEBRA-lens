@@ -1,13 +1,12 @@
-import torch
-import pytest
-import numpy as np
 from collections import namedtuple
 from unittest.mock import MagicMock
-from cebra_lens.activations import (
-    get_activations_model,
-    _cut_array,
-    get_cut_indices,
-)
+
+import numpy as np
+import pytest
+import torch
+
+from cebra_lens.activations import (_cut_array, get_activations_model,
+                                    get_cut_indices)
 
 
 def test_cut_array_no_cut():
@@ -32,8 +31,9 @@ def test_get_cut_indices():
     result = get_cut_indices(model_mock, torch.nn.Conv1d, [3, 3])
     assert isinstance(result, list)
     assert all(isinstance(x, tuple) and len(x) == 2 for x in result)
-    
-    with pytest.raises(NotImplementedError, match="Padding handling not implemented*"):
+
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
         get_cut_indices(model_mock, None, [3, 3])
 
 

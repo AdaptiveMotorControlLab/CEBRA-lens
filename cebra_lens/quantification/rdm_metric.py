@@ -1,16 +1,18 @@
 """All the functions relative to the Representation Dissimilarity Matrix (RDM) calculation"""
 
-from typing import Dict, List, Optional
-import numpy as np
-from scipy.linalg import block_diag
-from typing import List, Optional, Tuple, Union
-from scipy.spatial.distance import correlation, pdist, squareform
-from .misc import discrete_binning, continuous_binning
-import torch
+from typing import Dict, List, Optional, Tuple, Union
+
 import matplotlib
-from .base import _BaseMetric
-import cebra_lens.matplotlib as cebra_lens_matplotlib
+import numpy as np
 import numpy.typing as npt
+import torch
+from scipy.linalg import block_diag
+from scipy.spatial.distance import correlation, pdist, squareform
+
+import cebra_lens.matplotlib as cebra_lens_matplotlib
+
+from .base import _BaseMetric
+from .misc import continuous_binning, discrete_binning
 
 
 class RDM(_BaseMetric):

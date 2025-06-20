@@ -1,13 +1,15 @@
 """Functions to retrieve and handle layer activations"""
 
+from typing import Dict, List, Optional, Tuple, Type
+
 import cebra
-import torch
-import torch.nn as nn
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Dict, List, Type, Optional
+import torch
+import torch.nn as nn
+
 from .matplotlib import plot_activations
-import matplotlib.pyplot as plt
 
 
 def _cut_array(array: npt.NDArray,

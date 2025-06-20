@@ -1,11 +1,12 @@
-from tqdm import tqdm
-import numpy as np
 import pickle
 import types
-from typing import List, Union, Dict
 from abc import *
 from pathlib import Path
+from typing import Dict, List, Union
+
+import numpy as np
 import numpy.typing as npt
+from tqdm import tqdm
 
 
 class _BaseMetric:

@@ -1,10 +1,12 @@
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
-from cebra_lens import extract_label, compute_metric, plot_metric, model_loader
+import pytest
+
+from cebra_lens import compute_metric, extract_label, model_loader, plot_metric
+from cebra_lens.quantification.cka_metric import CKA
 from cebra_lens.quantification.decoder import Decoding
 from cebra_lens.quantification.rdm_metric import RDM
-from cebra_lens.quantification.cka_metric import CKA
 
 
 def test_extract_label_single_dim():

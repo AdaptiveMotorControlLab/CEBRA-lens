@@ -1,11 +1,10 @@
-import pytest
 import numpy as np
+import pytest
 import torch
-from cebra_lens.quantification.misc import (
-    discrete_binning,
-    continuous_binning,
-    repetition_binning,
-)
+
+from cebra_lens.quantification.misc import (continuous_binning,
+                                            discrete_binning,
+                                            repetition_binning)
 
 
 def test_discrete_binning_shape_and_values():

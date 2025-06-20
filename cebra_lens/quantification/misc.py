@@ -1,11 +1,12 @@
 """misc functions like normalization and possibly others"""
 
-from random import sample
-import numpy as np
-import torch
-import numpy.typing as npt
-from typing import List
 import warnings
+from random import sample
+from typing import List
+
+import numpy as np
+import numpy.typing as npt
+import torch
 
 
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:

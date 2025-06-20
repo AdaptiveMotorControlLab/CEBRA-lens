@@ -1,17 +1,20 @@
+from typing import Dict, Optional, Tuple, Type
+
 import cebra
-import torch
+import matplotlib
 import numpy as np
+import numpy.typing as npt
+import sklearn.metrics
+import torch
+import torch as pt
+import torch.nn as nn
+
+import cebra_lens.matplotlib as cebra_lens_matplotlib
+
+from ..activations import get_activations_model
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
-from ..activations import get_activations_model
 from .base import _BaseMetric
-import cebra_lens.matplotlib as cebra_lens_matplotlib
-import numpy.typing as npt
-from typing import Dict, Type, Tuple, Optional
-import torch.nn as nn
-import sklearn.metrics
-import torch as pt
-import matplotlib
 
 
 def decoding(
@@ -370,8 +373,10 @@ class Decoding(_BaseMetric):
                 )
 
         if self.output_only:
-            return cebra_lens_matplotlib.plot_decoding(results_dict, palette, self.dataset_label,
-                                 label, plot_error, ax)
+            return cebra_lens_matplotlib.plot_decoding(results_dict, palette,
+                                                       self.dataset_label,
+                                                       label, plot_error, ax)
         else:
-            return cebra_lens_matplotlib.plot_layer_decoding(results_dict, title, self.dataset_label,
-                                       label, plot_error, figsize)
+            return cebra_lens_matplotlib.plot_layer_decoding(
+                results_dict, title, self.dataset_label, label, plot_error,
+                figsize)

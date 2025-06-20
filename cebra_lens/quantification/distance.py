@@ -1,14 +1,16 @@
 "file containing all the functions relative to distance computing"
 
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
+import numpy.typing as npt
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
-from typing import List, Optional, Tuple, Union, Dict
-from .misc import discrete_binning, repetition_binning, continuous_binning
-from .base import _BaseMetric
+
 from ..matplotlib import *
-import numpy.typing as npt
 from ..utils import extract_label
+from .base import _BaseMetric
+from .misc import continuous_binning, discrete_binning, repetition_binning
 
 
 class DistanceMetric:

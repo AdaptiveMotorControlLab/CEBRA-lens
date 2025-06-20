@@ -1,17 +1,19 @@
 import pathlib
+from typing import Any, Dict, List, Union
+
 import cebra
-import torch
-from typing import Dict, List, Any, Union
 import numpy as np
 import numpy.typing as npt
-from tqdm import tqdm
+import torch
 from torch import nn
+from tqdm import tqdm
+
+from .quantification.cka_metric import CKA
 from .quantification.decoder import Decoding
 from .quantification.rdm_metric import RDM
-from .quantification.cka_metric import CKA
 from .quantification.tsne import Tsne
-from .utils_hpc import get_datasets as get_datasets_hpc
 from .utils_allen import get_datasets as get_datasets_visual
+from .utils_hpc import get_datasets as get_datasets_hpc
 
 
 def get_data(

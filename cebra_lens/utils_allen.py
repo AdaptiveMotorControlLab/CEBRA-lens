@@ -1,11 +1,12 @@
 """Utils relative to the visual dataset"""
 
-import numpy as np
-import torch
+import copy
+
 import cebra
 import cebra.datasets
-import copy
+import numpy as np
 import sklearn.metrics
+import torch
 
 
 ########################################################################################################################

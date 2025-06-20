@@ -1,11 +1,13 @@
 """Functions to transform data e.g. tSNE, other functions can be added"""
 
-from sklearn.manifold import TSNE
-import numpy as np
-from .base import _BaseMetric
-from ..matplotlib import *
 from typing import List, Optional, Union
+
+import numpy as np
 import numpy.typing as npt
+from sklearn.manifold import TSNE
+
+from ..matplotlib import *
+from .base import _BaseMetric
 
 
 class Tsne(_BaseMetric):

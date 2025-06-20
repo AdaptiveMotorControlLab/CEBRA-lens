@@ -5,13 +5,16 @@ CKA computation was taken from https://github.com/amathislab/DeepDraw
 
 """
 
-from tqdm import tqdm
-import numpy as np
-from .base import _BaseMetric
-import cebra_lens.matplotlib as cebra_lens_matplotlib
-from typing import Optional, List, Dict, Tuple
-import numpy.typing as npt
+from typing import Dict, List, Optional, Tuple
+
 import matplotlib
+import numpy as np
+import numpy.typing as npt
+from tqdm import tqdm
+
+import cebra_lens.matplotlib as cebra_lens_matplotlib
+
+from .base import _BaseMetric
 
 
 class CKA(_BaseMetric):
@@ -189,7 +192,7 @@ class CKA(_BaseMetric):
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
             if flag:
-                # the situation when there multiple models inside model labels and the same number of 
+                # the situation when there multiple models inside model labels and the same number of
                 # models inside each label
                 cka_matrix[j, :] = self._compute_cka(embeddings_1[j],
                                                      embeddings_2[j])
@@ -230,7 +233,7 @@ class CKA(_BaseMetric):
 
         if len(activations_1) != len(activations_2):
             # if the number of models in a label is different from the other model label
-            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with 
+            # choose embeddings_1 for the one with more models, and then embeddings_2 just compare with
             # the first model
             if len(activations_1) > len(activations_2):
                 embeddings_1 = activations_1
