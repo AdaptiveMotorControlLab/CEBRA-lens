@@ -28,7 +28,7 @@ class RDM(_BaseMetric):
     metric : str, optional
         The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
     bool_oracle : bool, optional
-        A flag to determine whether to compute and compare the calculated RDM with the Oracle RDM. Default is True.
+        Whether to compute and compare with the Oracle RDM. Default is True.
     label_ind : int, optional
         The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
     """
@@ -37,7 +37,7 @@ class RDM(_BaseMetric):
         self,
         data: torch.Tensor,
         label: torch.Tensor,
-        is_discrete_labels: bool = False,
+        is_discrete_labels: bool = None,
         dataset_label: str = None,
         metric: str = "correlation",
         bool_oracle: bool = True,
@@ -220,15 +220,6 @@ class RDM(_BaseMetric):
             activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
-
-        if self.dataset_label != "visual" and self.dataset_label != "HPC":
-            self.idxs = discrete_binning(
-                self.data,
-                self.label,
-                self.dataset_label,
-                num_bins=self.num_bins,
-                max_num_samples=self.num_samples,
-            )
 
         return super().iterate_over_layers(activations, self._compute_per_layer)
 
