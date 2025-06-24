@@ -1,7 +1,5 @@
 # CEBRA-Lens jupyter-book
 
-Documentation for the usage of CEBRA-Lens.
-
 ## Usage
 
 ### Building the book

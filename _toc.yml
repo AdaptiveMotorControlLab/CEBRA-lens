@@ -2,18 +2,15 @@ format: jb-book
 root: README
 
 parts:
-- caption: Documentation
-  chapters:
-  - file: docs/docs/initial_pitch
-  - file: docs/docs/package_intro
-  - file: docs/docs/repo_org
-  - file: docs/CONDUCT
-  - file: docs/CONTRIBUTING
 
-- caption: Usage
+- caption: Documentation
   chapters:
   - file: docs/docs/installation
   - file: docs/docs/usage
+  - file: docs/docs/repo_org
+  - file: docs/CONDUCT
+  - file: docs/CONTRIBUTING
+  - file: docs/README
 
 - caption: Examples
   chapters:
