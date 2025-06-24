@@ -14,6 +14,6 @@ conda install -c conda-forge pytables==3.8.0
 conda install pytorch cudatoolkit=11.3 -c pytorch
 
 # install CEBRA and CEBRA-lens
-pip install --pre 'cebra[datasets,demos]
+pip install --pre 'cebra[datasets,demos]'
 pip install -- cebra_lens
 ```

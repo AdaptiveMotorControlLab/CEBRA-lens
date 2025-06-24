@@ -2,7 +2,7 @@
 
 ## A python library for mechanistic interpretability of CEBRA models
 
-<img src="figures/zebra.png" title="cebra-lens" alt="cebra-lens" width="150" align="right" vspace = "80"/>
+<img src="/Users/mwmathis/Documents/CEBRA-lens/docs/docs/images/zebra.png" title="cebra-lens" alt="cebra-lens" width="150" align="right" vspace = "80"/>
 
 
 **CEBRA-Lens** is a Python library for analyzing and interpreting neural representations learned by models trained with [CEBRA](https://github.com/AdaptiveMotorControlLab/cebra). It provides tools for mechanistic interpretability, allowing users to probe, visualize, and understand the structure of learned embeddings. The library is designed to support in-depth analysis of representational geometry, feature selectivity, and latent space dynamics in neuroscience and beyond. 👋 We welcome contributions and will continue to expand the library in the coming years.
@@ -24,7 +24,7 @@ conda install -c conda-forge pytables==3.8.0
 conda install pytorch cudatoolkit=11.3 -c pytorch
 
 # install CEBRA and CEBRA-lens
-pip install --pre 'cebra[datasets,demos]
+pip install --pre 'cebra[datasets,demos]'
 pip install -- cebra_lens
 ```
 
@@ -66,7 +66,7 @@ These analyses quantify the change in the distance calculated per layer in a mod
 - inter-class distance
 - inter-repetition distance (only relevant if the model was trained on a dataset where there is repeating stimuli)
 
-<img src="figures/analysis.png" alt="analysis">
+<img src="/Users/mwmathis/Documents/CEBRA-lens/docs/docs/images/abstractfig.png" alt="analysis">
 
 # Demo
 
@@ -96,7 +96,8 @@ fig = lens.plot_metric(
 )
 ```
 
-#### Jupyter Notebooks
+### Jupyter Notebooks
+
 - UsageDemoVISUAL: analysis on the Allen visual dataset, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoVISUAL.ipynb).
 - UsageDemoGENERAL: analysis on the Hippocampus dataset, but without specific dataset functions, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoGENERAL.ipynb).
 
@@ -126,8 +127,6 @@ elif dataset_label == "new_dataset":
 This is briefly repeated in the usage demo notebooks.
 
 # Contributing Guide
-
-### Steps to Contribute
 
 1. **Fork the repository** and create a new branch:
    ```bash

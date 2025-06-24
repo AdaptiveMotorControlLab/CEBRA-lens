@@ -6,7 +6,6 @@ parts:
 - caption: Documentation
   chapters:
   - file: docs/docs/installation
-  - file: docs/docs/usage
   - file: docs/docs/repo_org
   - file: docs/CONDUCT
   - file: docs/CONTRIBUTING
@@ -14,10 +13,9 @@ parts:
 
 - caption: Examples
   chapters:
-  - file: docs/docs/examples/UsageDemo.ipynb
-  - file: docs/docs/examples/ModelGenerator.ipynb
   - file: demos/UsageDemoGENERAL.ipynb
   - file: demos/UsageDemoVISUAL.ipynb
+  - file: docs/docs/examples/ModelGenerator.ipynb
 
 - caption: API Reference
   chapters:
