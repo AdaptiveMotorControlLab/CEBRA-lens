@@ -7,9 +7,6 @@ parts:
   chapters:
   - file: docs/docs/installation
   - file: docs/docs/repo_org
-  - file: docs/CONDUCT
-  - file: docs/CONTRIBUTING
-  - file: docs/README
 
 - caption: Examples
   chapters:
@@ -22,3 +19,8 @@ parts:
   - file: docs/docs/api/metrics
   - file: docs/docs/api/helpers
 
+- caption: Extras
+  chapters:
+  - file: docs/CONDUCT
+  - file: docs/CONTRIBUTING
+  - file: docs/README
