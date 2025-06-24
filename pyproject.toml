@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cebra_lens"
-version = "0.0.1"
+version = "0.0.1rc1"
 description = "Tools for analyzing embeddings from CEBRA"
 authors = [
     { name = "M.W. Mathis Lab", email = "mackenzie.mathis@epfl.ch" },
