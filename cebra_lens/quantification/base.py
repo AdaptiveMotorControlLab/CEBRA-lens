@@ -1,11 +1,12 @@
-from tqdm import tqdm
-import numpy as np
 import pickle
 import types
-from typing import List, Union, Dict
 from abc import *
 from pathlib import Path
+from typing import Dict, List, Union
+
+import numpy as np
 import numpy.typing as npt
+from tqdm import tqdm
 
 
 class _BaseMetric:
@@ -14,7 +15,8 @@ class _BaseMetric:
     """
 
     @abstractmethod
-    def compute(self, activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
+    def compute(self,
+                activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
         """
         Every metric which inherits ``_BaseMetric`` needs to implement a compute function.
         The compute function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
@@ -66,9 +68,8 @@ class _BaseMetric:
             and the value is a npt.NDArray containing for all the models under that label the calculated data.
         """
         filepath = Path(filepath)
-        custom_filepath = filepath.with_stem(
-            filepath.stem + f"_{self.__class__.__name__}"
-        )
+        custom_filepath = filepath.with_stem(filepath.stem +
+                                             f"_{self.__class__.__name__}")
         with open(custom_filepath, "wb") as f:
             pickle.dump(data, f)
 

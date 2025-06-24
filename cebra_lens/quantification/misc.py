@@ -1,11 +1,13 @@
 """misc functions like normalization and possibly others"""
 
-from random import sample
-import numpy as np
-import torch
-import numpy.typing as npt
-from typing import List
 import warnings
+from random import sample
+from typing import List
+
+import numpy as np
+import numpy.typing as npt
+import torch
+
 
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
     """
@@ -95,11 +97,8 @@ def continuous_binning(
         num_bins = 30
 
         if sample_mode == "sub_sample":
-            num_samples = (
-                max_num_samples
-                if len(data) / num_bins >= max_num_samples
-                else int(len(data) / num_bins)
-            )
+            num_samples = (max_num_samples if len(data) / num_bins
+                           >= max_num_samples else int(len(data) / num_bins))
         elif sample_mode == "all":
             num_samples = int(len(data) / num_bins)
         else:
@@ -113,9 +112,8 @@ def continuous_binning(
         j = 0
         for i in range(num_bins):
 
-            full_idxs = np.where(
-                (label[:] >= j * step_distance) & (label[:] < (j + 1) * step_distance)
-            )[0]
+            full_idxs = np.where((label[:] >= j * step_distance)
+                                 & (label[:] < (j + 1) * step_distance))[0]
 
             if sample_mode == "sub_sample":
                 idxs[i, :] = sample(list(full_idxs), num_samples)
@@ -144,11 +142,9 @@ def continuous_binning(
             if i == num_bins / 2:
                 j = 0
 
-            full_idxs = np.where(
-                (label[:, 0] >= j * step_distance)
-                & (label[:, 0] < (j + 1) * step_distance)
-                & (label[:, direction] == 1)
-            )[0]
+            full_idxs = np.where((label[:, 0] >= j * step_distance)
+                                 & (label[:, 0] < (j + 1) * step_distance)
+                                 & (label[:, direction] == 1))[0]
 
             if sample_mode == "sub_sample":
                 idxs[i, :] = sample(list(full_idxs), num_samples)
@@ -165,18 +161,13 @@ def continuous_binning(
         if len(data) < 1000:
             warnings.warn(
                 "Continuous binning is not recommended for datasets with less than 1000 samples. "
-                "Consider using discrete binning instead.",
-                UserWarning
-                )
+                "Consider using discrete binning instead.", UserWarning)
         num_bins = int(
             0.005 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
         if sample_mode == "sub_sample":
-            num_samples = (
-                max_num_samples
-                if len(data) / num_bins >= max_num_samples
-                else int(len(data) / num_bins)
-            )
+            num_samples = (max_num_samples if len(data) / num_bins
+                           >= max_num_samples else int(len(data) / num_bins))
         elif sample_mode == "all":
             num_samples = int(len(data) / num_bins)
         else:
@@ -196,9 +187,8 @@ def continuous_binning(
         for i in range(num_bins):
             lower_bin_border = round(min_value + i * step_distance, 2)
             higher_bin_border = round(min_value + (i + 1) * step_distance, 2)
-            full_idxs = np.where(
-                (label[:] >= lower_bin_border) & (label[:] < higher_bin_border)
-            )[0]
+            full_idxs = np.where((label[:] >= lower_bin_border)
+                                 & (label[:] < higher_bin_border))[0]
             indices.append(full_idxs)
 
         # Due do uneven number of samples in each bin, we will take the minimum number of samples from each bin, maybe need to discuss this further
@@ -207,14 +197,16 @@ def continuous_binning(
         print("Number of samples per bin:", num_samples)
         idxs = np.zeros((num_bins, num_samples))
         for i in range(num_bins):
-            idxs[i, :] = np.random.choice(indices[i], num_samples, replace=False)
+            idxs[i, :] = np.random.choice(indices[i],
+                                          num_samples,
+                                          replace=False)
 
     return idxs.astype(int), num_bins
 
 
-def repetition_binning(
-    indices: npt.NDArray, data, dataset_label: str = "visual"
-) -> List[npt.NDArray]:
+def repetition_binning(indices: npt.NDArray,
+                       data,
+                       dataset_label: str = "visual") -> List[npt.NDArray]:
     """
     Creates a list of indices for each repetition based on the provided indices and dataset label.
 
@@ -252,7 +244,7 @@ def repetition_binning(
 
         for j in range(num_repetitions):
 
-            repetition_bin_idxs.append(indices[i][j * step : (j + 1) * step])
+            repetition_bin_idxs.append(indices[i][j * step:(j + 1) * step])
 
         repetition_idxs.append(repetition_bin_idxs)
     return repetition_idxs

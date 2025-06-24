@@ -1,21 +1,24 @@
 import pathlib
+from typing import Any, Dict, List, Union
+
 import cebra
-import torch
-from typing import Dict, List, Any, Union
 import numpy as np
 import numpy.typing as npt
-from tqdm import tqdm
+import torch
 from torch import nn
-from .quantification.decoding import Decoding
-from .quantification.rdm_metric import RDM
+from tqdm import tqdm
+
 from .quantification.cka_metric import CKA
+from .quantification.decoder import Decoding
+from .quantification.rdm_metric import RDM
 from .quantification.tsne import Tsne
-from .utils_hpc import get_datasets as get_datasets_hpc
 from .utils_allen import get_datasets as get_datasets_visual
+from .utils_hpc import get_datasets as get_datasets_hpc
 
 
 def get_data(
-    dataset_label: str = None, session_id: int = None
+    dataset_label: str = None,
+    session_id: int = None
 ) -> list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
     """
     Returns datasets based on the specified dataset label. If you are using a non standard dataset, you can add a new data loading function add it here.
@@ -169,7 +172,8 @@ def plot_metric(
 
 
 def model_loader(
-    model_dir: str, groups: Dict[str, str] = {}
+    model_dir: str,
+    groups: Dict[str, str] = {}
 ) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
     Loads and categorizes CEBRA models from a given directory.
@@ -213,8 +217,8 @@ def model_loader(
     for file in models_folder_path.iterdir():
         if str(file).endswith((".pt", ".pth")):
             loaded_model = cebra.CEBRA.load(
-                file, backend="torch", map_location=torch.device("cpu")
-            ).to("cpu")
+                file, backend="torch",
+                map_location=torch.device("cpu")).to("cpu")
             key = groups.get(file.stem, file.stem)
             models.setdefault(key, []).append(loaded_model)
             print(f"Model {file.stem} loaded successfully.")
