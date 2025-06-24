@@ -17,4 +17,7 @@ parts:
   - file: docs/examples/UsageDemo.ipynb
   - file: docs/examples/ModelGenerator.ipynb
 
-
+- caption: API Reference
+  chapters:
+  - file: docs/api/metrics
+  - file: docs/api/helpers
