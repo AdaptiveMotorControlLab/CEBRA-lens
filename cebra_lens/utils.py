@@ -33,7 +33,7 @@ def get_data(
     Returns:
     --------
     list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]
-        A list containing the datasets: train_data, test_data, label_train, label_test.
+        A list containing the datasets: train_data, test_data, train_label, test_label.
     """
 
     if dataset_label == "visual":
@@ -46,40 +46,12 @@ def get_data(
         )
 
 
-def extract_label(labels: npt.NDArray, label_ind: int) -> List:
-    """
-    Extracts unique labels from a NumPy array of labels.
-    Parameters:
-    -----------
-    labels : npt.NDArray
-        A NumPy array containing labels, which can be of any numeric type.
-    label_ind : int
-        The index of the label to extract from the array.
-
-    Returns:
-    --------
-    List
-        A list of unique labels extracted from the input array.
-    """
-    try:
-        num_labels = labels.shape[1]
-    except:
-        num_labels = 1
-        labels = labels.reshape(-1, 1)
-    if label_ind > num_labels - 1:
-        raise ValueError(
-            f"label_ind {label_ind} is out of range for labels with shape {labels.shape}"
-        )
-    labels = labels[:, label_ind]
-
-    return labels
-
-
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
-    output_only: bool = False,
-    bool_oracle: bool = False,
+    **kwargs,
+    #output_only: bool = False,
+    #bool_oracle: bool = False,
 ) -> Dict[str, npt.NDArray[Any]]:
     """
     Computes metrics for each model using a provided metric class.
@@ -117,26 +89,18 @@ def compute_metric(
             result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
 
     else:
-        if isinstance(metric_class, Decoding):
-            metric_class.output_only = output_only
-            metric_class.output_information()
-            print("\n")
-
-        if isinstance(metric_class, RDM):
-            metric_class.bool_oracle = bool_oracle
-            metric_class.output_information()
-            print("\n")
-
         for group_name, samples in model_data.items():
 
             computed_values = [
-                metric_class.compute(sample)
+                metric_class.compute(sample, **kwargs)
                 for sample in tqdm(samples, desc=f"Processing {group_name}")
             ]
             if not isinstance(metric_class, RDM):
                 computed_values = np.array(computed_values)
 
             result_dict[group_name] = computed_values
+
+        metric_class.output_information()
 
     return result_dict
 
@@ -173,7 +137,9 @@ def plot_metric(
 
 def model_loader(
     model_dir: str,
-    groups: Dict[str, str] = {}
+    groups: Dict[str, str] = {},
+    backend: str = "torch",
+    device: Union[str, torch.device] = "cpu",
 ) -> Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]]:
     """
     Loads and categorizes CEBRA models from a given directory.
@@ -217,8 +183,8 @@ def model_loader(
     for file in models_folder_path.iterdir():
         if str(file).endswith((".pt", ".pth")):
             loaded_model = cebra.CEBRA.load(
-                file, backend="torch",
-                map_location=torch.device("cpu")).to("cpu")
+                file, backend=backend,
+                map_location=torch.device(device)).to(device)
             key = groups.get(file.stem, file.stem)
             models.setdefault(key, []).append(loaded_model)
             print(f"Model {file.stem} loaded successfully.")

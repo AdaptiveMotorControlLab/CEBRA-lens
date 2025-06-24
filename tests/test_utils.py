@@ -3,28 +3,10 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from cebra_lens import compute_metric, extract_label, model_loader, plot_metric
+from cebra_lens import compute_metric, model_loader, plot_metric
 from cebra_lens.quantification.cka_metric import CKA
 from cebra_lens.quantification.decoder import Decoding
 from cebra_lens.quantification.rdm_metric import RDM
-
-
-def test_extract_label_single_dim():
-    labels = np.array([1, 2, 3, 2])
-    result = extract_label(labels, 0)
-    assert result.tolist() == [1, 2, 3, 2]
-
-
-def test_extract_label_multi_dim():
-    labels = np.array([[1, 0], [2, 1], [3, 2]])
-    result = extract_label(labels, 1)
-    assert result.tolist() == [0, 1, 2]
-
-
-def test_extract_label_out_of_range():
-    labels = np.array([[1, 0], [2, 1], [3, 2]])
-    with pytest.raises(ValueError):
-        extract_label(labels, 3)
 
 
 def test_compute_metric_with_mock_metric_class():

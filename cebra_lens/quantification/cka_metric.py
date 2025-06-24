@@ -212,7 +212,7 @@ class CKA(_BaseMetric):
         Parameters:
         -----------
         activations : Dict[str, npt.NDArray]
-            A dictionary where keys are strings which represent the model label and values are 2d lists 
+            A dictionary where keys are strings which represent the model label and values are 2d lists
             with the corresponding activations per layer.
 
         comparison : Tuple[str, str]

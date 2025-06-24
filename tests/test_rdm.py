@@ -44,11 +44,16 @@ def test_init_with_label_ind():
     labels = np.array([[1, 2], [3, 4]])
     data = torch.tensor(np.random.rand(2, 5), dtype=torch.float32)
     rdm = cebra_lens.quantification.rdm_metric.RDM(data=data,
-                                                   label=labels,
-                                                   label_ind=0,
+                                                   label=labels[:, 0],
                                                    dataset_label=None,
                                                    is_discrete_labels=True)
     assert rdm.label.tolist() == [1, 3]
+
+    with pytest.raises(ValueError):
+        cebra_lens.quantification.rdm_metric.RDM(data=data,
+                                                 label=labels,
+                                                 dataset_label=None,
+                                                 is_discrete_labels=True)
 
 
 def test_create_oracle_rdm_custom():
@@ -96,7 +101,8 @@ def test_rdm_plot(mock_all, mock_corr):
     dummy_rdm = cebra_lens.quantification.rdm_metric.RDM(
         data=torch.rand((10000, 5)),
         label=torch.randint(0, 5, (10000, )),
-        is_discrete_labels=False)
+        is_discrete_labels=False,
+    )
     dummy_rdm.bool_oracle = True
     dummy_rdm.plot({"group": [np.random.rand(5, 5)]})
     assert mock_corr.called
@@ -109,20 +115,6 @@ def test_rdm_plot(mock_all, mock_corr):
 
     dummy_rdm.plot({"group": [np.random.rand(5, 5)]}, titles=None)
     dummy_rdm.plot({})
-
-
-def test_init_raises_keyerror_for_multilabel_without_label_ind():
-    # label is 2D, dataset_label is not HPC/visual, label_ind not provided
-    labels = np.array([[1, 2], [3, 4]])
-    data = torch.tensor(np.random.rand(2, 5), dtype=torch.float32)
-    with pytest.raises(KeyError):
-        cebra_lens.quantification.rdm_metric.RDM(
-            data=data,
-            label=labels,
-            is_discrete_labels=True,
-            dataset_label=None,
-            label_ind=None,
-        )
 
 
 def test_define_indices_raises_valueerror_for_invalid_dataset_label():

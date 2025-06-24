@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 import numpy.typing as npt
 import matplotlib
 
+
 class NewMetric(_BaseMetric):
     """
     Compute New Metric on data
@@ -35,7 +36,7 @@ class NewMetric(_BaseMetric):
         --------
         newmetric_for_layer : npt.NDArray
         """
-        #New Metric computation for layer
+        # New Metric computation for layer
 
         return NewMetric_for_layer
 
@@ -55,12 +56,12 @@ class NewMetric(_BaseMetric):
             The 2D embedding produced by t-SNE for each layer of a model.
         """
 
-        #Computation logic insert
+        # Computation logic insert
 
-        #If the computation is done by layer then
+        # If the computation is done by layer then
         return super().iterate_over_layers(data, self._compute_per_layer)
-    
-        #If the computation is done on the data directly
+
+        # If the computation is done on the data directly
         return result
 
     @property
@@ -86,7 +87,7 @@ class NewMetric(_BaseMetric):
             The figure containing the NewMetric plot.
         """
 
-        #Need to define the plot_newMetric function in the utils_plot.py
+        # Need to define the plot_newMetric function in the utils_plot.py
         return plot_newMetric(
             embeddings,
             labels,

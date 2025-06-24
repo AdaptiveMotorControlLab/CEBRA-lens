@@ -33,7 +33,7 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
 def discrete_binning(labels: npt.NDArray) -> npt.NDArray:
     """
     Defines bins for discrete labels and the indices of the samples in each bin.
-    
+
     This function is used to create bins for discrete labels in RDM analysis and distance analysis.
 
     Parameters:
@@ -68,8 +68,8 @@ def continuous_binning(
     max_num_samples: int = 200,
 ) -> npt.NDArray:
     """
-    Bins the training data based on the provided labels, creating indices for sampling. 
-    
+    Bins the training data based on the provided labels, creating indices for sampling.
+
     Used to discretize a continuous input for RDM.
     For non-specific datasets, the number of bins is determined empirically based on the data size, based on a heuristic of 0.005 * num_samples.
 
@@ -161,7 +161,9 @@ def continuous_binning(
         if len(data) < 1000:
             warnings.warn(
                 "Continuous binning is not recommended for datasets with less than 1000 samples. "
-                "Consider using discrete binning instead.", UserWarning)
+                "Consider using discrete binning instead.",
+                UserWarning,
+            )
         num_bins = int(
             0.005 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data

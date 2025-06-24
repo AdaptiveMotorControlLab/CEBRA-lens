@@ -31,10 +31,6 @@ class RDM(_BaseMetric):
         The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
     metric : str, optional
         The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
-    bool_oracle : bool, optional
-        Whether to compute and compare with the Oracle RDM. Default is True.
-    label_ind : int, optional
-        The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
     """
 
     def __init__(
@@ -44,28 +40,21 @@ class RDM(_BaseMetric):
         is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "correlation",
-        bool_oracle: bool = True,
-        label_ind: int = None,
     ):
         super().__init__()
         self.data = data
         self.label = label
-        self.label_ind = label_ind
         self.dataset_label = dataset_label
-        # check that label is 1D if dataset_label is not HPC/visual, and the label_ind is not provided
-        if (isinstance(self.label, np.ndarray) and self.label.ndim != 1
-                and self.dataset_label not in ["HPC", "visual"]):
-            # if the dataset contains multiple labels check that if it is not HPC dataset the label_ind was given
-            if self.label_ind != None:
-                self.label = label[:, label_ind]
-
-            else:
-                raise KeyError(
-                    "If dataset not HPC or visual and there are multiple possible labels, parameter label_ind must be provided to indicate which label will be used for the RDM calculation"
-                )
+        # check that label is 1D if dataset_label is not HPC/visual
+        if isinstance(self.label, np.ndarray) and self.dataset_label not in [
+                "HPC",
+                "visual",
+        ]:
+            if len(label.shape) > 1:
+                raise ValueError("The label must be a 1D array.")
+            self.label = label
 
         self.metric = metric
-        self.bool_oracle = bool_oracle
         self.discrete = is_discrete_labels
         self.idxs, self.num_bins = self._define_indices()
 
@@ -74,17 +63,17 @@ class RDM(_BaseMetric):
         Outputs information about the RDM class initialization parameters.
         """
         print("RDM class initialized with the following parameters:")
-        if self.bool_oracle:
-            print(
-                "The chosen analysis will plot the correlation of the RDMs with the Oracle RDM."
-            )
-        else:
-            print(
-                "The chosen analysis will plot the RDMs, no Oracle RDM comparison."
-            )
+        # if self.bool_oracle:
+        #     print(
+        #         "The chosen analysis will plot the correlation of the RDMs with the Oracle RDM."
+        #     )
+        # else:
+        #     print(
+        #         "The chosen analysis will plot the RDMs, no Oracle RDM comparison."
+        #     )
         if self.dataset_label is None:
             print(
-                f"The dataset label is not specified, the RDMs will be computed based on the label index {self.label_ind},\n this label has been noted DISCRETE = {self.discrete}."
+                f"The dataset label is not specified,\n this label has been noted DISCRETE = {self.discrete}."
             )
         else:
             print(f"The dataset label is specified as: {self.dataset_label}")
@@ -232,6 +221,7 @@ class RDM(_BaseMetric):
     def plot(
         self,
         rdms: Dict[str, List[npt.NDArray]],
+        bool_oracle: bool = False,
         titles: List[str] = None,
         cmap: str = "viridis",
         figsize: tuple = None,
@@ -257,7 +247,7 @@ class RDM(_BaseMetric):
         matplotlib.figure.Figure
             The figure containing the plotted RDMs.
         """
-        if self.bool_oracle:
+        if bool_oracle:
             return utils_plot.plot_rdm_correlation(rdms)
         else:
             return utils_plot.plot_rdm_all(

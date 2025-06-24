@@ -11,13 +11,13 @@ import cebra_lens
 def embeddings_labels():
     emb_train = torch.randn((1000, 32))
     emb_test = torch.randn((200, 32))
-    label_train = np.random.rand(1000, 2)
-    label_test = np.random.rand(200, 2)
-    return emb_train, emb_test, label_train, label_test
+    train_label = np.random.rand(1000, 2)
+    test_label = np.random.rand(200, 2)
+    return emb_train, emb_test, train_label, test_label
 
 
 def test_decoding_function(embeddings_labels):
-    emb_train, emb_test, label_train, label_test = embeddings_labels
+    emb_train, emb_test, train_label, test_label = embeddings_labels
 
     with patch("cebra.KNNDecoder") as mock_knn:
         mock_model = MagicMock()
@@ -29,8 +29,8 @@ def test_decoding_function(embeddings_labels):
             emb_train, emb_test, label_train, label_test)
 
         assert isinstance(score, float)
-        assert len(medians) == label_train.shape[1]
-        assert len(r2s) == label_train.shape[1]
+        assert len(medians) == train_label.shape[1]
+        assert len(r2s) == train_label.shape[1]
 
 
 def make_mock_cebra_model():

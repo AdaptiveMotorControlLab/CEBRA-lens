@@ -37,15 +37,19 @@ def dummy_activations():
     # Each group has a list of 2D arrays (one per layer)
     return {
         "A":
-        np.array([[np.random.rand(5, 10),
-                   np.random.rand(5, 10)],
-                  [np.random.rand(5, 10),
-                   np.random.rand(5, 10)]]),
+        np.array([
+            [np.random.rand(5, 10),
+             np.random.rand(5, 10)],
+            [np.random.rand(5, 10),
+             np.random.rand(5, 10)],
+        ]),
         "B":
-        np.array([[np.random.rand(5, 10),
-                   np.random.rand(5, 10)],
-                  [np.random.rand(5, 10),
-                   np.random.rand(5, 10)]]),
+        np.array([
+            [np.random.rand(5, 10),
+             np.random.rand(5, 10)],
+            [np.random.rand(5, 10),
+             np.random.rand(5, 10)],
+        ]),
     }
 
 
