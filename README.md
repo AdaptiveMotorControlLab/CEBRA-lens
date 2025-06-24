@@ -25,7 +25,7 @@ conda install pytorch cudatoolkit=11.3 -c pytorch
 
 # install CEBRA and CEBRA-lens
 pip install --pre 'cebra[datasets,demos]
-pip install -- cebralens
+pip install -- cebra_lens
 ```
 
 ## 🦓🔍 Analysis Methods
