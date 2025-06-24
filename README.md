@@ -107,7 +107,7 @@ These two notebooks showcase the different approach when analyzing a pre-defined
 
 - This repository contains the code for [Eloise's](https://github.com/eloisehabek) semester's project "Engineering software for neural representation analysis"(SPRING 2025),
   building on [Riccardo's](https://github.com/riccardoprog) semester project "Exploring nonlinear encoders for robust vision decoding" (FALL 2024).
-- The work was supervised by [Célia Benquet](https://github.com/CeliaBenquet) and [Mackenzie](https://github.com/MMathisLab) at the Mathis Laboratory of Adaptive Intelligence.
+- The work was supervised by [Célia Benquet](https://github.com/CeliaBenquet) and [Mackenzie Mathis](https://github.com/MMathisLab) at the Mathis Laboratory of Adaptive Intelligence.
 - We thank the [DeepDraw project](https://elifesciences.org/articles/81499) for some [source code](https://github.com/amathislab/DeepDraw) and analysis methods.
 
 # Other helpful tips:
