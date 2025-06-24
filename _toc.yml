@@ -1,27 +1,29 @@
 format: jb-book
 root: README
+
 parts:
 - caption: Documentation
   chapters:
-  - file: docs/initial_pitch
-  - file: docs/package_intro
-  - file: docs/repo_org
+  - file: docs/docs/initial_pitch
+  - file: docs/docs/package_intro
+  - file: docs/docs/repo_org
   - file: docs/CONDUCT
   - file: docs/CONTRIBUTING
 
 - caption: Usage
   chapters:
-  - file: docs/installation
-  - file: docs/usage
+  - file: docs/docs/installation
+  - file: docs/docs/usage
 
 - caption: Examples
   chapters:
-  - file: docs/examples/UsageDemo.ipynb
-  - file: docs/examples/ModelGenerator.ipynb
+  - file: docs/docs/examples/UsageDemo.ipynb
+  - file: docs/docs/examples/ModelGenerator.ipynb
   - file: demos/UsageDemoGENERAL.ipynb
   - file: demos/UsageDemoVISUAL.ipynb
 
 - caption: API Reference
   chapters:
-  - file: docs/api/metrics
-  - file: docs/api/helpers
+  - file: docs/docs/api/metrics
+  - file: docs/docs/api/helpers
+
