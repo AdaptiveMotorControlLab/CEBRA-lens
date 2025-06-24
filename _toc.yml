@@ -6,6 +6,8 @@ parts:
   - file: docs/initial_pitch
   - file: docs/package_intro
   - file: docs/repo_org
+  - file: docs/CONDUCT
+  - file: docs/CONTRIBUTING
 
 - caption: Usage
   chapters:
@@ -16,6 +18,8 @@ parts:
   chapters:
   - file: docs/examples/UsageDemo.ipynb
   - file: docs/examples/ModelGenerator.ipynb
+  - file: demos/UsageDemoGENERAL.ipynb
+  - file: demos/UsageDemoVISUAL.ipynb
 
 - caption: API Reference
   chapters:
