@@ -1,15 +1,36 @@
-# CEBRA-Lens: a helper package for interpretable latent spaces
-<img src="figures/zebra.png" alt="zebra" width="200" height="194">
+# CEBRA-Lens
 
-What is CEBRA-Lens?
+## A python library for mechanistic interpretability of CEBRA models
 
-This Python codebase allows for neural representation analysis of CEBRA models. It contains tools to help answer the question: **What representations is my model learning?**  We can get a glimpse of what the models learn by looking at the NN units themselves after the model is trained, using “neuroscientist methods” such as CKA, PCA/tSNE (See Sandbrink et al 2023). Precisely these "neuroscientist methods" are implemented in this codebase.
+<img src="figures/zebra.png" title="cebra-lens" alt="cellseg3d logo" width="150" align="right" vspace = "80"/>
 
-The current version of CEBRA-Lens supports specific analysis on the Allen Institute visual coding dataset ([DeVries et al, Nature Neuro., 2020](https://www.nature.com/articles/s41593-019-0550-9)) and Hippocampus dataset ([Grosmark & Buzáki, Science, 2016](https://www.science.org/doi/full/10.1126/science.aad1935)), and for general analysis on other datasets.
 
-## 🔍 Analysis
+**CEBRA-Lens** is a Python library for analyzing and interpreting neural representations learned by models trained with [CEBRA](https://github.com/AdaptiveMotorControlLab/cebra). It provides tools for mechanistic interpretability, allowing users to probe, visualize, and understand the structure of learned embeddings. The library is designed to support in-depth analysis of representational geometry, feature selectivity, and latent space dynamics in neuroscience and beyond. 👋 We welcome contributions and will continue to expand the library in the coming years.
 
-Implemented "neuroscientist methods" for neural representation analysis are presented below.
+[🦓🔎 CEBRA Lens](https://github.com/AdaptiveMotorControlLab/CEBRA-lens)
+
+## 🛠️ Quick start
+
+🚨 Make sure that the environment in which you trained the CEBRA models in **has the same torch version** as the environment used for CEBRA-Lens.
+
+```{Hint} Familiar with python packages and conda? Quick Install Guide:
+```bash
+conda create -n CEBRAlens python=3.12
+conda activate CEBRAlens
+conda install -c conda-forge pytables==3.8.0
+
+# install PyTorch with your desired CUDA version (or for CPU only)- check their website: https://pytorch.org/get-started/locally/
+# example: GPU version of pytorch for CUDA 11.3
+conda install pytorch cudatoolkit=11.3 -c pytorch
+
+# install CEBRA and CEBRA-lens
+pip install --pre 'cebra[datasets,demos]
+pip install -- cebralens
+```
+
+## 🦓🔍 Analysis Methods
+
+Implemented mechanistic interpretability methods for neural representation analysis are presented below.
 
 ### Model performance analysis
 
@@ -47,31 +68,9 @@ These analyses quantify the change in the distance calculated per layer in a mod
 
 <img src="figures/analysis.png" alt="analysis">
 
-## 📚 Codebase folder structure
+# Demo
 
-Below is the folder structure of the repository with the main folder and files. The `cebra_lens` folder contains all the code for the analysis with the metric class definitions in the `quantification` folder, the `demos` folder contains the usage jupyter notebooks and finally there is a `tests` folder which contains some pytest for the repo.
-
-    CEBRA_lens/
-    ├── README.md
-    ├── cebra_lens/
-    │   ├── quantification/
-    │   │   ├── base.py
-    │   │   ├── cka_metric.py
-    │   │   ├── decoding.py
-    │   │   ├── distance.py
-    │   │   ├── misc.py
-    │   │   ├── rdm_metric.py
-    │   │   └── tsne.py
-    │   ├── activations.py
-    │   ├── matplotlib.py
-    │   ├── utils_allen.py
-    │   ├── utils_hpc.py
-    │   └── utils.py
-    │
-    ├── demos/
-    │   ├── UsageDemoVISUAL.ipynb
-    │   └── UsageDemoGENERAL.ipynb
-    └── tests/
+The current version of CEBRA-Lens supports specific analysis on the Allen Institute visual coding dataset ([DeVries et al, Nature Neuro., 2020](https://www.nature.com/articles/s41593-019-0550-9)) and Hippocampus dataset ([Grosmark & Buzáki, Science, 2016](https://www.science.org/doi/full/10.1126/science.aad1935)), and for general analysis on other datasets. See the example notebooks we provide.
 
 ## 📊Usage
 
@@ -97,11 +96,21 @@ fig = lens.plot_metric(
 )
 ```
 
-The full demonstration of the usage is in the form of 2 jupyter notebooks:
-- UsageDemoVISUAL: analysis on the Allen visual dataset, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/eloise/tests/demos/UsageDemoVISUAL.ipynb)
-- UsageDemoGENERAL: analysis on the Hippocampus dataset, but without specific dataset functions, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/eloise/tests/demos/UsageDemoGENERAL.ipynb)
+#### Jupyter Notebooks
+- UsageDemoVISUAL: analysis on the Allen visual dataset, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoVISUAL.ipynb).
+- UsageDemoGENERAL: analysis on the Hippocampus dataset, but without specific dataset functions, [here](https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoGENERAL.ipynb).
 
 These two notebooks showcase the different approach when analyzing a pre-defined dataset and a non-defined dataset.
+
+
+# Acknowledgements
+
+- This repository contains the code for [Eloise's](https://github.com/eloisehabek) semester's project "Engineering software for neural representation analysis"(SPRING 2025),
+  building on [Riccardo's](https://github.com/riccardoprog) semester project "Exploring nonlinear encoders for robust vision decoding" (FALL 2024).
+- The work was supervised by [Célia Benquet](https://github.com/CeliaBenquet) and [Mackenzie](https://github.com/MMathisLab) at the Mathis Laboratory of Adaptive Intelligence.
+- We thank the [DeepDraw project](https://elifesciences.org/articles/81499) for some [source code](https://github.com/amathislab/DeepDraw) and analysis methods.
+
+# Other helpful tips:
 
 ## 📥 Download dataset
 
@@ -116,14 +125,20 @@ elif dataset_label == "new_dataset":
 ```
 This is briefly repeated in the usage demo notebooks.
 
-## 🛠️ Environment set-up
+# Contributing Guide
 
-Make sure that the environment in which you trained the CEBRA models in has the same torch version as the environmnet used for CEBRA-Lens.
+### Steps to Contribute
 
-```
-!pip install --pre 'cebra[datasets,demos]'
-```
+1. **Fork the repository** and create a new branch:
+   ```bash
+   git checkout -b your-feature-name
+   ```
 
-**Adaptation for use on CEBRA-Unified and xCEBRA models is needed for now.**
+2. **Make your changes** and ensure they are well-tested.
 
-Have fun!
+3. **Format your code** using `isort` and `black`:
+   ```bash
+   isort .
+   black .
+   ```
+4. **Open a Pull Request** to the `main` branch with a clear description of your changes.
