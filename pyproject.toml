@@ -7,7 +7,7 @@ name = "cebra_lens"
 version = "0.0.1"
 description = "Tools for analyzing embeddings from CEBRA"
 authors = [
-    { name = "Your Name", email = "your@email.com" },
+    { name = "M.W. Mathis Lab", email = "mackenzie.mathis@epfl.ch" },
 ]
 readme = "README.md"
 requires-python = ">=3.9"
