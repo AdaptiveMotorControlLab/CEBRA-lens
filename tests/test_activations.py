@@ -1,13 +1,12 @@
-import pytest
-import torch
-import numpy as np
 from collections import namedtuple
 from unittest.mock import MagicMock
-from cebra_lens.activations import (
-    get_activations_model,
-    _cut_array,
-    get_cut_indices,
-)
+
+import numpy as np
+import pytest
+import torch
+
+from cebra_lens.activations import (_cut_array, get_activations_model,
+                                    get_cut_indices)
 
 
 def test_cut_array_no_cut():
@@ -22,7 +21,7 @@ def test_cut_array_with_cut():
     np.testing.assert_array_equal(result, np.array([[2, 3, 4]]))
 
 
-def test_get_cut_indices_conv1d():
+def test_get_cut_indices():
     Offset = namedtuple("Offset", ["left", "right"])
 
     # Mock the model's get_offset behavior
@@ -32,6 +31,10 @@ def test_get_cut_indices_conv1d():
     result = get_cut_indices(model_mock, torch.nn.Conv1d, [3, 3])
     assert isinstance(result, list)
     assert all(isinstance(x, tuple) and len(x) == 2 for x in result)
+
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
+        get_cut_indices(model_mock, None, [3, 3])
 
 
 def make_mock_cebra_model():
@@ -55,7 +58,9 @@ def test_get_activations_model_basic(monkeypatch):
     monkeypatch.setattr(
         activations,
         "_attach_hooks",
-        lambda *a, **kw: ({"test_layer": np.ones((5, 3))}, [], [3]),
+        lambda *a, **kw: ({
+            "test_layer": np.ones((5, 3))
+        }, [], [3]),
     )
     result = get_activations_model(model, data, layer_type=torch.nn.Conv1d)
     assert isinstance(result, dict)

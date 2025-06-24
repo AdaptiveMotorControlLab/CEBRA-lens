@@ -1,14 +1,16 @@
 "file containing all the functions relative to distance computing"
 
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
+import numpy.typing as npt
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
-from typing import List, Optional, Tuple, Union, Dict
-from .misc import discrete_binning, repetition_binning, continuous_binning
-from .base import _BaseMetric
-from ..matplotlib import *
-import numpy.typing as npt
+
 from ..utils import extract_label
+from ..utils_plot import *
+from .base import _BaseMetric
+from .misc import continuous_binning, discrete_binning, repetition_binning
 
 
 class DistanceMetric:
@@ -18,9 +20,8 @@ class DistanceMetric:
     This class provides methods to compute distances between embeddings and centroids.
     """
 
-    def compute_centroid(
-        self, embedding: npt.NDArray, indices: List[np.int64]
-    ) -> np.float64:
+    def compute_centroid(self, embedding: npt.NDArray,
+                         indices: List[np.int64]) -> np.float64:
         """
         Computes the centroid of a single embedding (e.g. single layer) for specified bin indices.
 
@@ -36,12 +37,13 @@ class DistanceMetric:
         np.float64
             The computed centroid value.
         """
-        bin_data = embedding[:, indices.flatten()]  # Get data for the current bin
+        bin_data = embedding[:,
+                             indices.flatten()]  # Get data for the current bin
         return np.mean(bin_data, axis=1)  # Compute centroid
 
-    def scale_embedding(
-        self, embedding: npt.NDArray, metric: str = "cosine"
-    ) -> npt.NDArray:
+    def scale_embedding(self,
+                        embedding: npt.NDArray,
+                        metric: str = "cosine") -> npt.NDArray:
         """
         Scales the embedding data based on the specified metric.
 
@@ -61,8 +63,7 @@ class DistanceMetric:
         if metric == "euclidean":
             scaler = StandardScaler()
             return scaler.fit_transform(
-                embedding.T
-            ).T  # Standardize across each dimension
+                embedding.T).T  # Standardize across each dimension
         elif metric == "cosine":
             return embedding
         else:
@@ -70,9 +71,10 @@ class DistanceMetric:
                 f"The scaling for metric {metric} is not yet implemented. Please use 'cosine' or 'euclidean'."
             )
 
-    def compute_centroids(
-        self, embedding: npt.NDArray, indices: List[np.float64], metric: str = "cosine"
-    ) -> List[np.float64]:
+    def compute_centroids(self,
+                          embedding: npt.NDArray,
+                          indices: List[np.float64],
+                          metric: str = "cosine") -> List[np.float64]:
         """
         Computes the centroid of a single embedding (e.g. single layer) for all the bins.
 
@@ -95,7 +97,8 @@ class DistanceMetric:
         for bin_idx in range(indices.shape[0]):
             embedding_scaled = self.scale_embedding(embedding, metric)
             bin_indices = indices[bin_idx, :]
-            centroids.append(self.compute_centroid(embedding_scaled, bin_indices))
+            centroids.append(
+                self.compute_centroid(embedding_scaled, bin_indices))
         return centroids
 
 
@@ -111,7 +114,9 @@ class Intrabin(DistanceMetric):
         The distance metric to use for computing distances (default is "cosine").
     """
 
-    def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
+    def __init__(self,
+                 indices: List[np.int64],
+                 metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 
@@ -140,17 +145,16 @@ class Intrabin(DistanceMetric):
                 bin_data, metric=self.metric
             )  # Pairwise distances within the bin -> distances is list of x1x2,x1x3,x1x4...
             mean_intra_distance = np.mean(
-                intra_distances
-            )  # Mean of the pairwise distances
+                intra_distances)  # Mean of the pairwise distances
             distances.append(mean_intra_distance)
 
         return np.mean(distances)
 
     def plot(
-        self,
-        distance_dict: Dict[str, npt.NDArray],
-        title: str = "Intra-bin distance",
-        figsize: tuple = (15, 5),
+            self,
+            distance_dict: Dict[str, npt.NDArray],
+            title: str = "Intra-bin distance",
+            figsize: tuple = (15, 5),
     ) -> matplotlib.figure.Figure:
         """
         Plots the intra-bin distances.
@@ -219,32 +223,29 @@ class Interrep(DistanceMetric):
             for i in range(len(self.repetition_indices[0])):
 
                 rep_indices = self.repetition_indices[bin_idx][
-                    i
-                ]  # Get indices for the current repetition
+                    i]  # Get indices for the current repetition
                 embedding_scaled = self.scale_embedding(embedding, self.metric)
                 repetition_centroids.append(
-                    self.compute_centroid(embedding_scaled, rep_indices)
-                )
+                    self.compute_centroid(embedding_scaled, rep_indices))
 
             # Compute pairwise distances between centroids using cosine distance
-            bin_distances = cdist(
-                repetition_centroids, repetition_centroids, metric=self.metric
-            )
+            bin_distances = cdist(repetition_centroids,
+                                  repetition_centroids,
+                                  metric=self.metric)
 
             # Extract non-diagonal elements to get distances between different repetitions
             non_diagonal_distances = bin_distances[
-                ~np.eye(bin_distances.shape[0], dtype=bool)
-            ]
+                ~np.eye(bin_distances.shape[0], dtype=bool)]
             mean_distance = np.mean(non_diagonal_distances)
             distances.append(mean_distance)
 
         return np.mean(distances)
 
     def plot(
-        self,
-        distance_dict: Dict[str, npt.NDArray],
-        title: str = "Inter-repetition distance",
-        figsize: tuple = (15, 5),
+            self,
+            distance_dict: Dict[str, npt.NDArray],
+            title: str = "Inter-repetition distance",
+            figsize: tuple = (15, 5),
     ) -> matplotlib.figure.Figure:
         """
         Plots the inter-repetition distances.
@@ -277,7 +278,9 @@ class Interbin(DistanceMetric):
             The distance metric to use for computing distances (default is "cosine").
     """
 
-    def __init__(self, indices: List[np.int64], metric: Optional[str] = "cosine"):
+    def __init__(self,
+                 indices: List[np.int64],
+                 metric: Optional[str] = "cosine"):
         self.indices = indices
         self.metric = metric
 
@@ -297,24 +300,25 @@ class Interbin(DistanceMetric):
             The mean inter-bin distance across the embedding (e.g. across one layer).
         """
 
-        centroids = self.compute_centroids(
-            embedding=embedding, indices=self.indices, metric=self.metric
-        )
+        centroids = self.compute_centroids(embedding=embedding,
+                                           indices=self.indices,
+                                           metric=self.metric)
 
         # Compute pairwise distances between centroids using metric
         distances = cdist(centroids, centroids, metric=self.metric)
 
         # Compute the mean inter-bin distance for each layer, excluding self-distances
-        non_diagonal_distances = distances[~np.eye(distances.shape[0], dtype=bool)]
+        non_diagonal_distances = distances[~np.
+                                           eye(distances.shape[0], dtype=bool)]
         mean_distance = np.mean(non_diagonal_distances)
 
         return mean_distance
 
     def plot(
-        self,
-        distance_dict: Dict[str, npt.NDArray],
-        title: str = "Inter-bin distance",
-        figsize: tuple = (15, 5),
+            self,
+            distance_dict: Dict[str, npt.NDArray],
+            title: str = "Inter-bin distance",
+            figsize: tuple = (15, 5),
     ) -> matplotlib.figure.Figure:
         """
         Plots the inter-bin distances.
@@ -386,10 +390,12 @@ class Distance(_BaseMetric):
         self.metric = metric
         self.distance_label = distance_label
 
-        self.indices, self.repetition_indices = self._define_indices(is_discrete_labels)
+        self.indices, self.repetition_indices = self._define_indices(
+            is_discrete_labels)
 
     def _define_indices(
-        self, is_discrete_labels: bool = None
+        self,
+        is_discrete_labels: bool = None
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for each bin.
@@ -429,9 +435,7 @@ class Distance(_BaseMetric):
             if is_discrete_labels:
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and is_discrete_labels is True
-                idxs = discrete_binning(
-                    label=self.label,
-                )
+                idxs = discrete_binning(label=self.label, )
             else:
                 # dataset_label is HPC or visual/ is_discrete_labels is False (dataset_label is None)
                 idxs = continuous_binning(
@@ -444,16 +448,15 @@ class Distance(_BaseMetric):
         if self.distance_label == "interrep":
             # only relevant for visual dataset
             repetition_indices = repetition_binning(
-                indices=idxs, data=self.data, dataset_label=self.dataset_label
-            )
+                indices=idxs, data=self.data, dataset_label=self.dataset_label)
         else:
             repetition_indices = None
 
         return idxs, repetition_indices
 
     def compute(
-        self, activations: List[Union[np.float64, npt.NDArray]]
-    ) -> List[np.float64]:
+            self, activations: List[Union[np.float64,
+                                          npt.NDArray]]) -> List[np.float64]:
         """
         Computes specified type of distance for multiple layers of embedding data.
 
@@ -472,23 +475,25 @@ class Distance(_BaseMetric):
         elif self.distance_label == "intrabin":
             distance = Intrabin(self.indices, self.metric)
         elif self.distance_label == "interrep":
-            distance = Interrep(self.indices, self.repetition_indices, self.metric)
+            distance = Interrep(self.indices, self.repetition_indices,
+                                self.metric)
         else:
             raise NotImplementedError(
                 f"Distance {self.distance_label} not yet implemented. Please use 'interbin','interrep' or 'intrabin'."
             )
 
-        return super().iterate_over_layers(activations, distance._compute_distance)
+        return super().iterate_over_layers(activations,
+                                           distance._compute_distance)
 
     @property
     def __name__(self):
         return self.distance_label
 
     def plot(
-        self,
-        distance_dict: Dict[str, npt.NDArray],
-        title: str = None,
-        figsize: tuple = (15, 5),
+            self,
+            distance_dict: Dict[str, npt.NDArray],
+            title: str = None,
+            figsize: tuple = (15, 5),
     ) -> matplotlib.figure.Figure:
         """
         Plots the computed distances.

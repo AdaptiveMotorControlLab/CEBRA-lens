@@ -1,9 +1,10 @@
-import cebra
-import numpy as np
-import sklearn
-import cebra.datasets
-import numpy.typing as npt
 from typing import List
+
+import cebra
+import cebra.datasets
+import numpy as np
+import numpy.typing as npt
+import sklearn
 
 
 def get_datasets(
@@ -26,7 +27,8 @@ def get_datasets(
 
     for i in rats:
         data = cebra.datasets.init(f"rat-hippocampus-single-{i}")
-        neural_train, neural_valid, label_train, label_valid = split_data_HPC(data)
+        neural_train, neural_valid, label_train, label_valid = split_data_HPC(
+            data)
         train_datas.append(neural_train)
         valid_datas.append(neural_valid)
         continuous_labels_train.append(label_train)
@@ -80,7 +82,8 @@ def decoding_pos_dir(
 
     test_score = sklearn.metrics.r2_score(label_test[:, :2], prediction)
     pos_test_err = np.median(abs(prediction[:, 0] - label_test[:, 0]))
-    pos_test_score = sklearn.metrics.r2_score(label_test[:, 0], prediction[:, 0])
+    pos_test_score = sklearn.metrics.r2_score(label_test[:, 0], prediction[:,
+                                                                           0])
 
     return test_score, pos_test_err, pos_test_score
 

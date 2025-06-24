@@ -1,18 +1,19 @@
 """Functions to retrieve and handle layer activations"""
 
+from typing import Dict, List, Optional, Tuple, Type
+
 import cebra
-import torch
-import torch.nn as nn
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-from typing import Tuple, Dict, List, Type, Optional
-from .matplotlib import plot_activations
-import matplotlib.pyplot as plt
+import torch
+import torch.nn as nn
+
+from .utils_plot import plot_activations
 
 
-def _cut_array(
-    array: npt.NDArray, cut_indices: Tuple[np.int64, np.int64]
-) -> npt.NDArray:
+def _cut_array(array: npt.NDArray,
+               cut_indices: Tuple[np.int64, np.int64]) -> npt.NDArray:
     """
     Slices the input array based on the provided cut indices.
     This is used to remove the padding from activations in `get_activations_model`.
@@ -36,7 +37,7 @@ def _cut_array(
         sliced_array = array
     else:
         # Otherwise, slice the array
-        sliced_array = array[:, start : end if end != 0 else start :]
+        sliced_array = array[:, start:end if end != 0 else start:]
     return sliced_array
 
 
@@ -80,10 +81,13 @@ def get_cut_indices(
         # add for output layer
         cut_indices.append((0, 0))
     elif layer_type == None:
-        raise NotImplementedError("Padding handling not implemented for 'all'.")
+        raise NotImplementedError(
+            "Padding handling not implemented to handle activations for all layer types.",
+            "Set layer_type to nn.Conv1d to use the default padding handling.")
     else:
         # need to analyze the padding from the last output of Conv1 and apply the same cut
-        raise NotImplementedError(f"Padding handling not implemented for {layer_type}.")
+        raise NotImplementedError(
+            f"Padding handling not implemented for {layer_type}.")
     return cut_indices
 
 
@@ -93,7 +97,7 @@ def get_activations_model(
     session_id: int = -1,
     name: str = "single",
     instance: int = 0,
-    layer_type: Type[nn.Module] = None,
+    layer_type: Type[nn.Module] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
     """
     Extracts activations from a single model layer.
@@ -111,7 +115,8 @@ def get_activations_model(
     instance : int
         The instance number for the model, used to differentiate between models from the same model category.
     layer_type : Type[nn.Module]
-        The type of layer to extract activations from. Defaults to None, meaning extracts activations from all layers.
+        The type of layer to extract activations from. None means it extracts activations from all layers.
+        Default is nn.Conv1d, which is the most common layer type used in CEBRA models.
 
     Returns:
     --------
@@ -125,26 +130,25 @@ def get_activations_model(
     activations = {}
     transform_kwargs = {}
     if model.solver_name_ in [
-        "multi-session",
-        "multi-session-aux",
-        "multiobjective-solver",
+            "multi-session",
+            "multi-session-aux",
+            "multiobjective-solver",
     ]:
 
         model_ = model.model_[session_id]
         transform_kwargs.update({"session_id": session_id})
 
     elif model.solver_name_ in [
-        "single-session",
-        "single-session-aux",
-        "single-session-hybrid",
-        "single-session-full",
+            "single-session",
+            "single-session-aux",
+            "single-session-hybrid",
+            "single-session-full",
     ]:
         model_ = model.model_
 
     else:
         raise NotImplementedError(
-            f"Solver {model.solver_name_} is not yet implemented."
-        )
+            f"Solver {model.solver_name_} is not yet implemented.")
 
     activations, handles, conv_layer_info = _attach_hooks(
         activations=activations,
@@ -209,14 +213,14 @@ def process_activations(
                     name=model_name,
                     instance=i,
                     layer_type=layer_type,
-                )
-            )
+                ))
 
     return activations
 
 
 # Function to create a hook that stores the activations in the dictionary
 def _get_activation(name: str, activations: Dict):
+
     def hook(model, input, output):
         activations[name] = output.detach().squeeze().numpy()
 
@@ -262,8 +266,7 @@ def _attach_hooks(
             # attach hook to the layer_type and to the output layer
             if isinstance(model.net[i], layer_type) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
-                    f"{name}_{instance}_layer_{num_layer}", activations
-                )
+                    f"{name}_{instance}_layer_{num_layer}", activations)
                 if isinstance(model.net[i], layer_type):
                     conv_layer_info.append(model.net[i].kernel_size[0])
                 handle = model.net[i].register_forward_hook(hook)
@@ -298,8 +301,7 @@ def _attach_hooks(
 
             else:
                 hook, activations = _get_activation(
-                    f"{name}_{instance}_layer_{num_layer}", activations
-                )
+                    f"{name}_{instance}_layer_{num_layer}", activations)
 
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
@@ -309,8 +311,7 @@ def _attach_hooks(
 
 
 def aggregate_activations(
-    activations: Dict[str, npt.NDArray],
-) -> Dict[str, npt.NDArray]:
+    activations: Dict[str, npt.NDArray], ) -> Dict[str, npt.NDArray]:
     """
     Aggregates activations by model identifier aka. instance.
     This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,
@@ -387,8 +388,7 @@ def get_activations(
     activations = activations or {}
 
     aggregated_activations = aggregate_activations(
-        process_activations(models, data, session_id, activations, layer_type)
-    )
+        process_activations(models, data, session_id, activations, layer_type))
 
     activations_dict = {}
     for key, value in aggregated_activations.items():

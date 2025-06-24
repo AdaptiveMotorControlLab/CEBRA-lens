@@ -1,8 +1,10 @@
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pytest
 import torch
-from unittest.mock import patch, MagicMock
-from cebra_lens.quantification.decoding import decoding, Decoding
+
+import cebra_lens
 
 
 @pytest.fixture
@@ -17,13 +19,14 @@ def embeddings_labels():
 def test_decoding_function(embeddings_labels):
     emb_train, emb_test, label_train, label_test = embeddings_labels
 
-    with patch("cebra_lens.quantification.decoding.cebra.KNNDecoder") as mock_knn:
+    with patch("cebra.KNNDecoder") as mock_knn:
         mock_model = MagicMock()
         # Return prediction with correct shape each time
         mock_model.predict.side_effect = lambda x: np.random.rand(len(x))
         mock_knn.return_value = mock_model
 
-        score, medians, r2s = decoding(emb_train, emb_test, label_train, label_test)
+        score, medians, r2s = cebra_lens.quantification.decoder.decoding(
+            emb_train, emb_test, label_train, label_test)
 
         assert isinstance(score, float)
         assert len(medians) == label_train.shape[1]
@@ -39,7 +42,7 @@ def make_mock_cebra_model():
 
 def test_decoding_class_output_only_true():
     model = make_mock_cebra_model()
-    decoding_class = Decoding(
+    decoding_class = cebra_lens.quantification.decoder.Decoding(
         train_data=torch.rand((300, 100)),
         train_label=np.random.rand(300, 1),
         test_data=torch.rand((100, 100)),
@@ -52,7 +55,7 @@ def test_decoding_class_output_only_true():
     assert 0 in results
 
 
-@patch("cebra_lens.quantification.decoding.get_activations_model")
+@patch("cebra_lens.activations.get_activations_model")
 def test_decoding_class_output_only_false(mock_get_act):
     model = make_mock_cebra_model()
     mock_get_act.side_effect = lambda **kwargs: {
@@ -60,7 +63,7 @@ def test_decoding_class_output_only_false(mock_get_act):
         "layer2": np.random.rand(1000, 1000),
     }
 
-    decoding_class = Decoding(
+    decoding_class = cebra_lens.quantification.decoder.Decoding(
         train_data=torch.rand((1000, 1000)),
         train_label=np.random.rand(1000, 1),
         test_data=torch.rand((1000, 1000)),
@@ -71,11 +74,21 @@ def test_decoding_class_output_only_false(mock_get_act):
 
     results = decoding_class.compute(model)
     assert isinstance(results, dict)
-    assert len(results) == 3  # baseline + 2 layers
+    assert len(results) == 1  # only one Conv1d layer in the mock model
+
+    decoding_class.layer_type = None
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
+        decoding_class.compute(model)
+
+    decoding_class.layer_type = torch.nn.Linear
+    with pytest.raises(NotImplementedError,
+                       match="Padding handling not implemented*"):
+        decoding_class.compute(model)
 
 
 def test_set_output_only():
-    decoding_instance = Decoding(
+    decoding_instance = cebra_lens.quantification.decoder.Decoding(
         train_data=torch.rand((10, 5)),
         train_label=np.random.rand(10, 1),
         test_data=torch.rand((10, 5)),
@@ -85,11 +98,11 @@ def test_set_output_only():
     assert decoding_instance.output_only is False
 
 
-@patch("cebra_lens.quantification.decoding.plot_decoding")
-@patch("cebra_lens.quantification.decoding.plot_layer_decoding")
-def test_plot_logic(mock_layer_plot, mock_decoding_plot):
+@patch("cebra_lens.utils_plot.plot_decoding")
+@patch("cebra_lens.utils_plot.plot_layer_decoding")
+def test_decoder_plot(mock_layer_plot, mock_decoding_plot):
     dummy_result = {"modelA": {0: (0.9, [0.1], [0.8])}}
-    dec = Decoding(
+    dec = cebra_lens.quantification.decoder.Decoding(
         train_data=torch.rand((10, 10)),
         train_label=np.random.rand(10, 1),
         test_data=torch.rand((10, 10)),

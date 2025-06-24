@@ -1,10 +1,12 @@
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
-from cebra_lens import extract_label, compute_metric, plot_metric, model_loader
-from cebra_lens.quantification.decoding import Decoding
-from cebra_lens.quantification.rdm_metric import RDM
+import pytest
+
+from cebra_lens import compute_metric, extract_label, model_loader, plot_metric
 from cebra_lens.quantification.cka_metric import CKA
+from cebra_lens.quantification.decoder import Decoding
+from cebra_lens.quantification.rdm_metric import RDM
 
 
 def test_extract_label_single_dim():
@@ -29,6 +31,7 @@ def test_compute_metric_with_mock_metric_class():
     dummy_data = {"group1": [np.array([1, 2]), np.array([3, 4])]}
 
     class DummyMetric:
+
         def compute(self, sample):
             return sample.sum()
 
@@ -37,7 +40,7 @@ def test_compute_metric_with_mock_metric_class():
 
 
 def test_compute_metric_with_decoding():
-    dummy_data = {"group": [np.ones((5,)), np.ones((5,))]}
+    dummy_data = {"group": [np.ones((5, )), np.ones((5, ))]}
 
     mock_metric = MagicMock(spec=Decoding)
     mock_metric.compute.side_effect = lambda x: x.sum()
@@ -46,10 +49,14 @@ def test_compute_metric_with_decoding():
 
 
 def test_plot_metric_single_model(monkeypatch):
+
     class DummyRDM:
+
         def plot(self, data_dict, **kwargs):
             assert isinstance(data_dict, dict)
             return "plotted"
 
-    result = plot_metric({"data": np.array([1, 2, 3])}, DummyRDM(), group_name="test")
+    result = plot_metric({"data": np.array([1, 2, 3])},
+                         DummyRDM(),
+                         group_name="test")
     assert result == "plotted"

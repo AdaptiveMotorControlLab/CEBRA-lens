@@ -1,11 +1,14 @@
 """Functions to transform data e.g. tSNE, other functions can be added"""
 
-from sklearn.manifold import TSNE
-import numpy as np
-from .base import _BaseMetric
-from ..matplotlib import *
 from typing import List, Optional, Union
+
+import matplotlib
+import numpy as np
 import numpy.typing as npt
+from sklearn.manifold import TSNE
+
+from ..utils_plot import *
+from .base import _BaseMetric
 
 
 class Tsne(_BaseMetric):
@@ -44,7 +47,8 @@ class Tsne(_BaseMetric):
             layer_activation = layer_activation.T
 
         tsne = TSNE(n_components=3)
-        tsne_embedding = tsne.fit_transform(layer_activation[:, : self.num_samples].T)
+        tsne_embedding = tsne.fit_transform(
+            layer_activation[:, :self.num_samples].T)
         return tsne_embedding
 
     def compute(
@@ -64,7 +68,8 @@ class Tsne(_BaseMetric):
         List[Union[float, npt.NDArray]]
             The 2D embedding produced by t-SNE for each layer of a model.
         """
-        return super().iterate_over_layers(activations, self._compute_per_layer)
+        return super().iterate_over_layers(activations,
+                                           self._compute_per_layer)
 
     def _check_num_samples(self):
         """Checks if the number of samples is less than 200. If so, it sets the number of samples to 200 and prints a warning message."""
