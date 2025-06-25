@@ -133,11 +133,17 @@ This is briefly repeated in the usage demo notebooks.
    git checkout -b your-feature-name
    ```
 
-2. **Make your changes** and ensure they are well-tested.
+2. **Make your changes** and ensure they are well-tested and well-documented.
 
-3. **Format your code** using `isort` and `black`:
+3. **Format your code** using `isort` and `yapf`:
    ```bash
    isort .
-   black .
+   yapf -i -p -r cebra_lens
+   yapf -i -p -r tests
    ```
+
+or the `make` command
+    ```bash 
+    make format
+    ```
 4. **Open a Pull Request** to the `main` branch with a clear description of your changes.
