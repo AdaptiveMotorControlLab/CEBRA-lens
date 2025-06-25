@@ -32,7 +32,7 @@ docs-touch:
 	jupyter-book build .
 
 docs-strict:
-	jupyter-book build docs --keep-going --strict
+	jupyter-book build . --keep-going --strict
 
 # Serve the docs
 serve_docs:

@@ -2,8 +2,7 @@
 
 ## A python library for mechanistic interpretability of CEBRA models
 
-<img src="/Users/mwmathis/Documents/CEBRA-lens/docs/docs/images/zebra.png" title="cebra-lens" alt="cebra-lens" width="150" align="right" vspace = "80"/>
-
+ <img src="_static/zebra.png" title="cebra-lens" alt="cebra-lens" width="150" align="right" vspace = "80"/>
 
 **CEBRA-Lens** is a Python library for analyzing and interpreting neural representations learned by models trained with [CEBRA](https://github.com/AdaptiveMotorControlLab/cebra). It provides tools for mechanistic interpretability, allowing users to probe, visualize, and understand the structure of learned embeddings. The library is designed to support in-depth analysis of representational geometry, feature selectivity, and latent space dynamics in neuroscience and beyond. 👋 We welcome contributions and will continue to expand the library in the coming years.
 
@@ -66,7 +65,7 @@ These analyses quantify the change in the distance calculated per layer in a mod
 - inter-class distance
 - inter-repetition distance (only relevant if the model was trained on a dataset where there is repeating stimuli)
 
-<img src="/Users/mwmathis/Documents/CEBRA-lens/docs/docs/images/abstractfig.png" alt="analysis">
+<img src="_static/abstractfig.png" alt="analysis">
 
 # Demo
 
@@ -142,8 +141,8 @@ This is briefly repeated in the usage demo notebooks.
    yapf -i -p -r tests
    ```
 
-or the `make` command
-    ```bash 
-    make format
-    ```
+or the `make` command:
+   ```bash 
+   make format
+   ```
 4. **Open a Pull Request** to the `main` branch with a clear description of your changes.

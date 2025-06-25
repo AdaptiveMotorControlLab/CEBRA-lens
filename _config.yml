@@ -9,6 +9,7 @@ sphinx:
     add_module_names: False
     autosummary_generate: False
     suppress_warnings: ['autosummary']
+    html_static_path: ['docs/docs/images']
   extra_extensions:
     - numpydoc
     - 'sphinx.ext.autodoc'
