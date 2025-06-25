@@ -10,22 +10,19 @@ from tqdm import tqdm
 
 
 class _BaseMetric:
-    """
-    Base class for metrics computations.
-    """
+    """Base class for metrics computations."""
 
     @abstractmethod
     def compute(self,
                 activations: Dict[str, npt.NDArray]) -> Dict[str, npt.NDArray]:
-        """
-        Every metric which inherits ``_BaseMetric`` needs to implement a compute function.
+        """Every metric which inherits ``_BaseMetric`` needs to implement a compute function.
+        
         The compute function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
 
-        Parameters:
-        -----------
-        activations : Dict[str, npt.NDArray]
-            Dictionary where the key is the model category group (str),
-            and the value is a npt.NDArray containing for all the models under that group the activations per layer.
+        Args:
+            activations : Dict[str, npt.NDArray]
+                Dictionary where the key is the model category group (str),
+                and the value is a npt.NDArray containing for all the models under that group the activations per layer.
 
         """
         raise NotImplementedError
@@ -35,20 +32,17 @@ class _BaseMetric:
         activations: List[Union[float, npt.NDArray]],
         metric_func: types.FunctionType,
     ) -> List[Union[np.float64, npt.NDArray]]:
-        """
-        Iterate over each layer of activations and apply the metric function to compute the desired metric.
+        """Iterate over each layer of activations and apply the metric function to compute the desired metric.
 
-        Parameters:
-        -----------
-        activations : List[npt.NDArray]
-            List of 2D numpy array representing the activation of neurons per layer.
-        metric_func : types.FunctionType
-            Function that computes the metric for a single layer's activations.
+        Args:
+            activations : List[npt.NDArray]
+                List of 2D numpy array representing the activation of neurons per layer.
+            metric_func : types.FunctionType
+                Function that computes the metric for a single layer's activations.
 
         Returns:
-        --------
-        layer_data : List[Union[float, npt.NDArray]]
-            The computed metric for each layer.
+            layer_data : List[Union[float, npt.NDArray]]
+                The computed metric for each layer.
         """
         layer_data = []
         for layer_activation in activations:
@@ -56,16 +50,14 @@ class _BaseMetric:
         return layer_data
 
     def save(self, filepath: str, data: Dict[str, npt.NDArray]) -> None:
-        """
-        Save data in the location filepath.
+        """Save data in the location filepath.
 
-        Parameters:
-        -----------
-        filepath : str
-            Filepath to the location where the data wants to be stored.
-        data : Dict[str, npt.NDArray]
-            Dictionary where the key is the model category label (str),
-            and the value is a npt.NDArray containing for all the models under that label the calculated data.
+        Args:
+            filepath : str
+                Filepath to the location where the data wants to be stored.
+            data : Dict[str, npt.NDArray]
+                Dictionary where the key is the model category label (str),
+                and the value is a npt.NDArray containing for all the models under that label the calculated data.
         """
         filepath = Path(filepath)
         custom_filepath = filepath.with_stem(filepath.stem +
@@ -74,19 +66,16 @@ class _BaseMetric:
             pickle.dump(data, f)
 
     def load(self, filepath: str) -> Dict[str, npt.NDArray]:
-        """
-        Load data from the filepath location
+        """Load data from the filepath location
 
-        Parameters:
-        -----------
-        filepath : str
-            Filepath to the location where the data is stored.
+        Args:
+            filepath : str
+                Filepath to the location where the data is stored.
 
         Returns:
-        --------
-        Dict[str, npt.NDArray]
-            Dictionary where the key is the model category label (str),
-            and the value is a npt.NDArray containing for all the models under that label the calculated data.
+            Dict[str, npt.NDArray]
+                Dictionary where the key is the model category label (str),
+                and the value is a npt.NDArray containing for all the models under that label the calculated data.
         """
         with open(filepath, "rb") as f:
             data = pickle.load(f)
@@ -94,8 +83,8 @@ class _BaseMetric:
 
     @abstractmethod
     def plot(self):
-        """
-        Every metric which inherits ``_BaseMetric`` needs to implement a plot function.
+        """Every metric which inherits ``_BaseMetric`` needs to implement a plot function.
+        
         The plot function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
         """
         raise NotImplementedError
