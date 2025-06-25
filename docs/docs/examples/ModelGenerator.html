@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Model generation for Allen Visual dataset &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/docs/examples/ModelGenerator';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Metrics" href="../api/metrics.html" />
+    <link rel="prev" title="CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)" href="../../../demos/UsageDemoVISUAL.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github.com/AdaptiveMotorControlLab/CEBRA-Lens/demos/UsageDemoGENERAL.ipynb/github/AdaptiveMotorControlLab/CEBRA-Lens/blob/main/docs/docs/docs/examples/ModelGenerator.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2Fdocs/docs/examples/ModelGenerator.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/docs/docs/examples/ModelGenerator.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Model generation for Allen Visual dataset</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-necessary-packages-and-mount-goolge-drive">Install necessary packages and mount goolge drive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-data">Load data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-models">Train Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-session">Single-session</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-session">Multi-session</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="model-generation-for-allen-visual-dataset">
+<h1>Model generation for Allen Visual dataset<a class="headerlink" href="#model-generation-for-allen-visual-dataset" title="Link to this heading">#</a></h1>
+<p>This notebook generates 12 models as used in the analysis notebook. It is meant to be run on <a class="reference external" href="https://colab.research.google.com/">Google Colab</a> for GPU usage.</p>
+<p>If you have not downloaded the necessary dataset to train the models please refer to the top of the Usage demo notebook.</p>
+<p>The notebook follows this structure:</p>
+<ol class="arabic simple">
+<li><p>Load Data</p></li>
+<li><p>Train Models:</p></li>
+</ol>
+<ul class="simple">
+<li><p>Single: 1 untrained + 5 Trained (mouse 4)</p></li>
+<li><p>Multi: 1 untrained + 5 Trained (all mice)</p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p>Saves the models in Drive</p></li>
+</ol>
+<section id="install-necessary-packages-and-mount-goolge-drive">
+<h2>Install necessary packages and mount goolge drive<a class="headerlink" href="#install-necessary-packages-and-mount-goolge-drive" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">pre</span> <span class="s1">&#39;cebra[datasets,demos]&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;/content/drive&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-data">
+<h2>Load data<a class="headerlink" href="#load-data" title="Link to this heading">#</a></h2>
+<p>In order to load data make sure you are in a directory where the data folder /data is located.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cebra</span><span class="w"> </span><span class="kn">import</span> <span class="n">CEBRA</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cebra_lens</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lens</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#try with offset5 model and also offset15, offset36</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_datas</span><span class="p">,</span> <span class="n">valid_datas</span><span class="p">,</span> <span class="n">discrete_labels_train</span><span class="p">,</span> <span class="n">discrete_labels_val</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">lens</span><span class="o">.</span><span class="n">utils_allen</span><span class="o">.</span><span class="n">get_single_session_datasets</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">3e-4</span><span class="p">,</span>
+    <span class="s2">&quot;model_architechture&quot;</span><span class="p">:</span> <span class="s2">&quot;offset5-model&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;num_units&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="s2">&quot;output_dim&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;time_offsets&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">2042</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">mice</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mouse1&quot;</span><span class="p">,</span> <span class="s2">&quot;mouse2&quot;</span><span class="p">,</span> <span class="s2">&quot;mouse3&quot;</span><span class="p">,</span> <span class="s2">&quot;mouse4&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="train-models">
+<h2>Train Models<a class="headerlink" href="#train-models" title="Link to this heading">#</a></h2>
+<section id="single-session">
+<h3>Single-session<a class="headerlink" href="#single-session" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">10000</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># RUN MOUSE4 5 TIMES:</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+
+    <span class="n">cebra_model_single_session</span> <span class="o">=</span> <span class="n">CEBRA</span><span class="p">(</span>
+        <span class="n">model_architecture</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model_architechture&quot;</span><span class="p">],</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">],</span>
+        <span class="n">num_hidden_units</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;num_units&quot;</span><span class="p">],</span>
+        <span class="n">output_dimension</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;output_dim&quot;</span><span class="p">],</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="n">conditional</span><span class="o">=</span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">time_offsets</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;time_offsets&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span><span class="p">,</span> <span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">embeddings_single_session</span> <span class="o">=</span> <span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+        <span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span>
+    <span class="p">)</span>
+
+    <span class="c1">################### SAVING ###################</span>
+
+    <span class="c1"># torch version</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+        <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_single_session_</span><span class="si">{</span><span class="n">mice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_torch.pt&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+    <span class="c1"># sklearn version</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+        <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_single_session_</span><span class="si">{</span><span class="n">mice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sklearn Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># UNTRAINED</span>
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">cebra_model_single_session</span> <span class="o">=</span> <span class="n">CEBRA</span><span class="p">(</span>
+    <span class="n">model_architecture</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model_architechture&quot;</span><span class="p">],</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">],</span>
+    <span class="n">num_hidden_units</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;num_units&quot;</span><span class="p">],</span>
+    <span class="n">output_dimension</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;output_dim&quot;</span><span class="p">],</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+    <span class="n">distance</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+    <span class="n">conditional</span><span class="o">=</span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda_if_available&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">time_offsets</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;time_offsets&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span><span class="p">,</span> <span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">embeddings_single_session</span> <span class="o">=</span> <span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train_datas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span><span class="p">)</span>
+
+<span class="c1">################### SAVING ###################</span>
+
+<span class="c1"># torch version</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+    <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_single_session_</span><span class="si">{</span><span class="n">mice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_UT_torch.pt&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+<span class="c1"># sklearn version</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+    <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_single_session_</span><span class="si">{</span><span class="n">mice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_UT.pt&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cebra_model_single_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sklearn Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="multi-session">
+<h3>Multi-session<a class="headerlink" href="#multi-session" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">untrained</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">multi_session_neural_train</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">multi_session_index_train</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">multi_session_neural_valid</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">multi_session_index_valid</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">multi_session_neural_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span><span class="p">)</span>
+    <span class="n">multi_session_index_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">multi_session_neural_valid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neural</span><span class="p">)</span>
+    <span class="n">multi_session_index_valid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">10000</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TRAIN 5 MULTI-SESSIONS</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="c1"># Multisession training</span>
+    <span class="n">cebra_model_multi_session</span> <span class="o">=</span> <span class="n">CEBRA</span><span class="p">(</span>
+        <span class="n">model_architecture</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model_architechture&quot;</span><span class="p">],</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">],</span>
+        <span class="n">num_hidden_units</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;num_units&quot;</span><span class="p">],</span>
+        <span class="n">output_dimension</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;output_dim&quot;</span><span class="p">],</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="n">conditional</span><span class="o">=</span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda_if_available&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">time_offsets</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;time_offsets&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Provide a list of data, i.e. datas = [data_a, data_b, ...]</span>
+    <span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">multi_session_neural_train</span><span class="p">,</span> <span class="n">multi_session_index_train</span><span class="p">)</span>
+
+    <span class="c1">################### SAVING ###################</span>
+
+    <span class="c1"># torch version</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+        <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_multi_session_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_torch.pt&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+    <span class="c1"># sklearn version</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+        <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_multi_session_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sklearn Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># UNTRAINED</span>
+
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Multisession training</span>
+<span class="n">cebra_model_multi_session</span> <span class="o">=</span> <span class="n">CEBRA</span><span class="p">(</span>
+    <span class="n">model_architecture</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model_architechture&quot;</span><span class="p">],</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">],</span>
+    <span class="n">num_hidden_units</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;num_units&quot;</span><span class="p">],</span>
+    <span class="n">output_dimension</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;output_dim&quot;</span><span class="p">],</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="n">max_iterations</span><span class="p">,</span>
+    <span class="n">distance</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+    <span class="n">conditional</span><span class="o">=</span><span class="s2">&quot;time_delta&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda_if_available&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">time_offsets</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;time_offsets&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Provide a list of data, i.e. datas = [data_a, data_b, ...]</span>
+<span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">multi_session_neural_train</span><span class="p">,</span> <span class="n">multi_session_index_train</span><span class="p">)</span>
+
+<span class="c1">################### SAVING ###################</span>
+
+<span class="c1"># torch version</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+    <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_multi_session_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_UT_torch.pt&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+<span class="c1"># sklearn version</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span>
+    <span class="sa">f</span><span class="s2">&quot;CEBRA_models/FinalModels/VISION/allen_multi_session_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">max_iterations</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">k_UT.pt&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cebra_model_multi_session</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sklearn Model saved under: &quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs/docs/examples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../demos/UsageDemoVISUAL.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../api/metrics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Metrics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-necessary-packages-and-mount-goolge-drive">Install necessary packages and mount goolge drive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-data">Load data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-models">Train Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-session">Single-session</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-session">Multi-session</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

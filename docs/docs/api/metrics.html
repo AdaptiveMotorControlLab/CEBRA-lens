@@ -1,0 +1,1634 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Metrics &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/docs/api/metrics';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Helpers" href="helpers.html" />
+    <link rel="prev" title="Model generation for Allen Visual dataset" href="../examples/ModelGenerator.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2Fdocs/docs/api/metrics.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/docs/docs/api/metrics.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Metrics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.cka_metric">CKA Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA"><code class="docutils literal notranslate"><span class="pre">CKA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.comparisons"><code class="docutils literal notranslate"><span class="pre">CKA.comparisons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.center_gram"><code class="docutils literal notranslate"><span class="pre">CKA.center_gram()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.cka"><code class="docutils literal notranslate"><span class="pre">CKA.cka()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.compute"><code class="docutils literal notranslate"><span class="pre">CKA.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.gram_linear"><code class="docutils literal notranslate"><span class="pre">CKA.gram_linear()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.plot"><code class="docutils literal notranslate"><span class="pre">CKA.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.rdm_metric">RDM Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM"><code class="docutils literal notranslate"><span class="pre">RDM</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.data"><code class="docutils literal notranslate"><span class="pre">RDM.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.label"><code class="docutils literal notranslate"><span class="pre">RDM.label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.is_discrete_labels"><code class="docutils literal notranslate"><span class="pre">RDM.is_discrete_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.dataset_label"><code class="docutils literal notranslate"><span class="pre">RDM.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.metric"><code class="docutils literal notranslate"><span class="pre">RDM.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.bool_oracle"><code class="docutils literal notranslate"><span class="pre">RDM.bool_oracle</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.label_ind"><code class="docutils literal notranslate"><span class="pre">RDM.label_ind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.compute"><code class="docutils literal notranslate"><span class="pre">RDM.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.output_information"><code class="docutils literal notranslate"><span class="pre">RDM.output_information()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.plot"><code class="docutils literal notranslate"><span class="pre">RDM.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.decoder">Decoder Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding"><code class="docutils literal notranslate"><span class="pre">Decoding</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.train_data"><code class="docutils literal notranslate"><span class="pre">Decoding.train_data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.train_label"><code class="docutils literal notranslate"><span class="pre">Decoding.train_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.test_data"><code class="docutils literal notranslate"><span class="pre">Decoding.test_data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.test_label"><code class="docutils literal notranslate"><span class="pre">Decoding.test_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.session_id"><code class="docutils literal notranslate"><span class="pre">Decoding.session_id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.dataset_label"><code class="docutils literal notranslate"><span class="pre">Decoding.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.layer_type"><code class="docutils literal notranslate"><span class="pre">Decoding.layer_type</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.output_only"><code class="docutils literal notranslate"><span class="pre">Decoding.output_only</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.compute"><code class="docutils literal notranslate"><span class="pre">Decoding.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.output_information"><code class="docutils literal notranslate"><span class="pre">Decoding.output_information()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.plot"><code class="docutils literal notranslate"><span class="pre">Decoding.plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.set_output_only"><code class="docutils literal notranslate"><span class="pre">Decoding.set_output_only()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.decoding"><code class="docutils literal notranslate"><span class="pre">decoding()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.distance">Distance Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance"><code class="docutils literal notranslate"><span class="pre">Distance</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.data"><code class="docutils literal notranslate"><span class="pre">Distance.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.label"><code class="docutils literal notranslate"><span class="pre">Distance.label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.label_ind"><code class="docutils literal notranslate"><span class="pre">Distance.label_ind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.is_discrete_labels"><code class="docutils literal notranslate"><span class="pre">Distance.is_discrete_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.dataset_label"><code class="docutils literal notranslate"><span class="pre">Distance.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.metric"><code class="docutils literal notranslate"><span class="pre">Distance.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.distance_label"><code class="docutils literal notranslate"><span class="pre">Distance.distance_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.compute"><code class="docutils literal notranslate"><span class="pre">Distance.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.plot"><code class="docutils literal notranslate"><span class="pre">Distance.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric"><code class="docutils literal notranslate"><span class="pre">DistanceMetric</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroid"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.compute_centroid()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroids"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.compute_centroids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.scale_embedding"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.scale_embedding()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin"><code class="docutils literal notranslate"><span class="pre">Interbin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.indices"><code class="docutils literal notranslate"><span class="pre">Interbin.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.metric"><code class="docutils literal notranslate"><span class="pre">Interbin.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.plot"><code class="docutils literal notranslate"><span class="pre">Interbin.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep"><code class="docutils literal notranslate"><span class="pre">Interrep</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.indices"><code class="docutils literal notranslate"><span class="pre">Interrep.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.repetition_indices"><code class="docutils literal notranslate"><span class="pre">Interrep.repetition_indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.metric"><code class="docutils literal notranslate"><span class="pre">Interrep.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.plot"><code class="docutils literal notranslate"><span class="pre">Interrep.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin"><code class="docutils literal notranslate"><span class="pre">Intrabin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.indices"><code class="docutils literal notranslate"><span class="pre">Intrabin.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.metric"><code class="docutils literal notranslate"><span class="pre">Intrabin.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.plot"><code class="docutils literal notranslate"><span class="pre">Intrabin.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="metrics">
+<h1>Metrics<a class="headerlink" href="#metrics" title="Link to this heading">#</a></h1>
+<section id="module-cebra_lens.quantification.cka_metric">
+<span id="cka-metric"></span><h2>CKA Metric<a class="headerlink" href="#module-cebra_lens.quantification.cka_metric" title="Link to this heading">#</a></h2>
+<p>All relevant functions for Centered Kernel Alignment (CKA) analysis.</p>
+<p>CKA computation was taken from <a class="github reference external" href="https://github.com/amathislab/DeepDraw">amathislab/DeepDraw</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CKA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comparisons</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseMetric</span></code></p>
+<p>Compute the Centered Kernel Alignment (CKA) between two sets of model types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.comparisons">
+<span class="sig-name descname"><span class="pre">comparisons</span></span><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.comparisons" title="Link to this definition">#</a></dt>
+<dd><p>List[Tuple[str,str]]
+A List of tuple containing two strings representing the model group names to be compared.
+For example, [(‘single_UT’, ‘single_TR’), (‘multi_TR’, ‘single_TR’)].</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.cka_metric.CKA.center_gram" title="cebra_lens.quantification.cka_metric.CKA.center_gram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center_gram</span></code></a>(gram[, unbiased])</p></td>
+<td><p>Center a symmetric Gram matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.cka_metric.CKA.cka" title="cebra_lens.quantification.cka_metric.CKA.cka"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cka</span></code></a>(gram_x, gram_y[, debiased])</p></td>
+<td><p>Compute CKA.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.cka_metric.CKA.compute" title="cebra_lens.quantification.cka_metric.CKA.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(activations, comparison)</p></td>
+<td><p>Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.cka_metric.CKA.gram_linear" title="cebra_lens.quantification.cka_metric.CKA.gram_linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gram_linear</span></code></a>(x)</p></td>
+<td><p>Compute Gram (kernel) matrix for a linear kernel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterate_over_layers</span></code>(activations, metric_func)</p></td>
+<td><p>Iterate over each layer of activations and apply the metric function to compute the desired metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(filepath)</p></td>
+<td><p>Load data from the filepath location</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.cka_metric.CKA.plot" title="cebra_lens.quantification.cka_metric.CKA.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(cka_matrices, annot[, show_cbar, ...])</p></td>
+<td><p>Plot the CKA matrices as heatmaps.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(filepath, data)</p></td>
+<td><p>Save data in the location filepath.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.center_gram">
+<span class="sig-name descname"><span class="pre">center_gram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gram</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unbiased</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA.center_gram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.center_gram" title="Link to this definition">#</a></dt>
+<dd><p>Center a symmetric Gram matrix.</p>
+<p>This is equvialent to centering the (possibly infinite-dimensional) features
+induced by the kernel before computing the Gram matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gram</strong> – npt.NDArray
+A num_examples x num_examples symmetric matrix.</p></li>
+<li><p><strong>unbiased</strong> – bool
+Whether to adjust the Gram matrix in order to compute an unbiased
+estimate of HSIC. Note that this estimator may be negative.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A symmetric matrix with centered columns and rows.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.cka">
+<span class="sig-name descname"><span class="pre">cka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gram_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gram_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debiased</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA.cka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.cka" title="Link to this definition">#</a></dt>
+<dd><p>Compute CKA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gram_x</strong> – npt.NDArray
+A num_examples x num_examples Gram matrix.</p></li>
+<li><p><strong>gram_y</strong> – npt.NDArray
+A num_examples x num_examples Gram matrix.</p></li>
+<li><p><strong>debiased</strong> – bool
+Use unbiased estimator of HSIC. CKA may still be biased.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of CKA between X and Y.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comparison</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.compute" title="Link to this definition">#</a></dt>
+<dd><p>Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.</p>
+<p>This function calculates the CKA score between activations from different models and layers,
+comparing them based on the specified models and layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>activations</strong> – Dict[str, npt.NDArray]
+A dictionary where keys are strings which represent the model label and values are 2d lists
+with the corresponding activations per layer.</p></li>
+<li><p><strong>comparison</strong> – Tuple[str, str]
+A tuple containing the model labels to compare.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>npt.NDArray</dt><dd><p>A CKA matrix with rows representing instances of the model and columns representing the layers.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cka_matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.gram_linear">
+<span class="sig-name descname"><span class="pre">gram_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA.gram_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.gram_linear" title="Link to this definition">#</a></dt>
+<dd><p>Compute Gram (kernel) matrix for a linear kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – npt.NDArray
+A num_examples x num_features matrix of features.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A num_examples x num_examples Gram matrix of examples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.cka_metric.CKA.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cka_matrices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_cbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cbar_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'CKA</span> <span class="pre">score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'magma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/cka_metric.html#CKA.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.cka_metric.CKA.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot the CKA matrices as heatmaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cka_matrices</strong> – Dict[str, npt.NDArray]
+A dictionary where keys are model labels and values are CKA matrices.</p></li>
+<li><p><strong>annot</strong> – bool
+If True, display the CKA values on the heatmap.</p></li>
+<li><p><strong>show_cbar</strong> – bool
+If True, display the color bar on the heatmap.</p></li>
+<li><p><strong>cbar_label</strong> – str
+Label for the color bar.</p></li>
+<li><p><strong>color_map</strong> – str
+Color map to use for the heatmap.</p></li>
+<li><p><strong>figsize</strong> – tuple
+Size of the figure for the heatmap.</p></li>
+<li><p><strong>ax</strong> – Optional[matplotlib.axes.Axes]
+If provided, the heatmap will be plotted on this axes. If None, a new figure and axes will be created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.axes.Axes</dt><dd><p>The axes on which the heatmap is plotted.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cebra_lens.quantification.rdm_metric">
+<span id="rdm-metric"></span><h2>RDM Metric<a class="headerlink" href="#module-cebra_lens.quantification.rdm_metric" title="Link to this heading">#</a></h2>
+<p>All the functions relative to the Representation Dissimilarity Matrix (RDM) calculation</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RDM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_discrete_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'correlation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool_oracle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/rdm_metric.html#RDM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseMetric</span></code></p>
+<p>Compute the Representational Dissimilarity Matrix (RDM) for a given activation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.data" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The data array of shape (num_samples, num_features).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.label" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The array of labels corresponding to the data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.is_discrete_labels">
+<span class="sig-name descname"><span class="pre">is_discrete_labels</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.is_discrete_labels" title="Link to this definition">#</a></dt>
+<dd><p>bool, optional
+Whether the labels are discrete or continuous. By default, it is False, meaning the labels are continuous.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.dataset_label">
+<span class="sig-name descname"><span class="pre">dataset_label</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.dataset_label" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The dataset type, either ‘visual’ or ‘HPC’. Default is ‘visual’.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.metric" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The distance metric to use for computing the RDMs. ‘correlation’ or ‘euclidean’ are supported.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.bool_oracle">
+<span class="sig-name descname"><span class="pre">bool_oracle</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.bool_oracle" title="Link to this definition">#</a></dt>
+<dd><p>bool, optional
+Whether to compute and compare with the Oracle RDM. Default is True.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.label_ind">
+<span class="sig-name descname"><span class="pre">label_ind</span></span><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.label_ind" title="Link to this definition">#</a></dt>
+<dd><p>int, optional
+The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.rdm_metric.RDM.compute" title="cebra_lens.quantification.rdm_metric.RDM.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(activations)</p></td>
+<td><p>Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterate_over_layers</span></code>(activations, metric_func)</p></td>
+<td><p>Iterate over each layer of activations and apply the metric function to compute the desired metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(filepath)</p></td>
+<td><p>Load data from the filepath location</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.rdm_metric.RDM.output_information" title="cebra_lens.quantification.rdm_metric.RDM.output_information"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_information</span></code></a>()</p></td>
+<td><p>Outputs information about the RDM class initialization parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.rdm_metric.RDM.plot" title="cebra_lens.quantification.rdm_metric.RDM.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(rdms[, titles, cmap, figsize, ax])</p></td>
+<td><p>Plots the RDM analysis results.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(filepath, data)</p></td>
+<td><p>Save data in the location filepath.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/rdm_metric.html#RDM.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.compute" title="Link to this definition">#</a></dt>
+<dd><p>Computes the RDMs (Representational Dissimilarity Matrices) for each layer’s activations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>activations</strong> – List[Union[float, npt.NDArray]]
+List of 2D numpy arrays representing the activation of neurons per layer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Tuple[npt.NDArray, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.output_information">
+<span class="sig-name descname"><span class="pre">output_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/rdm_metric.html#RDM.output_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.output_information" title="Link to this definition">#</a></dt>
+<dd><p>Outputs information about the RDM class initialization parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.rdm_metric.RDM.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/rdm_metric.html#RDM.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.rdm_metric.RDM.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the RDM analysis results. If <cite>bool_oracle</cite> is True, it plots the correlation of the RDMs with the Oracle RDM, else it plots the RDMs in the rdms dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rdms</strong> – Dict[str, List[npt.NDArray]]
+Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.</p></li>
+<li><p><strong>titles</strong> – List[str], optional
+List of title for the RDM plots, if it is different from ordered layers.</p></li>
+<li><p><strong>cmap</strong> – str, optional
+The colormap to be used for the plot. Default is “viridis”.</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure for the plot. Default is None, which uses the default size.</p></li>
+<li><p><strong>ax</strong> – Optional[matplotlib.axes.Axes], optional
+The axes on which to plot the RDMs. If None, a new figure and axes will be created. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.figure.Figure</dt><dd><p>The figure containing the plotted RDMs.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cebra_lens.quantification.decoder">
+<span id="decoder-metric"></span><h2>Decoder Metric<a class="headerlink" href="#module-cebra_lens.quantification.decoder" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_data:</span> <span class="pre">~torch.Tensor,</span> <span class="pre">train_label:</span> <span class="pre">~numpy.ndarray[tuple[int,</span> <span class="pre">...],</span> <span class="pre">~numpy.dtype[~numpy._typing._array_like._ScalarType_co]],</span> <span class="pre">test_data:</span> <span class="pre">~torch.Tensor,</span> <span class="pre">test_label:</span> <span class="pre">~numpy.ndarray[tuple[int,</span> <span class="pre">...],</span> <span class="pre">~numpy.dtype[~numpy._typing._array_like._ScalarType_co]],</span> <span class="pre">session_id:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">dataset_label:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">layer_type:</span> <span class="pre">~typing.Type[~torch.nn.modules.module.Module]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.conv.Conv1d'&gt;,</span> <span class="pre">output_only:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#Decoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseMetric</span></code></p>
+<p>Decoding class for decoding neural data by layer using a given CEBRA model.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.train_data">
+<span class="sig-name descname"><span class="pre">train_data</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.train_data" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The training data used for model transformation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.train_label">
+<span class="sig-name descname"><span class="pre">train_label</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.train_label" title="Link to this definition">#</a></dt>
+<dd><p>npt.NDArray
+The true labels corresponding to the training data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.test_data">
+<span class="sig-name descname"><span class="pre">test_data</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.test_data" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The validation data used for testing the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.test_label">
+<span class="sig-name descname"><span class="pre">test_label</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.test_label" title="Link to this definition">#</a></dt>
+<dd><p>npt.NDArray
+The true labels corresponding to the validation data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.session_id">
+<span class="sig-name descname"><span class="pre">session_id</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.session_id" title="Link to this definition">#</a></dt>
+<dd><p>int, optional
+The session ID for multi-session models. For single-session no need to input it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.dataset_label">
+<span class="sig-name descname"><span class="pre">dataset_label</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.dataset_label" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The type of dataset being used for decoding.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.layer_type">
+<span class="sig-name descname"><span class="pre">layer_type</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.layer_type" title="Link to this definition">#</a></dt>
+<dd><p>Type[nn.Module]
+The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.output_only">
+<span class="sig-name descname"><span class="pre">output_only</span></span><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.output_only" title="Link to this definition">#</a></dt>
+<dd><p>bool
+A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.decoder.Decoding.compute" title="cebra_lens.quantification.decoder.Decoding.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(model)</p></td>
+<td><p>Decode neural data by layer using a given CEBRA model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterate_over_layers</span></code>(activations, metric_func)</p></td>
+<td><p>Iterate over each layer of activations and apply the metric function to compute the desired metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(filepath)</p></td>
+<td><p>Load data from the filepath location</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.decoder.Decoding.plot" title="cebra_lens.quantification.decoder.Decoding.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(results_dict[, title, label, figsize, ...])</p></td>
+<td><p>Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(filepath, data)</p></td>
+<td><p>Save data in the location filepath.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.decoder.Decoding.set_output_only" title="cebra_lens.quantification.decoder.Decoding.set_output_only"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output_only</span></code></a>(output_only)</p></td>
+<td><p>Set the output_only parameter to True or False.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><strong>output_information</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CEBRA</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#Decoding.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.compute" title="Link to this definition">#</a></dt>
+<dd><p>Decode neural data by layer using a given CEBRA model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – cebra.integrations.sklearn.cebra.CEBRA
+The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>npt.NDArray</dt><dd><p>A numpy array containing the decoding results for each layer and the neural input baseline.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.output_information">
+<span class="sig-name descname"><span class="pre">output_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#Decoding.output_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.output_information" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Decoding</span> <span class="pre">by</span> <span class="pre">layer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hls'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#Decoding.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_dict</strong> – Dict[str, Dict[int, Tuple[np.float64, list, list]]]
+Dictionary containing the decoding results for each model and layer.</p></li>
+<li><p><strong>title</strong> – str, optional
+The title of the plot. Default is “Decoding by layer”.</p></li>
+<li><p><strong>label</strong> – int, optional
+The label to plot. This is relevant only if the dataset label is not specified.</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure to plot. Default is (15, 5).</p></li>
+<li><p><strong>palette</strong> – str, optional
+The color palette to use for the plot. Default is “hls”.</p></li>
+<li><p><strong>plot_error</strong> – bool, optional
+Whether to plot the error score. Default is False, meaning the R^2 score will be plotted. This is relevant only if the dataset label is not specified.</p></li>
+<li><p><strong>ax</strong> – Optional[matplotlib.axes.Axes], optional
+The axes to plot on. If None, a new figure and axes will be created. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.axes.Axes</dt><dd><p>The axes containing the plot. If ax is provided, it will return the same ax with the plot, otherwise it will create a new figure and return the ax.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.Decoding.set_output_only">
+<span class="sig-name descname"><span class="pre">set_output_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#Decoding.set_output_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.Decoding.set_output_only" title="Link to this definition">#</a></dt>
+<dd><p>Set the output_only parameter to True or False.</p>
+<p>If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_only</strong> – bool
+If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cebra_lens.quantification.decoder.decoding">
+<span class="sig-name descname"><span class="pre">decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/decoder.html#decoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.decoder.decoding" title="Link to this definition">#</a></dt>
+<dd><p>Function to decode the embeddings using KNNDecoder from CEBRA.</p>
+<p>The decoding scores are returned in the form of average $R^2$ score
+across all labels, $R^2$ scores per label and error per label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding_train</strong> – pt.tensor
+The part of the output embedding to use as training for the decoding.</p></li>
+<li><p><strong>embedding_test</strong> – pt.tensor
+The part of the output embedding to use as testing for the decoding.</p></li>
+<li><p><strong>label_train</strong> – npt.NDArray
+The true labels corresponding to the training data.</p></li>
+<li><p><strong>label_test</strong> – npt.NDArray
+The true labels corresponding to the validation data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Tuple[np.float64, list, list]</dt><dd><p>A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cebra_lens.quantification.distance">
+<span id="distance-metric"></span><h2>Distance Metric<a class="headerlink" href="#module-cebra_lens.quantification.distance" title="Link to this heading">#</a></h2>
+<p>file containing all the functions relative to distance computing</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_discrete_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'interbin'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Distance" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseMetric</span></code></p>
+<p>A Base class to compute distances between embeddings and centroids.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.data" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The data array of shape (num_samples, num_features).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.label" title="Link to this definition">#</a></dt>
+<dd><p>torch.Tensor
+The array of labels corresponding to the data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.label_ind">
+<span class="sig-name descname"><span class="pre">label_ind</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.label_ind" title="Link to this definition">#</a></dt>
+<dd><p>int, optional
+The index of the label to extract from the array (default is 0). This is relevant when dataset_label is None.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.is_discrete_labels">
+<span class="sig-name descname"><span class="pre">is_discrete_labels</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.is_discrete_labels" title="Link to this definition">#</a></dt>
+<dd><p>bool, optional
+Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.dataset_label">
+<span class="sig-name descname"><span class="pre">dataset_label</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.dataset_label" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The dataset type, either ‘visual’ or ‘HPC’. Default is ‘visual’.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.metric" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The distance metric to use for computing distances (default is “cosine”).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.distance_label">
+<span class="sig-name descname"><span class="pre">distance_label</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.distance_label" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The type of distance to compute (default is “interbin”).</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.Distance.compute" title="cebra_lens.quantification.distance.Distance.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>(activations)</p></td>
+<td><p>Computes specified type of distance for multiple layers of embedding data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iterate_over_layers</span></code>(activations, metric_func)</p></td>
+<td><p>Iterate over each layer of activations and apply the metric function to compute the desired metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>(filepath)</p></td>
+<td><p>Load data from the filepath location</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.Distance.plot" title="cebra_lens.quantification.distance.Distance.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(distance_dict[, title, figsize])</p></td>
+<td><p>Plots the computed distances.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(filepath, data)</p></td>
+<td><p>Save data in the location filepath.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Distance.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.compute" title="Link to this definition">#</a></dt>
+<dd><p>Computes specified type of distance for multiple layers of embedding data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>activations</strong> – List[Union[np.float64, npt.NDArray]]
+List of 2D numpy array representing the activation of neurons per layer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>List[np.float64]</dt><dd><p>A list of computed distances for each layer.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Distance.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Distance.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Distance.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the computed distances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_dict</strong> – Dict[str, npt.NDArray]
+A dictionary containing the distances for each layer.</p></li>
+<li><p><strong>title</strong> – str, optional
+The title of the plot (default is None, which will use the distance type).</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure for the plot (default is (15, 5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.figure.Figure</dt><dd><p>The figure object containing the plot.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.DistanceMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DistanceMetric</span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#DistanceMetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.DistanceMetric" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for distance metrics.</p>
+<p>This class provides methods to compute distances between embeddings and centroids.</p>
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroid" title="cebra_lens.quantification.distance.DistanceMetric.compute_centroid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroid</span></code></a>(embedding, indices)</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for specified bin indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroids" title="cebra_lens.quantification.distance.DistanceMetric.compute_centroids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroids</span></code></a>(embedding, indices[, metric])</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for all the bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric.scale_embedding" title="cebra_lens.quantification.distance.DistanceMetric.scale_embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_embedding</span></code></a>(embedding[, metric])</p></td>
+<td><p>Scale the embedding data based on the specified metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.DistanceMetric.compute_centroid">
+<span class="sig-name descname"><span class="pre">compute_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#DistanceMetric.compute_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroid" title="Link to this definition">#</a></dt>
+<dd><p>Compute the centroid of a single embedding (e.g. single layer) for specified bin indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> – npt.NDArray
+The embedding data array of shape Neurons X Samples.</p></li>
+<li><p><strong>indices</strong> – List[np.int64]
+A list of indices specifying the bin data to compute the centroid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>np.float64</dt><dd><p>The computed centroid value.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.DistanceMetric.compute_centroids">
+<span class="sig-name descname"><span class="pre">compute_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#DistanceMetric.compute_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroids" title="Link to this definition">#</a></dt>
+<dd><p>Compute the centroid of a single embedding (e.g. single layer) for all the bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> – npt.NDArray
+The embedding data array of shape Neurons X Samples.</p></li>
+<li><p><strong>indices</strong> – List[np.float64]
+A list of indices specifying the bins to compute the centroids.</p></li>
+<li><p><strong>metric</strong> – str, optional
+The distance metric to use for scaling the embedding (default is “cosine”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>List[np.float64]</dt><dd><p>A list of computed centroid values.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.DistanceMetric.scale_embedding">
+<span class="sig-name descname"><span class="pre">scale_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#DistanceMetric.scale_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.DistanceMetric.scale_embedding" title="Link to this definition">#</a></dt>
+<dd><p>Scale the embedding data based on the specified metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> – npt.NDArray
+The embedding data array of shape Neurons X Samples.</p></li>
+<li><p><strong>metric</strong> – str
+The distance metric to use for scaling the embedding, either “cosine” or “euclidean”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>npt.NDArray</dt><dd><p>The scaled embedding data.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interbin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Interbin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Interbin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Interbin" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric" title="cebra_lens.quantification.distance.DistanceMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistanceMetric</span></code></a></p>
+<p>Class to compute inter-bin distances for a given embedding data and indices.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interbin.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Interbin.indices" title="Link to this definition">#</a></dt>
+<dd><p>List[np.int64]
+A list of indices specifying the bins.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interbin.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Interbin.metric" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The distance metric to use for computing distances (default is “cosine”).</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroid</span></code>(embedding, indices)</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for specified bin indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroids</span></code>(embedding, indices[, metric])</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for all the bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.Interbin.plot" title="cebra_lens.quantification.distance.Interbin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(distance_dict[, title, figsize])</p></td>
+<td><p>Plots the inter-bin distances.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_embedding</span></code>(embedding[, metric])</p></td>
+<td><p>Scale the embedding data based on the specified metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interbin.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Inter-bin</span> <span class="pre">distance'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Interbin.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Interbin.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the inter-bin distances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_dict</strong> – Dict[str, npt.NDArray]
+A dictionary containing the distances for each layer.</p></li>
+<li><p><strong>title</strong> – str, optional
+The title of the plot (default is “Inter-bin distance”).</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure for the plot (default is (15, 5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.figure.Figure</dt><dd><p>The figure object containing the plot.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interrep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Interrep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repetition_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Interrep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Interrep" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric" title="cebra_lens.quantification.distance.DistanceMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistanceMetric</span></code></a></p>
+<p>Class to compute inter-repetition distances for a given embedding data, indices, and repetition indices.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interrep.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Interrep.indices" title="Link to this definition">#</a></dt>
+<dd><p>List[np.int64]
+A list of indices specifying the bins.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interrep.repetition_indices">
+<span class="sig-name descname"><span class="pre">repetition_indices</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Interrep.repetition_indices" title="Link to this definition">#</a></dt>
+<dd><p>List[np.int64]
+A list of lists specifying the repetition indices.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interrep.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Interrep.metric" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The distance metric to use for computing distances (default is “cosine”).</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroid</span></code>(embedding, indices)</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for specified bin indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroids</span></code>(embedding, indices[, metric])</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for all the bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.Interrep.plot" title="cebra_lens.quantification.distance.Interrep.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(distance_dict[, title, figsize])</p></td>
+<td><p>Plots the inter-repetition distances.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_embedding</span></code>(embedding[, metric])</p></td>
+<td><p>Scale the embedding data based on the specified metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Interrep.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Inter-repetition</span> <span class="pre">distance'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Interrep.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Interrep.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the inter-repetition distances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_dict</strong> – Dict[str, npt.NDArray]
+A dictionary containing the distances for each layer.</p></li>
+<li><p><strong>title</strong> – str, optional
+The title of the plot (default is “Inter-repetition distance”).</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure for the plot (default is (15, 5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.figure.Figure</dt><dd><p>The figure object containing the plot.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Intrabin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Intrabin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Intrabin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Intrabin" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cebra_lens.quantification.distance.DistanceMetric" title="cebra_lens.quantification.distance.DistanceMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistanceMetric</span></code></a></p>
+<p>Class to compute intra-bin distances for a given embedding data and indices.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Intrabin.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Intrabin.indices" title="Link to this definition">#</a></dt>
+<dd><p>List[np.int64]
+A list of indices specifying the bins.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Intrabin.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#cebra_lens.quantification.distance.Intrabin.metric" title="Link to this definition">#</a></dt>
+<dd><p>str, optional
+The distance metric to use for computing distances (default is “cosine”).</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroid</span></code>(embedding, indices)</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for specified bin indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_centroids</span></code>(embedding, indices[, metric])</p></td>
+<td><p>Compute the centroid of a single embedding (e.g. single layer) for all the bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cebra_lens.quantification.distance.Intrabin.plot" title="cebra_lens.quantification.distance.Intrabin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(distance_dict[, title, figsize])</p></td>
+<td><p>Plots the intra-bin distances.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_embedding</span></code>(embedding[, metric])</p></td>
+<td><p>Scale the embedding data based on the specified metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cebra_lens.quantification.distance.Intrabin.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarType_co</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Intra-bin</span> <span class="pre">distance'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/cebra_lens/quantification/distance.html#Intrabin.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cebra_lens.quantification.distance.Intrabin.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plots the intra-bin distances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_dict</strong> – Dict[str, npt.NDArray]
+A dictionary containing the distances for each layer.</p></li>
+<li><p><strong>title</strong> – str, optional
+The title of the plot (default is “Intra-bin distance”).</p></li>
+<li><p><strong>figsize</strong> – tuple, optional
+The size of the figure for the plot (default is (15, 5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>matplotlib.figure.Figure</dt><dd><p>The figure object containing the plot.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs/docs/api"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../examples/ModelGenerator.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Model generation for Allen Visual dataset</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="helpers.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Helpers</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.cka_metric">CKA Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA"><code class="docutils literal notranslate"><span class="pre">CKA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.comparisons"><code class="docutils literal notranslate"><span class="pre">CKA.comparisons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.center_gram"><code class="docutils literal notranslate"><span class="pre">CKA.center_gram()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.cka"><code class="docutils literal notranslate"><span class="pre">CKA.cka()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.compute"><code class="docutils literal notranslate"><span class="pre">CKA.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.gram_linear"><code class="docutils literal notranslate"><span class="pre">CKA.gram_linear()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.cka_metric.CKA.plot"><code class="docutils literal notranslate"><span class="pre">CKA.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.rdm_metric">RDM Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM"><code class="docutils literal notranslate"><span class="pre">RDM</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.data"><code class="docutils literal notranslate"><span class="pre">RDM.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.label"><code class="docutils literal notranslate"><span class="pre">RDM.label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.is_discrete_labels"><code class="docutils literal notranslate"><span class="pre">RDM.is_discrete_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.dataset_label"><code class="docutils literal notranslate"><span class="pre">RDM.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.metric"><code class="docutils literal notranslate"><span class="pre">RDM.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.bool_oracle"><code class="docutils literal notranslate"><span class="pre">RDM.bool_oracle</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.label_ind"><code class="docutils literal notranslate"><span class="pre">RDM.label_ind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.compute"><code class="docutils literal notranslate"><span class="pre">RDM.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.output_information"><code class="docutils literal notranslate"><span class="pre">RDM.output_information()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.rdm_metric.RDM.plot"><code class="docutils literal notranslate"><span class="pre">RDM.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.decoder">Decoder Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding"><code class="docutils literal notranslate"><span class="pre">Decoding</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.train_data"><code class="docutils literal notranslate"><span class="pre">Decoding.train_data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.train_label"><code class="docutils literal notranslate"><span class="pre">Decoding.train_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.test_data"><code class="docutils literal notranslate"><span class="pre">Decoding.test_data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.test_label"><code class="docutils literal notranslate"><span class="pre">Decoding.test_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.session_id"><code class="docutils literal notranslate"><span class="pre">Decoding.session_id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.dataset_label"><code class="docutils literal notranslate"><span class="pre">Decoding.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.layer_type"><code class="docutils literal notranslate"><span class="pre">Decoding.layer_type</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.output_only"><code class="docutils literal notranslate"><span class="pre">Decoding.output_only</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.compute"><code class="docutils literal notranslate"><span class="pre">Decoding.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.output_information"><code class="docutils literal notranslate"><span class="pre">Decoding.output_information()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.plot"><code class="docutils literal notranslate"><span class="pre">Decoding.plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.Decoding.set_output_only"><code class="docutils literal notranslate"><span class="pre">Decoding.set_output_only()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.decoder.decoding"><code class="docutils literal notranslate"><span class="pre">decoding()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-cebra_lens.quantification.distance">Distance Metric</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance"><code class="docutils literal notranslate"><span class="pre">Distance</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.data"><code class="docutils literal notranslate"><span class="pre">Distance.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.label"><code class="docutils literal notranslate"><span class="pre">Distance.label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.label_ind"><code class="docutils literal notranslate"><span class="pre">Distance.label_ind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.is_discrete_labels"><code class="docutils literal notranslate"><span class="pre">Distance.is_discrete_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.dataset_label"><code class="docutils literal notranslate"><span class="pre">Distance.dataset_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.metric"><code class="docutils literal notranslate"><span class="pre">Distance.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.distance_label"><code class="docutils literal notranslate"><span class="pre">Distance.distance_label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.compute"><code class="docutils literal notranslate"><span class="pre">Distance.compute()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Distance.plot"><code class="docutils literal notranslate"><span class="pre">Distance.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric"><code class="docutils literal notranslate"><span class="pre">DistanceMetric</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroid"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.compute_centroid()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.compute_centroids"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.compute_centroids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.DistanceMetric.scale_embedding"><code class="docutils literal notranslate"><span class="pre">DistanceMetric.scale_embedding()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin"><code class="docutils literal notranslate"><span class="pre">Interbin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.indices"><code class="docutils literal notranslate"><span class="pre">Interbin.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.metric"><code class="docutils literal notranslate"><span class="pre">Interbin.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interbin.plot"><code class="docutils literal notranslate"><span class="pre">Interbin.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep"><code class="docutils literal notranslate"><span class="pre">Interrep</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.indices"><code class="docutils literal notranslate"><span class="pre">Interrep.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.repetition_indices"><code class="docutils literal notranslate"><span class="pre">Interrep.repetition_indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.metric"><code class="docutils literal notranslate"><span class="pre">Interrep.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Interrep.plot"><code class="docutils literal notranslate"><span class="pre">Interrep.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin"><code class="docutils literal notranslate"><span class="pre">Intrabin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.indices"><code class="docutils literal notranslate"><span class="pre">Intrabin.indices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.metric"><code class="docutils literal notranslate"><span class="pre">Intrabin.metric</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cebra_lens.quantification.distance.Intrabin.plot"><code class="docutils literal notranslate"><span class="pre">Intrabin.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

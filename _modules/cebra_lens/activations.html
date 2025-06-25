@@ -1,0 +1,819 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cebra_lens.activations &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cebra_lens/activations';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2F_modules/cebra_lens/activations.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for cebra_lens.activations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions to retrieve and handle layer activations&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cebra</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_activations</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cut_array</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+               <span class="n">cut_indices</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Slices the input array based on the provided cut indices.</span>
+<span class="sd">    </span>
+<span class="sd">    This is used to remove the padding from activations in `get_activations_model`.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        array : numpy.ndarray</span>
+<span class="sd">            The input array to be sliced.</span>
+<span class="sd">        cut_indices : Tuple[np.int64, np.int64]</span>
+<span class="sd">            A tuple containing two integers, start and end indices for slicing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        npt.NDArray</span>
+<span class="sd">            The sliced array. If both start and end indices are 0, the whole array is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">cut_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">cut_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># If both start and end are 0, take the whole array</span>
+        <span class="n">sliced_array</span> <span class="o">=</span> <span class="n">array</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Otherwise, slice the array</span>
+        <span class="n">sliced_array</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:,</span> <span class="n">start</span><span class="p">:</span><span class="n">end</span> <span class="k">if</span> <span class="n">end</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">start</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">sliced_array</span>
+
+
+<div class="viewcode-block" id="get_cut_indices">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.activations.get_cut_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cut_indices</span><span class="p">(</span>
+    <span class="n">model_</span><span class="p">:</span> <span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">,</span>
+    <span class="n">layer_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="n">conv_layer_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute indices for removing padding from activation layers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_ : cebra.integrations.sklearn.cebra.CEBRA</span>
+<span class="sd">            CEBRA model instance.</span>
+<span class="sd">        layer_type : Type[nn.Module]</span>
+<span class="sd">            The type of layer whose activations were extracted.</span>
+<span class="sd">        conv_layer_info : Optional[List[int]]</span>
+<span class="sd">            A list of the kernel sizes for the convolutional layers extracted, needed for receptive field calculation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        cut_indices: List[Tuple[int,int]]</span>
+<span class="sd">            A list of tuples, a tuple for each activation layer, where the first element is the amount of elements which need to be removed from the beginning and the abs(last element) the amount needed to be remove from the end.</span>
+<span class="sd">            Example:</span>
+<span class="sd">            cut_indices = [(4,-4), (3,-3), (2,-2), (1,-1), (0,0), (0,0)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cut_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">model_</span><span class="o">.</span><span class="n">get_offset</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv1d</span><span class="p">:</span>
+        <span class="c1"># fix it so it&#39;s using only model_</span>
+        <span class="n">reduction</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">conv_layer_info</span><span class="p">:</span>
+            <span class="n">reduction</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">reduction</span> <span class="o">-</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">reduction</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># lower</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">reduction</span> <span class="o">-</span> <span class="n">left</span>
+            <span class="k">if</span> <span class="n">offset</span><span class="o">.</span><span class="n">left</span> <span class="o">&gt;</span> <span class="n">offset</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">left</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">reduction</span> <span class="o">-</span> <span class="n">right</span>
+            <span class="n">cut_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">left</span><span class="p">,</span> <span class="o">-</span><span class="n">right</span><span class="p">))</span>
+        <span class="c1"># add for output layer</span>
+        <span class="n">cut_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Padding handling not implemented to handle activations for all layer types.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Set layer_type to nn.Conv1d to use the default padding handling.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># need to analyze the padding from the last output of Conv1 and apply the same cut</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Padding handling not implemented for </span><span class="si">{</span><span class="n">layer_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cut_indices</span></div>
+
+
+
+<div class="viewcode-block" id="get_activations_model">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.activations.get_activations_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_activations_model</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+    <span class="n">instance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">layer_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv1d</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract activations from a single model layer.</span>
+<span class="sd">    </span>
+<span class="sd">    This function extracts activations from the specified layer of </span>
+<span class="sd">    a model and stores them in a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model : cebra.integrations.sklearn.cebra.CEBRA</span>
+<span class="sd">            The cebra model from which to extract activations.</span>
+<span class="sd">        data : torch.Tensor</span>
+<span class="sd">            The input data to be passed through the model. Shape of samples X channels (neurons).</span>
+<span class="sd">        session_id : int, optional</span>
+<span class="sd">            The session identifier used for selecting the appropriate model in multi-session solvers.</span>
+<span class="sd">            For single-session, no need to input it.</span>
+<span class="sd">        instance : int</span>
+<span class="sd">            The instance number for the model, used to differentiate between models from the same model category.</span>
+<span class="sd">        layer_type : Type[nn.Module]</span>
+<span class="sd">            The type of layer to extract activations from. None means it extracts activations from all layers.</span>
+<span class="sd">            Default is nn.Conv1d, which is the most common layer type used in CEBRA models.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary containing the activations from the layers of the model. Where the keys are str &#39;model_label_instance_layer_num , and the values are the activations for that model instance and layer. E.g.  {&#39;model1_layer_1&#39;: [0.1, 0.2], &#39;model1_layer_2&#39;: [0.3, 0.4]}</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        If the model includes padding, the padding is removed from the activations for easier downstream use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">activations</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">transform_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">solver_name_</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;multi-session&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;multi-session-aux&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;multiobjective-solver&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+
+        <span class="n">model_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span>
+        <span class="n">transform_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">})</span>
+
+    <span class="k">elif</span> <span class="n">model</span><span class="o">.</span><span class="n">solver_name_</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;single-session&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;single-session-aux&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;single-session-hybrid&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;single-session-full&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="n">model_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Solver </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">solver_name_</span><span class="si">}</span><span class="s2"> is not yet implemented.&quot;</span><span class="p">)</span>
+
+    <span class="n">activations</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">conv_layer_info</span> <span class="o">=</span> <span class="n">_attach_hooks</span><span class="p">(</span>
+        <span class="n">activations</span><span class="o">=</span><span class="n">activations</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model_</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">instance</span><span class="o">=</span><span class="n">instance</span><span class="p">,</span>
+        <span class="n">layer_type</span><span class="o">=</span><span class="n">layer_type</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">transform_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># remove all handles to avoid activation&#39;s problems</span>
+    <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles</span><span class="p">:</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">pad_before_transform</span><span class="p">:</span>
+        <span class="c1"># Padding logic: calculate the total reduction which happens based on the kernel size per layer, divide the reduction per layer into 2 parts</span>
+        <span class="n">cut_indices</span> <span class="o">=</span> <span class="n">get_cut_indices</span><span class="p">(</span><span class="n">model_</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">,</span> <span class="n">conv_layer_info</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">activations</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">activations</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_cut_array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">cut_indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">activations</span></div>
+
+
+
+<div class="viewcode-block" id="process_activations">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.activations.process_activations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_activations</span><span class="p">(</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">]],</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">activations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">layer_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts activations from multiple models and stores them in a dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    This function demonstrates how to use the `get_activations_model` function by extracting activations from multiple models</span>
+<span class="sd">    and storing them in a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models : Dict[str, List[ cebra.integrations.sklearn.cebra.CEBRA]]</span>
+<span class="sd">            A dictionary containing different sets of models.</span>
+<span class="sd">        data : torch.Tensor</span>
+<span class="sd">            The input data for which activations are to be extracted. Shape of samples X channels (neurons).</span>
+<span class="sd">        session_id : int</span>
+<span class="sd">            The session identifier used for selecting the appropriate model in multi-session solvers.</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary to store the activations. If passed as an argument, the new keys will be concatenated to the existing dictionary.</span>
+<span class="sd">        layer_type : Type[nn.Module]</span>
+<span class="sd">            The type of layer from which to extract activations (e.g., nn.Conv1d).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary containing the activations from all the models passed as input. A dictionary where keys are strings in the format &#39;model_identifier_layer_num&#39; and values are activations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">models</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+            <span class="n">activations</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">get_activations_model</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                    <span class="n">instance</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                    <span class="n">layer_type</span><span class="o">=</span><span class="n">layer_type</span><span class="p">,</span>
+                <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">activations</span></div>
+
+
+
+<span class="c1"># Function to create a hook that stores the activations in the dictionary</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_activation</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">activations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">hook</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="n">activations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">hook</span><span class="p">,</span> <span class="n">activations</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_attach_hooks</span><span class="p">(</span>
+    <span class="n">activations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">instance</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">layer_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>  <span class="c1"># only attaches hooks on convolutional layers</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attaches forward hooks to the specified layers of a given model to capture activations.</span>
+<span class="sd">    </span>
+<span class="sd">    This function attaches hooks to the specified layers of the model to capture </span>
+<span class="sd">    activations during the forward pass.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary to store the activations. Please refer to ``activations`` returned by ``get_activations_model``.</span>
+<span class="sd">        model : cebra.integrations.sklearn.cebra.CEBRA</span>
+<span class="sd">            The model to which hooks will be attached.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            A base name for the activation keys (e.g., &quot;single&quot;, &quot;multi&quot;).</span>
+<span class="sd">        instance : int</span>
+<span class="sd">            The instance number for the model, used to differentiate between models from the same model category.</span>
+<span class="sd">        layer_type : Type[nn.Module]</span>
+<span class="sd">            The type of layer from which to extract activations (e.g., nn.Conv1d).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            The updated dictionary containing the activations captured by the hooks. Please refer to ``activations`` returned by ``get_activations_model``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_layer</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">handles</span><span class="p">,</span> <span class="n">conv_layer_info</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">layer_type</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">)):</span>
+            <span class="c1"># attach hook to the layer_type and to the output layer</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layer_type</span><span class="p">)</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="n">_get_activation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">_layer_</span><span class="si">{</span><span class="n">num_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">activations</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layer_type</span><span class="p">):</span>
+                    <span class="n">conv_layer_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">handle</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+                <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                <span class="n">num_layer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">elif</span> <span class="nb">bool</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">_modules</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">submodule</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">submodule</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">):</span>
+                        <span class="n">hook</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="n">_get_activation</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">_layer_</span><span class="si">{</span><span class="n">num_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">activations</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">conv_layer_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">submodule</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">handle</span> <span class="o">=</span> <span class="n">submodule</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+                        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                        <span class="n">num_layer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># layer_type is None meaning we want to attach hooks to every layer regardless</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">_modules</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">submodule</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+                    <span class="n">hook</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="n">_get_activation</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">_layer_</span><span class="si">{</span><span class="n">num_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">activations</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">handle</span> <span class="o">=</span> <span class="n">submodule</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+                    <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                    <span class="n">num_layer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hook</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="n">_get_activation</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">_layer_</span><span class="si">{</span><span class="n">num_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">activations</span><span class="p">)</span>
+
+                <span class="n">handle</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">)</span>
+                <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                <span class="n">num_layer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">activations</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">conv_layer_info</span>
+
+
+<div class="viewcode-block" id="aggregate_activations">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.activations.aggregate_activations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_activations</span><span class="p">(</span>
+    <span class="n">activations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate activations by model identifier aka instance.</span>
+<span class="sd">    </span>
+<span class="sd">    This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,</span>
+<span class="sd">    and the values are the corresponding activations. It aggregates the activations by model identifier, ignoring the layer information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        activations : Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary where keys are strings in the format &#39;model_identifier_layer_num&#39; and values are activations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, npt.NDArray]</span>
+<span class="sd">            A dictionary where keys are model identifiers and values are lists of activations corresponding to those model identifiers.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; activations = {</span>
+<span class="sd">        ...     &#39;model1_layer_1&#39;: [0.1, 0.2],</span>
+<span class="sd">        ...     &#39;model1_layer_2&#39;: [0.3, 0.4],</span>
+<span class="sd">        ...     &#39;model2_layer_1&#39;: [0.5, 0.6]</span>
+<span class="sd">        ... }</span>
+<span class="sd">        &gt;&gt;&gt; _aggregate_activations(activations)</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;model1&#39;: [[0.1, 0.2], [0.3, 0.4]],</span>
+<span class="sd">            &#39;model2&#39;: [[0.5, 0.6]]</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aggregated_activations</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">activations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">model_identifier</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;_layer&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">model_identifier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aggregated_activations</span><span class="p">:</span>
+            <span class="n">aggregated_activations</span><span class="p">[</span><span class="n">model_identifier</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">aggregated_activations</span><span class="p">[</span><span class="n">model_identifier</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aggregated_activations</span></div>
+
+
+
+<div class="viewcode-block" id="get_activations">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.activations.get_activations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_activations</span><span class="p">(</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">]],</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">activations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">layer_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and organize activations from models.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models : Dict[str, List[CEBRA]]</span>
+<span class="sd">            Dictionary of models categorized by label.</span>
+<span class="sd">        data : torch.Tensor</span>
+<span class="sd">            Input tensor for the models, shape (samples, features).</span>
+<span class="sd">        session_id : int</span>
+<span class="sd">            Session identifier used for selecting the appropriate model.</span>
+<span class="sd">        activations : Dict[str, npt.NDArray], optional</span>
+<span class="sd">            Optional dictionary to store activations.</span>
+<span class="sd">        layer_type : Type[nn.Module], optional</span>
+<span class="sd">            Optional layer type (e.g., nn.Conv1d) to extract specific activations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, npt.NDArray]</span>
+<span class="sd">            Dictionary with model label prefixes as keys and lists of activation arrays as values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">activations</span> <span class="o">=</span> <span class="n">activations</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="n">aggregated_activations</span> <span class="o">=</span> <span class="n">aggregate_activations</span><span class="p">(</span>
+        <span class="n">process_activations</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">activations</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">))</span>
+
+    <span class="n">activations_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">aggregated_activations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">activations_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">activations_dict</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>CEBRA-Lens jupyter-book &#8212; AMCL_DocTemplate</title>
+    <title>CEBRA-Lens &#8212; DocTemplate</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -57,9 +57,12 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'README';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="🛠️ Installation" href="docs/docs/installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -142,7 +145,7 @@
     
   
 
-<a class="navbar-brand logo" href="docs/intro.html">
+<a class="navbar-brand logo" href="#">
   
   
   
@@ -153,8 +156,8 @@
       
     
     
-    <img src="_static/zebra.png" class="logo__image only-light" alt="AMCL_DocTemplate - Home"/>
-    <script>document.write(`<img src="_static/zebra.png" class="logo__image only-dark" alt="AMCL_DocTemplate - Home"/>`);</script>
+    <img src="_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
   
   
 </a></div>
@@ -173,17 +176,33 @@
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
-            <li class="toctree-l1">
-                <a class="reference internal" href="docs/intro.html">
-                    Riccardo’s space - Exploring nonlinear encoders for robust vision decoding
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    CEBRA-Lens
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Main Documentation</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="docs/initial_pitch.html">💫 Initial pitch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/package_intro.html">🔍 cebra_lens package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/repo_org.html">📚 Repository organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/docs/installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/docs/repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/docs/examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/docs/api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/docs/api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/README.html">CEBRA-Lens jupyter-book</a></li>
 </ul>
 
     </div>
@@ -238,7 +257,7 @@
       
       
       
-      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-lens" target="_blank"
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -255,7 +274,7 @@
       
       
       
-      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-lens/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -369,7 +388,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CEBRA-Lens jupyter-book</h1>
+    <h1>CEBRA-Lens</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -379,14 +398,34 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-book">Building the book</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hosting-the-book">Hosting the book</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CEBRA-Lens</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">🛠️ Quick start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-methods">🦓🔍 Analysis Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-performance-analysis">Model performance analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-visualizations">Layer visualizations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#population-level-comparison">Population level comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-metrics">Distance metrics</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributors">Contributors</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#credits">Credits</a></li>
 </ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#demo">Demo</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">📊Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jupyter-notebooks">Jupyter Notebooks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgements">Acknowledgements</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#other-helpful-tips">Other helpful tips:</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#download-dataset">📥 Download dataset</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-guide">Contributing Guide</a><ul class="visible nav section-nav flex-column">
+</ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -397,37 +436,177 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="cebra-lens-jupyter-book">
-<h1>CEBRA-Lens jupyter-book<a class="headerlink" href="#cebra-lens-jupyter-book" title="Link to this heading">#</a></h1>
-<p>Documentation for the usage of CEBRA-Lens</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="cebra-lens">
+<h1>CEBRA-Lens<a class="headerlink" href="#cebra-lens" title="Link to this heading">#</a></h1>
+<img src="https://images.squarespace-cdn.com/content/v1/57f6d51c9f74566f55ecf271/c443da50-49cd-4fcb-a2f3-a5cae2915f51/zebra.png?format=1500w" title="cebra-lens" alt="cebra-lens" width="150" align="right" style="margin-top:80px;" />
+<p>A python library for mechanistic interpretability of CEBRA models</p>
+<p><strong>CEBRA-Lens</strong> is a Python library for analyzing and interpreting neural representations learned by models trained with <a class="reference external" href="https://github.com/AdaptiveMotorControlLab/cebra">CEBRA</a>. It provides tools for mechanistic interpretability, allowing users to probe, visualize, and understand the structure of learned embeddings. The library is designed to support in-depth analysis of representational geometry, feature selectivity, and latent space dynamics in neuroscience and beyond. 👋 We welcome contributions and will continue to expand the library in the coming years.</p>
+<p><a class="reference external" href="https://github.com/AdaptiveMotorControlLab/CEBRA-lens">🦓🔎 CEBRA Lens</a></p>
+<section id="quick-start">
+<h2>🛠️ Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p>🚨 Make sure that the environment in which you trained the CEBRA models in <strong>has the same torch version</strong> as the environment used for CEBRA-Lens.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Familiar with python packages and conda? Quick Install Guide:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>CEBRAlens<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.12
+conda<span class="w"> </span>activate<span class="w"> </span>CEBRAlens
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">pytables</span><span class="o">==</span><span class="m">3</span>.8.0
+
+<span class="c1"># install PyTorch with your desired CUDA version - check their website: https://pytorch.org/get-started/locally/</span>
+<span class="c1"># example: GPU version of pytorch for CUDA 11.3</span>
+conda<span class="w"> </span>install<span class="w"> </span>pytorch<span class="w"> </span><span class="nv">cudatoolkit</span><span class="o">=</span><span class="m">11</span>.3<span class="w"> </span>-c<span class="w"> </span>pytorch
+
+<span class="c1"># install CEBRA and CEBRA-lens</span>
+pip<span class="w"> </span>install<span class="w"> </span>--pre<span class="w"> </span><span class="s1">&#39;cebra[datasets,demos]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span>--pre<span class="w"> </span>cebra_lens
+</pre></div>
+</div>
+</div>
+</section>
+<section id="analysis-methods">
+<h2>🦓🔍 Analysis Methods<a class="headerlink" href="#analysis-methods" title="Link to this heading">#</a></h2>
+<p>Implemented mechanistic interpretability methods for neural representation analysis are presented below.</p>
+<section id="model-performance-analysis">
+<h3>Model performance analysis<a class="headerlink" href="#model-performance-analysis" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Model decoding metrics:</p>
+<ul>
+<li><p>average <span class="math notranslate nohighlight">\(R^2\)</span> score across labels</p></li>
+<li><p><span class="math notranslate nohighlight">\(R^2\)</span> score per label</p></li>
+<li><p>error score per label</p></li>
+</ul>
+</li>
+</ul>
+<p>Additionally, there is the possibility to analyze the decoding performance of each layer embeddings.</p>
+</section>
+<section id="layer-visualizations">
+<h3>Layer visualizations<a class="headerlink" href="#layer-visualizations" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>single unit activation - plotting the activation value for each neural network unit</p></li>
+<li><p>high-dimensional embedding of population activity - 3D scatter plot using the first 3 dimensions</p></li>
+<li><p>low-dimensional embedding of population activity with a 3 component tSNE (<a class="reference external" href="https://arxiv.org/abs/2201.00005">Cai &amp; Ma, arXiv, 2022</a>)</p></li>
+</ul>
+</section>
+<section id="population-level-comparison">
+<h3>Population level comparison<a class="headerlink" href="#population-level-comparison" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Central Kernal Alignment (CKA) (<a class="reference external" href="https://arxiv.org/abs/2210.16156">Kim et al., arXiv, 2022</a>)</p>
+<p>This method allows for the comparison of corresponding layers for different models.</p>
+</li>
+<li><p>Representational Dissmilarity Matrix (RDM) (<a class="reference external" href="https://www.frontiersin.org/journals/systems-neuroscience/articles/10.3389/neuro.06.004.2008/full">Kriegeskorte et al., Frontiers in Systems Neuroscience, 2008</a>)</p>
+<p>This method investigates population-level representations in competing models. This is done by calculating the correlation or cosine distance for each stimuli between the embeddings of a particular layer of a model.
+Possible plots for this analysis:</p>
+<ul class="simple">
+<li><p>plot model layer RDM</p></li>
+<li><p>plot correlation with Oracle RDM across layers</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="distance-metrics">
+<h3>Distance metrics<a class="headerlink" href="#distance-metrics" title="Link to this heading">#</a></h3>
+<p>These analyses quantify the change in the distance calculated per layer in a model. The distances which are implemented in this codebase are:</p>
+<ul class="simple">
+<li><p>intra-class distance</p></li>
+<li><p>inter-class distance</p></li>
+<li><p>inter-repetition distance (only relevant if the model was trained on a dataset where there is repeating stimuli)</p></li>
+</ul>
+<img src="https://images.squarespace-cdn.com/content/v1/57f6d51c9f74566f55ecf271/4e8eaca2-e14a-4a46-aba5-702775ad2797/abstractfig.png?format=1500w" alt="analysis">
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="demo">
+<h1>Demo<a class="headerlink" href="#demo" title="Link to this heading">#</a></h1>
+<p>The current version of CEBRA-Lens supports specific analysis on the Allen Institute visual coding dataset (<a class="reference external" href="https://www.nature.com/articles/s41593-019-0550-9">DeVries et al, Nature Neuro., 2020</a>) and Hippocampus dataset (<a class="reference external" href="https://www.science.org/doi/full/10.1126/science.aad1935">Grosmark &amp; Buzáki, Science, 2016</a>), and for general analysis on other datasets. See the example notebooks we provide.</p>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<section id="building-the-book">
-<h3>Building the book<a class="headerlink" href="#building-the-book" title="Link to this heading">#</a></h3>
-<p>If you’d like to develop and/or build the CEBRA-Lens jupyter-book book, you should:</p>
-<ol class="arabic simple">
-<li><p>Clone this repository</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> (it is recommended you do this within a virtual environment)</p></li>
-<li><p>(Optional) Edit the books source files located in the <code class="docutils literal notranslate"><span class="pre">cebra_lens_jupyter_book/</span></code> directory</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">jupyter-book</span> <span class="pre">clean</span> <span class="pre">cebra_lens_jupyter_book/</span></code> to remove any existing builds</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">jupyter-book</span> <span class="pre">build</span> <span class="pre">cebra_lens_jupyter_book/</span></code></p></li>
+<h2>📊Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>The CEBRA-Lens package allows for analyzing the embeddings of CEBRA models, but also offers the functionality of comparing embeddings and behavior through layers between models. For this purpose the code logic is centered around “metric classes”. Before every analysis you first must initalize the corresponding metric class with the necessary arguments, and then to compute the metric the overhead function <code class="docutils literal notranslate"><span class="pre">compute_metric(data,</span> <span class="pre">metric_class)</span></code> needs to be called, this is the same for plotting, <code class="docutils literal notranslate"><span class="pre">plot_metric(data,</span> <span class="pre">metric_class)</span></code>.
+For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">interbin_class</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Distance</span><span class="p">(</span>
+<span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+<span class="n">label</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+<span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+<span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+<span class="n">distance_label</span><span class="o">=</span><span class="s2">&quot;interbin&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">interbin_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span>
+    <span class="n">activations_dict</span><span class="p">,</span>
+    <span class="n">interbin_class</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span>
+    <span class="n">interbin_dict</span><span class="p">,</span> 
+    <span class="n">interbin_class</span><span class="p">,</span> 
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inter-bin distance&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<section id="jupyter-notebooks">
+<h3>Jupyter Notebooks<a class="headerlink" href="#jupyter-notebooks" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>UsageDemoVISUAL: analysis on the Allen visual dataset, <a class="reference external" href="https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoVISUAL.ipynb">here</a>.</p></li>
+<li><p>UsageDemoGENERAL: analysis on the Hippocampus dataset, but without specific dataset functions, <a class="reference external" href="https://github.com/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoGENERAL.ipynb">here</a>.</p></li>
+</ul>
+<p>These two notebooks showcase the different approach when analyzing a pre-defined dataset and a non-defined dataset.</p>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="acknowledgements">
+<h1>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>This repository contains the code for <a class="reference external" href="https://github.com/eloisehabek">Eloise’s</a> semester’s project “Engineering software for neural representation analysis”(SPRING 2025),
+building on <a class="reference external" href="https://github.com/riccardoprog">Riccardo’s</a> semester project “Exploring nonlinear encoders for robust vision decoding” (FALL 2024).</p></li>
+<li><p>The work was supervised by <a class="reference external" href="https://github.com/CeliaBenquet">Célia Benquet</a> and <a class="reference external" href="https://github.com/MMathisLab">Mackenzie Mathis</a> at the Mathis Laboratory of Adaptive Intelligence.</p></li>
+<li><p>We thank the <a class="reference external" href="https://elifesciences.org/articles/81499">DeepDraw project</a> for some <a class="reference external" href="https://github.com/amathislab/DeepDraw">source code</a> and analysis methods.</p></li>
+</ul>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="other-helpful-tips">
+<h1>Other helpful tips:<a class="headerlink" href="#other-helpful-tips" title="Link to this heading">#</a></h1>
+<section id="download-dataset">
+<h2>📥 Download dataset<a class="headerlink" href="#download-dataset" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">utils.py</span></code> file contains a overarching <code class="docutils literal notranslate"><span class="pre">get_data</span></code> function which checks for a pre-defined dataset label and accordingly loads the data based on specific functions for the dataset. If you want to load data from a non-defined dataset, you need to first import the loading function inside the <code class="docutils literal notranslate"><span class="pre">utils.py</span></code> file as so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.utils_new</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_datasets</span> <span class="k">as</span> <span class="n">get_datasets_new</span>
+</pre></div>
+</div>
+<p>then add an if clause for your new dataset:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">dataset_label</span> <span class="o">==</span> <span class="s2">&quot;new_dataset&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_datasets_new</span><span class="p">(</span><span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is briefly repeated in the usage demo notebooks.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="contributing-guide">
+<h1>Contributing Guide<a class="headerlink" href="#contributing-guide" title="Link to this heading">#</a></h1>
+<ol class="arabic">
+<li><p><strong>Fork the repository</strong> and create a new branch:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>your-feature-name
+</pre></div>
+</div>
+</li>
+<li><p><strong>Make your changes</strong> and ensure they are well-tested and well-documented.</p></li>
+<li><p><strong>Format your code</strong> using <code class="docutils literal notranslate"><span class="pre">isort</span></code> and <code class="docutils literal notranslate"><span class="pre">yapf</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>isort<span class="w"> </span>.
+yapf<span class="w"> </span>-i<span class="w"> </span>-p<span class="w"> </span>-r<span class="w"> </span>cebra_lens
+yapf<span class="w"> </span>-i<span class="w"> </span>-p<span class="w"> </span>-r<span class="w"> </span>tests
+</pre></div>
+</div>
+</li>
 </ol>
-<p>A fully-rendered HTML version of the book will be built in <code class="docutils literal notranslate"><span class="pre">cebra_lens_jupyter_book/_build/html/</span></code>.</p>
-</section>
-<section id="hosting-the-book">
-<h3>Hosting the book<a class="headerlink" href="#hosting-the-book" title="Link to this heading">#</a></h3>
-<p>Please see the <a class="reference external" href="https://jupyterbook.org/publish/web.html">Jupyter Book documentation</a> to discover options for deploying a book online using services such as GitHub, GitLab, or Netlify.</p>
-<p>For GitHub and GitLab deployment specifically, the <a class="reference external" href="https://github.com/executablebooks/cookiecutter-jupyter-book">cookiecutter-jupyter-book</a> includes templates for, and information about, optional continuous integration (CI) workflow files to help easily and automatically deploy books online with GitHub or GitLab. For example, if you chose <code class="docutils literal notranslate"><span class="pre">github</span></code> for the <code class="docutils literal notranslate"><span class="pre">include_ci</span></code> cookiecutter option, your book template was created with a GitHub actions workflow file that, once pushed to GitHub, automatically renders and pushes your book to the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch of your repo and hosts it on GitHub Pages when a push or pull request is made to the main branch.</p>
-</section>
-</section>
-<section id="contributors">
-<h2>Contributors<a class="headerlink" href="#contributors" title="Link to this heading">#</a></h2>
-<p>We welcome and recognize all contributions. You can see a list of current contributors in the <a class="reference external" href="https://github.com/eloisehabek/cebra_lens_jupyter_book/graphs/contributors">contributors tab</a>.</p>
-</section>
-<section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">#</a></h2>
-<p>This project is created using the excellent open source <a class="reference external" href="https://jupyterbook.org/">Jupyter Book project</a> and the <a class="reference external" href="https://github.com/executablebooks/cookiecutter-jupyter-book">executablebooks/cookiecutter-jupyter-book template</a>.</p>
-</section>
+<p>or the <code class="docutils literal notranslate"><span class="pre">make</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>format
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>Open a Pull Request</strong> to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch with a clear description of your changes.</p></li>
+</ol>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -460,6 +639,15 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="right-next"
+       href="docs/docs/installation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">🛠️ Installation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -476,14 +664,34 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-book">Building the book</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hosting-the-book">Hosting the book</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CEBRA-Lens</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">🛠️ Quick start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-methods">🦓🔍 Analysis Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-performance-analysis">Model performance analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-visualizations">Layer visualizations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#population-level-comparison">Population level comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-metrics">Distance metrics</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributors">Contributors</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#credits">Credits</a></li>
 </ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#demo">Demo</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">📊Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jupyter-notebooks">Jupyter Notebooks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgements">Acknowledgements</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#other-helpful-tips">Other helpful tips:</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#download-dataset">📥 Download dataset</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-guide">Contributing Guide</a><ul class="visible nav section-nav flex-column">
+</ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>
@@ -497,7 +705,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By MWMathis Lab
+By MLAI
 </p>
 
   </div>

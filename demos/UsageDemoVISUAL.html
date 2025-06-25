@@ -1,0 +1,1331 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute) &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'demos/UsageDemoVISUAL';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Model generation for Allen Visual dataset" href="../docs/docs/examples/ModelGenerator.html" />
+    <link rel="prev" title="CEBRA-Lens Demo" href="UsageDemoGENERAL.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../docs/docs/installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/docs/repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/docs/examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../docs/docs/api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/docs/api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../docs/CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docs/README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github.com/AdaptiveMotorControlLab/CEBRA-Lens/demos/UsageDemoGENERAL.ipynb/github/AdaptiveMotorControlLab/CEBRA-Lens/blob/main/docs/demos/UsageDemoVISUAL.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2Fdemos/UsageDemoVISUAL.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/demos/UsageDemoVISUAL.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#download-dataset">Download dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-data-and-models">Load data and models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding">Model decoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding-allen-visual-dataset">Model decoding - Allen visual dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding-by-layer">Model decoding by layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-visual-dataset">Allen visual dataset</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activations">Activations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-plot-and-compare-embeddings">Retrieve, plot and compare embeddings</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-activations-for-one-model">Plot activations for one model</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-embedddings-of-two-models-across-layers">Compare embedddings of two models across layers</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tsne-dimensionality-reduction">tSNE dimensionality reduction</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-embeddings-for-tsne-reduced-model-embeddings">Compare embeddings for tSNE reduced model embeddings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cka-analysis">CKA Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rdm-representational-dissimilarity-matrix-analysis">RDM (Representational Dissimilarity Matrix) Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Allen visual dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-metric-analysis">Distance metric analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Allen visual dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-repetition">Inter-repetition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#intra-bin">Intra-bin</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-bin">Inter-bin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="cebra-lens-demo-2p-visual-coding-dataset-allen-institute">
+<h1>CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)<a class="headerlink" href="#cebra-lens-demo-2p-visual-coding-dataset-allen-institute" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://colab.research.google.com/github/AdaptiveMotorControlLab/CEBRA-lens/blob/main/demos/UsageDemoVISUAL.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<!-- #fix the link later --><section id="download-dataset">
+<h2>Download dataset<a class="headerlink" href="#download-dataset" title="Link to this heading">#</a></h2>
+<p>This notebook will demo how to use CEBRA-Lens on the Allen visual dataset. To download the allen data please follow the <a class="reference external" href="https://figshare.com/s/60adb075234c2cc51fa3?file=36869049">link</a>. Make sure the data is placed in a folder <code class="docutils literal notranslate"><span class="pre">/data</span></code>. As a prerequisite for the notebook you should have models already trained.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">CEBRA_lens.cebra_lens</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lens</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\Eloise\miniconda3\envs\cebra_lens\Lib\site-packages\requests\__init__.py:86: RequestsDependencyWarning: Unable to find acceptable character detection dependency (chardet or charset_normalizer).
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-data-and-models">
+<h2>Load data and models<a class="headerlink" href="#load-data-and-models" title="Link to this heading">#</a></h2>
+<p>Data is loaded here with a utils functions for the Allen dataset. Models are loaded by using the name of the folder where they are located as well as the folder path. It will load all the models ending with .pt located in the path, thus these models should be saved as <strong>torch</strong> and not as sklearn. This was done due to easier loading on the CPU compared to the sklearn</p>
+<p>The function model_loader allows for inputing labels for models which allow for grouping based on prefered parameters. The labels are given as a dictionary where the keys correspond to the model file name and the value to the prefered label for that model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_path_visual</span> <span class="o">=</span> <span class="s2">&quot;FinalModels/VISION/offset10&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Example of labels dictionary:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">groups_visual</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;allen_single_session_mouse4_0k_UT_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_UT&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_10k_3_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_10k_2_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_single_session_mouse4_10k_0_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_single_session_mouse4_10k_1_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_10k_4_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_10k_0_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_10k_1_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_single_session_mouse4_10k_3_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_single_session_mouse4_10k_2_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_TR&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_multi_session_0k_UT_torch&#39;</span><span class="p">:</span><span class="s1">&#39;multi_UT&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;allen_single_session_mouse4_10k_4_torch&#39;</span><span class="p">:</span><span class="s1">&#39;single_TR&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">models</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">model_loader</span><span class="p">(</span><span class="n">model_path_visual</span><span class="p">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">groups_visual</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model allen_multi_session_0k_UT_torch loaded successfully.
+Model allen_multi_session_10k_0_torch loaded successfully.
+Model allen_multi_session_10k_1_torch loaded successfully.
+Model allen_multi_session_10k_2_torch loaded successfully.
+Model allen_multi_session_10k_3_torch loaded successfully.
+Model allen_multi_session_10k_4_torch loaded successfully.
+Model allen_single_session_mouse4_0k_UT_torch loaded successfully.
+Model allen_single_session_mouse4_10k_0_torch loaded successfully.
+Model allen_single_session_mouse4_10k_1_torch loaded successfully.
+Model allen_single_session_mouse4_10k_2_torch loaded successfully.
+Model allen_single_session_mouse4_10k_3_torch loaded successfully.
+Model allen_single_session_mouse4_10k_4_torch loaded successfully.
+</pre></div>
+</div>
+</div>
+</div>
+<p>To load data make sure you are in the directory where the <code class="docutils literal notranslate"><span class="pre">/data</span></code> folder is located</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">session_id</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1">#we are getting the data for achilles which is session_id = 0</span>
+<span class="n">dataset_label</span> <span class="o">=</span> <span class="s2">&quot;visual&quot;</span>
+<span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_label</span><span class="p">,</span> <span class="n">test_label</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">lens</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\Eloise\miniconda3\envs\cebra_lens\Lib\site-packages\cebra\datasets\allen\single_session_ca.py:246: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don&#39;t have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  frame_feature = torch.load(frame_feature_path)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="model-decoding">
+<h2>Model decoding<a class="headerlink" href="#model-decoding" title="Link to this heading">#</a></h2>
+<p>To verify the model performance the decode_models function can be called. This will give a dictionnary with each key being the name of the model “single_UT” “multi_TR” … and plot the performance accordingly. This is flexible and can thus take many different models.</p>
+<p>If the data comes from either the Hippocampus or the Allen visual dataset the decoding functions are defined specifically, but if the data is from another dataset, the decoding scores are calculated with a generic decoding function where there are 3 outputs:</p>
+<ul class="simple">
+<li><p>average R^2 score over all labels</p></li>
+<li><p>R^2 score for each label</p></li>
+<li><p>Error score for each label</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layer_type</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv1d</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="model-decoding-allen-visual-dataset">
+<h3>Model decoding - Allen visual dataset<a class="headerlink" href="#model-decoding-allen-visual-dataset" title="Link to this heading">#</a></h3>
+<p>Here is the demonstration of how to use the Decoding class to compute the decoding for a specific dataset</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_label</span> <span class="o">=</span> <span class="s2">&quot;visual&quot;</span>
+<span class="n">session_id</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">decoding_models</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Decoding</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_label</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">test_label</span><span class="p">,</span> <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">layer_type</span> <span class="o">=</span><span class="n">layer_type</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#by adding the output_only flag, we only compute the output of the model</span>
+<span class="n">results_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">decoding_models</span><span class="p">,</span> <span class="n">output_only</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The decoding analysis initialized with the following parameters:
+Session ID: 3
+Dataset label: visual
+Layer type: &lt;class &#39;torch.nn.modules.conv.Conv1d&#39;&gt;
+Output only: True
+The decoding analysis will only compute the decoding scores for the output embeddings of the model and plot them.
+If you want to change the parameters, please re-initialize the class with the new parameters or if you want to change the output_only parameter, call the compute_metric function with the output_only parameter set to True or False.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:02&lt;00:00,  2.62s/it]
+Processing multi_TR: 100%|██████████| 5/5 [00:11&lt;00:00,  2.28s/it]
+Processing single_UT: 100%|██████████| 1/1 [00:02&lt;00:00,  2.07s/it]
+Processing single_TR: 100%|██████████| 5/5 [00:10&lt;00:00,  2.08s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">results_dict</span><span class="p">,</span> <span class="n">decoding_models</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bde408754bfc921b951ff2f24fd3943d2585f1d1ed8d0a028f8a5ebd1f3cac0b.png" src="../_images/bde408754bfc921b951ff2f24fd3943d2585f1d1ed8d0a028f8a5ebd1f3cac0b.png" />
+</div>
+</div>
+</section>
+<section id="model-decoding-by-layer">
+<h3>Model decoding by layer<a class="headerlink" href="#model-decoding-by-layer" title="Link to this heading">#</a></h3>
+<p>If you want to analyze how the decoding score changes through layers, you can use the same Decoding metric class defined above,
+but now when computing the metric you have to change the output_only flag into False.</p>
+</section>
+<section id="allen-visual-dataset">
+<h3>Allen visual dataset<a class="headerlink" href="#allen-visual-dataset" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">decoding_models</span><span class="p">,</span> <span class="n">output_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The decoding analysis initialized with the following parameters:
+Session ID: 3
+Dataset label: visual
+Layer type: &lt;class &#39;torch.nn.modules.conv.Conv1d&#39;&gt;
+Output only: False
+The decoding analysis will compute the decoding scores for the activations of the model and plot them across layers.
+If you want to change the parameters, please re-initialize the class with the new parameters or if you want to change the output_only parameter, call the compute_metric function with the output_only parameter set to True or False.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:13&lt;00:00, 13.54s/it]
+Processing multi_TR: 100%|██████████| 5/5 [01:12&lt;00:00, 14.55s/it]
+Processing single_UT: 100%|██████████| 1/1 [00:18&lt;00:00, 18.92s/it]
+Processing single_TR: 100%|██████████| 5/5 [01:14&lt;00:00, 14.84s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">results_dict</span><span class="p">,</span> <span class="n">decoding_models</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/21a1c61406a0cf0f8c7c417e329f3e4572cba4d36975066416f72749e9fae9df.png" src="../_images/21a1c61406a0cf0f8c7c417e329f3e4572cba4d36975066416f72749e9fae9df.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="activations">
+<h2>Activations<a class="headerlink" href="#activations" title="Link to this heading">#</a></h2>
+<section id="retrieve-plot-and-compare-embeddings">
+<h3>Retrieve, plot and compare embeddings<a class="headerlink" href="#retrieve-plot-and-compare-embeddings" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">activations_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">get_activations</span><span class="p">(</span>
+    <span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="n">layer_type</span><span class="o">=</span><span class="n">layer_type</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="plot-activations-for-one-model">
+<h4>Plot activations for one model<a class="headerlink" href="#plot-activations-for-one-model" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>directly plot the full activation which were extracted from ‘’get_activation()’’</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_activations</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span>
+    <span class="n">activations_dict</span><span class="p">,</span>
+    <span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;Multi Trained&quot;</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/536f99c6ca3822ecc0a13117be92f6db64b28bec300ba1ad4ab0b4418f169f6e.png" src="../_images/536f99c6ca3822ecc0a13117be92f6db64b28bec300ba1ad4ab0b4418f169f6e.png" />
+<img alt="../_images/d0d80dfdcfd378cbb2f48b61e36c0ccefc044d9e1ae694610e3b298351c1acc0.png" src="../_images/d0d80dfdcfd378cbb2f48b61e36c0ccefc044d9e1ae694610e3b298351c1acc0.png" />
+<img alt="../_images/e675a750a90ddcf4e33b391eb7824188e712e6208942ea9a4b980bed4011e662.png" src="../_images/e675a750a90ddcf4e33b391eb7824188e712e6208942ea9a4b980bed4011e662.png" />
+<img alt="../_images/bb6cff8434499fc66251b9f8e92d7dcfd9c20a9f48cb98250f864b715cf7255d.png" src="../_images/bb6cff8434499fc66251b9f8e92d7dcfd9c20a9f48cb98250f864b715cf7255d.png" />
+<img alt="../_images/19d1dabdbf14a9202b4350b060f8939192f1a0325744bef0d87036f8a051068e.png" src="../_images/19d1dabdbf14a9202b4350b060f8939192f1a0325744bef0d87036f8a051068e.png" />
+<img alt="../_images/77d7050933c09bbe6abefe6b60762f1bac14b0a780b3f820f1aa154ab85498e9.png" src="../_images/77d7050933c09bbe6abefe6b60762f1bac14b0a780b3f820f1aa154ab85498e9.png" />
+<img alt="../_images/ee57e64d4a788a5a176f28a7e412516425f6ab8fba6638450fd644c6d28bd304.png" src="../_images/ee57e64d4a788a5a176f28a7e412516425f6ab8fba6638450fd644c6d28bd304.png" />
+<img alt="../_images/065956e84faef8571ec1973445384d51684af9eaa477cfed9bd6fc31b77c8520.png" src="../_images/065956e84faef8571ec1973445384d51684af9eaa477cfed9bd6fc31b77c8520.png" />
+<img alt="../_images/99a9bec7e9aace0c3350603c1e7a3fbc28abf5493fce8cbbb493a70321fa9659.png" src="../_images/99a9bec7e9aace0c3350603c1e7a3fbc28abf5493fce8cbbb493a70321fa9659.png" />
+<img alt="../_images/a4f3b09723dc0b27141c1cda4afe2cfbe2a7bc867f428db7fa7458fc592ff81a.png" src="../_images/a4f3b09723dc0b27141c1cda4afe2cfbe2a7bc867f428db7fa7458fc592ff81a.png" />
+<img alt="../_images/86fd6a6c2f624bdc7a4e4fbd1aa4e8a1575730b344e91df824d2e966dcf0b327.png" src="../_images/86fd6a6c2f624bdc7a4e4fbd1aa4e8a1575730b344e91df824d2e966dcf0b327.png" />
+<img alt="../_images/c9daf638a39c10c66d3fbf81cb84ea90758efecab144ac5b6f655a54925e70d4.png" src="../_images/c9daf638a39c10c66d3fbf81cb84ea90758efecab144ac5b6f655a54925e70d4.png" />
+</div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>plot a specific model embedding</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">instance</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;multi_TR&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_data</span> <span class="o">=</span> <span class="n">activations_dict</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="n">instance</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_activations</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span>
+    <span class="n">plot_data</span><span class="p">,</span>
+    <span class="n">plot_title</span><span class="o">=</span><span class="s2">&quot;Multi Trained&quot;</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bad22741e6961ae9b0f8bb43e4fb506e65c4bbfd8cfe81a28d7a1f5431687795.png" src="../_images/bad22741e6961ae9b0f8bb43e4fb506e65c4bbfd8cfe81a28d7a1f5431687795.png" />
+</div>
+</div>
+<p>Plot embeddings of models (first 3 dimensions)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_embeddings</span><span class="p">(</span>
+    <span class="n">plot_data</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;multi_TR&quot;</span><span class="p">,</span>
+    <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ae806ef494fd3d3831c5237ee5de16dbe54ad30462ca3b3bd1bd37b63fbf96e6.png" src="../_images/ae806ef494fd3d3831c5237ee5de16dbe54ad30462ca3b3bd1bd37b63fbf96e6.png" />
+</div>
+</div>
+</section>
+<section id="compare-embedddings-of-two-models-across-layers">
+<h4>Compare embedddings of two models across layers<a class="headerlink" href="#compare-embedddings-of-two-models-across-layers" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">activations_dict</span><span class="p">[</span><span class="s2">&quot;single_TR&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="n">activations_dict</span><span class="p">[</span><span class="s2">&quot;multi_TR&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compare_embeddings_layers</span><span class="p">(</span>
+    <span class="n">model1</span><span class="p">,</span> 
+    <span class="n">model2</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+    <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+    <span class="n">comparison_groups</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;CEBRA embeddings&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Single&quot;</span><span class="p">,</span> <span class="s2">&quot;Multi&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d7324cbc2bab6a40e7a079fa89a3e6fb8d5ca9ba11efa728f70029d48adca38d.png" src="../_images/d7324cbc2bab6a40e7a079fa89a3e6fb8d5ca9ba11efa728f70029d48adca38d.png" />
+</div>
+</div>
+</section>
+<section id="tsne-dimensionality-reduction">
+<h4>tSNE dimensionality reduction<a class="headerlink" href="#tsne-dimensionality-reduction" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_samples_tSNE</span> <span class="o">=</span> <span class="mi">2000</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tsne_model</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Tsne</span><span class="p">(</span><span class="n">num_samples_tSNE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tSNE_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span> <span class="n">tsne_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [02:04&lt;00:00, 124.61s/it]
+Processing multi_TR: 100%|██████████| 5/5 [07:20&lt;00:00, 88.07s/it]
+Processing single_UT: 100%|██████████| 1/1 [02:09&lt;00:00, 129.75s/it]
+Processing single_TR: 100%|██████████| 5/5 [05:59&lt;00:00, 71.93s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple">
+<li><p>plot the full tSNE output</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">tSNE_dict</span><span class="p">,</span> <span class="n">tsne_model</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">train_label</span><span class="p">,</span> <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span> <span class="n">sample_plot</span> <span class="o">=</span> <span class="n">num_samples_tSNE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fef7ed08871215c14852826c07d81dc27dbbc5edc46675596327a43fe225d4f7.png" src="../_images/fef7ed08871215c14852826c07d81dc27dbbc5edc46675596327a43fe225d4f7.png" />
+<img alt="../_images/f35a2cc7aa1f4007635dda0246bac1e50bfeb15555859e54f6552a61c2184180.png" src="../_images/f35a2cc7aa1f4007635dda0246bac1e50bfeb15555859e54f6552a61c2184180.png" />
+<img alt="../_images/d0c43e8f1a3ae5cb1d44f3d80b7aab4df186896290175c5d8c499f4c9745183d.png" src="../_images/d0c43e8f1a3ae5cb1d44f3d80b7aab4df186896290175c5d8c499f4c9745183d.png" />
+<img alt="../_images/d38593cff4ce78d4c253de7986a9e0212160a4d5257825bba28094651061373e.png" src="../_images/d38593cff4ce78d4c253de7986a9e0212160a4d5257825bba28094651061373e.png" />
+<img alt="../_images/1375d0bb77d5d8316fe8c3ec452f1d00420b62d0c574a80e09245e1766284324.png" src="../_images/1375d0bb77d5d8316fe8c3ec452f1d00420b62d0c574a80e09245e1766284324.png" />
+<img alt="../_images/09f1896dfbde852017b5c92b65bd9a8974c9e4cc9ea478121e05b60c5d2019c9.png" src="../_images/09f1896dfbde852017b5c92b65bd9a8974c9e4cc9ea478121e05b60c5d2019c9.png" />
+<img alt="../_images/55f8a572abbfa72f400eafae70562392eb3ba4dac7f19c13e15a2956e45e663a.png" src="../_images/55f8a572abbfa72f400eafae70562392eb3ba4dac7f19c13e15a2956e45e663a.png" />
+<img alt="../_images/b3076836df65d076c3f56fb25bdb55cae269a093b1a80cb6afed8ca8223abaf9.png" src="../_images/b3076836df65d076c3f56fb25bdb55cae269a093b1a80cb6afed8ca8223abaf9.png" />
+<img alt="../_images/d3107c1448a98da51c8071f5ca5c1c6029348a12c1feb5c2b9f313935b2e7529.png" src="../_images/d3107c1448a98da51c8071f5ca5c1c6029348a12c1feb5c2b9f313935b2e7529.png" />
+<img alt="../_images/81a078317c680dee43ce01bcc0df056a61695e65ba0fd43e4d893873ffd7f984.png" src="../_images/81a078317c680dee43ce01bcc0df056a61695e65ba0fd43e4d893873ffd7f984.png" />
+<img alt="../_images/d9a574993fabab84924fe37e55366b5961a7a5527306aeee6b35bf139928f6c5.png" src="../_images/d9a574993fabab84924fe37e55366b5961a7a5527306aeee6b35bf139928f6c5.png" />
+<img alt="../_images/5d4d8c0daed8ba0fa9d26cbb4534bac37596ce58a8d3277fee9fdff1439a4ad3.png" src="../_images/5d4d8c0daed8ba0fa9d26cbb4534bac37596ce58a8d3277fee9fdff1439a4ad3.png" />
+</div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>plot the dim reduced embeddings of one model</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">group_name</span> <span class="o">=</span> <span class="s2">&quot;single_TR&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_plot</span> <span class="o">=</span> <span class="n">tSNE_dict</span><span class="p">[</span><span class="n">group_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">data_plot</span><span class="p">,</span> <span class="n">tsne_model</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">train_label</span><span class="p">,</span> <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span> <span class="n">sample_plot</span> <span class="o">=</span> <span class="n">num_samples_tSNE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/69c1672eb62200a2c70970e4c4bc33db5bc066bc7b5b80827d217f8e23134078.png" src="../_images/69c1672eb62200a2c70970e4c4bc33db5bc066bc7b5b80827d217f8e23134078.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="compare-embeddings-for-tsne-reduced-model-embeddings">
+<h3>Compare embeddings for tSNE reduced model embeddings<a class="headerlink" href="#compare-embeddings-for-tsne-reduced-model-embeddings" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compare_embeddings_layers</span><span class="p">(</span>
+    <span class="n">tSNE_dict</span><span class="p">[</span><span class="s2">&quot;single_TR&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">tSNE_dict</span><span class="p">[</span><span class="s2">&quot;multi_TR&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+    <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+    <span class="n">sample_plot</span><span class="o">=</span><span class="n">num_samples_tSNE</span><span class="p">,</span>
+    <span class="n">comparison_groups</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tSNE&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Single&quot;</span><span class="p">,</span> <span class="s2">&quot;Multi&quot;</span><span class="p">]),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/09754685113340050b2732e5cebdd9492d686d661046b4f090e6d3a8d524d2d5.png" src="../_images/09754685113340050b2732e5cebdd9492d686d661046b4f090e6d3a8d524d2d5.png" />
+</div>
+</div>
+</section>
+<section id="cka-analysis">
+<h3>CKA Analysis<a class="headerlink" href="#cka-analysis" title="Link to this heading">#</a></h3>
+<p>To compute the CKA you can chose the desired comparisons and it will create the CKA matrix accordingly. These comparisons are a list of tuples. Where the tuples comprise of model labels</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comparisons</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;single_UT&quot;</span><span class="p">,</span> <span class="s2">&quot;single_TR&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;multi_UT&quot;</span><span class="p">,</span> <span class="s2">&quot;multi_TR&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;single_TR&quot;</span><span class="p">,</span> <span class="s2">&quot;multi_TR&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;single_TR&quot;</span><span class="p">,</span> <span class="s2">&quot;single_TR&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;multi_TR&quot;</span><span class="p">,</span> <span class="s2">&quot;multi_TR&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cka_multi</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">CKA</span><span class="p">(</span><span class="n">comparisons</span><span class="p">)</span>
+<span class="n">cka_matrices</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span> <span class="n">cka_multi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 5/5 [04:26&lt;00:00, 53.33s/it]
+100%|██████████| 5/5 [04:35&lt;00:00, 55.14s/it]]
+100%|██████████| 5/5 [04:26&lt;00:00, 53.29s/it]]
+100%|██████████| 5/5 [09:12&lt;00:00, 110.57s/it]
+100%|██████████| 5/5 [04:09&lt;00:00, 49.88s/it]]
+100%|██████████| 5/5 [26:51&lt;00:00, 322.23s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">cka_matrices</span><span class="p">,</span> <span class="n">cka_multi</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/dd6d0468b7d98cf753739b212382bb3ac1d80be64894511dd14744767791ead6.png" src="../_images/dd6d0468b7d98cf753739b212382bb3ac1d80be64894511dd14744767791ead6.png" />
+</div>
+</div>
+</section>
+<section id="rdm-representational-dissimilarity-matrix-analysis">
+<h3>RDM (Representational Dissimilarity Matrix) Analysis<a class="headerlink" href="#rdm-representational-dissimilarity-matrix-analysis" title="Link to this heading">#</a></h3>
+<p>RDM Matrices are huge to save (20Go) but not so long to compute. Be careful when saving it, comment if needed or at least delete it when no longer needed it. rdm_dict will have the same format as activation_dict. It computes the RDM for the whole activation dataset, but smaller datasets can be inputted. It also has the possibility to correlate it to Oracle RDM.</p>
+<ol class="arabic simple">
+<li><p>Plot RDM, bool_oracle = False</p></li>
+</ol>
+<ol class="arabic simple" start="2">
+<li><p>Plot correlation with Oracle RDM across layers, bool_oracle = True</p></li>
+</ol>
+</section>
+<section id="id1">
+<h3>Allen visual dataset<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rdm_single</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">RDM</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+    <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;multi_TR&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">activations_dict</span><span class="p">[</span><span class="s2">&quot;multi_TR&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]]}</span>
+<span class="c1">#extracting the last layer activations for multi_TR to calculate the RDM </span>
+<span class="n">multi_rdm_corr</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rdm_single</span><span class="p">,</span> <span class="n">bool_oracle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>RDM class initialized with the following parameters:
+The chosen analysis will plot the RDMs, no Oracle RDM comparison.
+The dataset label is specified as: visual
+If this is not the desired behavior, please check the parameters passed to the RDM class.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_TR: 100%|██████████| 1/1 [00:01&lt;00:00,  1.79s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">multi_rdm_corr</span><span class="p">,</span> <span class="n">rdm_single</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0692dfc2a3b97e3190828977e8647ef253f23003d8a9c68020174cef1202919a.png" src="../_images/0692dfc2a3b97e3190828977e8647ef253f23003d8a9c68020174cef1202919a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multi_rdm_corr</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span> <span class="n">rdm_single</span><span class="p">,</span> <span class="n">bool_oracle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>RDM class initialized with the following parameters:
+The chosen analyis will plot the correlation of the RDMs with the Oracle RDM.
+The dataset label is specified as: visual
+If this is not the desired behavior, please check the parameters passed to the RDM class.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:09&lt;00:00,  9.77s/it]
+Processing multi_TR: 100%|██████████| 5/5 [00:53&lt;00:00, 10.74s/it]
+Processing single_UT: 100%|██████████| 1/1 [00:10&lt;00:00, 10.29s/it]
+Processing single_TR: 100%|██████████| 5/5 [01:12&lt;00:00, 14.53s/it]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">multi_rdm_corr</span><span class="p">,</span> <span class="n">rdm_single</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c7168bfd88599c3a6c961cb95df36de6a014fa463097f03855e2d090ed4ff5f7.png" src="../_images/c7168bfd88599c3a6c961cb95df36de6a014fa463097f03855e2d090ed4ff5f7.png" />
+</div>
+</div>
+</section>
+<section id="distance-metric-analysis">
+<h3>Distance metric analysis<a class="headerlink" href="#distance-metric-analysis" title="Link to this heading">#</a></h3>
+<p>A final embedding analysis can be done using cebra_lens: a distance analysis.
+The binning is either dataset specific or general
+Three distances can be computed:</p>
+<ul class="simple">
+<li><p>inter-bin -&gt; between the bins (irrespective of repetitions)</p></li>
+<li><p>intra-bin -&gt; inside of each bin</p></li>
+<li><p>inter-repetition -&gt; distance between each repetition by computing centroid of each bin at each repetition, this only makes sense if the data was recorded with label repetition to analyze</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3>Allen visual dataset<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="inter-repetition">
+<h4>Inter-repetition<a class="headerlink" href="#inter-repetition" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interrep_class</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Distance</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+        <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">distance_label</span><span class="o">=</span><span class="s2">&quot;interrep&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interrep_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span>
+    <span class="n">interrep_class</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:00&lt;00:00, 16.35it/s]
+Processing multi_TR: 100%|██████████| 5/5 [00:00&lt;00:00, 23.36it/s]
+Processing single_UT: 100%|██████████| 1/1 [00:00&lt;00:00, 20.38it/s]
+Processing single_TR: 100%|██████████| 5/5 [00:00&lt;00:00, 21.53it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">interrep_dict</span><span class="p">,</span> <span class="n">interrep_class</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inter-representation distance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c930a67192d6d02156c045e3ba17f50ca9cfa212fce2074c990432ce8ee5f857.png" src="../_images/c930a67192d6d02156c045e3ba17f50ca9cfa212fce2074c990432ce8ee5f857.png" />
+</div>
+</div>
+</section>
+<section id="intra-bin">
+<h4>Intra-bin<a class="headerlink" href="#intra-bin" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">intrabin_class</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Distance</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+        <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">distance_label</span><span class="o">=</span><span class="s2">&quot;intrabin&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">intrabin_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span> <span class="n">intrabin_class</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:00&lt;00:00,  5.41it/s]
+Processing multi_TR: 100%|██████████| 5/5 [00:00&lt;00:00,  6.12it/s]
+Processing single_UT: 100%|██████████| 1/1 [00:00&lt;00:00,  6.14it/s]
+Processing single_TR: 100%|██████████| 5/5 [00:00&lt;00:00,  6.10it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">intrabin_dict</span><span class="p">,</span> <span class="n">intrabin_class</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Intra-bin distance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fefc7a6ac6c364d266de487b6bf31fa7a967d7653f063fe07999b29931b322eb.png" src="../_images/fefc7a6ac6c364d266de487b6bf31fa7a967d7653f063fe07999b29931b322eb.png" />
+</div>
+</div>
+</section>
+<section id="inter-bin">
+<h4>Inter-bin<a class="headerlink" href="#inter-bin" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interbin_class</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">Distance</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">train_label</span><span class="p">,</span>
+        <span class="n">dataset_label</span><span class="o">=</span><span class="n">dataset_label</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">distance_label</span><span class="o">=</span><span class="s2">&quot;interbin&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">interbin_dict</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">compute_metric</span><span class="p">(</span><span class="n">activations_dict</span><span class="p">,</span><span class="n">interbin_class</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing multi_UT: 100%|██████████| 1/1 [00:00&lt;00:00, 79.21it/s]
+Processing multi_TR: 100%|██████████| 5/5 [00:00&lt;00:00, 95.86it/s]
+Processing single_UT: 100%|██████████| 1/1 [00:00&lt;00:00, 96.22it/s]
+Processing single_TR: 100%|██████████| 5/5 [00:00&lt;00:00, 77.81it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">lens</span><span class="o">.</span><span class="n">plot_metric</span><span class="p">(</span><span class="n">interbin_dict</span><span class="p">,</span> <span class="n">interbin_class</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Inter-bin distance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6eb2d65f375b5c817a76832353110c9256d1f724f9bd09e6fa560ccd3e32dafb.png" src="../_images/6eb2d65f375b5c817a76832353110c9256d1f724f9bd09e6fa560ccd3e32dafb.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./demos"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="UsageDemoGENERAL.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">CEBRA-Lens Demo</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../docs/docs/examples/ModelGenerator.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Model generation for Allen Visual dataset</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#download-dataset">Download dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-data-and-models">Load data and models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding">Model decoding</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding-allen-visual-dataset">Model decoding - Allen visual dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-decoding-by-layer">Model decoding by layer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-visual-dataset">Allen visual dataset</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activations">Activations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-plot-and-compare-embeddings">Retrieve, plot and compare embeddings</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-activations-for-one-model">Plot activations for one model</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-embedddings-of-two-models-across-layers">Compare embedddings of two models across layers</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tsne-dimensionality-reduction">tSNE dimensionality reduction</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-embeddings-for-tsne-reduced-model-embeddings">Compare embeddings for tSNE reduced model embeddings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cka-analysis">CKA Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rdm-representational-dissimilarity-matrix-analysis">RDM (Representational Dissimilarity Matrix) Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Allen visual dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distance-metric-analysis">Distance metric analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Allen visual dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-repetition">Inter-repetition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#intra-bin">Intra-bin</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#inter-bin">Inter-bin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

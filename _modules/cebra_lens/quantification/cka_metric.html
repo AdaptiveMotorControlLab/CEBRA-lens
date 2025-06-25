@@ -1,0 +1,733 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cebra_lens.quantification.cka_metric &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cebra_lens/quantification/cka_metric';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/docs/installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/docs/repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/docs/examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/docs/api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/docs/api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2F_modules/cebra_lens/quantification/cka_metric.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for cebra_lens.quantification.cka_metric</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">All relevant functions for Centered Kernel Alignment (CKA) analysis.</span>
+
+<span class="sd">CKA computation was taken from https://github.com/amathislab/DeepDraw</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cebra_lens</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils_plot</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_BaseMetric</span>
+
+
+<div class="viewcode-block" id="CKA">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CKA</span><span class="p">(</span><span class="n">_BaseMetric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Centered Kernel Alignment (CKA) between two sets of model types.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        comparisons : List[Tuple[str,str]]</span>
+<span class="sd">            A List of tuple containing two strings representing the model group names to be compared.</span>
+<span class="sd">            For example, [(&#39;single_UT&#39;, &#39;single_TR&#39;), (&#39;multi_TR&#39;, &#39;single_TR&#39;)].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comparisons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
+
+        <span class="k">for</span> <span class="n">comparison</span> <span class="ow">in</span> <span class="n">comparisons</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">comparison</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;A comparison must be a tuple. Comparison is of type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">comparison</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparisons</span> <span class="o">=</span> <span class="n">comparisons</span>
+
+<div class="viewcode-block" id="CKA.center_gram">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA.center_gram">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">center_gram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">gram</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+                    <span class="n">unbiased</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Center a symmetric Gram matrix.</span>
+
+<span class="sd">        This is equvialent to centering the (possibly infinite-dimensional) features</span>
+<span class="sd">        induced by the kernel before computing the Gram matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gram : npt.NDArray</span>
+<span class="sd">                A num_examples x num_examples symmetric matrix.</span>
+<span class="sd">            unbiased : bool</span>
+<span class="sd">                Whether to adjust the Gram matrix in order to compute an unbiased</span>
+<span class="sd">                estimate of HSIC. Note that this estimator may be negative.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A symmetric matrix with centered columns and rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gram</span><span class="p">,</span> <span class="n">gram</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-03</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.004</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a symmetric matrix.&quot;</span><span class="p">)</span>
+        <span class="n">gram</span> <span class="o">=</span> <span class="n">gram</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">unbiased</span><span class="p">:</span>
+            <span class="c1"># This formulation of the U-statistic, from Szekely, G. J., &amp; Rizzo, M.</span>
+            <span class="c1"># L. (2014). Partial distance correlation with methods for dissimilarities.</span>
+            <span class="c1"># The Annals of Statistics, 42(6), 2382-2412, seems to be more numerically</span>
+            <span class="c1"># stable than the alternative from Song et al. (2007).</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">gram</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">gram</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gram</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">means</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">gram</span> <span class="o">-=</span> <span class="n">means</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">gram</span> <span class="o">-=</span> <span class="n">means</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">gram</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gram</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">means</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">gram</span> <span class="o">-=</span> <span class="n">means</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">gram</span> <span class="o">-=</span> <span class="n">means</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">gram</span></div>
+
+
+<div class="viewcode-block" id="CKA.cka">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA.cka">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cka</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">gram_x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">gram_y</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span>
+            <span class="n">debiased</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute CKA.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gram_x : npt.NDArray</span>
+<span class="sd">                A num_examples x num_examples Gram matrix.</span>
+<span class="sd">            gram_y : npt.NDArray</span>
+<span class="sd">                A num_examples x num_examples Gram matrix.</span>
+<span class="sd">            debiased : bool</span>
+<span class="sd">                Use unbiased estimator of HSIC. CKA may still be biased.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The value of CKA between X and Y.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gram_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_gram</span><span class="p">(</span><span class="n">gram_x</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="n">debiased</span><span class="p">)</span>
+        <span class="n">gram_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_gram</span><span class="p">(</span><span class="n">gram_y</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="n">debiased</span><span class="p">)</span>
+
+        <span class="c1"># Note: To obtain HSIC, this should be divided by (n-1)**2 (biased variant) or</span>
+        <span class="c1"># n*(n-3) (unbiased variant), but this cancels for CKA.</span>
+        <span class="n">scaled_hsic</span> <span class="o">=</span> <span class="n">gram_x</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">gram_y</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+
+        <span class="n">normalization_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gram_x</span><span class="p">)</span>
+        <span class="n">normalization_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gram_y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scaled_hsic</span> <span class="o">/</span> <span class="p">(</span><span class="n">normalization_x</span> <span class="o">*</span> <span class="n">normalization_y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CKA.gram_linear">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA.gram_linear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gram_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Gram (kernel) matrix for a linear kernel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x : npt.NDArray</span>
+<span class="sd">                A num_examples x num_features matrix of features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A num_examples x num_examples Gram matrix of examples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cka</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings_1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+                     <span class="n">embeddings_2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Centered Kernel Alignment (CKA) between two sets of embeddings for each layer.</span>
+
+<span class="sd">        This function calculates the CKA score between corresponding layers of two sets of embeddings,</span>
+<span class="sd">        assuming both sets have the same number of layers and that each corresponding layer has the same shape.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings_1 : List[npt.NDArray]</span>
+<span class="sd">                A list of embeddings for the first set. Each element represents the embeddings for a specific layer.</span>
+<span class="sd">            embeddings_2 : List[npt.NDArray]</span>
+<span class="sd">                A list of embeddings for the second set. Each element represents the embeddings for a specific layer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cka_matrix : npt.NDArray</span>
+<span class="sd">                A one-row array containing the CKA values for each layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings_2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;CKA similarity comparison is done between same or similar model architectures. The number of layers in embeddings_1 and embeddings_2 must be the same.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">embeddings_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">embeddings_2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;CKA similarity comparison is done between same or similar model architectures. The shape of layer </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in embeddings_1 and embeddings_2 must be the same.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">cka_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">)):</span>
+            <span class="n">cka_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cka</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gram_linear</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gram_linear</span><span class="p">(</span><span class="n">embeddings_2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cka_matrix</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_per_layer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embeddings_1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+        <span class="n">embeddings_2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+        <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings_1 : List[npt.NDArray]</span>
+<span class="sd">                A list of embeddings for the first set. Each element represents the embeddings for a specific layer.</span>
+<span class="sd">            embeddings_2 : List[npt.NDArray]</span>
+<span class="sd">                A list of embeddings for the second set. Each element represents the embeddings for a specific layer.</span>
+<span class="sd">            flag : bool</span>
+<span class="sd">                If True, compute CKA for each layer of the first set against the second set.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cka_matrix : npt.NDArray</span>
+<span class="sd">                A matrix containing the CKA values for each layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cka_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">))):</span>
+            <span class="k">if</span> <span class="n">flag</span><span class="p">:</span>
+                <span class="c1"># the situation when there multiple models inside model labels and the same number of</span>
+                <span class="c1"># models inside each label</span>
+                <span class="n">cka_matrix</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cka</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+                                                     <span class="n">embeddings_2</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cka_matrix</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cka</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+                                                     <span class="n">embeddings_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cka_matrix</span>
+
+<div class="viewcode-block" id="CKA.compute">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA.compute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">activations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+                <span class="n">comparison</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.</span>
+
+<span class="sd">        This function calculates the CKA score between activations from different models and layers,</span>
+<span class="sd">        comparing them based on the specified models and layers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            activations : Dict[str, npt.NDArray]</span>
+<span class="sd">                A dictionary where keys are strings which represent the model label and values are 2d lists </span>
+<span class="sd">                with the corresponding activations per layer.</span>
+<span class="sd">            comparison : Tuple[str, str]</span>
+<span class="sd">                A tuple containing the model labels to compare.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cka_matrix : npt.NDArray</span>
+<span class="sd">                A CKA matrix with rows representing instances of the model and columns representing the layers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparisonX</span> <span class="o">=</span> <span class="n">comparison</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparisonY</span> <span class="o">=</span> <span class="n">comparison</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cka_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">activations_1</span> <span class="o">=</span> <span class="n">activations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">comparisonX</span><span class="p">]</span>
+        <span class="n">activations_2</span> <span class="o">=</span> <span class="n">activations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">comparisonY</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_2</span><span class="p">):</span>
+            <span class="c1"># if the number of models in a label is different from the other model label</span>
+            <span class="c1"># choose embeddings_1 for the one with more models, and then embeddings_2 just compare with</span>
+            <span class="c1"># the first model</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_2</span><span class="p">):</span>
+                <span class="n">embeddings_1</span> <span class="o">=</span> <span class="n">activations_1</span>
+                <span class="n">embeddings_2</span> <span class="o">=</span> <span class="n">activations_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations_2</span><span class="p">):</span>
+                <span class="n">embeddings_1</span> <span class="o">=</span> <span class="n">activations_2</span>
+                <span class="n">embeddings_2</span> <span class="o">=</span> <span class="n">activations_1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cka_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_per_layer</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">,</span>
+                                                      <span class="n">embeddings_2</span><span class="p">)</span>
+
+        <span class="c1"># example when compare intra model single_TR v single_TR, only compare to the first instantiation</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparisonX</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparisonY</span><span class="p">:</span>
+            <span class="n">embeddings_1</span> <span class="o">=</span> <span class="n">activations_1</span>
+            <span class="n">embeddings_2</span> <span class="o">=</span> <span class="n">activations_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cka_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_per_layer</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">,</span>
+                                                      <span class="n">embeddings_2</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># when the model labels have the same number of models, but are different labels</span>
+            <span class="n">embeddings_1</span> <span class="o">=</span> <span class="n">activations_1</span>
+            <span class="n">embeddings_2</span> <span class="o">=</span> <span class="n">activations_2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cka_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_per_layer</span><span class="p">(</span><span class="n">embeddings_1</span><span class="p">,</span>
+                                                      <span class="n">embeddings_2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cka_matrix</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__name__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;cka&quot;</span>
+
+<div class="viewcode-block" id="CKA.plot">
+<a class="viewcode-back" href="../../../docs/docs/api/metrics.html#cebra_lens.quantification.cka_metric.CKA.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">cka_matrices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+            <span class="n">annot</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">show_cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">cbar_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CKA score&quot;</span><span class="p">,</span>
+            <span class="n">color_map</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;magma&quot;</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the CKA matrices as heatmaps.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cka_matrices : Dict[str, npt.NDArray]</span>
+<span class="sd">                A dictionary where keys are model labels and values are CKA matrices.</span>
+<span class="sd">            annot : bool</span>
+<span class="sd">                If True, display the CKA values on the heatmap.</span>
+<span class="sd">            show_cbar : bool</span>
+<span class="sd">                If True, display the color bar on the heatmap.</span>
+<span class="sd">            cbar_label : str</span>
+<span class="sd">                Label for the color bar.</span>
+<span class="sd">            color_map : str</span>
+<span class="sd">                Color map to use for the heatmap.</span>
+<span class="sd">            figsize : tuple</span>
+<span class="sd">                Size of the figure for the heatmap.</span>
+<span class="sd">            ax : Optional[matplotlib.axes.Axes]</span>
+<span class="sd">                If provided, the heatmap will be plotted on this axes. If None, a new figure and axes will be created.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            matplotlib.axes.Axes</span>
+<span class="sd">                The axes on which the heatmap is plotted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">utils_plot</span><span class="o">.</span><span class="n">plot_cka_heatmaps</span><span class="p">(</span>
+            <span class="n">cka_matrices</span><span class="p">,</span>
+            <span class="n">annot</span><span class="p">,</span>
+            <span class="n">show_cbar</span><span class="p">,</span>
+            <span class="n">cbar_label</span><span class="p">,</span>
+            <span class="n">color_map</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="p">,</span>
+            <span class="n">ax</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

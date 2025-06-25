@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cebra_lens.utils &#8212; DocTemplate</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cebra_lens/utils';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.jpeg" class="logo__image only-light" alt="DocTemplate - Home"/>
+    <script>document.write(`<img src="../../_static/logo.jpeg" class="logo__image only-dark" alt="DocTemplate - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    CEBRA-Lens
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/installation.html">🛠️ Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/repo_org.html">📚 Repository organization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../demos/UsageDemoGENERAL.html">CEBRA-Lens Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos/UsageDemoVISUAL.html">CEBRA-Lens Demo: 2P visual coding dataset (Allen Institute)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/examples/ModelGenerator.html">Model generation for Allen Visual dataset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/docs/api/helpers.html">Helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extras</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/CONDUCT.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/README.html">CEBRA-Lens jupyter-book</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AdaptiveMotorControlLab/CEBRA-Lens/issues/new?title=Issue%20on%20page%20%2F_modules/cebra_lens/utils.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for cebra_lens.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cebra</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.quantification.cka_metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">CKA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.quantification.decoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decoding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.quantification.rdm_metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.quantification.tsne</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tsne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils_allen</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_datasets</span> <span class="k">as</span> <span class="n">get_datasets_visual</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils_hpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_datasets</span> <span class="k">as</span> <span class="n">get_datasets_hpc</span>
+
+
+<div class="viewcode-block" id="get_data">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.utils.get_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span>
+    <span class="n">dataset_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns datasets based on the specified dataset label. If you are using a non standard dataset, you can add a new data loading function add it here.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_label : str</span>
+<span class="sd">            The label of the dataset to load. Options are &quot;visual&quot; or &quot;HPC&quot;.</span>
+<span class="sd">        session_id : int, optional</span>
+<span class="sd">            The session ID for the multisession datasets. This is used to load specific sessions of the dataset.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]</span>
+<span class="sd">            A list containing the datasets: train_data, test_data, label_train, label_test.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">dataset_label</span> <span class="o">==</span> <span class="s2">&quot;visual&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_datasets_visual</span><span class="p">(</span><span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dataset_label</span> <span class="o">==</span> <span class="s2">&quot;HPC&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_datasets_hpc</span><span class="p">(</span><span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Dataset label </span><span class="si">{</span><span class="n">dataset_label</span><span class="si">}</span><span class="s2"> is not recognized. Please use &#39;visual&#39; or &#39;HPC&#39;, or add data loading function here.&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_label">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.utils.extract_label">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_label</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">label_ind</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts unique labels from a NumPy array of labels.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        labels : npt.NDArray</span>
+<span class="sd">            A NumPy array containing labels, which can be of any numeric type.</span>
+<span class="sd">        label_ind : int</span>
+<span class="sd">            The index of the label to extract from the array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List</span>
+<span class="sd">            A list of unique labels extracted from the input array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">num_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">num_labels</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">label_ind</span> <span class="o">&gt;</span> <span class="n">num_labels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;label_ind </span><span class="si">{</span><span class="n">label_ind</span><span class="si">}</span><span class="s2"> is out of range for labels with shape </span><span class="si">{</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:,</span> <span class="n">label_ind</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+
+
+<div class="viewcode-block" id="compute_metric">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.utils.compute_metric">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_metric</span><span class="p">(</span>
+    <span class="n">model_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
+    <span class="n">metric_class</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">output_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">bool_oracle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes metrics for each model using a provided metric class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_data : Dict[str, List[npt.NDArray]]</span>
+<span class="sd">            Dictionary mapping model labels to lists of data samples (e.g., activations).</span>
+<span class="sd">        metric_class : object</span>
+<span class="sd">            Object with a `compute` method that takes a single data sample and returns a computed metric.</span>
+<span class="sd">        output_only : bool, optional</span>
+<span class="sd">            This is relevant for class Decoding, which can compute the metric only for the output layer.</span>
+<span class="sd">            If True, the metric class will compute the metric only for the output layer.</span>
+<span class="sd">        bool_oracle : bool, optional</span>
+<span class="sd">            This is relevant for class RDM, which can compute along side the RDMs also the correlation between the RDMs and the Oracle RDM.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, npt.NDArray]</span>
+<span class="sd">            Dictionary mapping model labels to arrays of computed metric values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;model_data should be a dictionary mapping model grouns to lists of model data.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">CKA</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">comparison</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">metric_class</span><span class="o">.</span><span class="n">comparisons</span><span class="p">):</span>
+            <span class="n">cka_matrix</span> <span class="o">=</span> <span class="n">metric_class</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">comparison</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">comparison</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_v_</span><span class="si">{</span><span class="n">comparison</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cka_matrix</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">Decoding</span><span class="p">):</span>
+            <span class="n">metric_class</span><span class="o">.</span><span class="n">output_only</span> <span class="o">=</span> <span class="n">output_only</span>
+            <span class="n">metric_class</span><span class="o">.</span><span class="n">output_information</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">RDM</span><span class="p">):</span>
+            <span class="n">metric_class</span><span class="o">.</span><span class="n">bool_oracle</span> <span class="o">=</span> <span class="n">bool_oracle</span>
+            <span class="n">metric_class</span><span class="o">.</span><span class="n">output_information</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">samples</span> <span class="ow">in</span> <span class="n">model_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">computed_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">metric_class</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">RDM</span><span class="p">):</span>
+                <span class="n">computed_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">computed_values</span><span class="p">)</span>
+
+            <span class="n">result_dict</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">computed_values</span>
+
+    <span class="k">return</span> <span class="n">result_dict</span></div>
+
+
+
+<div class="viewcode-block" id="plot_metric">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.utils.plot_metric">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_metric</span><span class="p">(</span>
+    <span class="n">data_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">],</span>
+    <span class="n">metric_class</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Model group&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots metrics for each model using a provided metric class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dict : Union[Dict[str, npt.NDArray[Any]], npt.NDArray]</span>
+<span class="sd">            Dictionary mapping model labels to arrays of computed metric values or metric values for a single model.</span>
+<span class="sd">        metric_class : object</span>
+<span class="sd">            Object with a `plot` method that takes a single data sample and returns a plot.</span>
+<span class="sd">        group_name : str, optional</span>
+<span class="sd">            This is relevant is the user wants to plot data from a single model, so we can transform it into a dictionary form which is acceptable. Here the group_name will be a placeholder group label values for the single model. Default is &quot;Model group&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">Dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">Tsne</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_class</span><span class="p">,</span> <span class="n">RDM</span><span class="p">):</span>
+            <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">group_name</span><span class="p">:</span> <span class="n">data_dict</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;data_dict should be a dictionary mapping model groups to lists of model data.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">metric_class</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="model_loader">
+<a class="viewcode-back" href="../../docs/docs/api/helpers.html#cebra_lens.utils.model_loader">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_loader</span><span class="p">(</span>
+    <span class="n">model_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">cebra</span><span class="o">.</span><span class="n">integrations</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads and categorizes CEBRA models from a given directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_dir : str</span>
+<span class="sd">            Path to the directory containing model `.pt` or `.pth` files.</span>
+<span class="sd">        groups : Dict[str, str], optional</span>
+<span class="sd">            Dictionary mapping model file names (without extensions) to category labels.</span>
+<span class="sd">            If not provided, the model&#39;s own filename will be used as its label.</span>
+<span class="sd">            The keys should be the file names without extensions, and the values should be the desired group labels.</span>
+
+<span class="sd">            ```</span>
+<span class="sd">            Example:</span>
+<span class="sd">            groups = {&#39;allen_single_session_mouse4_0k_UT_torch&#39;:&#39;single_UT&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_10k_3_torch&#39;:&#39;multi_TR&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_10k_2_torch&#39;:&#39;multi_TR&#39;,</span>
+<span class="sd">              &#39;allen_single_session_mouse4_10k_0_torch&#39;:&#39;single_TR&#39;,</span>
+<span class="sd">              &#39;allen_single_session_mouse4_10k_1_torch&#39;:&#39;single_TR&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_10k_4_torch&#39;:&#39;multi_TR&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_10k_0_torch&#39;:&#39;multi_TR&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_10k_1_torch&#39;:&#39;multi_TR&#39;,</span>
+<span class="sd">              &#39;allen_single_session_mouse4_10k_3_torch&#39;:&#39;single_TR&#39;,</span>
+<span class="sd">              &#39;allen_single_session_mouse4_10k_2_torch&#39;:&#39;single_TR&#39;,</span>
+<span class="sd">              &#39;allen_multi_session_0k_UT_torch&#39;:&#39;multi_UT&#39;,</span>
+<span class="sd">              &#39;allen_single_session_mouse4_10k_4_torch&#39;:&#39;single_TR&#39;}</span>
+<span class="sd">             ```</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, List[CEBRA]]</span>
+<span class="sd">            Dictionary with model category labels as keys and lists of loaded CEBRA models as values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">models_folder_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">model_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">models_folder_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Folder </span><span class="si">{</span><span class="n">models_folder_path</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
+
+    <span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">models_folder_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.pt&quot;</span><span class="p">,</span> <span class="s2">&quot;.pth&quot;</span><span class="p">)):</span>
+            <span class="n">loaded_model</span> <span class="o">=</span> <span class="n">cebra</span><span class="o">.</span><span class="n">CEBRA</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="n">file</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+                <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loaded_model</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2"> loaded successfully.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">models</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By MLAI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
