@@ -16,25 +16,23 @@ from .misc import continuous_binning, discrete_binning
 
 
 class RDM(_BaseMetric):
-    """
-    Compute the Representational Dissimilarity Matrix (RDM) for a given activation.
+    """Compute the Representational Dissimilarity Matrix (RDM) for a given activation.
 
-    Parameters:
-    -----------
-    data : torch.Tensor
-        The data array of shape (num_samples, num_features).
-    label : torch.Tensor
-        The array of labels corresponding to the data.
-    is_discrete_labels : bool, optional
-        Whether the labels are discrete or continuous. By default, it is False, meaning the labels are continuous.
-    dataset_label : str, optional
-        The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
-    metric : str, optional
-        The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
-    bool_oracle : bool, optional
-        Whether to compute and compare with the Oracle RDM. Default is True.
-    label_ind : int, optional
-        The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
+    Attributes:
+        data : torch.Tensor
+            The data array of shape (num_samples, num_features).
+        label : torch.Tensor
+            The array of labels corresponding to the data.
+        is_discrete_labels : bool, optional
+            Whether the labels are discrete or continuous. By default, it is False, meaning the labels are continuous.
+        dataset_label : str, optional
+            The dataset type, either 'visual' or 'HPC'. Default is 'visual'.
+        metric : str, optional
+            The distance metric to use for computing the RDMs. 'correlation' or 'euclidean' are supported.
+        bool_oracle : bool, optional
+            Whether to compute and compare with the Oracle RDM. Default is True.
+        label_ind : int, optional
+            The index of the label to use for the RDM calculation if there are multiple labels. If None, it will raise an error if the dataset is not HPC or visual.
     """
 
     def __init__(
@@ -70,9 +68,7 @@ class RDM(_BaseMetric):
         self.idxs, self.num_bins = self._define_indices()
 
     def output_information(self):
-        """
-        Outputs information about the RDM class initialization parameters.
-        """
+        """Outputs information about the RDM class initialization parameters."""
         print("RDM class initialized with the following parameters:")
         if self.bool_oracle:
             print(
@@ -93,15 +89,13 @@ class RDM(_BaseMetric):
         )
 
     def _define_indices(self) -> Tuple[npt.NDArray, Optional[int]]:
-        """
-        Defines the indices for the bins and repetitions based on the specified distance label.
+        """Defines the indices for the bins and repetitions based on the specified distance label.
 
         Returns:
-        --------
-        Tuple[npt.NDArray, Optional[int]]
-            A tuple containing:
-            - idxs: A 2D numpy array of shape (num_bins, num_samples) representing the indices of samples in each bin.
-            - num_bins: The number of bins if applicable, otherwise None.
+            Tuple[npt.NDArray, Optional[int]]
+                A tuple containing:
+                - idxs: A 2D numpy array of shape (num_bins, num_samples) representing the indices of samples in each bin.
+                - num_bins: The number of bins if applicable, otherwise None.
         """
         num_bins = None
         if self.dataset_label is not None:
@@ -139,13 +133,11 @@ class RDM(_BaseMetric):
         return idxs, num_bins
 
     def _create_oracle_rdm(self):
-        """
-        Creates the Oracle RDM for the specified dataset.
+        """Creates the Oracle RDM for the specified dataset.
 
         Returns:
-        --------
-        npt.NDArray
-            The Oracle RDM as a squareform distance matrix.
+            npt.NDArray
+                The Oracle RDM as a squareform distance matrix.
         """
 
         if self.dataset_label == "visual":
@@ -173,18 +165,15 @@ class RDM(_BaseMetric):
 
     def _compute_per_layer(
             self, layer_activation: npt.NDArray) -> Tuple[npt.NDArray, float]:
-        """
-        Computes the RDM for a given layer's activation.
+        """Computes the RDM for a given layer's activation.
 
-        Parameters:
-        -----------
-        layer_activation : npt.NDArray
-            A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
+        Args:
+            layer_activation : npt.NDArray
+                A 2D numpy array representing the activation of neurons in a layer. The shape should be (num_neurons, num_samples) or (num_samples, num_neurons).
 
         Returns:
-        --------
-        Tuple[npt.NDArray, float]
-            A tuple of the computed RDM as a squareform distance matrix and the similarity score between the computed RDM and the Oracle RDM, if applicable.
+            Tuple[npt.NDArray, float]
+                A tuple of the computed RDM as a squareform distance matrix and the similarity score between the computed RDM and the Oracle RDM, if applicable.
         """
         # to ensure the right shape: numSamples X numNeurons
         if layer_activation.shape[0] < layer_activation.shape[1]:
@@ -204,18 +193,15 @@ class RDM(_BaseMetric):
         self,
         activations: List[Union[float, npt.NDArray]],
     ) -> List[Tuple[npt.NDArray, float]]:
-        """
-        Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
+        """Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
-        Parameters:
-        -----------
-        activations : List[Union[float, npt.NDArray]]
-            List of 2D numpy arrays representing the activation of neurons per layer.
+        Args:
+            activations : List[Union[float, npt.NDArray]]
+                List of 2D numpy arrays representing the activation of neurons per layer.
 
         Returns:
-        --------
-        List[Tuple[npt.NDArray, float]]:
-            A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
+            List[Tuple[npt.NDArray, float]]:
+                A list of tuples, where each tuple contains the computed RDM and the correlation score with the Oracle RDM (if applicable) for each layer of a model.
         """
         if isinstance(
                 activations, (np.ndarray, torch.Tensor)
@@ -237,25 +223,23 @@ class RDM(_BaseMetric):
         figsize: tuple = None,
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.figure.Figure:
-        """
-        Plots the RDM analysis results. If `bool_oracle` is True, it plots the correlation of the RDMs with the Oracle RDM, else it plots the RDMs in the rdms dictionary.
+        """Plots the RDM analysis results. If `bool_oracle` is True, it plots the correlation of the RDMs with the Oracle RDM, else it plots the RDMs in the rdms dictionary.
 
-        Parameters:
-        ----------
-        rdms : Dict[str, List[npt.NDArray]]
-            Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
-        titles : List[str], optional
-            List of title for the RDM plots, if it is different from ordered layers.
-        cmap : str, optional
-            The colormap to be used for the plot. Default is "viridis".
-        figsize : tuple, optional
-            The size of the figure for the plot. Default is None, which uses the default size.
-        ax : Optional[matplotlib.axes.Axes], optional
-            The axes on which to plot the RDMs. If None, a new figure and axes will be created. Default is None.
+        Args:
+            rdms : Dict[str, List[npt.NDArray]]
+                Dictionary where the key is the model category label (str), and the value is a list of npt.NDArray containing for all the models under that label the calculated RDMs.
+            titles : List[str], optional
+                List of title for the RDM plots, if it is different from ordered layers.
+            cmap : str, optional
+                The colormap to be used for the plot. Default is "viridis".
+            figsize : tuple, optional
+                The size of the figure for the plot. Default is None, which uses the default size.
+            ax : Optional[matplotlib.axes.Axes], optional
+                The axes on which to plot the RDMs. If None, a new figure and axes will be created. Default is None.
+        
         Returns:
-        -------
-        matplotlib.figure.Figure
-            The figure containing the plotted RDMs.
+            matplotlib.figure.Figure
+                The figure containing the plotted RDMs.
         """
         if self.bool_oracle:
             return utils_plot.plot_rdm_correlation(rdms)

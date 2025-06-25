@@ -24,14 +24,15 @@ interrogate:
 
 docs:
 	export PYTHONPATH=$(pwd)
-	jupyter-book build docs
+	jupyter-book build .
 
 docs-touch:
+	export PYTHONPATH=$(pwd)
 	find docs/docs -iname '*.md' -exec touch {} \;
-	jupyter-book build docs/docs
+	jupyter-book build .
 
 docs-strict:
-	jupyter-book build docs --keep-going --strict
+	jupyter-book build . --keep-going --strict
 
 # Serve the docs
 serve_docs:

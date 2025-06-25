@@ -1,0 +1,36 @@
+title: DocTemplate
+author: MLAI
+logo: docs/docs/images/logo.jpeg
+only_build_toc_files: true
+
+sphinx:
+  config:
+    autodoc_mock_imports: list
+    add_module_names: False
+    autosummary_generate: False
+    suppress_warnings: ['autosummary']
+    html_static_path: ['docs/docs/images']
+  extra_extensions:
+    - numpydoc
+    - 'sphinx.ext.autodoc'
+    - 'sphinx.ext.napoleon'
+    - 'sphinx.ext.viewcode'
+
+execute:
+  execute_notebooks: "off"
+
+html:
+  favicon: "docs/docs/images/zebra.png"
+  extra_navbar: ""
+  use_issues_button: true
+  use_repository_button: true
+  extra_footer: |
+    <div>Powered by <a href="https://jupyterbook.org/">Jupyter Book</a>.</div>
+
+repository:
+  url: https://github.com/AdaptiveMotorControlLab/CEBRA-Lens
+  path_to_book: docs
+  branch: main
+
+launch_buttons:
+  colab_url: "https://colab.research.google.com/github.com/AdaptiveMotorControlLab/CEBRA-Lens/demos/UsageDemoGENERAL.ipynb"

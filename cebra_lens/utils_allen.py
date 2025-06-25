@@ -23,7 +23,8 @@ def get_datasets(
     gaussian_noise: float = None,
     session_id: int = None,
 ):
-    """
+    """Return the training and validation datasets for the Allen movie 1 dataset.
+    
     Args:
         test_session: The session ID to consider as the test session. NOTE(celia): this will need
             to be changed if we want to test smaller training set number of repeats.
@@ -95,15 +96,14 @@ def get_datasets(
 
 
 def obtain_pseudomice(mice, num_neurons_per_mouse=80):
-    """
-    Creates a pseudomouse by selecting a random subset of neurons from each mouse's neural data.
+    """Creates a pseudomouse by selecting a random subset of neurons from each mouse's neural data.
 
-    Parameters:
-    mice (list): List of neural data for different mice
-    num_neurons_per_mouse (int): the number of neurons to select from each mouse
+    Args:
+        mice (list): List of neural data for different mice
+        num_neurons_per_mouse (int): the number of neurons to select from each mouse
 
     Returns:
-    Mouse: a pseudomouse object with the concatenated neural data from the selected neurons
+        Mouse: a pseudomouse object with the concatenated neural data from the selected neurons
     """
     neuron_ids = []
     pseudomice_matrix = None
