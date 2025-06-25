@@ -66,7 +66,9 @@ These analyses quantify the change in the distance calculated per layer in a mod
 - inter-class distance
 - inter-repetition distance (only relevant if the model was trained on a dataset where there is repeating stimuli)
 
-<img src="docs/docs/images/abstractfig.png" alt="analysis">
+<img src="https://images.squarespace-cdn.com/content/v1/57f6d51c9f74566f55ecf271/4e8eaca2-e14a-4a46-aba5-702775ad2797/abstractfig.png?format=1500w" alt="analysis">
+
+
 
 # Demo
 
