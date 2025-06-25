@@ -2,7 +2,8 @@
 
 ## A python library for mechanistic interpretability of CEBRA models
 
- <img src="docs/docs/images/zebra.png" title="cebra-lens" alt="cebra-lens" width="150" align="right" vspace = "80"/>
+<img src="https://images.squarespace-cdn.com/content/v1/57f6d51c9f74566f55ecf271/c443da50-49cd-4fcb-a2f3-a5cae2915f51/zebra.png?format=1500w" title="cebra-lens" alt="cebra-lens" width="150" align="right" style="margin-top:80px;" />
+
 
 **CEBRA-Lens** is a Python library for analyzing and interpreting neural representations learned by models trained with [CEBRA](https://github.com/AdaptiveMotorControlLab/cebra). It provides tools for mechanistic interpretability, allowing users to probe, visualize, and understand the structure of learned embeddings. The library is designed to support in-depth analysis of representational geometry, feature selectivity, and latent space dynamics in neuroscience and beyond. 👋 We welcome contributions and will continue to expand the library in the coming years.
 
