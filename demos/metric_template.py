@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 import numpy.typing as npt
 import matplotlib
 
+
 class NewMetric(_BaseMetric):
     """
     Compute New Metric on data
@@ -40,8 +41,9 @@ class NewMetric(_BaseMetric):
         return NewMetric_for_layer
 
     def compute(
-        self, data: List[Union[float, npt.NDArray]]
-    ) -> List[Union[float, npt.NDArray]]:
+        self,
+        data: List[Union[float,
+                         npt.NDArray]]) -> List[Union[float, npt.NDArray]]:
         """
         Applies NewMetric to data
 
@@ -59,7 +61,7 @@ class NewMetric(_BaseMetric):
 
         #If the computation is done by layer then
         return super().iterate_over_layers(data, self._compute_per_layer)
-    
+
         #If the computation is done on the data directly
         return result
 
