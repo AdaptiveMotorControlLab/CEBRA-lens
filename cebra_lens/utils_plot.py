@@ -625,7 +625,6 @@ class _EmbeddingPlot:
         sample_plot: int = None,
         comparison_groups: Tuple = None,
     ):
-
         self.labels = labels
         self.dataset_label = dataset_label
         if axis is None:
@@ -642,22 +641,26 @@ class _EmbeddingPlot:
             raise ValueError(
                 f"Please provide two sets of embeddings if you want to plot a comparison_groups tuple, got {len(embeddings)} sets instead."
             )
-        elif comparison_groups is not None and len(embeddings) == 2:
-            if sample_plot is None:
-                self.sample_plot = self.embeddings[0][0].shape[1]
+
+        if len(embeddings) == 1:
+            self.embeddings = embeddings[0]
+            if sample_plot is None or sample_plot > embeddings[0].shape[1]:
+                self.sample_plot = embeddings[0].shape[1]
             else:
                 self.sample_plot = sample_plot
+
         else:
-            if sample_plot is None:
-                self.sample_plot = self.embeddings[0].shape[1]
+            #self.embeddings_1 = embeddings[0]
+            #self.embeddings_2 = embeddings[1]
+            if sample_plot is None or sample_plot > embeddings[0][0].shape[1]:
+                self.sample_plot = embeddings[0][0].shape[1]
             else:
                 self.sample_plot = sample_plot
+
+            self.comparison_groups = comparison_groups
                 
         #NOTE(celia): the sampling so that embeddings and labels have the same number of samples
-        # is a bit weird for now.
-
-        self.comparison_groups = comparison_groups
-    
+        # is a bit weird for now.    
 
     def _multi_padding_check(self, embeddings_1, embeddings_2):
         """Check if the two embeddings have the same number of layer. 
@@ -716,82 +719,7 @@ class _EmbeddingPlot:
         else:
             self.ax = axis
         return self.ax
-
-    def _plot_dataset(
-            self,
-            ax: matplotlib.axes.Axes,
-            embedding: npt.NDArray,
-            label: str,
-            label_ind: int = None,
-            gray: bool = False,
-            idx_order: Tuple[int, int, int] = (0, 1, 2),
-    ) -> matplotlib.axes.Axes:
-        """Plot the dataset embedding, for generic dataset.
-        
-        Note: 
-            By default, it plots all labels.
-
-        Args: 
-            ax : matplotlib.axes.Axes
-                The axis on which to plot the embedding.
-            embedding : npt.NDArray
-                The embedding data to be plotted, shape Samples X num Neurons.
-            label : str
-                The label data corresponding to the embedding, shape Samples X num Labels.
-            label_ind : int, optional
-                The index of the label to be used for coloring the points in the embedding plot.
-            gray : bool, optional
-                If True, will plot the embedding in gray scale (default is False).
-            idx_order : Tuple[int, int, int], optional
-                The order of indices to use for the x, y, and z axes in the 3D plot (default is (0, 1, 2)).
-
-        Returns:
-            ax : matplotlib.axes.Axes
-                The axis with the plotted embedding.
-        """
-        idx1, idx2, idx3 = idx_order
-        label = np.atleast_2d(label)
-        if label.shape[0] == 1 and label.shape[1] != 1:
-            label = label.T
-
-        if (0 in np.unique(label[:, label_ind])
-                and 1 in np.unique(label[:, label_ind])
-                and len(np.unique(label[:, label_ind])) == 2):
-            l_ind = label[:, label_ind] == 1
-            l_c = label[l_ind, label_ind]
-            l = ax.scatter(
-                embedding[l_ind, idx1],
-                embedding[l_ind, idx2],
-                embedding[l_ind, idx3],
-                c=l_c,
-                cmap="cool",
-                s=0.05,
-                alpha=0.75,
-            )
-
-        else:
-            c = label[:, label_ind]
-
-            idx1, idx2, idx3 = idx_order
-            ax.scatter(
-                embedding[:, idx1],
-                embedding[:, idx2],
-                embedding[:, idx3],
-                c=c,
-                cmap="magma",
-                s=0.05,
-                alpha=0.75,
-            )
-
-        ax.grid(False)
-        ax.xaxis.pane.fill = False
-        ax.yaxis.pane.fill = False
-        ax.zaxis.pane.fill = False
-        ax.xaxis.pane.set_edgecolor("w")
-        ax.yaxis.pane.set_edgecolor("w")
-        ax.zaxis.pane.set_edgecolor("w")
-
-        return ax
+    
 
     def _plot_hippocampus(
             self,
