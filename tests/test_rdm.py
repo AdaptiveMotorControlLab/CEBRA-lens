@@ -76,8 +76,7 @@ def test_compute_per_layer_and_bool_oracle():
     )
     rdm.idxs = np.array([[i] for i in range(10000)])
     dummy_layer = np.random.rand(10000, 5)
-    rdm.bool_oracle = True
-    _, corr = rdm._compute_per_layer(dummy_layer)
+    _, corr = rdm._compute_per_layer(dummy_layer, bool_oracle=True)
     assert isinstance(corr, float)
 
 
@@ -136,5 +135,4 @@ def test_compute_per_layer_transposes_if_needed():
     rdm.idxs = np.array([[i] for i in range(10)])
     # Provide activation with shape (features, samples)
     dummy_layer = np.random.rand(5, 10)
-    rdm.bool_oracle = False
     rdm._compute_per_layer(dummy_layer)

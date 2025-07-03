@@ -255,7 +255,7 @@ class Decoding(_BaseMetric):
                 model=model,
                 data=self.train_data,
                 labels=self.train_label,
-                activations_keys_prefix=model.solver.__class__.__name__
+                activations_keys_prefix=model.solver_.__class__.__name__
                 if hasattr(model, 'solver_') else model.__class__.__name__,
                 session_id=self.session_id,
                 layer_type=self.layer_type,
@@ -265,7 +265,7 @@ class Decoding(_BaseMetric):
                 model=model,
                 data=self.test_data,
                 labels=self.test_label,
-                activations_keys_prefix=model.solver.__class__.__name__
+                activations_keys_prefix=model.solver_.__class__.__name__
                 if hasattr(model, 'solver_') else model.__class__.__name__,
                 session_id=self.session_id,
                 layer_type=self.layer_type,

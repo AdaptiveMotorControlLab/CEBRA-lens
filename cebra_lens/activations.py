@@ -244,6 +244,8 @@ def _get_activation(activations_keys_prefix: str, activations: Dict):
     return hook, activations
 
 
+#NOTE(celia): this function is not super flexible to handle different layer types,
+# but it is a good starting point.
 def _attach_hooks(
     activations: Dict[str, npt.NDArray],
     model: cebra.integrations.sklearn.cebra.CEBRA,
@@ -286,7 +288,8 @@ def _attach_hooks(
                 hook, activations = _get_activation(
                     f"{activations_keys_prefix}_{instance}_layer_{num_layer}",
                     activations)
-                if isinstance(model.net[i], layer_type):
+                if isinstance(model.net[i],
+                              layer_type) and layer_type == nn.Conv1d:
                     conv_layer_info.append(model.net[i].kernel_size[0])
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)

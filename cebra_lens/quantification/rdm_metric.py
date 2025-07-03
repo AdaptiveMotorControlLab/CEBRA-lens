@@ -153,7 +153,9 @@ class RDM(_BaseMetric):
         return oracle_rdm
 
     def _compute_per_layer(
-            self, layer_activation: npt.NDArray) -> Tuple[npt.NDArray, float]:
+            self,
+            layer_activation: npt.NDArray,
+            bool_oracle: bool = False) -> Tuple[npt.NDArray, float]:
         """Computes the RDM for a given layer's activation.
 
         Args:
@@ -170,7 +172,7 @@ class RDM(_BaseMetric):
 
         rdm = pdist(layer_activation[self.idxs.flatten(), :],
                     metric=self.metric)
-        if self.bool_oracle:
+        if bool_oracle:
             oracle_rdm = self._create_oracle_rdm()
             comparison = 1 - correlation(oracle_rdm, rdm)
         else:
@@ -181,6 +183,7 @@ class RDM(_BaseMetric):
     def compute(
         self,
         activations: List[Union[float, npt.NDArray]],
+        bool_oracle: bool = False,
     ) -> List[Tuple[npt.NDArray, float]]:
         """Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
@@ -198,7 +201,8 @@ class RDM(_BaseMetric):
             activations = [activations]
 
         return super().iterate_over_layers(activations,
-                                           self._compute_per_layer)
+                                           self._compute_per_layer,
+                                           bool_oracle=bool_oracle)
 
     @property
     def __name__(self):

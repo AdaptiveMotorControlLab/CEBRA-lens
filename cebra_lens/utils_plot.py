@@ -914,8 +914,8 @@ class _EmbeddingPlot:
                                           embeddings=self.embeddings,
                                           group_name=group_name,
                                           **kwargs)
-    
-    #NOTE(celia): too complex, could be removed, 
+
+    #NOTE(celia): too complex, could be removed,
     #TODO(celia): check that no other function uses it.
     def plot_compare(self):
         """Plots embedding layers for models being compared"""

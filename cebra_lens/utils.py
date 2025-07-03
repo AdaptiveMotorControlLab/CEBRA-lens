@@ -43,12 +43,11 @@ def get_data(
         )
 
 
+#NOTE(celia): this is messy, but it is a temporary solution, could be improved in the future.
 def compute_metric(
     model_data: Dict[str, List[npt.NDArray[Any]]],
     metric_class: Any,
     **kwargs,
-    #output_only: bool = False,
-    #bool_oracle: bool = False,
 ) -> Dict[str, npt.NDArray[Any]]:
     """Computes metrics for each model using a provided metric class.
 
@@ -69,7 +68,7 @@ def compute_metric(
     """
     result_dict = {}
 
-    if not isinstance(model_data, Dict):
+    if isinstance(metric_class, Decoding) and not isinstance(model_data, Dict):
         raise ValueError(
             "model_data should be a dictionary mapping model grouns to lists of model data."
         )
@@ -82,12 +81,19 @@ def compute_metric(
     else:
         for group_name, samples in model_data.items():
 
-            computed_values = [
-                metric_class.compute(sample, **kwargs)
-                for sample in tqdm(samples, desc=f"Processing {group_name}")
-            ]
-            if not isinstance(metric_class, RDM):
-                computed_values = np.array(computed_values)
+            if isinstance(metric_class, Decoding):
+                computed_values = metric_class.compute(samples,
+                                                       output_only=kwargs.get(
+                                                           "output_only",
+                                                           False))
+            else:
+                computed_values = [
+                    metric_class.compute(sample, **kwargs)
+                    for sample in tqdm(samples,
+                                       desc=f"Processing {group_name}")
+                ]
+                if not isinstance(metric_class, RDM):
+                    computed_values = np.array(computed_values)
 
             result_dict[group_name] = computed_values
 
