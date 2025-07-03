@@ -298,9 +298,10 @@ class Decoding(_BaseMetric):
                         self.dataset_label,
                     )
                 })
-            
-            else: 
-                if i == 0 and not isinstance(model, cebra.solver.UnifiedSolver):
+
+            else:
+                if i == 0 and not isinstance(model,
+                                             cebra.solver.UnifiedSolver):
                     results.update({
                         i:
                         self._decode(

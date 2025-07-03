@@ -630,9 +630,9 @@ class _EmbeddingPlot:
         if axis is None:
             self.figsize = (15, 10)
         self.axs = self._define_ax(axis, embeddings)
-        
+
         self.embeddings = embeddings
-        
+
         if comparison_groups is None and len(embeddings) == 2:
             raise ValueError(
                 f"Please provide a comparison_groups tuple if you want to plot two sets of embeddings."
@@ -658,9 +658,9 @@ class _EmbeddingPlot:
                 self.sample_plot = sample_plot
 
             self.comparison_groups = comparison_groups
-                
+
         #NOTE(celia): the sampling so that embeddings and labels have the same number of samples
-        # is a bit weird for now.    
+        # is a bit weird for now.
 
     def _multi_padding_check(self, embeddings_1, embeddings_2):
         """Check if the two embeddings have the same number of layer. 
@@ -686,10 +686,8 @@ class _EmbeddingPlot:
             embeddings_1 += [np.empty_like(embeddings_1[0])
                              ] * (self.num_layers_2 - self.num_layers_1)
 
-    def _define_ax(
-            self,
-            axis: Optional[matplotlib.axes.Axes],
-            embeddings: List[npt.NDArray]) -> matplotlib.axes.Axes:
+    def _define_ax(self, axis: Optional[matplotlib.axes.Axes],
+                   embeddings: List[npt.NDArray]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Args:
@@ -701,8 +699,7 @@ class _EmbeddingPlot:
         """
         if axis is None:
             if len(embeddings) == 2:
-                self._multi_padding_check(embeddings[0],
-                                          embeddings[1])
+                self._multi_padding_check(embeddings[0], embeddings[1])
                 self.fig, self.ax = plt.subplots(
                     2,
                     max(self.num_layers_1, self.num_layers_2),
@@ -719,7 +716,6 @@ class _EmbeddingPlot:
         else:
             self.ax = axis
         return self.ax
-    
 
     def _plot_hippocampus(
             self,
@@ -813,7 +809,7 @@ class _EmbeddingPlot:
                 embedding = embeddings[i]
 
             embedding = embedding[:self.sample_plot, :]
-            
+
             if self.dataset_label == "HPC":
                 ax = self._plot_hippocampus(ax, embedding, label)
             else:
