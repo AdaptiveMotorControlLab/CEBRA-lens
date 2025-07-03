@@ -222,7 +222,7 @@ class Decoding(_BaseMetric):
         """Decode neural data by layer using a given CEBRA model.
 
         Args:
-            model : cebra.integrations.sklearn.cebra.CEBRA
+            model : cebra.intfegrations.sklearn.cebra.CEBRA
                 The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
             output_only: bool
                 A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the
@@ -287,11 +287,7 @@ class Decoding(_BaseMetric):
             #NOTE(eloise): if output_only is True, then it will only do this iteration
             # of the for loop and for train_data it will take in the embeddings.
             #NOTE(celia): for now we skip the first layer if the model is a UnifiedSolver
-            if i == 0 and not isinstance(model, cebra.solver.UnifiedSolver):
-                if not output_only:
-                    train_embedding = self.train_data
-                    test_embedding = self.test_data
-
+            if output_only:
                 results.update({
                     i:
                     self._decode(
@@ -302,18 +298,30 @@ class Decoding(_BaseMetric):
                         self.dataset_label,
                     )
                 })
-
-            else:
-                results.update({
-                    i:
-                    self._decode(
-                        activations_train[keys[i - 1]],
-                        train_decoding_labels,
-                        activations_test[keys[i - 1]],
-                        test_decoding_labels,
-                        self.dataset_label,
-                    )
-                })
+            
+            else: 
+                if i == 0 and not isinstance(model, cebra.solver.UnifiedSolver):
+                    results.update({
+                        i:
+                        self._decode(
+                            self.train_data,
+                            train_decoding_labels,
+                            self.test_data,
+                            test_decoding_labels,
+                            self.dataset_label,
+                        )
+                    })
+                else:
+                    results.update({
+                        i:
+                        self._decode(
+                            activations_train[keys[i - 1]],
+                            train_decoding_labels,
+                            activations_test[keys[i - 1]],
+                            test_decoding_labels,
+                            self.dataset_label,
+                        )
+                    })
 
         return results
 

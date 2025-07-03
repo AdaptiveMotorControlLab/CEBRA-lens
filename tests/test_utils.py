@@ -32,7 +32,7 @@ def test_compute_metric_with_mock_metric_class():
 
 
 def test_compute_metric_with_decoding():
-    dummy_model = {"group1": make_mock_cebra_model(100, 1)}
+    dummy_model = {"group1": [make_mock_cebra_model(100, 1)]}
 
     dec_metric = Decoding(
         train_data=torch.rand((300, 100)),

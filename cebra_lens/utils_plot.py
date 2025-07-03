@@ -626,32 +626,38 @@ class _EmbeddingPlot:
         comparison_groups: Tuple = None,
     ):
 
-        self.embeddings_list = embeddings
         self.labels = labels
         self.dataset_label = dataset_label
         if axis is None:
             self.figsize = (15, 10)
-        self.axs = self._define_ax(axis)
-
-        if len(embeddings) == 1:
-            self.embeddings = embeddings[0]
+        self.axs = self._define_ax(axis, embeddings)
+        
+        self.embeddings = embeddings
+        
+        if comparison_groups is None and len(embeddings) == 2:
+            raise ValueError(
+                f"Please provide a comparison_groups tuple if you want to plot two sets of embeddings."
+            )
+        elif comparison_groups is not None and len(embeddings) != 2:
+            raise ValueError(
+                f"Please provide two sets of embeddings if you want to plot a comparison_groups tuple, got {len(embeddings)} sets instead."
+            )
+        elif comparison_groups is not None and len(embeddings) == 2:
+            if sample_plot is None:
+                self.sample_plot = self.embeddings[0][0].shape[1]
+            else:
+                self.sample_plot = sample_plot
+        else:
             if sample_plot is None:
                 self.sample_plot = self.embeddings[0].shape[1]
             else:
                 self.sample_plot = sample_plot
+                
+        #NOTE(celia): the sampling so that embeddings and labels have the same number of samples
+        # is a bit weird for now.
 
-        else:
-            self.embeddings_1 = embeddings[0]
-            self.embeddings_2 = embeddings[1]
-            if sample_plot is None:
-                self.sample_plot = self.embeddings_1[0].shape[1]
-            else:
-                self.sample_plot = sample_plot
-
-            self.comparison_groups = comparison_groups
-
-            self.axs_1 = self.ax[0, :]
-            self.axs_2 = self.ax[1, :]
+        self.comparison_groups = comparison_groups
+    
 
     def _multi_padding_check(self, embeddings_1, embeddings_2):
         """Check if the two embeddings have the same number of layer. 
@@ -679,7 +685,8 @@ class _EmbeddingPlot:
 
     def _define_ax(
             self,
-            axis: Optional[matplotlib.axes.Axes]) -> matplotlib.axes.Axes:
+            axis: Optional[matplotlib.axes.Axes],
+            embeddings: List[npt.NDArray]) -> matplotlib.axes.Axes:
         """Define the ax on which to generate the plot.
 
         Args:
@@ -690,9 +697,9 @@ class _EmbeddingPlot:
             A ``matplotlib.axes.Axes`` on which to generate the plot.
         """
         if axis is None:
-            if len(self.embeddings_list) == 2:
-                self._multi_padding_check(self.embeddings_list[0],
-                                          self.embeddings_list[1])
+            if len(embeddings) == 2:
+                self._multi_padding_check(embeddings[0],
+                                          embeddings[1])
                 self.fig, self.ax = plt.subplots(
                     2,
                     max(self.num_layers_1, self.num_layers_2),
@@ -702,7 +709,7 @@ class _EmbeddingPlot:
             else:
                 self.fig, self.ax = plt.subplots(
                     1,
-                    len(self.embeddings_list[0]),
+                    len(embeddings[0]),
                     figsize=(15, 10),
                     subplot_kw={"projection": "3d"},
                 )
@@ -863,14 +870,14 @@ class _EmbeddingPlot:
             fontsize=20,
         )
         if not isinstance(self.labels, str):
-            self.labels = [self.labels[:self.sample_plot]] * num_layers
+            labels = [self.labels[:self.sample_plot]] * num_layers
         else:
-            self.labels = [self.labels] * num_layers
+            labels = [self.labels] * num_layers
 
         titles = [f"Layer {layer}" for layer in range(1, num_layers)]
         titles.append("Output layer")
 
-        for i, (label, ax) in enumerate(zip(self.labels, axs)):
+        for i, (label, ax) in enumerate(zip(labels, axs)):
             if (embeddings[i].shape[0] < embeddings[i].shape[1]
                 ):  # should be num Samples X num Neurons
                 embedding = embeddings[i].T
@@ -878,6 +885,7 @@ class _EmbeddingPlot:
                 embedding = embeddings[i]
 
             embedding = embedding[:self.sample_plot, :]
+            
             if self.dataset_label == "HPC":
                 ax = self._plot_hippocampus(ax, embedding, label)
             else:
@@ -914,27 +922,6 @@ class _EmbeddingPlot:
                                           embeddings=self.embeddings,
                                           group_name=group_name,
                                           **kwargs)
-
-    #NOTE(celia): too complex, could be removed,
-    #TODO(celia): check that no other function uses it.
-    def plot_compare(self):
-        """Plots embedding layers for models being compared"""
-        self.plot_embedding_layers(
-            self.axs_1,
-            self.embeddings_1,
-            self.comparison_groups[1][0],
-        )
-        self.plot_embedding_layers(
-            self.axs_2,
-            self.embeddings_2,
-            self.comparison_groups[1][1],
-        )
-        self.fig.suptitle(
-            f"CEBRA across layers comparison",
-            fontsize=20,
-        )
-        plt.subplots_adjust(wspace=0, hspace=0)
-        plt.tight_layout()
 
 
 def compare_embeddings_layers(
@@ -981,14 +968,14 @@ def compare_embeddings_layers(
     )
 
     embeddings.plot_embedding_layers(
-        axs=embeddings.axs_1,
-        embeddings=embeddings.embeddings_1,
+        axs=embeddings.ax[0, :],
+        embeddings=embeddings.embeddings[0],
         group_name=embeddings.comparison_groups[1][0],
         **kwargs,
     )
     embeddings.plot_embedding_layers(
-        axs=embeddings.axs_2,
-        embeddings=embeddings.embeddings_2,
+        axs=embeddings.ax[1, :],
+        embeddings=embeddings.embeddings[1],
         group_name=embeddings.comparison_groups[1][1],
         **kwargs,
     )

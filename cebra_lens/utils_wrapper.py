@@ -11,7 +11,7 @@ def transform(model, data, label, **transform_kwargs):
     else:
         raise TypeError(
             "Model must be an instance of cebra.solver.UnifiedSolver",
-            "or cebra.integrations.sklearn.cebra.CEBRA.",
+            f"or cebra.integrations.sklearn.cebra.CEBRA, got {type(model)} instead.",
         )
 
     return embedding
