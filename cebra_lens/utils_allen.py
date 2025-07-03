@@ -18,7 +18,8 @@ def get_datasets(
     gaussian_noise: float = None,
     session_id: int = None,
 ):
-    """
+    """Return the training and validation datasets for the Allen movie 1 dataset.
+    
     Args:
         test_session: The session ID to consider as the test session. NOTE(celia): this will need
             to be changed if we want to test smaller training set number of repeats.
@@ -90,15 +91,14 @@ def get_datasets(
 
 
 def obtain_pseudomice(mice, num_neurons_per_mouse=80):
-    """
-    Creates a pseudomouse by selecting a random subset of neurons from each mouse's neural data.
+    """Creates a pseudomouse by selecting a random subset of neurons from each mouse's neural data.
 
-    Parameters:
-    mice (list): List of neural data for different mice
-    num_neurons_per_mouse (int): the number of neurons to select from each mouse
+    Args:
+        mice (list): List of neural data for different mice
+        num_neurons_per_mouse (int): the number of neurons to select from each mouse
 
     Returns:
-    Mouse: a pseudomouse object with the concatenated neural data from the selected neurons
+        Mouse: a pseudomouse object with the concatenated neural data from the selected neurons
     """
     neuron_ids = []
     pseudomice_matrix = None
@@ -139,8 +139,8 @@ def create_sequences(embedding, labels, seq_len=10):
 
 def decoding_frames(embedding_train,
                     embedding_test,
-                    label_train,
-                    label_test,
+                    train_label,
+                    test_label,
                     time_window=1,
                     seq_len=1):
     """1-frame decoding.
@@ -162,14 +162,14 @@ def decoding_frames(embedding_train,
             train_decoder.fit(
                 embedding_train[:train_valid_idx].reshape(
                     -1, seq_len * embedding_train.shape[2]),
-                label_train[:train_valid_idx],
+                train_label[:train_valid_idx],
             )
             pred = train_decoder.predict(
                 embedding_train[train_valid_idx:].reshape(
                     -1, seq_len * embedding_train.shape[2]))
         else:
             train_decoder.fit(embedding_train[:train_valid_idx],
-                              label_train[:train_valid_idx])
+                              train_label[:train_valid_idx])
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
         err = train_label[train_valid_idx:] - pred
         errs.append(abs(err).sum())
@@ -179,7 +179,7 @@ def decoding_frames(embedding_train,
     if seq_len > 1:
         test_decoder.fit(
             embedding_train.reshape(-1, seq_len * embedding_train.shape[2]),
-            label_train)
+            train_label)
         frame_pred = test_decoder.predict(
             embedding_test.reshape(-1, seq_len * embedding_test.shape[2]))
     else:

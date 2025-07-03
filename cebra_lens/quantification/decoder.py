@@ -16,8 +16,8 @@ from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from .base import _BaseMetric
 
-# resampling, subsampling and supervised model architecture is still not supported
-# checked via '''supported_model_architectures()''' function
+#NOTE(eloise): resampling, subsampling and supervised model architecture is still not supported
+#              checked via '''supported_model_architectures()''' function.
 
 
 def decoding(
@@ -26,24 +26,24 @@ def decoding(
     train_label: npt.NDArray,
     test_label: npt.NDArray,
 ) -> Tuple[np.float64, list, list]:
-    """
-    Function to decode the embeddings using KNNDecoder from CEBRA. The decoding scores are returned in the form of average R^2 score across all labels, R^2 scores per label and error per label.
+    """Function to decode the embeddings using KNNDecoder from CEBRA. 
+    
+    The decoding scores are returned in the form of average $R^2$ score 
+    across all labels, $R^2$ scores per label and error per label.
 
-    Parameters:
-    ----------
-    embedding_train : pt.tensor
-        The part of the output embedding to use as training for the decoding.
-    embedding_test : pt.tensor
-        The part of the output embedding to use as testing for the decoding.
-    train_label : npt.NDArray
-        The true labels corresponding to the training data.
-    test_label : npt.NDArray
-        The true labels corresponding to the validation data.
+    Args:
+        embedding_train : pt.tensor
+            The part of the output embedding to use as training for the decoding.
+        embedding_test : pt.tensor
+            The part of the output embedding to use as testing for the decoding.
+        train_label : npt.NDArray
+            The true labels corresponding to the training data.
+        test_label : npt.NDArray
+            The true labels corresponding to the validation data.
 
     Returns:
-    -------
-    Tuple[np.float64, list, list]
-        A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
+        Tuple[np.float64, list, list]
+            A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
     """
     if train_label.shape[1] > 1:
         num_labels = train_label.shape[1]
@@ -96,22 +96,23 @@ class Decoding(_BaseMetric):
     """
     Decoding class for decoding neural data by layer using a given CEBRA model.
 
-    Parameter:
-    ----------
-    train_data : torch.Tensor
-        The training data used for model transformation.
-    train_label : npt.NDArray
-        The true labels corresponding to the training data.
-    test_data : torch.Tensor
-        The validation data used for testing the model.
-    test_label : npt.NDArray
-        The true labels corresponding to the validation data.
-    session_id : int, optional
-        The session ID for multi-session models. For single-session no need to input it.
-    dataset_label : str, optional
-        The type of dataset being used for decoding.
-    layer_type : Type[nn.Module]
-        The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
+    Attributes:
+        train_data : torch.Tensor
+            The training data used for model transformation.
+        train_label : npt.NDArray
+            The true labels corresponding to the training data.
+        test_data : torch.Tensor
+            The validation data used for testing the model.
+        test_label : npt.NDArray
+            The true labels corresponding to the validation data.
+        session_id : int, optional
+            The session ID for multi-session models. For single-session no need to input it.
+        dataset_label : str, optional
+            The type of dataset being used for decoding.
+        layer_type : Type[nn.Module]
+            The type of layer to extract activations from. Defaults to None, meaning activations will be extracted from all layers.
+        output_only: bool
+            A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the embeddings of the model. Default: True.
     """
 
     def __init__(
@@ -161,27 +162,26 @@ class Decoding(_BaseMetric):
         test_label: npt.NDArray,
         dataset_label: str = None,
     ) -> npt.NDArray:
-        """
-        Decodes a model by choosing the appropriate function base on the dataset.
-        Currently compatible with multi-session and single-session data only.
+        """Decode a model by choosing the appropriate function base on the dataset.
+        
+        Note: 
+            Currently compatible with multi-session and single-session data only.
 
-        Parameters:
-        -----------
-        embedding_train : npt.NDArray
-            The part of the output embedding to use as training for the decoding.
-        train_label : npt.NDArray
-            The true labels corresponding to the training data.
-        embedding_test : npt.NDArray
-            The part of the output embedding to use as testing for the decoding.
-        test_label : npt.NDArray
-            The true labels corresponding to the validation data.
-        dataset_label : str, optional
-            The type of dataset being used for decoding.
+        Args: 
+            embedding_train : npt.NDArray
+                The part of the output embedding to use as training for the decoding.
+            train_label : npt.NDArray
+                The true labels corresponding to the training data.
+            embedding_test : npt.NDArray
+                The part of the output embedding to use as testing for the decoding.
+            test_label : npt.NDArray
+                The true labels corresponding to the validation data.
+            dataset_label : str, optional
+                The type of dataset being used for decoding.
 
         Returns:
-        --------
-        npt.NDArray
-            Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
+            npt.NDArray
+                Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
 
         """
         if (embedding_train.shape[0]
@@ -206,9 +206,6 @@ class Decoding(_BaseMetric):
                 test_label=test_label,
             )
         else:
-            print("yooo embedding", embedding_train.shape,
-                  embedding_test.shape)
-            print("yoooo2 label", train_label.shape, test_label.shape)
             results = decoding(
                 embedding_train=embedding_train,
                 embedding_test=embedding_test,
@@ -222,21 +219,18 @@ class Decoding(_BaseMetric):
         model: cebra.integrations.sklearn.cebra.CEBRA,
         output_only: bool = True,
     ) -> npt.NDArray:
-        """
-        Decode neural data by layer using a given CEBRA model.
+        """Decode neural data by layer using a given CEBRA model.
 
-        Parameters:
-        ----------
-        model : cebra.integrations.sklearn.cebra.CEBRA
-            The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
-        output_only: bool
-            A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the
-            embeddings of the model. Default: True.
+        Args:
+            model : cebra.integrations.sklearn.cebra.CEBRA
+                The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
+            output_only: bool
+                A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the
+                embeddings of the model. Default: True.
 
         Returns:
-        -------
-        npt.NDArray
-            A numpy array containing the decoding results for each layer and the neural input baseline.
+            npt.NDArray
+                A numpy array containing the decoding results for each layer and the neural input baseline.
         """
         transform_kwargs = {}
         if output_only:
@@ -327,6 +321,7 @@ class Decoding(_BaseMetric):
     def __name__(self):
         return "decode_by_layer"
 
+    # TODO(celia): check that doesn't break anything to remove it
     # def set_output_only(self, output_only: bool) -> None:
     #     """
     #     Set the output_only parameter to True or False. If True, it will compute the decoding scores for the output embeddings of the model, otherwise it will compute the decoding scores for the activations of the model.
@@ -348,32 +343,27 @@ class Decoding(_BaseMetric):
         plot_error: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.axes.Axes:
-        """
-        Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
+        """Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
 
-        Parameters:
-        ----------
-        results_dict : Dict[str, Dict[int, Tuple[np.float64, list, list]]]
-            Dictionary containing the decoding results for each model and layer.
-        title : str, optional
-            The title of the plot. Default is "Decoding by layer".
-        label : int, optional
-            The label to plot. This is relevant only if the dataset label is not specified.
-        figsize : tuple, optional
-            The size of the figure to plot. Default is (15, 5).
-        palette : str, optional
-            The color palette to use for the plot. Default is "hls".
-        plot_error : bool, optional
-            Whether to plot the error score. Default is False, meaning the R^2 score will be plotted.
-            This is relevant only if the dataset label is not specified.
-        ax : Optional[matplotlib.axes.Axes], optional
-            The axes to plot on. If None, a new figure and axes will be created. Default is None.
+        Args:
+            results_dict : Dict[str, Dict[int, Tuple[np.float64, list, list]]]
+                Dictionary containing the decoding results for each model and layer.
+            title : str, optional
+                The title of the plot. Default is "Decoding by layer".
+            label : int, optional
+                The label to plot. This is relevant only if the dataset label is not specified.
+            figsize : tuple, optional
+                The size of the figure to plot. Default is (15, 5).
+            palette : str, optional
+                The color palette to use for the plot. Default is "hls".
+            plot_error : bool, optional
+                Whether to plot the error score. Default is False, meaning the R^2 score will be plotted. This is relevant only if the dataset label is not specified.
+            ax : Optional[matplotlib.axes.Axes], optional
+                The axes to plot on. If None, a new figure and axes will be created. Default is None.
 
         Returns:
-        -------
-        matplotlib.axes.Axes
-            The axes containing the plot. If ax is provided, it will return the same ax with the plot,
-            otherwise it will create a new figure and return the ax.
+            matplotlib.axes.Axes
+                The axes containing the plot. If ax is provided, it will return the same ax with the plot, otherwise it will create a new figure and return the ax.
         """
 
         if self.dataset_label is None:

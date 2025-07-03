@@ -41,8 +41,9 @@ class NewMetric(_BaseMetric):
         return NewMetric_for_layer
 
     def compute(
-        self, data: List[Union[float, npt.NDArray]]
-    ) -> List[Union[float, npt.NDArray]]:
+        self,
+        data: List[Union[float,
+                         npt.NDArray]]) -> List[Union[float, npt.NDArray]]:
         """
         Applies NewMetric to data
 

@@ -26,7 +26,7 @@ def test_decoding_function(embeddings_labels):
         mock_knn.return_value = mock_model
 
         score, medians, r2s = cebra_lens.quantification.decoder.decoding(
-            emb_train, emb_test, label_train, label_test)
+            emb_train, emb_test, train_label, test_label)
 
         assert isinstance(score, float)
         assert len(medians) == train_label.shape[1]

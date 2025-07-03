@@ -10,19 +10,16 @@ import torch
 
 
 def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
-    """
-    Normalizes a given array using Min-Max normalization.
+    """Normalizes a given array using Min-Max normalization.
 
-    Parameters:
-    -----------
-    rdm : npt.NDArray
-        A NumPy array to be normalized. This can be any numeric array, such as an RDM (Representational
-        Dissimilarity Matrix), where values are normalized to the range [0, 1].
+    Args:
+        rdm : npt.NDArray
+            A NumPy array to be normalized. This can be any numeric array, such as an RDM (Representational
+            Dissimilarity Matrix), where values are normalized to the range [0, 1].
 
     Returns:
-    --------
-    npt.NDArray
-        A normalized NumPy array where the minimum value is scaled to 0 and the maximum value is scaled to 1.
+        npt.NDArray
+            A normalized NumPy array where the minimum value is scaled to 0 and the maximum value is scaled to 1.
     """
 
     rdm_min = np.min(rdm)
@@ -31,20 +28,17 @@ def normalize_minmax(rdm: npt.NDArray) -> npt.NDArray:
 
 
 def discrete_binning(labels: npt.NDArray) -> npt.NDArray:
-    """
-    Defines bins for discrete labels and the indices of the samples in each bin.
-
+    """Defines bins for discrete labels and the indices of the samples in each bin.
+    
     This function is used to create bins for discrete labels in RDM analysis and distance analysis.
 
-    Parameters:
-    -----------
-    labels : npt.NDArray
-        A NumPy array containing discrete labels, which can be of any numeric type.
+    Args:
+        labels : npt.NDArray
+            A NumPy array containing discrete labels, which can be of any numeric type.
 
     Returns:
-    --------
-    npt.NDArray
-        An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
+        npt.NDArray
+            An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
     """
     unique_labels, inverse_indices = np.unique(labels, return_inverse=True)
     idxs_dict = {
@@ -67,29 +61,26 @@ def continuous_binning(
     sample_mode: str = "sub_sample",
     max_num_samples: int = 200,
 ) -> npt.NDArray:
-    """
-    Bins the training data based on the provided labels, creating indices for sampling.
-
+    """Bins the training data based on the provided labels, creating indices for sampling. 
+    
     Used to discretize a continuous input for RDM.
     For non-specific datasets, the number of bins is determined empirically based on the data size, based on a heuristic of 0.005 * num_samples.
 
-    Parameters:
-    -----------
-    data : torch.Tensor
-        The data array of shape (num_samples, num_features).
-    label : torch.Tensor
-        The array of labels corresponding to the data.
-    dataset_label : str, optional
-        The dataset type, either 'visual' or 'HPC'. Default is 'visual'. If None, it will do an empirical binning based on the data.
-    sample_mode : str, optional
-        If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
-    max_num_samples : int
-        The maximum number of samples per bin allowed if the number of labels divided by the num_bins is bigger than 200
+    Args:
+        data : torch.Tensor
+            The data array of shape (num_samples, num_features).
+        label : torch.Tensor
+            The array of labels corresponding to the data.
+        dataset_label : str, optional
+            The dataset type, either 'visual' or 'HPC'. Default is 'visual'. If None, it will do an empirical binning based on the data.
+        sample_mode : str, optional
+            If set to "sub" it will sample of subset of data (e.g. 200 samples per class as used in RDM), if "all" it will take all the training data (e.g. distance analysis).
+        max_num_samples : int
+            The maximum number of samples per bin allowed if the number of labels divided by the num_bins is bigger than 200
 
     Returns:
-    --------
-    npt.NDArray
-        An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
+        npt.NDArray
+            An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
     """
 
     num_bins = None
@@ -161,9 +152,7 @@ def continuous_binning(
         if len(data) < 1000:
             warnings.warn(
                 "Continuous binning is not recommended for datasets with less than 1000 samples. "
-                "Consider using discrete binning instead.",
-                UserWarning,
-            )
+                "Consider using discrete binning instead.", UserWarning)
         num_bins = int(
             0.005 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
@@ -209,24 +198,21 @@ def continuous_binning(
 def repetition_binning(indices: npt.NDArray,
                        data,
                        dataset_label: str = "visual") -> List[npt.NDArray]:
-    """
-    Creates a list of indices for each repetition based on the provided indices and dataset label.
+    """Creates a list of indices for each repetition based on the provided indices and dataset label.
 
     This is relevant for datasets where the labels are repeated over multiple samples, such as in the Allen visual dataset.
 
-    Parameters:
-    -----------
-    indices : npt.NDArray
-        An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
-    data : npt.NDArray
-        The data array of shape (num_samples, num_features).
-    dataset_label : str, optional
-        The dataset type, either 'visual' or 'HPC'. Default is 'visual'. If None, it will do an empirical binning based on the data.
+    Args:
+        indices : npt.NDArray
+            An array of shape (num_bins, num_samples) representing the indices of samples in each bin.
+        data : npt.NDArray
+            The data array of shape (num_samples, num_features).
+        dataset_label : str, optional
+            The dataset type, either 'visual' or 'HPC'. Default is 'visual'. If None, it will do an empirical binning based on the data.
 
     Returns:
-    --------
-    List[npt.NDArray]
-        A list of indices for each repetition, where each element is an array of shape (num_bins, num_samples_per_rep).
+        List[npt.NDArray]
+            A list of indices for each repetition, where each element is an array of shape (num_bins, num_samples_per_rep).
     """
 
     if dataset_label == "visual":

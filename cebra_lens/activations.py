@@ -16,20 +16,19 @@ from .utils_plot import plot_activations
 
 def _cut_array(array: npt.NDArray,
                cut_indices: Tuple[np.int64, np.int64]) -> npt.NDArray:
-    """
-    Slices the input array based on the provided cut indices.
+    """Slices the input array based on the provided cut indices.
+    
     This is used to remove the padding from activations in `get_activations_model`.
-    Parameters:
-    -----------
-    array : numpy.ndarray
-        The input array to be sliced.
-    cut_indices : Tuple[np.int64, np.int64]
-        A tuple containing two integers, start and end indices for slicing.
+    
+    Args:
+        array : numpy.ndarray
+            The input array to be sliced.
+        cut_indices : Tuple[np.int64, np.int64]
+            A tuple containing two integers, start and end indices for slicing.
 
     Returns:
-    --------
-    npt.NDArray
-        The sliced array. If both start and end indices are 0, the whole array is returned.
+        npt.NDArray
+            The sliced array. If both start and end indices are 0, the whole array is returned.
     """
 
     start = cut_indices[0]
@@ -48,24 +47,21 @@ def get_cut_indices(
     layer_type: Type[nn.Module],
     conv_layer_info: Optional[List[int]] = [],
 ) -> List[Tuple[int, int]]:
-    """
-    Function which computes indices for removing padding from activation layers.
+    """Compute indices for removing padding from activation layers.
 
-    Parameters:
-    -----------
-    model_ : cebra.integrations.sklearn.cebra.CEBRA
-        CEBRA model instance.
-    layer_type : Type[nn.Module]
-        The type of layer whose activations were extracted.
-    conv_layer_info : Optional[List[int]]
-        A list of the kernel sizes for the convolutional layers extracted, needed for receptive field calculation.
+    Args:
+        model_ : cebra.integrations.sklearn.cebra.CEBRA
+            CEBRA model instance.
+        layer_type : Type[nn.Module]
+            The type of layer whose activations were extracted.
+        conv_layer_info : Optional[List[int]]
+            A list of the kernel sizes for the convolutional layers extracted, needed for receptive field calculation.
 
     Returns:
-    --------
-    cut_indices: List[Tuple[int,int]]
-        A list of tuples, a tuple for each activation layer, where the first element is the amount of elements which need to be removed from the beginning and the abs(last element) the amount needed to be remove from the end.
-        Example:
-        cut_indices = [(4,-4), (3,-3), (2,-2), (1,-1), (0,0), (0,0)]
+        cut_indices: List[Tuple[int,int]]
+            A list of tuples, a tuple for each activation layer, where the first element is the amount of elements which need to be removed from the beginning and the abs(last element) the amount needed to be remove from the end.
+            Example:
+            cut_indices = [(4,-4), (3,-3), (2,-2), (1,-1), (0,0), (0,0)]
     """
     cut_indices = []
     offset = model_.get_offset()
@@ -85,8 +81,7 @@ def get_cut_indices(
     elif layer_type == None:
         raise NotImplementedError(
             "Padding handling not implemented to handle activations for all layer types.",
-            "Set layer_type to nn.Conv1d to use the default padding handling.",
-        )
+            "Set layer_type to nn.Conv1d to use the default padding handling.")
     else:
         # need to analyze the padding from the last output of Conv1 and apply the same cut
         raise NotImplementedError(
@@ -104,32 +99,31 @@ def get_activations_model(
     instance: int = 0,
     layer_type: Type[nn.Module] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
-    """
-    Extracts activations from a single model layer.
-    This function extracts activations from the specified layer of a model and stores them in a dictionary.
+    """Extract activations from a single model layer.
+    
+    This function extracts activations from the specified layer of 
+    a model and stores them in a dictionary.
 
-    Parameters:
-    -----------
-    model : cebra.integrations.sklearn.cebra.CEBRA
-        The cebra model from which to extract activations.
-    data : torch.Tensor
-        The input data to be passed through the model. Shape of samples X channels (neurons).
-    session_id : int, optional
-        The session identifier used for selecting the appropriate model in multi-session solvers.
-        For single-session, no need to input it.
-    instance : int
-        The instance number for the model, used to differentiate between models from the same model category.
-    layer_type : Type[nn.Module]
-        The type of layer to extract activations from. None means it extracts activations from all layers.
-        Default is nn.Conv1d, which is the most common layer type used in CEBRA models.
+    Args:
+        model : cebra.integrations.sklearn.cebra.CEBRA
+            The cebra model from which to extract activations.
+        data : torch.Tensor
+            The input data to be passed through the model. Shape of samples X channels (neurons).
+        session_id : int, optional
+            The session identifier used for selecting the appropriate model in multi-session solvers.
+            For single-session, no need to input it.
+        instance : int
+            The instance number for the model, used to differentiate between models from the same model category.
+        layer_type : Type[nn.Module]
+            The type of layer to extract activations from. None means it extracts activations from all layers.
+            Default is nn.Conv1d, which is the most common layer type used in CEBRA models.
 
     Returns:
-    --------
-    activations : Dict[str, npt.NDArray]
-        A dictionary containing the activations from the layers of the model. Where the keys are str 'model_label_instance_layer_num , and the values are the activations for that model instance and layer. E.g.  {'model1_layer_1': [0.1, 0.2], 'model1_layer_2': [0.3, 0.4]}
+        activations : Dict[str, npt.NDArray]
+            A dictionary containing the activations from the layers of the model. Where the keys are str 'model_label_instance_layer_num , and the values are the activations for that model instance and layer. E.g.  {'model1_layer_1': [0.1, 0.2], 'model1_layer_2': [0.3, 0.4]}
+    
     Notes:
-    --------
-    If the model includes padding, the padding is removed from the activations for easier downstream use.
+        If the model includes padding, the padding is removed from the activations for easier downstream use.
     """
 
     activations = {}
@@ -185,28 +179,26 @@ def process_activations(
     activations: Dict[str, npt.NDArray] = {},
     layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:
-    """
-    Extracts activations from multiple models and stores them in a dictionary.
+    """Extracts activations from multiple models and stores them in a dictionary.
+    
     This function demonstrates how to use the `get_activations_model` function by extracting activations from multiple models
     and storing them in a dictionary.
 
-    Parameters:
-    -----------
-    models : Dict[str, List[ cebra.integrations.sklearn.cebra.CEBRA]]
-        A dictionary containing different sets of models.
-    data : torch.Tensor
-        The input data for which activations are to be extracted. Shape of samples X channels (neurons).
-    session_id : int
-        The session identifier used for selecting the appropriate model in multi-session solvers.
-    activations : Dict[str, npt.NDArray]
-        A dictionary to store the activations. If passed as an argument, the new keys will be concatenated to the existing dictionary.
-    layer_type : Type[nn.Module]
-        The type of layer from which to extract activations (e.g., nn.Conv1d).
+    Args:
+        models : Dict[str, List[ cebra.integrations.sklearn.cebra.CEBRA]]
+            A dictionary containing different sets of models.
+        data : torch.Tensor
+            The input data for which activations are to be extracted. Shape of samples X channels (neurons).
+        session_id : int
+            The session identifier used for selecting the appropriate model in multi-session solvers.
+        activations : Dict[str, npt.NDArray]
+            A dictionary to store the activations. If passed as an argument, the new keys will be concatenated to the existing dictionary.
+        layer_type : Type[nn.Module]
+            The type of layer from which to extract activations (e.g., nn.Conv1d).
 
     Returns:
-    --------
-    activations : Dict[str, npt.NDArray]
-        A dictionary containing the activations from all the models passed as input. A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
+        activations : Dict[str, npt.NDArray]
+            A dictionary containing the activations from all the models passed as input. A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
     """
 
     for model_name, models in models.items():
@@ -232,19 +224,17 @@ def _get_activation(activations_keys_prefix: str, activations: Dict):
     
     This function returns a hook that captures the output of a model layer during the forward pass and stores it in a dictionary.
     
-    Parameters:
-    -----------
-    activations_keys_prefix : str
-        The prefix to use for the activation key, corresopnding to the type of model (eg. "single", "multi").
-    activations : Dict
-        A dictionary to store the activations. The key will be the name of the layer, and the value will be the activations.
+    Args:
+        activations_keys_prefix : str
+            The prefix to use for the activation key, corresopnding to the type of model (eg. "single", "multi").
+        activations : Dict
+            A dictionary to store the activations. The key will be the name of the layer, and the value will be the activations.
     
     Returns:
-    --------
-    hook : function
-        A forward hook function that captures the activations.
-    activations : Dict
-        The dictionary where the activations will be stored. The key is the name of the layer, and the value is the activations.
+        hook : function
+            A forward hook function that captures the activations.
+        activations : Dict
+            The dictionary where the activations will be stored. The key is the name of the layer, and the value is the activations.
     """
 
     def hook(model, input, output):
@@ -261,29 +251,28 @@ def _attach_hooks(
     instance: int,
     layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:  # only attaches hooks on convolutional layers
-    """
-    Attaches forward hooks to the specified layers of a given model to capture activations.
-    This function attaches hooks to the specified layers of the model to capture activations during the forward pass.
+    """Attaches forward hooks to the specified layers of a given model to capture activations.
+    
+    This function attaches hooks to the specified layers of the model to capture 
+    activations during the forward pass.
 
-    Parameters:
-    -----------
-    activations : Dict[str, npt.NDArray]
-        A dictionary to store the activations. Please refer to ``activations`` returned by ``get_activations_model``.
-    model : cebra.integrations.sklearn.cebra.CEBRA
-        The model to which hooks will be attached.
-    activations_keys_prefix : str
-        A base name for the activation keys (e.g., "single", "multi") so that the keys are 
-        unique for each model instance. The keys will be in the format 
-        '{activations_keys_prefix}_{instance}_layer_{num_layer}'.
-    instance : int
-        The instance number for the model, used to differentiate between models from the same model category.
-    layer_type : Type[nn.Module]
-        The type of layer from which to extract activations (e.g., nn.Conv1d).
+    Args:
+        activations : Dict[str, npt.NDArray]
+            A dictionary to store the activations. Please refer to ``activations`` returned by ``get_activations_model``.
+        model : cebra.integrations.sklearn.cebra.CEBRA
+            The model to which hooks will be attached.
+        activations_keys_prefix : str
+            A base name for the activation keys (e.g., "single", "multi") so that the keys are 
+            unique for each model instance. The keys will be in the format 
+            '{activations_keys_prefix}_{instance}_layer_{num_layer}'.
+        instance : int
+            The instance number for the model, used to differentiate between models from the same model category.
+        layer_type : Type[nn.Module]
+            The type of layer from which to extract activations (e.g., nn.Conv1d).
 
     Returns:
-    --------
-    activations : Dict[str, npt.NDArray]
-        The updated dictionary containing the activations captured by the hooks. Please refer to ``activations`` returned by ``get_activations_model``.
+        activations : Dict[str, npt.NDArray]
+            The updated dictionary containing the activations captured by the hooks. Please refer to ``activations`` returned by ``get_activations_model``.
     """
 
     num_layer = 1
@@ -343,33 +332,30 @@ def _attach_hooks(
 
 def aggregate_activations(
     activations: Dict[str, npt.NDArray], ) -> Dict[str, npt.NDArray]:
-    """
-    Aggregates activations by model identifier aka. instance.
+    """Aggregate activations by model identifier aka instance.
+    
     This function takes a dictionary of activations where the keys are strings containing model identifiers and layer information,
     and the values are the corresponding activations. It aggregates the activations by model identifier, ignoring the layer information.
 
-    Parameters:
-    -----------
-    activations : Dict[str, npt.NDArray]
-        A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
+    Args:
+        activations : Dict[str, npt.NDArray]
+            A dictionary where keys are strings in the format 'model_identifier_layer_num' and values are activations.
 
     Returns:
-    --------
-    Dict[str, npt.NDArray]
-        A dictionary where keys are model identifiers and values are lists of activations corresponding to those model identifiers.
+        Dict[str, npt.NDArray]
+            A dictionary where keys are model identifiers and values are lists of activations corresponding to those model identifiers.
 
     Example:
-    --------
-    >>> activations = {
-    ...     'model1_layer_1': [0.1, 0.2],
-    ...     'model1_layer_2': [0.3, 0.4],
-    ...     'model2_layer_1': [0.5, 0.6]
-    ... }
-    >>> _aggregate_activations(activations)
-    {
-        'model1': [[0.1, 0.2], [0.3, 0.4]],
-        'model2': [[0.5, 0.6]]
-    }
+        >>> activations = {
+        ...     'model1_layer_1': [0.1, 0.2],
+        ...     'model1_layer_2': [0.3, 0.4],
+        ...     'model2_layer_1': [0.5, 0.6]
+        ... }
+        >>> _aggregate_activations(activations)
+        {
+            'model1': [[0.1, 0.2], [0.3, 0.4]],
+            'model2': [[0.5, 0.6]]
+        }
     """
 
     aggregated_activations = {}
@@ -393,30 +379,23 @@ def get_activations(
     activations: Optional[Dict[str, npt.NDArray]] = None,
     layer_type: Optional[Type[nn.Module]] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
-    """
-    Extracts and organizes activations from models.
+    """Extract and organize activations from models.
 
-    Parameters:
-    -----------
-    models : Dict[str, List[CEBRA]]
-        Dictionary of models categorized by label.
-
-    data : torch.Tensor
-        Input tensor for the models, shape (samples, features).
-
-    session_id : int
-        Session identifier used for selecting the appropriate model.
-
-    activations : Dict[str, npt.NDArray], optional
-        Optional dictionary to store activations.
-
-    layer_type : Type[nn.Module], optional
-        Optional layer type (e.g., nn.Conv1d) to extract specific activations.
+    Args:
+        models : Dict[str, List[CEBRA]]
+            Dictionary of models categorized by label.
+        data : torch.Tensor
+            Input tensor for the models, shape (samples, features).
+        session_id : int
+            Session identifier used for selecting the appropriate model.
+        activations : Dict[str, npt.NDArray], optional
+            Optional dictionary to store activations.
+        layer_type : Type[nn.Module], optional
+            Optional layer type (e.g., nn.Conv1d) to extract specific activations.
 
     Returns:
-    --------
-    Dict[str, npt.NDArray]
-        Dictionary with model label prefixes as keys and lists of activation arrays as values.
+        Dict[str, npt.NDArray]
+            Dictionary with model label prefixes as keys and lists of activation arrays as values.
     """
     activations = activations or {}
 

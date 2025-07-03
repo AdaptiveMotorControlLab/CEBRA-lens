@@ -18,14 +18,12 @@ from .base import _BaseMetric
 
 
 class CKA(_BaseMetric):
-    """
-    Compute the Centered Kernel Alignment (CKA) between two sets of model types.
+    """Compute the Centered Kernel Alignment (CKA) between two sets of model types.
 
-    Parameters:
-    -----------
-    comparisons : List[Tuple[str,str]]
-        A List of tuple containing two strings representing the model group names to be compared.
-        For example, [('single_UT', 'single_TR'), ('multi_TR', 'single_TR')].
+    Attributes:
+        comparisons : List[Tuple[str,str]]
+            A List of tuple containing two strings representing the model group names to be compared.
+            For example, [('single_UT', 'single_TR'), ('multi_TR', 'single_TR')].
     """
 
     def __init__(self, comparisons: List[Tuple[str, str]]):
@@ -40,23 +38,20 @@ class CKA(_BaseMetric):
     def center_gram(self,
                     gram: npt.NDArray,
                     unbiased: bool = False) -> npt.NDArray:
-        """
-        Center a symmetric Gram matrix.
+        """Center a symmetric Gram matrix.
 
         This is equvialent to centering the (possibly infinite-dimensional) features
         induced by the kernel before computing the Gram matrix.
 
-        Parameters:
-        -----------
-        gram : npt.NDArray
-            A num_examples x num_examples symmetric matrix.
-        unbiased : bool
-            Whether to adjust the Gram matrix in order to compute an unbiased
-            estimate of HSIC. Note that this estimator may be negative.
+        Args:
+            gram : npt.NDArray
+                A num_examples x num_examples symmetric matrix.
+            unbiased : bool
+                Whether to adjust the Gram matrix in order to compute an unbiased
+                estimate of HSIC. Note that this estimator may be negative.
 
         Returns:
-        --------
-        A symmetric matrix with centered columns and rows.
+            A symmetric matrix with centered columns and rows.
         """
         if not np.allclose(gram, gram.T, rtol=1e-03, atol=0.004):
             raise ValueError("Input must be a symmetric matrix.")
@@ -88,18 +83,16 @@ class CKA(_BaseMetric):
             debiased: bool = False) -> np.float64:
         """Compute CKA.
 
-        Parameters:
-        -----------
-        gram_x : npt.NDArray
-            A num_examples x num_examples Gram matrix.
-        gram_y : npt.NDArray
-            A num_examples x num_examples Gram matrix.
-        debiased : bool
-            Use unbiased estimator of HSIC. CKA may still be biased.
+        Args:
+            gram_x : npt.NDArray
+                A num_examples x num_examples Gram matrix.
+            gram_y : npt.NDArray
+                A num_examples x num_examples Gram matrix.
+            debiased : bool
+                Use unbiased estimator of HSIC. CKA may still be biased.
 
         Returns:
-        --------
-        The value of CKA between X and Y.
+            The value of CKA between X and Y.
         """
         gram_x = self.center_gram(gram_x, unbiased=debiased)
         gram_y = self.center_gram(gram_y, unbiased=debiased)
@@ -115,14 +108,12 @@ class CKA(_BaseMetric):
     def gram_linear(self, x: npt.NDArray) -> npt.NDArray:
         """Compute Gram (kernel) matrix for a linear kernel.
 
-        Parameters:
-        -----------
-        x : npt.NDArray
-            A num_examples x num_features matrix of features.
+        Args:
+            x : npt.NDArray
+                A num_examples x num_features matrix of features.
 
         Returns:
-        --------
-        A num_examples x num_examples Gram matrix of examples.
+            A num_examples x num_examples Gram matrix of examples.
         """
 
         return x.dot(x.T)
@@ -135,17 +126,15 @@ class CKA(_BaseMetric):
         This function calculates the CKA score between corresponding layers of two sets of embeddings,
         assuming both sets have the same number of layers and that each corresponding layer has the same shape.
 
-        Parameters:
-        -----------
-        embeddings_1 : List[npt.NDArray]
-            A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
-        embeddings_2 : List[npt.NDArray]
-            A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
+        Args:
+            embeddings_1 : List[npt.NDArray]
+                A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
+            embeddings_2 : List[npt.NDArray]
+                A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
 
         Returns:
-        --------
-        cka_matrix : npt.NDArray
-            A one-row array containing the CKA values for each layer.
+            cka_matrix : npt.NDArray
+                A one-row array containing the CKA values for each layer.
         """
 
         if len(embeddings_1) != len(embeddings_2):
@@ -172,22 +161,19 @@ class CKA(_BaseMetric):
         embeddings_2: List[npt.NDArray],
         flag=False,
     ) -> npt.NDArray:
-        """
-        Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
+        """Compute the Centered Kernel Alignment (CKA) between two sets of embeddings.
 
-        Parameters:
-        -----------
-        embeddings_1 : List[npt.NDArray]
-            A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
-        embeddings_2 : List[npt.NDArray]
-            A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
-        flag : bool
-            If True, compute CKA for each layer of the first set against the second set.
+        Args:
+            embeddings_1 : List[npt.NDArray]
+                A list of embeddings for the first set. Each element represents the embeddings for a specific layer.
+            embeddings_2 : List[npt.NDArray]
+                A list of embeddings for the second set. Each element represents the embeddings for a specific layer.
+            flag : bool
+                If True, compute CKA for each layer of the first set against the second set.
 
         Returns:
-        --------
-        cka_matrix : npt.NDArray
-            A matrix containing the CKA values for each layer.
+            cka_matrix : npt.NDArray
+                A matrix containing the CKA values for each layer.
         """
         cka_matrix = np.zeros((len(embeddings_1), len(embeddings_1[0])))
         for j in tqdm(range(len(embeddings_1))):
@@ -203,25 +189,21 @@ class CKA(_BaseMetric):
 
     def compute(self, activations: Dict[str, npt.NDArray],
                 comparison: Tuple[str, str]) -> npt.NDArray:
-        """
-        Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
+        """Compute multi-layer Centered Kernel Alignment (CKA) between different sets of activations.
 
         This function calculates the CKA score between activations from different models and layers,
         comparing them based on the specified models and layers.
 
-        Parameters:
-        -----------
-        activations : Dict[str, npt.NDArray]
-            A dictionary where keys are strings which represent the model label and values are 2d lists
-            with the corresponding activations per layer.
-
-        comparison : Tuple[str, str]
-            A tuple containing the model labels to compare.
+        Args:
+            activations : Dict[str, npt.NDArray]
+                A dictionary where keys are strings which represent the model label and values are 2d lists 
+                with the corresponding activations per layer.
+            comparison : Tuple[str, str]
+                A tuple containing the model labels to compare.
 
         Returns:
-        --------
-        cka_matrix : npt.NDArray
-            A CKA matrix with rows representing instances of the model and columns representing the layers.
+            cka_matrix : npt.NDArray
+                A CKA matrix with rows representing instances of the model and columns representing the layers.
         """
 
         self.comparisonX = comparison[0]
@@ -276,29 +258,27 @@ class CKA(_BaseMetric):
             figsize: tuple = (15, 5),
             ax: Optional[matplotlib.axes.Axes] = None,
     ):
-        """
-        Plot the CKA matrices as heatmaps.
+        """Plot the CKA matrices as heatmaps.
 
-        Parameters:
-        -----------
-        cka_matrices : Dict[str, npt.NDArray]
-            A dictionary where keys are model labels and values are CKA matrices.
-        annot : bool
-            If True, display the CKA values on the heatmap.
-        show_cbar : bool
-            If True, display the color bar on the heatmap.
-        cbar_label : str
-            Label for the color bar.
-        color_map : str
-            Color map to use for the heatmap.
-        figsize : tuple
-            Size of the figure for the heatmap.
-        ax : Optional[matplotlib.axes.Axes]
-            If provided, the heatmap will be plotted on this axes. If None, a new figure and axes will be created.
+        Args:
+            cka_matrices : Dict[str, npt.NDArray]
+                A dictionary where keys are model labels and values are CKA matrices.
+            annot : bool
+                If True, display the CKA values on the heatmap.
+            show_cbar : bool
+                If True, display the color bar on the heatmap.
+            cbar_label : str
+                Label for the color bar.
+            color_map : str
+                Color map to use for the heatmap.
+            figsize : tuple
+                Size of the figure for the heatmap.
+            ax : Optional[matplotlib.axes.Axes]
+                If provided, the heatmap will be plotted on this axes. If None, a new figure and axes will be created.
+        
         Returns:
-        --------
-        matplotlib.axes.Axes
-            The axes on which the heatmap is plotted.
+            matplotlib.axes.Axes
+                The axes on which the heatmap is plotted.
         """
         return utils_plot.plot_cka_heatmaps(
             cka_matrices,

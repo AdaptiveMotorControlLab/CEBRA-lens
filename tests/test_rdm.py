@@ -103,14 +103,12 @@ def test_rdm_plot(mock_all, mock_corr):
         label=torch.randint(0, 5, (10000, )),
         is_discrete_labels=False,
     )
-    dummy_rdm.bool_oracle = True
-    dummy_rdm.plot({"group": [np.random.rand(5, 5)]})
+    dummy_rdm.plot({"group": [np.random.rand(5, 5)]}, bool_oracle=True)
     assert mock_corr.called
 
-    dummy_rdm.bool_oracle = False
     dummy_rdm.num_bins = 2
     dummy_rdm.is_discrete_labels = True
-    dummy_rdm.plot({"group": [np.random.rand(5, 5)]})
+    dummy_rdm.plot({"group": [np.random.rand(5, 5)]}, bool_oracle=False)
     assert mock_all.called
 
     dummy_rdm.plot({"group": [np.random.rand(5, 5)]}, titles=None)
