@@ -224,7 +224,7 @@ class DistancePlot(_GenericPlot):
     def _transform(self) -> Dict[str, List[List[np.float64]]]:
         """Transforms ``results_dict`` into a dictionary.
         
-        The returned dictionnary is such that the keys stay the same, but the values are 
+        The returned dictionary is such that the keys stay the same, but the values are 
         now corresponding to the distance metric across layers for model label.
 
         Returns:

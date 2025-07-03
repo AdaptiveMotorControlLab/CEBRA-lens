@@ -226,7 +226,7 @@ def _get_activation(activations_keys_prefix: str, activations: Dict):
     
     Args:
         activations_keys_prefix : str
-            The prefix to use for the activation key, corresopnding to the type of model (eg. "single", "multi").
+            The prefix to use for the activation key, corresponding to the type of model (eg. "single", "multi").
         activations : Dict
             A dictionary to store the activations. The key will be the name of the layer, and the value will be the activations.
     
