@@ -63,13 +63,14 @@ def decoding(
                                   8)  # NOTE(celia): for now 8/9 arbitrarily
             train_decoder.fit(embedding_train[:train_valid_idx],
                               train_label[:train_valid_idx, i])
+
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
             err = train_label[train_valid_idx:, i] - pred
             errs.append(abs(err).sum())
 
         best_decoder = cebra.KNNDecoder(n_neighbors=params[np.argmin(errs)],
                                         metric="cosine")
-
+    
         best_decoder.fit(embedding_train, train_label[:, i])
         label_pred = best_decoder.predict(embedding_test)
 
@@ -222,7 +223,7 @@ class Decoding(_BaseMetric):
         """Decode neural data by layer using a given CEBRA model.
 
         Args:
-            model : cebra.intfegrations.sklearn.cebra.CEBRA
+            model : cebra.integrations.sklearn.cebra.CEBRA
                 The CEBRA model that will be used to transform the data (either multi-session or single-session model for now).
             output_only: bool
                 A bool which defines whether to calculation decoding scores for the activations layers of a model, or for the
@@ -233,6 +234,7 @@ class Decoding(_BaseMetric):
                 A numpy array containing the decoding results for each layer and the neural input baseline.
         """
         transform_kwargs = {}
+
         if output_only:
             num_layers = 0
             transform_kwargs.update({"session_id": self.session_id})
@@ -250,8 +252,9 @@ class Decoding(_BaseMetric):
                 label=self.test_label,
                 **transform_kwargs,
             )
+       
         else:
-            activations_train = get_activations_model(
+            activations_train, labels_train = get_activations_model(
                 model=model,
                 data=self.train_data,
                 labels=self.train_label,
@@ -261,7 +264,7 @@ class Decoding(_BaseMetric):
                 layer_type=self.layer_type,
             )
 
-            activations_test = get_activations_model(
+            activations_test, labels_test = get_activations_model(
                 model=model,
                 data=self.test_data,
                 labels=self.test_label,
@@ -273,56 +276,55 @@ class Decoding(_BaseMetric):
             num_layers = len(activations_train)
             keys = list(activations_train.keys())
 
-        # Get the decoding labels
+
         if isinstance(model, cebra.solver.UnifiedSolver):
             train_decoding_labels = self.train_label[self.session_id]
             test_decoding_labels = self.test_label[self.session_id]
+
         else:
             train_decoding_labels = self.train_label
             test_decoding_labels = self.test_label
 
+        
         results = {}
         for i in range(num_layers + 1):
-
             #NOTE(eloise): if output_only is True, then it will only do this iteration
             # of the for loop and for train_data it will take in the embeddings.
             #NOTE(celia): for now we skip the first layer if the model is a UnifiedSolver
+
             if output_only:
-                results.update({
-                    i:
-                    self._decode(
+                # only embeddings at layer 0
+                results[i] = self._decode(
+                    train_embedding,
+                    train_decoding_labels,
+                    test_embedding,
+                    test_decoding_labels,
+                    self.dataset_label,
+                )
+                break
+
+            else:
+                # layer 0 = raw neural‐input baseline (skip for UnifiedSolver)
+                if i == 0 and not isinstance(model, cebra.solver.UnifiedSolver):
+                    results[i] = self._decode(
                         train_embedding,
                         train_decoding_labels,
                         test_embedding,
                         test_decoding_labels,
                         self.dataset_label,
                     )
-                })
+                    continue                    
 
-            else:
-                if i == 0 and not isinstance(model,
-                                             cebra.solver.UnifiedSolver):
-                    results.update({
-                        i:
-                        self._decode(
-                            self.train_data,
-                            train_decoding_labels,
-                            self.test_data,
-                            test_decoding_labels,
-                            self.dataset_label,
-                        )
-                    })
+                # layers 1..N = use activations_train[key] + labels_train[key]
                 else:
-                    results.update({
-                        i:
-                        self._decode(
-                            activations_train[keys[i - 1]],
-                            train_decoding_labels,
-                            activations_test[keys[i - 1]],
-                            test_decoding_labels,
-                            self.dataset_label,
-                        )
-                    })
+                    key = keys[i - 1]
+                    results[i] = self._decode(
+                        activations_train[key],
+                        labels_train[key],
+                        activations_test[key],
+                        labels_test[key],
+                        self.dataset_label,
+                    )
 
         return results
 

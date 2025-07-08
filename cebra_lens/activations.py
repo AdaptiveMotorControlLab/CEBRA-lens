@@ -98,7 +98,7 @@ def get_activations_model(
     activations_keys_prefix: str = "model",
     instance: int = 0,
     layer_type: Type[nn.Module] = nn.Conv1d,
-) -> Dict[str, npt.NDArray]:
+) -> Tuple[Dict[str, npt.NDArray], Dict[str, npt.NDArray]]:
     """Extract activations from a single model layer.
     
     This function extracts activations from the specified layer of 
@@ -164,10 +164,35 @@ def get_activations_model(
         # Padding logic: calculate the total reduction which happens based on the
         # kernel size per layer, divide the reduction per layer into 2 parts
         cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
+
         for i, (key, value) in enumerate(activations.items()):
             activations[key] = _cut_array(value, cut_indices[i])
 
-    return activations
+    else:
+        cut_indices = [(0,0)] * len(activations)
+    
+    labels_dict: Dict[str, np.ndarray] = {}
+    if labels is not None:
+        if isinstance(labels, (list, tuple)):
+            if session_id is None:
+                raise ValueError("session_id must be provided when labels is a list of per-session arrays")
+            labels = labels[session_id]
+        elif isinstance(labels, torch.Tensor) and labels.ndim == 3:
+            labels = labels[session_id]
+ 
+        if torch.is_tensor(labels):
+            labels_np = labels.detach().cpu().numpy()
+        else:
+            labels_np = np.asarray(labels)
+
+        # for each layer, slice front/back exactly as we did for activations
+        for i, key in enumerate(activations.keys()):
+            start, end = cut_indices[i]
+            lab = labels_np[start:] if end == 0 else labels_np[start:-abs(end)]
+            lab = lab[:activations[key].shape[1]]  
+            labels_dict[key] = lab
+    
+    return activations, labels_dict
 
 
 def process_activations(
@@ -203,8 +228,7 @@ def process_activations(
 
     for model_name, models in models.items():
         for i, model in enumerate(models):
-            activations.update(
-                get_activations_model(
+            update_activations, _ = get_activations_model(
                     model=model,
                     data=data,
                     labels=labels,
@@ -213,7 +237,8 @@ def process_activations(
                     activations_keys_prefix=model_name,
                     instance=i,
                     layer_type=layer_type,
-                ))
+            )
+            activations.update(update_activations)
 
     return activations
 
@@ -238,8 +263,7 @@ def _get_activation(activations_keys_prefix: str, activations: Dict):
     """
 
     def hook(model, input, output):
-        activations[activations_keys_prefix] = output.detach().squeeze().numpy(
-        )
+        activations[activations_keys_prefix] = output.detach().squeeze().cpu().numpy()
 
     return hook, activations
 

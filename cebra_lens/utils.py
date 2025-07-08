@@ -80,11 +80,11 @@ def compute_metric(
 
     else:
         for group_name, samples in model_data.items():
-
             computed_values = [
                 metric_class.compute(sample, **kwargs)
                 for sample in tqdm(samples, desc=f"Processing {group_name}")
             ]
+
             if not isinstance(metric_class, RDM):
                 computed_values = np.array(computed_values)
 
