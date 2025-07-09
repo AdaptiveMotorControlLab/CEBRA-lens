@@ -191,7 +191,7 @@ def continuous_binning(
             idxs[i, :] = np.random.choice(indices[i],
                                           num_samples,
                                           replace=False)
-
+    print(num_bins)
     return idxs.astype(int), num_bins
 
 

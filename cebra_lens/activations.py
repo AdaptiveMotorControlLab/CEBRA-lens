@@ -202,8 +202,9 @@ def process_activations(
     session_id: int = None,
     pad_before_transform: bool = True,
     activations: Dict[str, npt.NDArray] = {},
+    labels_dict: Dict[str, npt.NDArray] = {},
     layer_type: Type[nn.Module] = None,
-) -> Dict[str, npt.NDArray]:
+) -> Tuple[ Dict[str, npt.NDArray], Dict[str, npt.NDArray] ]:
     """Extracts activations from multiple models and stores them in a dictionary.
     
     This function demonstrates how to use the `get_activations_model` function by extracting activations from multiple models
@@ -228,7 +229,7 @@ def process_activations(
 
     for model_name, models in models.items():
         for i, model in enumerate(models):
-            update_activations, _ = get_activations_model(
+            update_activations, update_labels = get_activations_model(
                     model=model,
                     data=data,
                     labels=labels,
@@ -239,8 +240,9 @@ def process_activations(
                     layer_type=layer_type,
             )
             activations.update(update_activations)
+            labels_dict.update(update_labels)
 
-    return activations
+    return activations, labels_dict
 
 
 # Function to create a hook that stores the activations in the dictionary
@@ -425,21 +427,27 @@ def get_activations(
             Dictionary with model label prefixes as keys and lists of activation arrays as values.
     """
     activations = activations or {}
+    raw_acts, raw_labels = process_activations(
+        models=models,
+        data=data,
+        labels=labels,
+        session_id=session_id,
+        pad_before_transform=pad_before_transform,
+        activations=activations,
+        labels_dict={},
+        layer_type=layer_type,
+    )
 
-    aggregated_activations = aggregate_activations(
-        process_activations(
-            models=models,
-            data=data,
-            labels=labels,
-            session_id=session_id,
-            pad_before_transform=pad_before_transform,
-            activations=activations,
-            layer_type=layer_type,
-        ))
+    agg_acts = aggregate_activations(raw_acts)
+    agg_labels = aggregate_activations(raw_labels)
 
-    activations_dict = {}
-    for key, value in aggregated_activations.items():
-        prefix = "_".join(key.split("_")[:-1])
-        activations_dict.setdefault(prefix, []).append(value)
 
-    return activations_dict
+    activations_dict: Dict[str,List[npt.NDArray]] = {}
+    labels_dict:      Dict[str,List[npt.NDArray]] = {}
+
+    for full_key, act_list in agg_acts.items():
+        prefix = "_".join(full_key.split("_")[:-1])
+        activations_dict.setdefault(prefix, []).append(act_list)
+        labels_dict.setdefault(prefix, []).append(agg_labels[full_key])
+
+    return activations_dict, labels_dict
