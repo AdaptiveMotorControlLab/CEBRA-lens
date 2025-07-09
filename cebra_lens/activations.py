@@ -170,7 +170,7 @@ def get_activations_model(
 
     else:
         cut_indices = [(0,0)] * len(activations)
-    print("cut_indices:", cut_indices)
+    
     labels_dict: Dict[str, np.ndarray] = {}
     if labels is not None:
         if isinstance(labels, (list, tuple)):
