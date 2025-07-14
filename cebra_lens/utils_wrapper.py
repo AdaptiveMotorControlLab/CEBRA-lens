@@ -1,10 +1,13 @@
 import cebra
 import numpy as np
+from cebra.solver.base import Solver
+
 
 
 def transform(model, data, label, **transform_kwargs):
     
-    if isinstance(model, cebra.solver.UnifiedSolver):
+
+    if isinstance(model, Solver):
         embedding = model.transform(data, label, **transform_kwargs)
     elif isinstance(model, cebra.integrations.sklearn.cebra.CEBRA):
         embedding = model.transform(data, **transform_kwargs)

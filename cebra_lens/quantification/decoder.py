@@ -15,6 +15,7 @@ from ..activations import get_activations_model
 from ..utils_allen import decoding_frames
 from ..utils_hpc import decoding_pos_dir
 from .base import _BaseMetric
+from cebra.solver.base import Solver
 
 #NOTE(eloise): resampling, subsampling and supervised model architecture is still not supported
 #              checked via '''supported_model_architectures()''' function.
@@ -56,15 +57,18 @@ def decoding(
     predictions, labels_test_err, labels_test_score = [], [], []
     for i in range(num_labels):
         params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
+        train_valid_idx = int(len(embedding_train) / 9 *8)
+        valid_params = [n for n in params if n <= train_valid_idx]
         errs = []
-        for n in params:
+        for n in valid_params:
             train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
-            train_valid_idx = int(len(embedding_train) / 9 *
-                                  8)  # NOTE(celia): for now 8/9 arbitrarily
+            #train_valid_idx = int(len(embedding_train) / 9 *8)  # NOTE(celia): for now 8/9 arbitrarily
             train_decoder.fit(embedding_train[:train_valid_idx],
                               train_label[:train_valid_idx, i])
 
             pred = train_decoder.predict(embedding_train[train_valid_idx:])
+            if isinstance(pred, torch.Tensor):
+                pred = pred.detach().cpu().numpy()
             err = train_label[train_valid_idx:, i] - pred
             errs.append(abs(err).sum())
 
@@ -185,12 +189,36 @@ class Decoding(_BaseMetric):
                 Array containing the decoding results based on the given embeddings and labels. Has different structure depending on the dataset used: e.g. 1D array of structure test_score, pos_test_err, pos_test_score for HPC dataset, or test_score, test_err, test_acc for Allen visual dataset.
 
         """
-        if (embedding_train.shape[0]
+        if embedding_train.ndim > 2:
+            embedding_train = embedding_train.reshape(embedding_train.shape[0], -1)
+        if embedding_test.ndim > 2:
+            embedding_test  = embedding_test.reshape(embedding_test.shape[0],  -1)
+
+        """if (embedding_train.shape[0]
                 < embedding_train.shape[1]):  # should be samples X neurons
             embedding_train = embedding_train.T
         if (embedding_test.shape[0]
                 < embedding_test.shape[1]):  # should be samples X neurons
-            embedding_test = embedding_test.T
+            embedding_test = embedding_test.T"""
+        # Ensure axis‑0 really is samples for training data
+        if embedding_train.shape[0] != train_label.shape[0]:
+            if embedding_train.shape[1] == train_label.shape[0]:
+                embedding_train = embedding_train.T
+            else:
+                raise ValueError(
+                    f"Can't align train embeddings {embedding_train.shape} "
+                    f"with labels {train_label.shape}"
+                )
+
+        # Ensure axis‑0 really is samples for test data
+        if embedding_test.shape[0] != test_label.shape[0]:
+            if embedding_test.shape[1] == test_label.shape[0]:
+                embedding_test = embedding_test.T
+            else:
+                raise ValueError(
+                    f"Can't align test embeddings {embedding_test.shape} "
+                    f"with labels {test_label.shape}"
+                )
 
         if dataset_label == "visual":
             results = decoding_frames(
@@ -277,7 +305,7 @@ class Decoding(_BaseMetric):
             keys = list(activations_train.keys())
 
 
-        if isinstance(model, cebra.solver.UnifiedSolver):
+        if isinstance(model, Solver):
             train_decoding_labels = self.train_label[self.session_id]
             test_decoding_labels = self.test_label[self.session_id]
 
@@ -304,8 +332,9 @@ class Decoding(_BaseMetric):
                 break
 
             else:
+
                 # layer 0 = raw neural‐input baseline (skip for UnifiedSolver)
-                if i == 0 and not isinstance(model, cebra.solver.UnifiedSolver):
+                if i == 0 and not isinstance(model, Solver):
                     results[i] = self._decode(
                         train_embedding,
                         train_decoding_labels,

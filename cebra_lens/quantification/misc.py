@@ -154,7 +154,7 @@ def continuous_binning(
                 "Continuous binning is not recommended for datasets with less than 1000 samples. "
                 "Consider using discrete binning instead.", UserWarning)
         num_bins = int(
-            0.005 * len(data)
+            0.5 * len(data)
         )  # 0.005 is a heuristic to get a reasonable number of bins for continuous data
         if sample_mode == "sub_sample":
             num_samples = (max_num_samples if len(data) / num_bins
@@ -165,7 +165,6 @@ def continuous_binning(
             raise NotImplementedError(
                 f"Sample mode {sample_mode} not yet implemented. Please use 'all' or 'sub_sample'."
             )
-
         max_value = max(label).item()
         min_value = min(label).item()
         step_distance = (max_value - min_value) / num_bins

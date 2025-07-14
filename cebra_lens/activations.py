@@ -129,7 +129,9 @@ def get_activations_model(
     activations = {}
     transform_kwargs = {}
 
-    if isinstance(model, cebra.integrations.sklearn.cebra.CEBRA):
+    if isinstance(model, cebra.solver.MultiSessionPseudoAnimalSolver):
+        model_ = model.model
+    elif isinstance(model, cebra.integrations.sklearn.cebra.CEBRA):
         model_ = model.solver_._get_model(session_id=session_id)
     elif isinstance(model, cebra.solver.Solver):
         model_ = model._get_model(session_id=session_id)
@@ -189,7 +191,7 @@ def get_activations_model(
         for i, key in enumerate(activations.keys()):
             start, end = cut_indices[i]
             lab = labels_np[start:] if end == 0 else labels_np[start:-abs(end)]
-            lab = lab[:activations[key].shape[1]]  
+            lab = lab[:activations[key].shape[0]]  #[1] before -_>worked for unified
             labels_dict[key] = lab
     
     return activations, labels_dict

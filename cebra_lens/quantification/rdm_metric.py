@@ -107,10 +107,12 @@ class RDM(_BaseMetric):
                 )
 
             if self.discrete:
+                print("discrete")
                 # just detect the unique values and find the indices of the bins (each bin is a unique value)
                 # dataset_label is None and discrete is True
                 idxs = discrete_binning(labels=self.label, )
             else:
+                print("not discrete")
                 # dataset_label is HPC or visual/ discrete is False (dataset_label is None)
                 idxs, num_bins = continuous_binning(
                     data=self.data,
@@ -184,6 +186,7 @@ class RDM(_BaseMetric):
         self,
         activations: List[Union[float, npt.NDArray]],
         bool_oracle: bool = False,
+        labels: Optional[List[npt.NDArray]] = None,
     ) -> List[Tuple[npt.NDArray, float]]:
         """Computes the RDMs (Representational Dissimilarity Matrices) for each layer's activations.
 
@@ -199,6 +202,30 @@ class RDM(_BaseMetric):
                 activations, (np.ndarray, torch.Tensor)
         ):  # if only one activation is passed instead of a list of arrays
             activations = [activations]
+
+        if labels is not None:
+            results: List[Tuple[npt.NDArray, float]] = []
+            # stash originals so we can restore afterwards
+            orig_label    = self.label
+            orig_data     = self.data
+            orig_idxs     = self.idxs
+            orig_num_bins = self.num_bins
+
+            for A, L in zip(activations, labels):
+                # 1) swap in the layer's own label
+                self.label = L
+                self.data  = A.T if A.shape[0] < A.shape[1] else A
+                self.idxs, self.num_bins = self._define_indices()
+
+                # 2) now compute exactly as before
+                mat, corr = self._compute_per_layer(A, bool_oracle)
+                results.append((mat, corr))
+
+            # 3) restore the object back to its original state
+            self.label, self.data, self.idxs, self.num_bins = (
+                orig_label, orig_data, orig_idxs, orig_num_bins
+            )
+            return results
 
         return super().iterate_over_layers(activations,
                                            self._compute_per_layer,

@@ -7,6 +7,7 @@ import numpy.typing as npt
 import torch
 from torch import nn
 from tqdm import tqdm
+import inspect
 
 from .quantification.cka_metric import CKA
 from .quantification.decoder import Decoding
@@ -77,6 +78,7 @@ def compute_metric(
         for comparison in tqdm(metric_class.comparisons):
             cka_matrix = metric_class.compute(model_data, comparison)
             result_dict[f"{comparison[0]}_v_{comparison[1]}"] = cka_matrix
+            return result_dict
 
     else:
         for group_name, samples in model_data.items():
@@ -93,6 +95,9 @@ def compute_metric(
         metric_class.output_information()
 
     return result_dict
+
+
+
 
 
 def plot_metric(
