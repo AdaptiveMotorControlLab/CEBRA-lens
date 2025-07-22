@@ -5,6 +5,9 @@ import matplotlib
 import numpy as np
 import numpy.typing as npt
 import sklearn.metrics
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer, accuracy_score, mean_absolute_error, r2_score
+from sklearn.utils.multiclass import type_of_target
 import torch
 import torch as pt
 import torch.nn as nn
@@ -26,10 +29,9 @@ def decoding(
     train_label: npt.NDArray,
     test_label: npt.NDArray,
 ) -> Tuple[np.float64, list, list]:
-    """Function to decode the embeddings using KNNDecoder from CEBRA. 
-    
-    The decoding scores are returned in the form of average $R^2$ score 
-    across all labels, $R^2$ scores per label and error per label.
+    """    
+    Decode embeddings with per-label automated KNNDecoder hyperparameter search.
+    Returns overall score (R² or accuracy), per-label error, and per-label score.
 
     Args:
         embedding_train : pt.tensor
@@ -51,45 +53,57 @@ def decoding(
         num_labels = 1
         train_label = train_label.reshape(-1, 1)
         test_label = test_label.reshape(-1, 1)
-
+        
+    label_types = [type_of_target(train_label[:, i]) for i in range(num_labels)]
+    is_reg = [t == "continuous" for t in label_types]
     # for each label find another K
-    predictions, labels_test_err, labels_test_score = [], [], []
+    param_grid = {"n_neighbors": np.arange(1, 11) ** 2}
+    
+    predictions, test_labels_err, test_labels_score = [], [], []
     for i in range(num_labels):
-        params = np.power(np.linspace(1, 10, 10, dtype=int), 2)
-        errs = []
-        for n in params:
-            train_decoder = cebra.KNNDecoder(n_neighbors=n, metric="cosine")
-            train_valid_idx = int(len(embedding_train) / 9 *
-                                  8)  # NOTE(celia): for now 8/9 arbitrarily
-            train_decoder.fit(embedding_train[:train_valid_idx],
-                              train_label[:train_valid_idx, i])
-            pred = train_decoder.predict(embedding_train[train_valid_idx:])
-            err = train_label[train_valid_idx:, i] - pred
-            errs.append(abs(err).sum())
+        y_train_i = train_label[:, i]
+        y_test_i  = test_label[:, i]
 
-        best_decoder = cebra.KNNDecoder(n_neighbors=params[np.argmin(errs)],
-                                        metric="cosine")
+        if not is_reg[i]:
+            # force binary → integer so CEBRA picks classifier
+            y_train_i = y_train_i.astype(np.int64)
+            y_test_i  = y_test_i.astype(np.int64)
 
-        best_decoder.fit(embedding_train, train_label[:, i])
-        label_pred = best_decoder.predict(embedding_test)
+        # Choose scorer based on continuous vs. classification
+        scorer = make_scorer(r2_score) if is_reg[i] else make_scorer(accuracy_score)
 
-        predictions.append(label_pred)
-        print("coucou", label_pred.shape, test_label[:, i].shape,
+        gs = GridSearchCV(
+            cebra.KNNDecoder(metric="cosine"),
+            param_grid=param_grid,
+            scoring=scorer,
+            cv=2,
+        )
+
+        gs.fit(embedding_train, y_train_i)
+        pred_label = gs.best_estimator_.predict(embedding_test)  
+
+        predictions.append(pred_label)
+        print("coucou", pred_label.shape, test_label[:, i].shape,
               embedding_test.shape)
-        label_test_err = np.median(abs(label_pred - test_label[:, i]))
-        labels_test_err.append(label_test_err)
-        label_test_score = sklearn.metrics.r2_score(test_label[:, i],
-                                                    label_pred)
-        labels_test_score.append(label_test_score)
+        if is_reg[i]:
+            test_labels_err.append(mean_absolute_error(y_test_i, pred_label))
+            test_labels_score.append(r2_score(y_test_i, pred_label))
+        else:
+            acc = accuracy_score(y_test_i, pred_label)
+            test_labels_err.append(1.0 - acc)
+            test_labels_score.append(acc)  
 
     predictions = np.stack(np.array(predictions), axis=1)
 
-    # NOTE(eloise): Here we are only taking into account regression style labels
-    # not classification
-    test_score = sklearn.metrics.r2_score(test_label, predictions)
+    if all(is_reg):
+        test_score = r2_score(test_label, predictions)
+    elif not any(is_reg):
+        test_score = accuracy_score(test_label.ravel(), predictions.ravel())
+    else:
+        test_score = None # for now, because not useful now
 
     # NOTE(eloise): For now, we always plot the test_score in R2 for overall labels
-    return test_score, labels_test_err, labels_test_score
+    return test_score, test_labels_err, test_labels_score
 
 
 class Decoding(_BaseMetric):
@@ -350,6 +364,7 @@ class Decoding(_BaseMetric):
         figsize: tuple = (15, 5),
         palette: str = "hls",
         plot_error: bool = False,
+        label_is_binary: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.axes.Axes:
         """Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
@@ -381,12 +396,7 @@ class Decoding(_BaseMetric):
                     "If dataset_label is not specified, label must be provided to plot ",
                     "the decoding scores for specified label.",
                 )
-
-        if len(results_dict) == 1:
-            return utils_plot.plot_decoding(results_dict, palette,
-                                            self.dataset_label, label,
-                                            plot_error, ax)
-        else:
-            return utils_plot.plot_layer_decoding(results_dict, title,
-                                                  self.dataset_label, label,
-                                                  plot_error, figsize)
+        return utils_plot.plot_layer_decoding(
+            results_dict, title, self.dataset_label, label, plot_error, label_is_binary, figsize
+        )
+           

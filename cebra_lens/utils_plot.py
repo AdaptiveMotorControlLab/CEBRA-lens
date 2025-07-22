@@ -274,12 +274,13 @@ class DecodingPlot(_GenericPlot):
         title: str = None,
         label: int = None,
         plot_error: bool = False,
+        label_is_binary: bool = False,
         figsize: Tuple[np.float64, np.float64] = (15, 5),
         axis: Optional[matplotlib.axes.Axes] = None,
     ):
 
         if title is not None:
-            if dataset_label == "visual":
+            if (dataset_label == "visual") or label_is_binary:
                 title = "Decoding accuracies across layers (%)"
             elif dataset_label == "HPC":
                 title = "Decoding position errors across layers (cm)"
@@ -295,6 +296,7 @@ class DecodingPlot(_GenericPlot):
                 "to the label you want to plot in the decoding results.")
         self.label = label
         self.plot_error = plot_error
+        self.label_is_binary = label_is_binary
         self.dataset_label = dataset_label
         self.results_dict = results_dict
         self.plot_data = self._transform()
@@ -333,11 +335,12 @@ class DecodingPlot(_GenericPlot):
                         layer_scores.append(scores[ind])
                 layer_values.append(layer_scores)
             data[group_name] = layer_values
+
         return data
 
     def plot(self):
         """Plots decoding accuracy across layers"""
-        if self.dataset_label == "visual":
+        if (self.dataset_label == "visual") or self.label_is_binary:
             y_axis = "Decoding accuracy (%)"
         elif self.dataset_label == "HPC":
             y_axis = "Decoding position error (cm)"
@@ -417,6 +420,7 @@ def plot_layer_decoding(
     dataset_label: str = None,
     label: int = None,
     plot_error: bool = False,
+    label_is_binary: bool = False,
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
 ) -> plt.Figure:
@@ -448,6 +452,7 @@ def plot_layer_decoding(
         dataset_label=dataset_label,
         label=label,
         plot_error=plot_error,
+        label_is_binary=label_is_binary, 
         figsize=figsize,
     ).plot(**kwargs)
 
