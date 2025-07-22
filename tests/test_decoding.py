@@ -8,6 +8,21 @@ import torch
 import cebra_lens
 
 
+class DummyKNNDecoder:
+    def fit(self, X, y):
+        return self
+
+    def predict(self, X):
+        return np.random.rand(len(X))
+
+    def get_params(self, deep=True):
+        return {}
+
+    def set_params(self, **params):
+        return self
+
+
+
 def make_mock_cebra_model(input_dim=10, label_dim=1):
     model = cebra.CEBRA(max_iterations=1, device="cpu")
     model.fit(torch.rand((5, input_dim)), torch.rand((5, label_dim)))
@@ -26,12 +41,7 @@ def embeddings_labels():
 def test_decoding_function(embeddings_labels):
     emb_train, emb_test, train_label, test_label = embeddings_labels
 
-    with patch("cebra.KNNDecoder") as mock_knn:
-        mock_model = MagicMock()
-        # Return prediction with correct shape each time
-        mock_model.predict.side_effect = lambda x: np.random.rand(len(x))
-        mock_knn.return_value = mock_model
-
+    with patch("cebra.KNNDecoder", return_value=DummyKNNDecoder()):
         score, medians, r2s = cebra_lens.quantification.decoder.decoding(
             emb_train, emb_test, train_label, test_label)
 

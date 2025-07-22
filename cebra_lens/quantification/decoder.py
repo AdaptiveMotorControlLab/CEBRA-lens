@@ -396,7 +396,36 @@ class Decoding(_BaseMetric):
                     "If dataset_label is not specified, label must be provided to plot ",
                     "the decoding scores for specified label.",
                 )
-        return utils_plot.plot_layer_decoding(
-            results_dict, title, self.dataset_label, label, plot_error, label_is_binary, figsize
-        )
+                
+        n_groups = len(results_dict)
+
+        # number of layers per group (unwrap a 1‐element object array)
+        sample = next(iter(results_dict.values()))
+        if isinstance(sample, np.ndarray) and sample.dtype == object and sample.size == 1:
+            n_layers = len(sample[0])
+        else:
+            n_layers = len(sample)
+        
+        if n_groups == 1 and n_layers == 1:
+            # only overall embedding 
+            return utils_plot.plot_decoding(
+                results_dict,
+                palette,
+                self.dataset_label,
+                label,
+                label_is_binary,
+                plot_error,
+                ax,
+            )    
            
+        else:
+            # multiple layers or multiple groups n
+            return utils_plot.plot_layer_decoding(
+                results_dict,
+                title,
+                self.dataset_label,
+                label,
+                plot_error,
+                label_is_binary,
+                figsize=figsize,
+            )

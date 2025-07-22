@@ -31,13 +31,16 @@ def _cut_array(array: npt.NDArray,
             The sliced array. If both start and end indices are 0, the whole array is returned.
     """
 
-    start = cut_indices[0]
-    end = cut_indices[1]
+    start, end = cut_indices
     if start == 0 and end == 0:
         # If both start and end are 0, take the whole array
         return array
-    # Otherwise, slice the array
-    return array[:, :, start : (end if end != 0 else None)]
+    
+    end_idx = None if end == 0 else end
+
+    # build a slice tuple: [:, :, ..., start:end_idx]
+    slicers = [slice(None)] * (array.ndim - 1) + [slice(start, end_idx)]
+    return array[tuple(slicers)]
 
 def get_cut_indices(
     model_: cebra.integrations.sklearn.cebra.CEBRA,
@@ -170,7 +173,8 @@ def get_activations_model(
             for chunk in batch_list
         ]
         # now every chunk.shape == (1, channels, common_time)
-        activations[key] = np.concatenate(sliced_chunks, axis=2)
+        axis = sliced_chunks[0].ndim - 1
+        activations[key] = np.concatenate(sliced_chunks, axis=axis)
         
     for key, arr in list(activations.items()):
         if arr.ndim == 3 and arr.shape[0] == 1:

@@ -483,6 +483,7 @@ class ModelDecodingPlot(_BasePlot):
         axis: Optional[matplotlib.axes.Axes],
         label: int = None,
         plot_error: bool = False,
+        label_is_binary: bool = False,
     ):
 
         self.figsize = (
@@ -497,6 +498,7 @@ class ModelDecodingPlot(_BasePlot):
             palette, len(results_dict))  # Define a color palette
         self.dataset_label = dataset_label  # Define dataset label
         self.plot_error = plot_error
+        self.label_is_binary = label_is_binary
         self.label = label
         if self.dataset_label is None and self.label is None:
             raise ValueError(
@@ -514,7 +516,7 @@ class ModelDecodingPlot(_BasePlot):
                                  1))  # X positions for scatter points
 
         for i, (key, results) in enumerate(self.results_dict.items()):
-            if self.dataset_label == "visual":
+            if (self.dataset_label == "visual") or self.label_is_binary:
                 # for visual dataset get accuracy
                 score = [dict_el[0][2] for dict_el in results]
                 self.plot_label = "Accuracy"
@@ -565,6 +567,7 @@ def plot_decoding(
     palette: str = "hls",
     dataset_label: str = None,
     label: int = None,
+    label_is_binary: bool = False,
     plot_error: bool = False,
     ax: Optional[matplotlib.axes.Axes] = None,
     **kwargs,
@@ -596,6 +599,7 @@ def plot_decoding(
         palette=palette,
         dataset_label=dataset_label,
         label=label,
+        label_is_binary=label_is_binary,
         plot_error=plot_error,
     ).plot(**kwargs)
 

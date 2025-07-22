@@ -1,34 +1,34 @@
-cebra
-joblib
-# Platform-specific numpy constraints
+cebra @ git+https://github.com/AdaptiveMotorControlLab/cebra.git@e9822481c9ffbbe5e9d923af5bc3fc0ce09c2ae5
+joblib==1.5.1
+# Platform‑specific numpy constraints
 numpy<2.0; platform_system=="Windows"
 numpy<2.0; platform_system!="Windows" and python_version<"3.10"
-numpy; platform_system!="Windows" and python_version>="3.10"
-literate-dataclasses
-scikit-learn
-scipy
-torch>=2.4.0
-tqdm
-matplotlib<3.11
-matplotlib-inline 
-requests
-pandas
-plotly
-seaborn
-jupyter-book
-ghp-import
-ipykernel
-jupyter
-nbconvert
-nbformat
-pylint
-toml
-yapf
-black
-isort
-coverage
-pytest
-licenseheaders
-interrogate
-codespell
-cffconvert
+numpy==1.26.4; platform_system!="Windows" and python_version>="3.10"
+literate-dataclasses==0.0.6
+scikit-learn==1.6.1
+scipy==1.13.1
+torch==2.6.0
+tqdm==4.67.1
+matplotlib==3.9.4
+matplotlib-inline==0.1.7
+requests==2.32.4
+pandas==2.3.1
+plotly==6.2.0
+seaborn==0.13.2
+jupyter-book==1.0.4.post1
+ghp-import==2.1.0
+ipykernel==6.30.0
+jupyter==1.1.1
+nbconvert==7.16.6
+nbformat==5.10.4
+pylint==3.3.7
+toml==0.10.2
+yapf==0.43.0
+black==25.1.0
+isort==6.0.1
+coverage==7.9.2
+pytest==8.4.1
+licenseheaders==0.8.8
+interrogate==1.7.0
+codespell==2.4.1
+cffconvert==2.0.0
