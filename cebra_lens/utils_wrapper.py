@@ -13,7 +13,6 @@ def transform(model, data, label, **transform_kwargs):
             "Model must be an instance of cebra.solver.UnifiedSolver",
             f"or cebra.integrations.sklearn.cebra.CEBRA, got {type(model)} instead.",
         )
-
     return embedding
 
 
