@@ -7,7 +7,11 @@ import torch
 
 import cebra_lens
 
-
+class _LayerMap(list):
+    """A little helper so that `.tolist()` returns the list of layer‐maps."""
+    def tolist(self):
+        return self
+    
 class DummyKNNDecoder:
     def fit(self, X, y):
         return self
@@ -42,9 +46,14 @@ def test_decoding_function(embeddings_labels):
     emb_train, emb_test, train_label, test_label = embeddings_labels
 
     with patch("cebra.KNNDecoder", return_value=DummyKNNDecoder()):
-        score, medians, r2s = cebra_lens.quantification.decoder.decoding(
+        # decoding() now returns a DecodeResult namedtuple:
+        dr = cebra_lens.quantification.decoder.decoding(
             emb_train, emb_test, train_label, test_label)
-
+        # unpack fields rather than expecting three separate return values
+        score   = dr.overall_score
+        medians = dr.per_label_error
+        r2s     = dr.per_label_score
+        
         assert isinstance(score, float)
         assert len(medians) == train_label.shape[1]
         assert len(r2s) == train_label.shape[1]
@@ -104,18 +113,17 @@ def test_decoder_plot(mock_layer_plot, mock_decoding_plot):
         test_data=torch.rand((10, 10)),
         test_label=np.random.rand(10, 1),
     )
-
-    dummy_result = {"modelA": {0: (0.9, [0.1], [0.8])}}
+    # single‐model, single‐layer → .tolist() must return a length‑1 mapping
+    dummy_result = {
+        "modelA": _LayerMap([{0: (0.9, [0.1], [0.8])}])
+    }
     dec.plot(dummy_result, label=0)
     assert mock_decoding_plot.called
 
+    # now two “models” → plot_layer_decoding
     dummy_result = {
-        "layerA": {
-            0: (0.9, [0.1], [0.8])
-        },
-        "layerB": {
-            0: (0.85, [0.15], [0.75])
-        }
+        "modelA": _LayerMap([{0: (0.9,  [0.1],  [0.8])}]),
+        "modelB": _LayerMap([{0: (0.85, [0.15], [0.75])}]),
     }
     dec.plot(dummy_result, label=0)
     assert mock_layer_plot.called

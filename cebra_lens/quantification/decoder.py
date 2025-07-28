@@ -1,4 +1,6 @@
 from typing import Dict, Optional, Tuple, Type
+from typing import NamedTuple, List, Any
+from typing import Union
 
 import cebra
 import matplotlib
@@ -22,17 +24,23 @@ from .base import _BaseMetric
 #NOTE(eloise): resampling, subsampling and supervised model architecture is still not supported
 #              checked via '''supported_model_architectures()''' function.
 
-
+class DecodeResult(NamedTuple):
+    overall_score: float
+    per_label_error: List[float]
+    per_label_score: List[float]
+    label_types: List[str] # for each label either regression or classification 
+    
 def decoding(
     embedding_train: pt.tensor,
     embedding_test: pt.tensor,
     train_label: npt.NDArray,
     test_label: npt.NDArray,
-) -> Tuple[np.float64, list, list]:
-    """    
-    Decode embeddings with per-label automated KNNDecoder hyperparameter search.
-    Returns overall score (R² or accuracy), per-label error, and per-label score.
-
+) -> DecodeResult:
+    """ Decode embeddings via per-label KNNDecoder hyperparameter search.  
+      
+    For each label, determines whether it's a regression (continuous) or classification (discrete)
+    task, then runs a grid search over KNN neighbors using R² for regression targets, accuracy for classification targets.
+    
     Args:
         embedding_train : pt.tensor
             The part of the output embedding to use as training for the decoding.
@@ -44,8 +52,13 @@ def decoding(
             The true labels corresponding to the validation data.
 
     Returns:
-        Tuple[np.float64, list, list]
-            A tuple containing the overall test score (R^2), a list of median errors for each label, and a list of R^2 scores for each label.
+        DecodeResult(
+            overall_score: float     # R² (if all regression), accuracy (if all classification), else None
+            per_label_error: List[float]  # MAE (regression) or 1–accuracy (classification)
+            per_label_score: List[float]  # R² or accuracy per label
+            label_types: str             # "regression" or "classification" per label 
+        )
+
     """
     if train_label.shape[1] > 1:
         num_labels = train_label.shape[1]
@@ -53,23 +66,34 @@ def decoding(
         num_labels = 1
         train_label = train_label.reshape(-1, 1)
         test_label = test_label.reshape(-1, 1)
-        
-    label_types = [type_of_target(train_label[:, i]) for i in range(num_labels)]
-    is_reg = [t == "continuous" for t in label_types]
+    # type_of_target check if each label is continuous (float) or discrete (int) and may return:
+    #  - "continuous"             → 1D float array (single‐output regression)
+    #  - "continuous‑multioutput" → 2D float array (multi‑output regression)
+    #  - "binary"/"multiclass"    → 1D int array (classification)
+    # Since we immediately split into 1D columns, we only ever see "continuous" vs classification types 
+    
+    raw_types  = [type_of_target(train_label[:, i]) for i in range(num_labels)]
+    label_types = [
+        "regression"     if t == "continuous" else
+        "classification" # covers "binary"/"multiclass"/etc.
+        for t in raw_types
+    ]
+    is_reg      = [mode == "regression" for mode in label_types]
+    
     # for each label find another K
     param_grid = {"n_neighbors": np.arange(1, 11) ** 2}
     
     predictions, test_labels_err, test_labels_score = [], [], []
     for i in range(num_labels):
-        y_train_i = train_label[:, i]
-        y_test_i  = test_label[:, i]
+        train_label_i = train_label[:, i]
+        test_label_i  = test_label[:, i]
 
         if not is_reg[i]:
-            # force binary → integer so CEBRA picks classifier
-            y_train_i = y_train_i.astype(np.int64)
-            y_test_i  = y_test_i.astype(np.int64)
+            # Cast discrete (binary/multiclass) labels to int64 so KNNDecoder runs classification
+            train_label_i = train_label_i.astype(np.int64)
+            test_label_i  = test_label_i.astype(np.int64)
 
-        # Choose scorer based on continuous vs. classification
+        # Choose scorer based on regression vs. classification
         scorer = make_scorer(r2_score) if is_reg[i] else make_scorer(accuracy_score)
 
         gs = GridSearchCV(
@@ -79,32 +103,36 @@ def decoding(
             cv=2,
         )
 
-        gs.fit(embedding_train, y_train_i)
+        gs.fit(embedding_train, train_label_i)
         pred_label = gs.best_estimator_.predict(embedding_test)  
 
         predictions.append(pred_label)
-        print("coucou", pred_label.shape, test_label[:, i].shape,
-              embedding_test.shape)
         if is_reg[i]:
-            test_labels_err.append(mean_absolute_error(y_test_i, pred_label))
-            test_labels_score.append(r2_score(y_test_i, pred_label))
+            test_labels_err.append(mean_absolute_error(test_label_i, pred_label))
+            test_labels_score.append(r2_score(test_label_i, pred_label))
         else:
-            acc = accuracy_score(y_test_i, pred_label)
+            # Class labels are categorical, so “prediction – true_label” has no meaningful numeric distance.
+            # Instead, use misclassification rate (1 – accuracy) as the error for classification tasks.
+            acc = accuracy_score(test_label_i, pred_label)
             test_labels_err.append(1.0 - acc)
             test_labels_score.append(acc)  
 
     predictions = np.stack(np.array(predictions), axis=1)
-
+    # only compute a global score if all labels use the same mode;
+    # if regression + classification labels are mixed, overall score will be None
     if all(is_reg):
         test_score = r2_score(test_label, predictions)
     elif not any(is_reg):
         test_score = accuracy_score(test_label.ravel(), predictions.ravel())
     else:
-        test_score = None # for now, because not useful now
+        test_score = None
 
-    # NOTE(eloise): For now, we always plot the test_score in R2 for overall labels
-    return test_score, test_labels_err, test_labels_score
-
+    return DecodeResult(
+        overall_score=test_score,
+        per_label_error=test_labels_err,
+        per_label_score=test_labels_score,
+        label_types=label_types,
+    )
 
 class Decoding(_BaseMetric):
     """
@@ -175,7 +203,7 @@ class Decoding(_BaseMetric):
         embedding_test: npt.NDArray,
         test_label: npt.NDArray,
         dataset_label: str = None,
-    ) -> npt.NDArray:
+    ) -> Union[DecodeResult, np.ndarray]:
         """Decode a model by choosing the appropriate function base on the dataset.
         
         Note: 
@@ -220,7 +248,7 @@ class Decoding(_BaseMetric):
                 test_label=test_label,
             )
         else:
-            results = decoding(
+            results: DecodeResult = decoding(
                 embedding_train=embedding_train,
                 embedding_test=embedding_test,
                 train_label=train_label,
@@ -232,7 +260,7 @@ class Decoding(_BaseMetric):
         self,
         model: cebra.integrations.sklearn.cebra.CEBRA,
         output_only: bool = True,
-    ) -> npt.NDArray:
+    ) -> Dict[int, DecodeResult]:
         """Decode neural data by layer using a given CEBRA model.
 
         Args:
@@ -243,8 +271,8 @@ class Decoding(_BaseMetric):
                 embeddings of the model. Default: True.
 
         Returns:
-            npt.NDArray
-                A numpy array containing the decoding results for each layer and the neural input baseline.
+            Dict[int, DecodeResult]
+                Mapping from layer index (0=input/baseline, 1…N=layers) to its decoding result.
         """
         transform_kwargs = {}
         if output_only:
@@ -294,7 +322,7 @@ class Decoding(_BaseMetric):
         else:
             train_decoding_labels = self.train_label
             test_decoding_labels = self.test_label
-
+            
         results = {}
         for i in range(num_layers + 1):
 
@@ -358,13 +386,12 @@ class Decoding(_BaseMetric):
 
     def plot(
         self,
-        results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
+        results_dict: Dict[str, Dict[int, DecodeResult]],
         title: str = "Decoding by layer",
         label: int = None,
         figsize: tuple = (15, 5),
         palette: str = "hls",
         plot_error: bool = False,
-        label_is_binary: bool = False,
         ax: Optional[matplotlib.axes.Axes] = None,
     ) -> matplotlib.axes.Axes:
         """Plot the decoding score of the output embeddings or the decoding scores of the activations across layers of models.If set to output_only=True, it will plot the decoding scores of the output embeddings, otherwise it will plot the decoding scores of the activations across layers.
@@ -397,35 +424,31 @@ class Decoding(_BaseMetric):
                     "the decoding scores for specified label.",
                 )
                 
-        n_groups = len(results_dict)
-
-        # number of layers per group (unwrap a 1‐element object array)
-        sample = next(iter(results_dict.values()))
-        if isinstance(sample, np.ndarray) and sample.dtype == object and sample.size == 1:
-            n_layers = len(sample[0])
-        else:
-            n_layers = len(sample)
+        num_models = len(results_dict)
         
-        if n_groups == 1 and n_layers == 1:
-            # only overall embedding 
+        # pick the first model's results and count its layers
+        first_model_results = next(iter(results_dict.values())).tolist()
+        first_run: Dict[int, DecodeResult] = first_model_results[0]
+        num_layers = len(first_run)
+        
+        if num_models == 1 and num_layers == 1:
+            # single-model & single-layer
             return utils_plot.plot_decoding(
                 results_dict,
                 palette,
                 self.dataset_label,
                 label,
-                label_is_binary,
                 plot_error,
                 ax,
             )    
            
         else:
-            # multiple layers or multiple groups n
+            # multiple layers or multiple models
             return utils_plot.plot_layer_decoding(
                 results_dict,
                 title,
                 self.dataset_label,
                 label,
-                plot_error,
-                label_is_binary,
+                plot_error=plot_error,
                 figsize=figsize,
             )

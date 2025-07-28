@@ -11,7 +11,6 @@ import torch.nn as nn
 
 from cebra_lens import utils_wrapper
 
-from .utils_plot import plot_activations
 
 
 def _cut_array(array: npt.NDArray,
@@ -38,7 +37,7 @@ def _cut_array(array: npt.NDArray,
     
     end_idx = None if end == 0 else end
 
-    # build a slice tuple: [:, :, ..., start:end_idx]
+    # Construct a slicing tuple like [:, :, ..., start:end_idx] to slice along the last axis
     slicers = [slice(None)] * (array.ndim - 1) + [slice(start, end_idx)]
     return array[tuple(slicers)]
 
@@ -164,7 +163,9 @@ def get_activations_model(
         cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
     else:
         cut_indices = [(0,0)] * len(handles)
-    
+    # for any activation that was captures in time chunks:
+    # remove the padding from each chunk using cut indices,
+    # then, concatenate them along the time axis
     for i, (key, batch_list) in enumerate(list(activations.items())):
         if not isinstance(batch_list, list):
             continue
@@ -172,10 +173,10 @@ def get_activations_model(
             _cut_array(chunk, cut_indices[i])
             for chunk in batch_list
         ]
-        # now every chunk.shape == (1, channels, common_time)
+        # now every chunk.shape == (1, channels, time)
         axis = sliced_chunks[0].ndim - 1
         activations[key] = np.concatenate(sliced_chunks, axis=axis)
-        
+    # squeeze (1, channels, time) to (channels, time), so downstream tools (e.g., k‑NN regression) receive the 2D array they require
     for key, arr in list(activations.items()):
         if arr.ndim == 3 and arr.shape[0] == 1:
             activations[key] = arr[0]
