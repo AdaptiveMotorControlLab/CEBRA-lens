@@ -1,4 +1,5 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+from cebra_lens.quantification.decoder import decoding, Decoding, DecodeResult
 
 import cebra
 import numpy as np
@@ -6,11 +7,6 @@ import pytest
 import torch
 
 import cebra_lens
-
-class _LayerMap(list):
-    """A little helper so that `.tolist()` returns the list of layer‐maps."""
-    def tolist(self):
-        return self
     
 class DummyKNNDecoder:
     def fit(self, X, y):
@@ -47,7 +43,7 @@ def test_decoding_function(embeddings_labels):
 
     with patch("cebra.KNNDecoder", return_value=DummyKNNDecoder()):
         # decoding() now returns a DecodeResult namedtuple:
-        dr = cebra_lens.quantification.decoder.decoding(
+        dr = decoding(
             emb_train, emb_test, train_label, test_label)
         # unpack fields rather than expecting three separate return values
         score   = dr.overall_score
@@ -61,7 +57,7 @@ def test_decoding_function(embeddings_labels):
 
 def test_decoding_class_output_only_true():
     model = make_mock_cebra_model(100, 1)
-    decoding_class = cebra_lens.quantification.decoder.Decoding(
+    decoding_class = Decoding(
         train_data=torch.rand((300, 100)),
         train_label=np.random.rand(300, 1),
         test_data=torch.rand((100, 100)),
@@ -81,7 +77,7 @@ def test_decoding_class_output_only_false(mock_get_act):
         "layer2": np.random.rand(1000, 1000),
     }
 
-    decoding_class = cebra_lens.quantification.decoder.Decoding(
+    decoding_class = Decoding(
         train_data=torch.rand((1000, 1000)),
         train_label=np.random.rand(1000, 1),
         test_data=torch.rand((1000, 1000)),
@@ -107,23 +103,37 @@ def test_decoding_class_output_only_false(mock_get_act):
 @patch("cebra_lens.utils_plot.plot_decoding")
 @patch("cebra_lens.utils_plot.plot_layer_decoding")
 def test_decoder_plot(mock_layer_plot, mock_decoding_plot):
-    dec = cebra_lens.quantification.decoder.Decoding(
+    dec = Decoding(
         train_data=torch.rand((10, 10)),
         train_label=np.random.rand(10, 1),
         test_data=torch.rand((10, 10)),
         test_label=np.random.rand(10, 1),
     )
-    # single‐model, single‐layer → .tolist() must return a length‑1 mapping
+
+    # single-model, single-layer → should call plot_decoding
     dummy_result = {
-        "modelA": _LayerMap([{0: (0.9, [0.1], [0.8])}])
+        "modelA": [
+            {
+                0: DecodeResult(
+                    overall_score=0.9,
+                    per_label_error=[0.1],
+                    per_label_score=[0.8],
+                    label_types=["regression"],
+                )
+            }
+        ]
     }
     dec.plot(dummy_result, label=0)
     assert mock_decoding_plot.called
 
-    # now two “models” → plot_layer_decoding
+    # multiple models → plot_layer_decoding
     dummy_result = {
-        "modelA": _LayerMap([{0: (0.9,  [0.1],  [0.8])}]),
-        "modelB": _LayerMap([{0: (0.85, [0.15], [0.75])}]),
+        "modelA": [{
+            0: DecodeResult(0.9, [0.1], [0.8], ["regression"])
+        }],
+        "modelB": [{
+            0: DecodeResult(0.85, [0.15], [0.75], ["regression"])
+        }],
     }
     dec.plot(dummy_result, label=0)
     assert mock_layer_plot.called

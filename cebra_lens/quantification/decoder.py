@@ -342,8 +342,9 @@ class Decoding(_BaseMetric):
                 })
 
             else:
-                if i == 0 and not isinstance(model,
-                                             cebra.solver.UnifiedSolver):
+                if i == 0:  
+                    if isinstance(model,cebra.solver.UnifiedSolver):
+                        continue
                     results.update({
                         i:
                         self._decode(
@@ -427,7 +428,8 @@ class Decoding(_BaseMetric):
         num_models = len(results_dict)
         
         # pick the first model's results and count its layers
-        first_model_results = next(iter(results_dict.values())).tolist()
+        #first_model_results = next(iter(results_dict.values())).tolist()
+        first_model_results = next(iter(results_dict.values()))
         first_run: Dict[int, DecodeResult] = first_model_results[0]
         num_layers = len(first_run)
         
