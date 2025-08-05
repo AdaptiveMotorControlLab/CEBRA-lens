@@ -35,12 +35,9 @@ def _cut_array(array: npt.NDArray,
     end = cut_indices[1]
     if start == 0 and end == 0:
         # If both start and end are 0, take the whole array
-        sliced_array = array
-    else:
-        # Otherwise, slice the array
-        sliced_array = array[:, start:end if end != 0 else start:]
-    return sliced_array
-
+        return array
+    # Otherwise, slice the array
+    return array[:, :, start : (end if end != 0 else None)]
 
 def get_cut_indices(
     model_: cebra.integrations.sklearn.cebra.CEBRA,
@@ -156,16 +153,28 @@ def get_activations_model(
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
-
+    
     if hasattr(model, "pad_before_transform"):
-        pad_before_transform = model.pad_before_transform
-
+        pad_before_transform = model.pad_before_transform    
+        
     if pad_before_transform:
-        # Padding logic: calculate the total reduction which happens based on the
-        # kernel size per layer, divide the reduction per layer into 2 parts
         cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
-        for i, (key, value) in enumerate(activations.items()):
-            activations[key] = _cut_array(value, cut_indices[i])
+    else:
+        cut_indices = [(0,0)] * len(handles)
+    
+    for i, (key, batch_list) in enumerate(list(activations.items())):
+        if not isinstance(batch_list, list):
+            continue
+        sliced_chunks = [
+            _cut_array(chunk, cut_indices[i])
+            for chunk in batch_list
+        ]
+        # now every chunk.shape == (1, channels, common_time)
+        activations[key] = np.concatenate(sliced_chunks, axis=2)
+        
+    for key, arr in list(activations.items()):
+        if arr.ndim == 3 and arr.shape[0] == 1:
+            activations[key] = arr[0]
 
     return activations
 
@@ -236,10 +245,10 @@ def _get_activation(activations_keys_prefix: str, activations: Dict):
         activations : Dict
             The dictionary where the activations will be stored. The key is the name of the layer, and the value is the activations.
     """
-
+    activations.setdefault(activations_keys_prefix, [])    
     def hook(model, input, output):
-        activations[activations_keys_prefix] = output.detach().squeeze().numpy(
-        )
+        arr = output.detach().cpu().numpy() 
+        activations[activations_keys_prefix].append(arr)
 
     return hook, activations
 
