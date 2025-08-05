@@ -1,10 +1,10 @@
 import cebra
-from cebra.integrations.sklearn.cebra import CEBRA as CEBRA
-from cebra.solver.base import Solver as BaseSolver
+from cebra.integrations.sklearn.cebra import CEBRA 
+from cebra.solver.base import Solver
 
 
 def transform(model, data, label, **transform_kwargs):
-    if isinstance(model, BaseSolver):
+    if isinstance(model, Solver):
         print(data[0].shape)
         print(label[0].shape)
         embedding = model.transform(data, label, **transform_kwargs)
