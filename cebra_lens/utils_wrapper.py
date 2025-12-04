@@ -5,8 +5,6 @@ from cebra.solver.base import Solver
 
 def transform(model, data, label, **transform_kwargs):
     if isinstance(model, Solver):
-        print(data[0].shape)
-        print(label[0].shape)
         embedding = model.transform(data, label, **transform_kwargs)
     elif isinstance(model, CEBRA):
         embedding = model.transform(data, **transform_kwargs)
