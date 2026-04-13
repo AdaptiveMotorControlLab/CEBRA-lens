@@ -15,7 +15,7 @@ requests
 pandas
 plotly
 seaborn
-jupyter-book
+jupyter-book==0.15.1
 ghp-import
 ipykernel
 jupyter
