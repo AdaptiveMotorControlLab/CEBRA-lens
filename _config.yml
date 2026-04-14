@@ -1,4 +1,4 @@
-title: DocTemplate
+title: CEBRA-Lens
 author: MLAI
 logo: docs/docs/images/logo.jpeg
 only_build_toc_files: true
@@ -20,7 +20,7 @@ execute:
   execute_notebooks: "off"
 
 html:
-  favicon: "docs/docs/images/zebra.png"
+  favicon: "docs/docs/images/logo.jpeg"
   extra_navbar: ""
   use_issues_button: true
   use_repository_button: true
