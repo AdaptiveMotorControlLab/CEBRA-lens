@@ -3,6 +3,7 @@
 import random
 from abc import *
 from typing import Dict, List, Optional, Tuple, Union
+from .quantification.decoder import DecodeResult
 
 import cebra
 import matplotlib.axes
@@ -269,24 +270,33 @@ class DecodingPlot(_GenericPlot):
 
     def __init__(
         self,
-        results_dict: Dict[str, Dict[int, Tuple[np.float64, list, list]]],
+        results_dict: Dict[str, Dict[int, DecodeResult]],
         dataset_label: str = None,
         title: str = None,
         label: int = None,
+        label_types: List[str] = None,
         plot_error: bool = False,
         figsize: Tuple[np.float64, np.float64] = (15, 5),
-        axis: Optional[matplotlib.axes.Axes] = None,
+        axis: Optional[matplotlib.axes.Axes] = None, 
     ):
+        
+        # Use the first DecodeResult to infer the label type : regression or classification 
+        first_group_results = next(iter(results_dict.values())).tolist()
+        first_layer_result = next(iter(first_group_results[0].values()))
+       
+        this_type = first_layer_result.label_types[label]
+        
+        if not plot_error:
+            base_title = "Layer-wise decoding performance"
+        else:
+            base_title = "Layer-wise decoding error"
 
-        if title is not None:
-            if dataset_label == "visual":
-                title = "Decoding accuracies across layers (%)"
-            elif dataset_label == "HPC":
-                title = "Decoding position errors across layers (cm)"
-            else:
-                title = "Decoding average R^2 scores across layers"
-                if plot_error:
-                    title = "Decoding error scores across layers"
+        # if no dataset_label but a per‑label plot, add label index
+        if dataset_label is None and label is not None:
+            title = f"{base_title} (Label {label})"
+        else:
+            title = base_title
+
 
         super().__init__(axis, figsize, title)
         if dataset_label is None and label is None:
@@ -296,13 +306,29 @@ class DecodingPlot(_GenericPlot):
         self.label = label
         self.plot_error = plot_error
         self.dataset_label = dataset_label
+        self.this_type = this_type
         self.results_dict = results_dict
         self.plot_data = self._transform()
         self.unique_keys = list(
             self.results_dict.keys())  # Define unique keys here
         self.colors = sns.color_palette("husl", len(self.unique_keys))
+    
+    def _y_axis_label(self) -> str:
+        """Pick the correct y-axis label from self.this_type and self.plot_error."""
+        if self.this_type == "classification":
+            return (
+                "Error (1 - accuracy)"
+                if self.plot_error else
+                "Accuracy (%)"
+            )
+        else:  # regression
+            return (
+                "Mean absolute error"
+                if self.plot_error else
+                "R² score"
+            )
 
-    def _transform(self) -> Dict[str, List[List[np.float64]]]:
+    def _transform(self) -> Dict[str, List[List[float]]]:
         """Transforms ``results_dict`` into a dictionary where the key stays the same, but the values 
         are now corresponding to the decoding scores across layers for model label.
 
@@ -310,43 +336,35 @@ class DecodingPlot(_GenericPlot):
             Dict[str,List[List[np.float64]]]
                 Dictionary where the keys correspond to the model labels, and the value to the decoding scores for each layer for each model inside a model label category.
         """
-        data = {}
-        for idx, (group_name, models) in enumerate(self.results_dict.items()):
-            layer_values = []
-
-            for i, model in enumerate(models):
-
-                if self.dataset_label == "visual":
-                    ind = 2
-                elif self.dataset_label == "HPC":
-                    ind = 2
-                else:
-                    ind = self.label
-                layer_scores = []
-                for layer, scores in model.items():
+        out: Dict[str, List[List[float]]] = {}
+        for group_label, layer_map in self.results_dict.items():
+            runs: List[List[float]] = []
+            for run_layers in layer_map:
+                values = []
+                for layer_idx in sorted(run_layers.keys()):
+                    res = run_layers[layer_idx]
+                    # choose per-label vector or overall score
                     if self.dataset_label is None:
-                        if self.plot_error:
-                            layer_scores.append(scores[1][ind])
-                        else:
-                            layer_scores.append(scores[2][ind])
+                        vector = (
+                            res.per_label_error if self.plot_error else res.per_label_score
+                        )
+                        # index into chosen label (default 0 if None)
+                        values.append(vector[self.label or 0])
                     else:
-                        layer_scores.append(scores[ind])
-                layer_values.append(layer_scores)
-            data[group_name] = layer_values
-        return data
+                        # dataset-specific: overall_score for single-value metrics
+                        if res.overall_score is not None:
+                            values.append(res.overall_score)
+                        else:
+                            values.append(res.per_label_score[0])
+                runs.append(values)
+            out[group_label] = runs
+        return out
 
     def plot(self):
-        """Plots decoding accuracy across layers"""
-        if self.dataset_label == "visual":
-            y_axis = "Decoding accuracy (%)"
-        elif self.dataset_label == "HPC":
-            y_axis = "Decoding position error (cm)"
-        else:
-            if self.plot_error:
-                y_axis = "Decoding error score"
-            else:
-                y_axis = "Decoding $R^2$ score"
+        """Plots decoding accuracy (or error) across layers."""
+        y_axis = self._y_axis_label()
         return super().plot(self.plot_data, y_axis)
+
 
 
 def plot_rdm_correlation(
@@ -412,10 +430,11 @@ def plot_distance(
 
 
 def plot_layer_decoding(
-    results_dict: Dict[str, npt.NDArray],
+    results_dict: Dict[str, Dict[int, DecodeResult]],
     title: str = "Decoding by layer",
     dataset_label: str = None,
     label: int = None,
+    label_types: List[str] = None,
     plot_error: bool = False,
     figsize: Tuple[np.float64, np.float64] = (15, 5),
     **kwargs,
@@ -441,12 +460,13 @@ def plot_layer_decoding(
         fig : matplotlib.figure.Figure
             The generated figure containing the decoding scored per layer per model.
     """
-
+    
     return DecodingPlot(
         results_dict=results_dict,
         title=title,
         dataset_label=dataset_label,
         label=label,
+        label_types=label_types, 
         plot_error=plot_error,
         figsize=figsize,
     ).plot(**kwargs)
@@ -509,7 +529,7 @@ class ModelDecodingPlot(_BasePlot):
                                  1))  # X positions for scatter points
 
         for i, (key, results) in enumerate(self.results_dict.items()):
-            if self.dataset_label == "visual":
+            if (self.dataset_label == "visual"):
                 # for visual dataset get accuracy
                 score = [dict_el[0][2] for dict_el in results]
                 self.plot_label = "Accuracy"

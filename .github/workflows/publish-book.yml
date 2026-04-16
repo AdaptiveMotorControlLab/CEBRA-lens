@@ -21,7 +21,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -e .
         python -m pip install .[docs]
-        pip install jupyter-book sphinxcontrib-mermaid numpydoc
+        pip install jupyter-book==0.15.1 sphinxcontrib-mermaid numpydoc
 
     - name: Build the book
       run: |
