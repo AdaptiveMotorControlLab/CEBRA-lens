@@ -7,7 +7,6 @@ import numpy.typing as npt
 from scipy.spatial.distance import cdist, pdist
 from sklearn.preprocessing import StandardScaler
 
-from ..utils import extract_label
 from ..utils_plot import *
 from .base import _BaseMetric
 from .misc import continuous_binning, discrete_binning, repetition_binning
@@ -320,8 +319,6 @@ class Distance(_BaseMetric):
             The data array of shape (num_samples, num_features).
         label : torch.Tensor
             The array of labels corresponding to the data.
-        label_ind : int, optional
-            The index of the label to extract from the array (default is 0). This is relevant when dataset_label is None.
         is_discrete_labels : bool, optional
             Specifies whether the given label is discrete or continuous. This is relevant when dataset_label is None.
         dataset_label : str, optional
@@ -336,7 +333,6 @@ class Distance(_BaseMetric):
         self,
         data,
         label,
-        label_ind: int = 0,
         is_discrete_labels: bool = False,
         dataset_label: str = None,
         metric: str = "cosine",
@@ -348,15 +344,13 @@ class Distance(_BaseMetric):
         self.label = label
         self.dataset_label = dataset_label
         if self.dataset_label is None:
-            if label_ind is None:
-                raise ValueError(
-                    "If dataset_label is None, label_ind must be provided to indicate which label will be used for the distance calculation."
-                )
             if is_discrete_labels is None:
                 raise ValueError(
                     "If dataset_label is None, is_discrete_labels must be specified to indicate whether the label is is_discrete_labels or continuous."
                 )
-            self.label = extract_label(label, label_ind)
+            if len(label.shape) > 1:
+                raise ValueError("The label must be a 1D array.")
+            self.label = label
         self.metric = metric
         self.distance_label = distance_label
 
@@ -369,7 +363,7 @@ class Distance(_BaseMetric):
     ) -> Tuple[npt.NDArray, Optional[npt.NDArray]]:
         """
         Defines the indices for each bin.
-        
+
         Depending on if the labels are continuous or is_discrete_labels, the labels are calculated accordingly using `continuous_binning()` or `is_discrete_labels_binning()`.
 
         Args:

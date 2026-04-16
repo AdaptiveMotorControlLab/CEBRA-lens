@@ -9,7 +9,8 @@ import numpy.typing as npt
 import torch
 import torch.nn as nn
 
-from .utils_plot import plot_activations
+from cebra_lens import utils_wrapper
+
 
 
 def _cut_array(array: npt.NDArray,
@@ -29,16 +30,16 @@ def _cut_array(array: npt.NDArray,
             The sliced array. If both start and end indices are 0, the whole array is returned.
     """
 
-    start = cut_indices[0]
-    end = cut_indices[1]
+    start, end = cut_indices
     if start == 0 and end == 0:
         # If both start and end are 0, take the whole array
-        sliced_array = array
-    else:
-        # Otherwise, slice the array
-        sliced_array = array[:, start:end if end != 0 else start:]
-    return sliced_array
+        return array
+    
+    end_idx = None if end == 0 else end
 
+    # Construct a slicing tuple like [:, :, ..., start:end_idx] to slice along the last axis
+    slicers = [slice(None)] * (array.ndim - 1) + [slice(start, end_idx)]
+    return array[tuple(slicers)]
 
 def get_cut_indices(
     model_: cebra.integrations.sklearn.cebra.CEBRA,
@@ -90,8 +91,10 @@ def get_cut_indices(
 def get_activations_model(
     model: cebra.integrations.sklearn.cebra.CEBRA,
     data: torch.Tensor,
-    session_id: int = -1,
-    name: str = "single",
+    labels: Optional[torch.Tensor] = None,
+    session_id: int = None,
+    pad_before_transform: bool = True,
+    activations_keys_prefix: str = "model",
     instance: int = 0,
     layer_type: Type[nn.Module] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
@@ -124,45 +127,59 @@ def get_activations_model(
 
     activations = {}
     transform_kwargs = {}
-    if model.solver_name_ in [
-            "multi-session",
-            "multi-session-aux",
-            "multiobjective-solver",
-    ]:
 
-        model_ = model.model_[session_id]
-        transform_kwargs.update({"session_id": session_id})
-
-    elif model.solver_name_ in [
-            "single-session",
-            "single-session-aux",
-            "single-session-hybrid",
-            "single-session-full",
-    ]:
-        model_ = model.model_
-
+    if isinstance(model, cebra.integrations.sklearn.cebra.CEBRA):
+        model_ = model.solver_._get_model(session_id=session_id)
+    elif isinstance(model, cebra.solver.Solver):
+        model_ = model._get_model(session_id=session_id)
     else:
-        raise NotImplementedError(
-            f"Solver {model.solver_name_} is not yet implemented.")
+        raise ValueError(
+            "Model must be an instance of cebra.integrations.sklearn.cebra.CEBRA "
+            f"or cebra.solver.Solver, got {type(model)} instead.", )
+
+    transform_kwargs.update({"session_id": session_id})
 
     activations, handles, conv_layer_info = _attach_hooks(
         activations=activations,
         model=model_,
-        name=name,
+        activations_keys_prefix=activations_keys_prefix,
         instance=instance,
         layer_type=layer_type,
     )
-    _ = model.transform(data, **transform_kwargs)
+
+    _ = utils_wrapper.transform(model=model,
+                                data=data,
+                                label=labels,
+                                **transform_kwargs)
 
     # remove all handles to avoid activation's problems
     for handle in handles:
         handle.remove()
-
-    if model.pad_before_transform:
-        # Padding logic: calculate the total reduction which happens based on the kernel size per layer, divide the reduction per layer into 2 parts
+    
+    if hasattr(model, "pad_before_transform"):
+        pad_before_transform = model.pad_before_transform    
+        
+    if pad_before_transform:
         cut_indices = get_cut_indices(model_, layer_type, conv_layer_info)
-        for i, (key, value) in enumerate(activations.items()):
-            activations[key] = _cut_array(value, cut_indices[i])
+    else:
+        cut_indices = [(0,0)] * len(handles)
+    # for any activation that was captures in time chunks:
+    # remove the padding from each chunk using cut indices,
+    # then, concatenate them along the time axis
+    for i, (key, batch_list) in enumerate(list(activations.items())):
+        if not isinstance(batch_list, list):
+            continue
+        sliced_chunks = [
+            _cut_array(chunk, cut_indices[i])
+            for chunk in batch_list
+        ]
+        # now every chunk.shape == (1, channels, time)
+        axis = sliced_chunks[0].ndim - 1
+        activations[key] = np.concatenate(sliced_chunks, axis=axis)
+    # squeeze (1, channels, time) to (channels, time), so downstream tools (e.g., k‑NN regression) receive the 2D array they require
+    for key, arr in list(activations.items()):
+        if arr.ndim == 3 and arr.shape[0] == 1:
+            activations[key] = arr[0]
 
     return activations
 
@@ -170,7 +187,9 @@ def get_activations_model(
 def process_activations(
     models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
     data: torch.Tensor,
-    session_id: int,
+    labels: Optional[torch.Tensor] = None,
+    session_id: int = None,
+    pad_before_transform: bool = True,
     activations: Dict[str, npt.NDArray] = {},
     layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:
@@ -202,8 +221,10 @@ def process_activations(
                 get_activations_model(
                     model=model,
                     data=data,
+                    labels=labels,
                     session_id=session_id,
-                    name=model_name,
+                    pad_before_transform=pad_before_transform,
+                    activations_keys_prefix=model_name,
                     instance=i,
                     layer_type=layer_type,
                 ))
@@ -212,18 +233,37 @@ def process_activations(
 
 
 # Function to create a hook that stores the activations in the dictionary
-def _get_activation(name: str, activations: Dict):
-
+def _get_activation(activations_keys_prefix: str, activations: Dict):
+    """Creates a forward hook to capture activations from a model layer.
+    
+    This function returns a hook that captures the output of a model layer during the forward pass and stores it in a dictionary.
+    
+    Args:
+        activations_keys_prefix : str
+            The prefix to use for the activation key, corresponding to the type of model (eg. "single", "multi").
+        activations : Dict
+            A dictionary to store the activations. The key will be the name of the layer, and the value will be the activations.
+    
+    Returns:
+        hook : function
+            A forward hook function that captures the activations.
+        activations : Dict
+            The dictionary where the activations will be stored. The key is the name of the layer, and the value is the activations.
+    """
+    activations.setdefault(activations_keys_prefix, [])    
     def hook(model, input, output):
-        activations[name] = output.detach().squeeze().numpy()
+        arr = output.detach().cpu().numpy() 
+        activations[activations_keys_prefix].append(arr)
 
     return hook, activations
 
 
+#NOTE(celia): this function is not super flexible to handle different layer types,
+# but it is a good starting point.
 def _attach_hooks(
     activations: Dict[str, npt.NDArray],
     model: cebra.integrations.sklearn.cebra.CEBRA,
-    name: str,
+    activations_keys_prefix: str,
     instance: int,
     layer_type: Type[nn.Module] = None,
 ) -> Dict[str, npt.NDArray]:  # only attaches hooks on convolutional layers
@@ -237,8 +277,10 @@ def _attach_hooks(
             A dictionary to store the activations. Please refer to ``activations`` returned by ``get_activations_model``.
         model : cebra.integrations.sklearn.cebra.CEBRA
             The model to which hooks will be attached.
-        name : str
-            A base name for the activation keys (e.g., "single", "multi").
+        activations_keys_prefix : str
+            A base name for the activation keys (e.g., "single", "multi") so that the keys are 
+            unique for each model instance. The keys will be in the format 
+            '{activations_keys_prefix}_{instance}_layer_{num_layer}'.
         instance : int
             The instance number for the model, used to differentiate between models from the same model category.
         layer_type : Type[nn.Module]
@@ -258,8 +300,10 @@ def _attach_hooks(
             # attach hook to the layer_type and to the output layer
             if isinstance(model.net[i], layer_type) or i == len(model.net) - 1:
                 hook, activations = _get_activation(
-                    f"{name}_{instance}_layer_{num_layer}", activations)
-                if isinstance(model.net[i], layer_type):
+                    f"{activations_keys_prefix}_{instance}_layer_{num_layer}",
+                    activations)
+                if isinstance(model.net[i],
+                              layer_type) and layer_type == nn.Conv1d:
                     conv_layer_info.append(model.net[i].kernel_size[0])
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
@@ -269,7 +313,7 @@ def _attach_hooks(
                 for submodule in model.net[i].modules():
                     if isinstance(submodule, layer_type):
                         hook, activations = _get_activation(
-                            f"{name}_{instance}_layer_{num_layer}",
+                            f"{activations_keys_prefix}_{instance}_layer_{num_layer}",
                             activations,
                         )
                         conv_layer_info.append(submodule.kernel_size[0])
@@ -284,7 +328,7 @@ def _attach_hooks(
             if bool(model.net[i]._modules):
                 for submodule in model.net[i].modules():
                     hook, activations = _get_activation(
-                        f"{name}_{instance}_layer_{num_layer}",
+                        f"{activations_keys_prefix}_{instance}_layer_{num_layer}",
                         activations,
                     )
                     handle = submodule.register_forward_hook(hook)
@@ -293,7 +337,8 @@ def _attach_hooks(
 
             else:
                 hook, activations = _get_activation(
-                    f"{name}_{instance}_layer_{num_layer}", activations)
+                    f"{activations_keys_prefix}_{instance}_layer_{num_layer}",
+                    activations)
 
                 handle = model.net[i].register_forward_hook(hook)
                 handles.append(handle)
@@ -345,9 +390,11 @@ def aggregate_activations(
 def get_activations(
     models: Dict[str, List[cebra.integrations.sklearn.cebra.CEBRA]],
     data: torch.Tensor,
-    session_id: int,
+    labels: Optional[torch.Tensor] = None,
+    session_id: int = None,
+    pad_before_transform: bool = True,
     activations: Optional[Dict[str, npt.NDArray]] = None,
-    layer_type: Optional[Type[nn.Module]] = None,
+    layer_type: Optional[Type[nn.Module]] = nn.Conv1d,
 ) -> Dict[str, npt.NDArray]:
     """Extract and organize activations from models.
 
@@ -370,7 +417,15 @@ def get_activations(
     activations = activations or {}
 
     aggregated_activations = aggregate_activations(
-        process_activations(models, data, session_id, activations, layer_type))
+        process_activations(
+            models=models,
+            data=data,
+            labels=labels,
+            session_id=session_id,
+            pad_before_transform=pad_before_transform,
+            activations=activations,
+            layer_type=layer_type,
+        ))
 
     activations_dict = {}
     for key, value in aggregated_activations.items():

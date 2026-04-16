@@ -31,6 +31,7 @@ class _BaseMetric:
         self,
         activations: List[Union[float, npt.NDArray]],
         metric_func: types.FunctionType,
+        **kwargs,
     ) -> List[Union[np.float64, npt.NDArray]]:
         """Iterate over each layer of activations and apply the metric function to compute the desired metric.
 
@@ -46,7 +47,7 @@ class _BaseMetric:
         """
         layer_data = []
         for layer_activation in activations:
-            layer_data.append(metric_func(layer_activation))
+            layer_data.append(metric_func(layer_activation, **kwargs))
         return layer_data
 
     def save(self, filepath: str, data: Dict[str, npt.NDArray]) -> None:
@@ -88,3 +89,7 @@ class _BaseMetric:
         The plot function is specific to a metric, e.g. intra-bin distance, RDM, CKA,...
         """
         raise NotImplementedError
+
+    def output_information(self):
+        """Output information about the metric class."""
+        print(f"Metric class: {self.__class__.__name__}")

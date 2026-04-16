@@ -83,8 +83,8 @@ class Tsne(_BaseMetric):
         sample_plot: int = 200,
         dataset_label: str = None,
         group_name: str = "t-SNE",
-        label_ind: int = None,
         ax: Optional[matplotlib.axes.Axes] = None,
+        **kwargs: dict,
     ) -> matplotlib.figure.Figure:
         """Plots the t-SNE embeddings for the first 3 dimensions.
 
@@ -99,8 +99,6 @@ class Tsne(_BaseMetric):
                 The label of the dataset, used for determining the number of bins in the plot. Default is "HPC".
             group_name : str, optional
                 The name of the group for which the embeddings are plotted. Default is "t-SNE".
-            label_ind : int, optional
-                In case dataset in non-defined and we are plotting embeddings, we need to define the label index for the coloring of the embeddings.
             ax : Optional[matplotlib.axes.Axes], optional
                 The axes on which to plot the embeddings. If None, a new figure and axes will be created. Default is None.
 
@@ -113,7 +111,7 @@ class Tsne(_BaseMetric):
             labels=labels,
             group_name=group_name,
             dataset_label=dataset_label,
-            label_ind=label_ind,
             sample_plot=sample_plot,
             ax=ax,
+            **kwargs,
         )

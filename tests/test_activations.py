@@ -1,10 +1,12 @@
 from collections import namedtuple
 from unittest.mock import MagicMock
 
+import cebra
 import numpy as np
 import pytest
 import torch
 
+from cebra_lens import activations
 from cebra_lens.activations import (_cut_array, get_activations_model,
                                     get_cut_indices)
 
@@ -38,22 +40,15 @@ def test_get_cut_indices():
 
 
 def make_mock_cebra_model():
-    model = MagicMock()
-    model.net = [torch.nn.Conv1d(1, 1, 3), torch.nn.ReLU()]
-    model.net[0].kernel_size = [3]
-    model.solver_name_ = "single-session"
-    model.model_ = model
+    model = cebra.CEBRA(max_iterations=1, device="cpu")
+    model.fit(torch.rand((5, 10)), torch.rand((5, 1)))
     model.pad_before_transform = False
-    model.transform.return_value = None
     return model
 
 
 def test_get_activations_model_basic(monkeypatch):
     model = make_mock_cebra_model()
     data = torch.rand((5, 10))
-
-    # Patch _attach_hooks to avoid touching real layers
-    from cebra_lens import activations
 
     monkeypatch.setattr(
         activations,
@@ -62,7 +57,10 @@ def test_get_activations_model_basic(monkeypatch):
             "test_layer": np.ones((5, 3))
         }, [], [3]),
     )
-    result = get_activations_model(model, data, layer_type=torch.nn.Conv1d)
+    print(type(model))
+    result = get_activations_model(model=model,
+                                   data=data,
+                                   layer_type=torch.nn.Conv1d)
     assert isinstance(result, dict)
     assert "test_layer" in result
     assert result["test_layer"].shape == (5, 3)
