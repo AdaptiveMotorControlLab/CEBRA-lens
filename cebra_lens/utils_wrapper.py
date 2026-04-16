@@ -1,27 +1,22 @@
-import cebra
+import inspect
+
+from cebra.integrations.sklearn.cebra import CEBRA
+from cebra.solver.base import Solver
 
 
 def transform(model, data, label, **transform_kwargs):
-    if isinstance(model, cebra.solver.UnifiedSolver):
-        print(data[0].shape)
-        print(label[0].shape)
-        embedding = model.transform(data, label, **transform_kwargs)
-    elif isinstance(model, cebra.integrations.sklearn.cebra.CEBRA):
-        embedding = model.transform(data, **transform_kwargs)
+    if isinstance(model, Solver):
+        transform_signature = inspect.signature(model.transform)
+        if "labels" in transform_signature.parameters:
+            embedding = model.transform(inputs=data, labels=label, **transform_kwargs)
+        else:
+            embedding = model.transform(inputs=data, **transform_kwargs)
+    elif isinstance(model, CEBRA):
+        embedding = model.transform(inputs=data, **transform_kwargs)
     else:
         raise TypeError(
-            "Model must be an instance of cebra.solver.UnifiedSolver",
-            f"or cebra.integrations.sklearn.cebra.CEBRA, got {type(model)} instead.",
+            "Model must be an instance of cebra.solver.base.Solver "
+            "or cebra.integrations.sklearn.cebra.CEBRA, "
+            f"got {type(model)} instead.",
         )
     return embedding
-
-
-# def load_model():
-
-#         loaded_model = cebra.CEBRA.load(
-#             file, backend=backend, map_location=torch.device("cpu")
-#         ).to("cpu")
-
-#     else:
-#         checkpoint = torch.load(file, map_location=device, weights_only = False)
-#         solver.load_state_dict(checkpoint, strict=True)
